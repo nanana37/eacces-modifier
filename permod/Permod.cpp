@@ -8,7 +8,7 @@ using namespace llvm;
 
 namespace {
 
-struct SkeletonPass : public PassInfoMixin<SkeletonPass> {
+struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         for (auto &F : M.functions()) {
             for (auto &B : F) {
@@ -47,12 +47,12 @@ extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo
 llvmGetPassPluginInfo() {
     return {
         .APIVersion = LLVM_PLUGIN_API_VERSION,
-        .PluginName = "Skeleton pass",
+        .PluginName = "Permod pass",
         .PluginVersion = "v0.1",
         .RegisterPassBuilderCallbacks = [](PassBuilder &PB) {
             PB.registerPipelineStartEPCallback(
                 [](ModulePassManager &MPM, OptimizationLevel Level) {
-                    MPM.addPass(SkeletonPass());
+                    MPM.addPass(PermodPass());
                 });
         }
     };
