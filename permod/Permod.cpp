@@ -4,35 +4,29 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
+
+#include <errno.h>
+
 using namespace llvm;
 
 namespace {
 
 struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
+        int num = 0;
         for (auto &F : M.functions()) {
             for (auto &B : F) {
-                for (auto &I : B) {
-                    if (auto *op = dyn_cast<BinaryOperator>(&I)) {
-                        // Insert at the point where the instruction `op`
-                        // appears.
-                        IRBuilder<> builder(op);
+                IRBuilder<> builder(&B);
+                ReturnInst *RI = dyn_cast<ReturnInst>(B.getTerminator());
 
-                        // Make a multiply with the same operands as `op`.
-                        Value *lhs = op->getOperand(0);
-                        Value *rhs = op->getOperand(1);
-                        Value *mul = builder.CreateMul(lhs, rhs);
-
-                        // Everywhere the old instruction was used as an
-                        // operand, use our new multiply instruction instead.
-                        for (auto &U : op->uses()) {
-                          // A User is anything with operands.
-                          User *user = U.getUser();
-                          user->setOperand(U.getOperandNo(), mul);
-                        }
-
-                        // We modified the code.
-                        return PreservedAnalyses::none();
+                if (ConstantInt *CI = dyn_cast<ConstantInt>(RI->getReturnValue())) {
+                    switch (CI->getSExtValue()) {
+                    case -EACCES:
+                        // Print with number
+                        errs() << "Found -EACCES: " << ++num << "\n";
+                        break;
+                    default:
+                        break;
                     }
                 }
             }
