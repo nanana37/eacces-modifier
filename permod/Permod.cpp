@@ -13,18 +13,29 @@ namespace {
 
 struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
-        int num = 0;
         for (auto &F : M.functions()) {
+
+            /* errs() << "Function: " << F.getName() << "\n"; */
+
             for (auto &B : F) {
                 IRBuilder<> builder(&B);
                 ReturnInst *RI = dyn_cast<ReturnInst>(B.getTerminator());
 
+                if (!RI) {
+                    errs() << "No return instruction found\n";
+                    continue;
+                }
+
                 if (ConstantInt *CI = dyn_cast<ConstantInt>(RI->getReturnValue())) {
                     switch (CI->getSExtValue()) {
                     case -EACCES:
-                        // Print with number
-                        errs() << "Found -EACCES: " << ++num << "\n";
-                        break;
+                        errs() << "Found EACCES\n";
+                        // Insert a call to printf before the return instruction
+                        builder.SetInsertPoint(RI);
+                        /* builder.CreateCall( */
+                        /*         Printf, */ 
+                        /*         ) */
+                        return PreservedAnalyses::none();
                     default:
                         break;
                     }

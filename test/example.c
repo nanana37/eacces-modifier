@@ -4,6 +4,7 @@
 int my_open (int flag) {
     switch (flag) {
         case 0:
+            printf("flag is 0\n");
             return -EACCES;
         default:
             return 0;
@@ -11,12 +12,8 @@ int my_open (int flag) {
 }
 
 int main(int argc, const char** argv) {
-    int i, num;
 
-    for (i = 0; i < 10; i++) {
-        scanf("%i", &num);
-        my_open(num);
-    }
+    my_open(0);
 
     return 0;
 }
