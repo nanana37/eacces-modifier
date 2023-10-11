@@ -7,13 +7,17 @@ int my_open (int flag) {
             printf("flag is 0\n");
             return -EACCES;
         default:
-            return 0;
+            break;
     }
+
+    return 5;
 }
 
 int main(int argc, const char** argv) {
 
-    my_open(0);
+    int num;
+    scanf("%d", &num);
+    my_open(num);
 
-    return 0;
+    return -EACCES;
 }

@@ -7,6 +7,8 @@
 
 #include <errno.h>
 
+#define DEBUG 1
+
 using namespace llvm;
 
 namespace {
@@ -14,27 +16,37 @@ namespace {
 struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         for (auto &F : M.functions()) {
-
-            /* errs() << "Function: " << F.getName() << "\n"; */
+            #ifdef DEBUG
+            errs() << "Function: " << F.getName() << "\n";
+            #endif
 
             for (auto &B : F) {
                 IRBuilder<> builder(&B);
                 ReturnInst *RI = dyn_cast<ReturnInst>(B.getTerminator());
 
                 if (!RI) {
+                    #ifdef DEBUG
                     errs() << "No return instruction found\n";
+                    #endif
+
                     continue;
                 }
 
                 if (ConstantInt *CI = dyn_cast<ConstantInt>(RI->getReturnValue())) {
+                    #ifdef DEBUG
+                    errs() << "Return value: " << CI->getSExtValue() << "\n";
+                    #endif
                     switch (CI->getSExtValue()) {
                     case -EACCES:
+                        #ifdef DEBUG
                         errs() << "Found EACCES\n";
+                        #endif
                         // Insert a call to printf before the return instruction
-                        builder.SetInsertPoint(RI);
+                        /* builder.SetInsertPoint(RI); */
                         /* builder.CreateCall( */
                         /*         Printf, */ 
                         /*         ) */
+
                         return PreservedAnalyses::none();
                     default:
                         break;
