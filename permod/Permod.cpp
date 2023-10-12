@@ -4,6 +4,11 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
+
+#include <errno.h>
+
+#define DEBUG 1
+
 using namespace llvm;
 
 namespace {
@@ -11,28 +16,40 @@ namespace {
 struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         for (auto &F : M.functions()) {
+            #ifdef DEBUG
+            errs() << "Function: " << F.getName() << "\n";
+            #endif
+
             for (auto &B : F) {
-                for (auto &I : B) {
-                    if (auto *op = dyn_cast<BinaryOperator>(&I)) {
-                        // Insert at the point where the instruction `op`
-                        // appears.
-                        IRBuilder<> builder(op);
+                IRBuilder<> builder(&B);
+                ReturnInst *RI = dyn_cast<ReturnInst>(B.getTerminator());
 
-                        // Make a multiply with the same operands as `op`.
-                        Value *lhs = op->getOperand(0);
-                        Value *rhs = op->getOperand(1);
-                        Value *mul = builder.CreateMul(lhs, rhs);
+                if (!RI) {
+                    #ifdef DEBUG
+                    errs() << "No return instruction found\n";
+                    #endif
 
-                        // Everywhere the old instruction was used as an
-                        // operand, use our new multiply instruction instead.
-                        for (auto &U : op->uses()) {
-                          // A User is anything with operands.
-                          User *user = U.getUser();
-                          user->setOperand(U.getOperandNo(), mul);
-                        }
+                    continue;
+                }
 
-                        // We modified the code.
+                if (ConstantInt *CI = dyn_cast<ConstantInt>(RI->getReturnValue())) {
+                    #ifdef DEBUG
+                    errs() << "Return value: " << CI->getSExtValue() << "\n";
+                    #endif
+                    switch (CI->getSExtValue()) {
+                    case -EACCES:
+                        #ifdef DEBUG
+                        errs() << "Found EACCES\n";
+                        #endif
+                        // Insert a call to printf before the return instruction
+                        /* builder.SetInsertPoint(RI); */
+                        /* builder.CreateCall( */
+                        /*         Printf, */ 
+                        /*         ) */
+
                         return PreservedAnalyses::none();
+                    default:
+                        break;
                     }
                 }
             }
