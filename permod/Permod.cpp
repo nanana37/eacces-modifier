@@ -16,13 +16,20 @@ namespace {
 struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         for (auto &F : M.functions()) {
+
             #ifdef DEBUG
             errs() << "Function: " << F.getName() << "\n";
             #endif
 
-            for (auto &BB : F) {
-                IRBuilder<> builder(&BB);
+            // Get the function to call from our runtime library.
+            LLVMContext &Ctx = F.getContext();
+            std::vector<Type*> paramTypes = {Type::getInt32Ty(Ctx)};
+            Type *retType = Type::getVoidTy(Ctx);
+            FunctionType *logFuncType = FunctionType::get(retType, paramTypes, false);
+            FunctionCallee logFunc =
+                F.getParent()->getOrInsertFunction("print_detailed_error", logFuncType);
 
+            for (auto &BB : F) {
                 ReturnInst *RI = dyn_cast<ReturnInst>(BB.getTerminator());
                 if (!RI) {
 
@@ -45,11 +52,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                         errs() << "Found EACCES\n";
                         #endif
 
-                        // Insert a call to printf before the return instruction
-                        /* builder.SetInsertPoint(RI); */
-                        /* builder.CreateCall( */
-                        /*         Printf, */ 
-                        /*         ) */
+                        // Insert just after the entry of the BB? 
+                        IRBuilder<> builder(&BB);
+                        builder.SetInsertPoint(RI, ++builder.GetInsertPoint());
+                        
+                        // Insert a call...
+                        Value* args[] = {op};
+                        builder.CreateCall(logFunc, args);
 
                         return PreservedAnalyses::none();
                     default:
