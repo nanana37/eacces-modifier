@@ -20,9 +20,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             errs() << "Function: " << F.getName() << "\n";
             #endif
 
-            for (auto &B : F) {
-                IRBuilder<> builder(&B);
-                ReturnInst *RI = dyn_cast<ReturnInst>(B.getTerminator());
+            for (auto &BB : F) {
+                IRBuilder<> builder(&BB);
+                ReturnInst *RI = dyn_cast<ReturnInst>(BB.getTerminator());
 
                 if (!RI) {
                     #ifdef DEBUG
