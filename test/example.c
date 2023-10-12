@@ -20,13 +20,13 @@ int main(int argc, const char** argv) {
     scanf("%d", &num);
     my_open(num);
 
-    switch (num) {
-        case 0:
-            printf("num is 0\n");
-            return -EACCES;
-        default:
-            break;
-    }
+    /* switch (num) { */
+    /*     case 0: */
+    /*         printf("num is 0\n"); */
+    /*         return -EACCES; */
+    /*     default: */
+    /*         break; */
+    /* } */
 
     return -EACCES;
 }
