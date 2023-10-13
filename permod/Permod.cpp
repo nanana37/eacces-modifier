@@ -22,13 +22,21 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // Search for Terminator BB (Contains return instruction)
             for (auto &BB : F) {
-                for (auto &I : BB) {
-                    if (ReturnInst *RI = dyn_cast<ReturnInst>(&I)) {
-                        #ifdef DEBUG
-                        errs() << "Return instruction found!\n";
-                        #endif
-                    }
-                }
+                // Get the Terminator Instruction
+                Instruction *TI = BB.getTerminator();
+                if (!TI) continue;
+
+                #ifdef DEBUG
+                errs() << "Found Terminator Instruction...\n";
+                #endif
+
+                // Check if this BB is a Terminator BB
+                ReturnInst *RI = dyn_cast<ReturnInst>(TI);
+                if (!RI) continue;
+
+                #ifdef DEBUG
+                errs() << "Found Return Instruction!\n";
+                #endif
             }
         }
         return PreservedAnalyses::all();
