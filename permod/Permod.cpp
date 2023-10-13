@@ -28,6 +28,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 #ifdef DEBUG
                 errs() << "Found Terminator Instruction...\n";
+                errs() << *TI << "\n";
                 #endif
 
                 // Check if this BB is a Terminator BB
@@ -36,6 +37,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 #ifdef DEBUG
                 errs() << "Found Return Instruction!\n";
+                errs() << *RI << "\n";
                 #endif
             }
         }
