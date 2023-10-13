@@ -20,40 +20,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             errs() << "Function: " << F.getName() << "\n";
             #endif
 
+            // Search for Terminator BB (Contains return instruction)
             for (auto &BB : F) {
-                IRBuilder<> builder(&BB);
-
-                ReturnInst *RI = dyn_cast<ReturnInst>(BB.getTerminator());
-                if (!RI) {
-
-                    #ifdef DEBUG
-                    errs() << "No return instruction found\n";
-                    #endif
-
-                    continue;
-                }
-                if (ConstantInt *CI = dyn_cast<ConstantInt>(RI->getReturnValue())) {
-
-                    #ifdef DEBUG
-                    errs() << "Return value: " << CI->getSExtValue() << "\n";
-                    #endif
-
-                    switch (CI->getSExtValue()) {
-                    case -EACCES:
-
+                for (auto &I : BB) {
+                    if (ReturnInst *RI = dyn_cast<ReturnInst>(&I)) {
                         #ifdef DEBUG
-                        errs() << "Found EACCES\n";
+                        errs() << "Return instruction found!\n";
                         #endif
-
-                        // Insert a call to printf before the return instruction
-                        /* builder.SetInsertPoint(RI); */
-                        /* builder.CreateCall( */
-                        /*         Printf, */ 
-                        /*         ) */
-
-                        return PreservedAnalyses::none();
-                    default:
-                        break;
                     }
                 }
             }
