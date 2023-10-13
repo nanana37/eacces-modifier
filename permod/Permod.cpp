@@ -20,10 +20,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             errs() << "Function: " << F.getName() << "\n";
             #endif
 
-            // This assumes that there is only one Term BB
-            bool IsReturnFound = false;
-            Value *RetVal = nullptr;
-
             // Search for Terminator BB (Contains return instruction)
             for (auto &BB : F) {
                 // Get the Terminator Instruction
@@ -44,26 +40,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 errs() << *RI << "\n";
                 #endif
 
-                // This assumes that there is only one Term BB
-                IsReturnFound = true;
-                RetVal = RI->getReturnValue();
-                errs() << "Return Value: " << *RetVal << "\n";
-                break;
+                Value *RetVal = RI->getReturnValue();
 
-            }
-
-            // This assumes that there is only one Term BB
-            if (!IsReturnFound) continue;
-
-            // Use-Def chain for the found return value
-            for (User *U : RetVal->users()) {
-                Instruction *UI = dyn_cast<Instruction>(U);
-                if (!UI) continue;
-
-                #ifdef DEBUG
-                errs() << "Found User Instruction!\n";
-                errs() << *UI << "\n";
-                #endif
+                // Use-Def chain for the found return value
+                for (User *U : RetVal->users()) {
+                    #ifdef DEBUG
+                    errs() << "Checking User:\n" << *U << "\n";
+                    #endif
+                }
             }
         }
         return PreservedAnalyses::all();
