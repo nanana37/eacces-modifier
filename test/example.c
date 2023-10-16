@@ -4,8 +4,8 @@
 int my_open (int flag) {
 
     switch (flag) {
-        case 0:
-            printf("flag is 0\n");
+        case 123:
+            printf("flag is 123\n");
             return -EACCES;
         default:
             break;
