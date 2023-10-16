@@ -19,7 +19,7 @@ namespace {
 /* 
  * Find 'return -EACCES'
     * The statement turns into:
-    Error-catcher BB:
+    Error-thrower BB:
         store i32 -13，ptr %1, align 4
     Terminator BB:
         %2 = load i32, ptr %1, align 4
@@ -33,7 +33,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // Search for Terminator BB (Contains return instruction)
             for (auto &BB : F) {
-                DEBUG_PRINT("Basic Block:" << BB << "\n");
+                DEBUG_PRINT("Basic Block:" << BB);
 
                 // Get the Terminator Instruction
                 Instruction *TI = BB.getTerminator();
@@ -68,6 +68,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if (!CI) continue;
                     if (CI->getSExtValue() != -EACCES) continue;
                     DEBUG_PRINT("'return -EACCES' found!\n");
+
+                    // Where we found the 'return -EACCES'
+                    BasicBlock *ErrBB = SI->getParent();
+                    DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n");
+
+
                 }
             }
         }
