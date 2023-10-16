@@ -45,17 +45,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 if (!RI) continue;
                 DEBUG_PRINT("~Found BB of Return\n");
 
-                // Get the return value
+                // Use of return value
                 Value *RetVal = RI->getReturnValue();
                 DEBUG_PRINT("Return Value: " << *RetVal << "\n");
 
-                // Get def of the return value
+                // Def of return value
                 LoadInst *DefLI = dyn_cast<LoadInst>(RetVal);
                 if (!DefLI) continue;
                 RetVal = DefLI->getPointerOperand();
                 DEBUG_PRINT("Def of Return Value: " << *RetVal << "\n");
 
-                // Use-Def chain for the found return value
+                // Def-Use chain for the found return value
                 for (User *U : RetVal->users()) {
                     DEBUG_PRINT("Checking User: " << *U << "\n");
 
