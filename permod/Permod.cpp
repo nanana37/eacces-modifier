@@ -8,6 +8,9 @@
 #include <errno.h>
 
 #define DEBUG
+#ifdef DEBUG
+    #define DEBUG_PRINT(x) do { errs() << x; } while (0)
+#endif
 
 using namespace llvm;
 
@@ -26,47 +29,36 @@ namespace {
 struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         for (auto &F : M.functions()) {
-#ifdef DEBUG
-            errs() << "Function: " << F.getName() << "\n";
-#endif
+            DEBUG_PRINT("Function: " << F.getName() << "\n");
 
             // Search for Terminator BB (Contains return instruction)
             for (auto &BB : F) {
+                DEBUG_PRINT("Basic Block:" << BB << "\n");
+
                 // Get the Terminator Instruction
                 Instruction *TI = BB.getTerminator();
                 if (!TI) continue;
-#ifdef DEBUG_ALL
-                errs() << "Found Terminator Instruction...\n";
-                errs() << *TI << "\n";
-#endif
+                DEBUG_PRINT("Terminator Instruction: " << *TI << "\n");
 
                 // Check if this BB is a Terminator BB
                 ReturnInst *RI = dyn_cast<ReturnInst>(TI);
                 if (!RI) continue;
-#ifdef DEBUG
-                errs() << "Found BB of Return\n";
-                errs() << *RI << "\n";
-#endif
+                DEBUG_PRINT("~Found BB of Return\n");
 
                 // Get the return value
                 Value *RetVal = RI->getReturnValue();
-#ifdef DEBUG
-                errs() << "Return Value: " << *RetVal << "\n";
-#endif
+                DEBUG_PRINT("Return Value: " << *RetVal << "\n");
 
                 // Get def of the return value
                 LoadInst *DefLI = dyn_cast<LoadInst>(RetVal);
                 if (!DefLI) continue;
                 RetVal = DefLI->getPointerOperand();
-#ifdef DEBUG
-                errs() << "Def of Return Value: " << *RetVal << "\n";
-#endif
+                DEBUG_PRINT("Def of Return Value: " << *RetVal << "\n");
 
                 // Use-Def chain for the found return value
                 for (User *U : RetVal->users()) {
-#ifdef DEBUG
-                    errs() << "Checking User:\n" << *U << "\n";
-#endif
+                    DEBUG_PRINT("Checking User: " << *U << "\n");
+
                     // Store instruction stores '-EACCES' (-13)
                     StoreInst *SI = dyn_cast<StoreInst>(U);
                     if (!SI) continue;
@@ -75,9 +67,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
                     if (!CI) continue;
                     if (CI->getSExtValue() != -EACCES) continue;
-#ifdef DEBUG
-                    errs() << "** Found -EACCES! **\n\n";
-#endif
+                    DEBUG_PRINT("'return -EACCES' found!\n");
                 }
             }
         }
