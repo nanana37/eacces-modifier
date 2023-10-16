@@ -28,5 +28,5 @@ int main(int argc, const char** argv) {
     /*         break; */
     /* } */
 
-    return -EACCES;
+    return 0;
 }

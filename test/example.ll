@@ -5,7 +5,6 @@ target triple = "x86_64-unknown-linux-gnu"
 
 @.str = private unnamed_addr constant [11 x i8] c"flag is 0\0A\00", align 1
 @.str.1 = private unnamed_addr constant [3 x i8] c"%d\00", align 1
-@.str.2 = private unnamed_addr constant [10 x i8] c"num is 0\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
 define dso_local i32 @my_open(i32 noundef %0) #0 {
@@ -48,26 +47,7 @@ define dso_local i32 @main(i32 noundef %0, ptr noundef %1) #0 {
   %7 = call i32 (ptr, ...) @__isoc99_scanf(ptr noundef @.str.1, ptr noundef %6)
   %8 = load i32, ptr %6, align 4
   %9 = call i32 @my_open(i32 noundef %8)
-  %10 = load i32, ptr %6, align 4
-  switch i32 %10, label %13 [
-    i32 0, label %11
-  ]
-
-11:                                               ; preds = %2
-  %12 = call i32 (ptr, ...) @printf(ptr noundef @.str.2)
-  store i32 -13, ptr %3, align 4
-  br label %15
-
-13:                                               ; preds = %2
-  br label %14
-
-14:                                               ; preds = %13
-  store i32 -13, ptr %3, align 4
-  br label %15
-
-15:                                               ; preds = %14, %11
-  %16 = load i32, ptr %3, align 4
-  ret i32 %16
+  ret i32 0
 }
 
 declare i32 @__isoc99_scanf(ptr noundef, ...) #1
