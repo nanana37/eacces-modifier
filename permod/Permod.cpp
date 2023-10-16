@@ -13,6 +13,16 @@ using namespace llvm;
 
 namespace {
 
+/* 
+ * Find 'return -EACCES'
+    * The statement turns into:
+    Error-catcher BB:
+        store i32 -13，ptr %1, align 4
+    Terminator BB:
+        %2 = load i32, ptr %1, align 4
+        ret i32 %2
+ */
+
 struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         for (auto &F : M.functions()) {
