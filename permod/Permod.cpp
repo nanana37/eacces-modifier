@@ -46,17 +46,33 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 if (!RI) continue;
 
                 #ifdef DEBUG
-                errs() << "Found Return Instruction!\n";
+                errs() << "Found BB of Return\n";
                 errs() << *RI << "\n";
                 #endif
 
+                // Get the return value
                 Value *RetVal = RI->getReturnValue();
+                errs() << "Return Value: " << *RetVal << "\n";
+                // Get def of the return value
+                LoadInst *DefLI = dyn_cast<LoadInst>(RetVal);
+                if (!DefLI) continue;
+                RetVal = DefLI->getPointerOperand();
+                errs() << "Def of Return Value: " << *RetVal << "\n";
 
                 // Use-Def chain for the found return value
                 for (User *U : RetVal->users()) {
                     #ifdef DEBUG
                     errs() << "Checking User:\n" << *U << "\n";
                     #endif
+                    // Store instruction stores '-EACCES' (-13)
+                    StoreInst *SI = dyn_cast<StoreInst>(U);
+                    if (!SI) continue;
+
+                    Value *ValOp = SI->getValueOperand();
+                    ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
+                    if (!CI) continue;
+                    if (CI->getSExtValue() != -EACCES) continue;
+                    errs() << "** Found -EACCES! **\n\n";
                 }
             }
         }
