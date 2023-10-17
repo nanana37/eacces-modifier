@@ -73,7 +73,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     BasicBlock *ErrBB = SI->getParent();
                     DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n");
 
+                    // Find the predecessor of the Error-thrower BB
+                    BasicBlock *PredBB = ErrBB->getSinglePredecessor();
+                    if (!PredBB) continue;
+                    DEBUG_PRINT("Predecessor of Error-thrower BB: " << *PredBB << "\n");
 
+                    // Find switch
+                    SwitchInst *SwI = dyn_cast<SwitchInst>(PredBB->getTerminator());
+                    if (!SwI) continue;
+                    DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
                 }
             }
         }
