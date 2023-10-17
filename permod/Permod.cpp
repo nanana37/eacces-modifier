@@ -82,6 +82,23 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     SwitchInst *SwI = dyn_cast<SwitchInst>(PredBB->getTerminator());
                     if (!SwI) continue;
                     DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
+
+                    // Get the condition
+                    Value *Cond = SwI->getCondition();
+                    if (Cond->hasName()) {
+                        DEBUG_PRINT("Condition: " << *Cond << "\n");
+                    } else {
+                        DEBUG_PRINT("Condition: " << *Cond << " has no name!\n");
+                        continue;
+                    }
+                    /* ValueName *CondName = Cond->getValueName(); */
+                    ConstantInt *Case = SwI->findCaseDest(ErrBB);
+                    if (!Case) {
+                        DEBUG_PRINT("Case to ErrBB has not found!\n");
+                        continue;
+                    }
+                    DEBUG_PRINT("Case: " << *Cond << " == " << *Case << "\n");
+
                 }
             }
         }
