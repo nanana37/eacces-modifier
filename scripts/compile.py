@@ -18,7 +18,7 @@ if len(sys.argv) > 1:
 source_target = f"test/{target}.c"
 
 # Compile
-clang_flag = "-fpass-plugin=build/permod/PermodPass.so"
+clang_flag = "-fpass-plugin=build/permod/PermodPass.so -fno-discard-value-names"
 compile_command = f"clang {clang_flag} {source_target}"
 print("Compile command:\n$ " + compile_command)
 subprocess.run(compile_command, shell=True)
