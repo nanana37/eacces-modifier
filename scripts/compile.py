@@ -12,7 +12,9 @@ subprocess.run(build_command, shell=True)
 os.chdir("..")
 
 # Get target
-target = sys.argv[1]
+target = "example"
+if len(sys.argv) > 1:
+    target = sys.argv[1]
 source_target = f"test/{target}.c"
 
 compile_command = f"clang -fpass-plugin=build/permod/PermodPass.so {source_target}"
