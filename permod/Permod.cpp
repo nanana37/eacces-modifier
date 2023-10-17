@@ -90,12 +90,24 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
                     // Get the condition
+                    // Get condition name: switch(THISNAME)
                     Value *Cond = SwI->getCondition();
-                    /* if (!Cond->hasName()) continue; */
+                    DEBUG_PRINT("Condition: " << *Cond << "\n");
+
+                    LoadInst *CondLI = dyn_cast<LoadInst>(Cond);
+                    if (!CondLI) continue;
+                    Cond = CondLI->getPointerOperand();
+                    DEBUG_PRINT("Def of Condition: " << *Cond << "\n");
+
+                    StringRef CondName = Cond->getName();
+                    if (CondName.empty()) CondName = "Condition";
+
+                    // Find the case that matches the error
                     ConstantInt *CaseInt = SwI->findCaseDest(ErrBB);
                     if (!CaseInt) continue;
-                    DEBUG_PRINT("EACCES Reason: '" << *Cond << " == " << *CaseInt << "'\n\n");
-                    DEBUG_PRINT("EACCES Reason: '" << Cond->getName() << " == " << *CaseInt << "'\n\n");
+
+                    // Print the case
+                    DEBUG_PRINT("EACCES Reason: '" << CondName << " == " << *CaseInt << "'\n\n");
 
                 }
             }
