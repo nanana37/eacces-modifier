@@ -109,6 +109,23 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     // Print the case
                     DEBUG_PRINT("EACCES Reason: '" << CondName << " == " << *CaseInt << "'\n\n");
 
+                    // TODO: When to get rtlib func?
+                    // Get the function to call from our runtime library.
+                    LLVMContext &Ctx = ErrBB->getContext();
+                    std::vector<Type*> paramTypes = {Type::getInt32Ty(Ctx)};
+                    Type *retType = Type::getVoidTy(Ctx);
+                    FunctionType *logFuncType = FunctionType::get(retType, paramTypes, false);
+                    FunctionCallee logFunc =
+                        F.getParent()->getOrInsertFunction("logop", logFuncType);
+
+                    // Insert a call
+                    IRBuilder<> builder(ErrBB);
+                    builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
+                    Value* args[] = {Cond, dyn_cast<Value>(CaseInt)};
+                    builder.CreateCall(logFunc, args);
+
+                    // Declare the modification
+                    return PreservedAnalyses::none();
                 }
             }
         }
