@@ -100,6 +100,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     Cond = CondLI->getPointerOperand();
                     DEBUG_PRINT("Def of Condition: " << *Cond << "\n");
 
+                    for (User *UC : Cond->users()) { // User of Condition
+                        DEBUG_PRINT("Checking User: " << *UC << "\n");
+                        StoreInst *CondSI = dyn_cast<StoreInst>(UC);
+                        if (!CondSI) continue;
+                        DEBUG_PRINT("Store Instruction: " << *CondSI << "\n");
+                        Cond = CondSI->getValueOperand();
+                    }
+
                     StringRef CondName = Cond->getName();
                     if (CondName.empty()) CondName = "Condition";
 
