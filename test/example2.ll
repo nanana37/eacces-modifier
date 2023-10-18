@@ -6,54 +6,74 @@ target triple = "x86_64-unknown-linux-gnu"
 @.str = private unnamed_addr constant [13 x i8] c"flag is 123\0A\00", align 1
 @.str.1 = private unnamed_addr constant [13 x i8] c"flag is 456\0A\00", align 1
 @.str.2 = private unnamed_addr constant [3 x i8] c"%d\00", align 1
+@.str.3 = private unnamed_addr constant [19 x i8] c"Permission denied\0A\00", align 1
+@.str.4 = private unnamed_addr constant [18 x i8] c"my_open suceeded\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @my_open(i32 noundef %0) #0 {
-  %2 = alloca i32, align 4
-  %3 = alloca i32, align 4
-  store i32 %0, ptr %3, align 4
-  %4 = load i32, ptr %3, align 4
-  switch i32 %4, label %9 [
-    i32 123, label %5
-    i32 456, label %7
+define dso_local i32 @my_open(i32 noundef %flag) #0 {
+entry:
+  %retval = alloca i32, align 4
+  %flag.addr = alloca i32, align 4
+  store i32 %flag, ptr %flag.addr, align 4
+  %0 = load i32, ptr %flag.addr, align 4
+  switch i32 %0, label %sw.default [
+    i32 123, label %sw.bb
+    i32 456, label %sw.bb1
   ]
 
-5:                                                ; preds = %1
-  %6 = call i32 (ptr, ...) @printf(ptr noundef @.str)
-  store i32 -13, ptr %2, align 4
-  br label %11
+sw.bb:                                            ; preds = %entry
+  %call = call i32 (ptr, ...) @printf(ptr noundef @.str)
+  store i32 -13, ptr %retval, align 4
+  br label %return
 
-7:                                                ; preds = %1
-  %8 = call i32 (ptr, ...) @printf(ptr noundef @.str.1)
-  store i32 -13, ptr %2, align 4
-  br label %11
+sw.bb1:                                           ; preds = %entry
+  %call2 = call i32 (ptr, ...) @printf(ptr noundef @.str.1)
+  store i32 -13, ptr %retval, align 4
+  br label %return
 
-9:                                                ; preds = %1
-  br label %10
+sw.default:                                       ; preds = %entry
+  br label %sw.epilog
 
-10:                                               ; preds = %9
-  store i32 5, ptr %2, align 4
-  br label %11
+sw.epilog:                                        ; preds = %sw.default
+  store i32 5, ptr %retval, align 4
+  br label %return
 
-11:                                               ; preds = %10, %7, %5
-  %12 = load i32, ptr %2, align 4
-  ret i32 %12
+return:                                           ; preds = %sw.epilog, %sw.bb1, %sw.bb
+  %1 = load i32, ptr %retval, align 4
+  ret i32 %1
 }
 
 declare i32 @printf(ptr noundef, ...) #1
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @main(i32 noundef %0, ptr noundef %1) #0 {
-  %3 = alloca i32, align 4
-  %4 = alloca i32, align 4
-  %5 = alloca ptr, align 8
-  %6 = alloca i32, align 4
-  store i32 0, ptr %3, align 4
-  store i32 %0, ptr %4, align 4
-  store ptr %1, ptr %5, align 8
-  %7 = call i32 (ptr, ...) @__isoc99_scanf(ptr noundef @.str.2, ptr noundef %6)
-  %8 = load i32, ptr %6, align 4
-  %9 = call i32 @my_open(i32 noundef %8)
+define dso_local i32 @main(i32 noundef %argc, ptr noundef %argv) #0 {
+entry:
+  %retval = alloca i32, align 4
+  %argc.addr = alloca i32, align 4
+  %argv.addr = alloca ptr, align 8
+  %num = alloca i32, align 4
+  %ret = alloca i32, align 4
+  store i32 0, ptr %retval, align 4
+  store i32 %argc, ptr %argc.addr, align 4
+  store ptr %argv, ptr %argv.addr, align 8
+  %call = call i32 (ptr, ...) @__isoc99_scanf(ptr noundef @.str.2, ptr noundef %num)
+  %0 = load i32, ptr %num, align 4
+  %call1 = call i32 @my_open(i32 noundef %0)
+  store i32 %call1, ptr %ret, align 4
+  %1 = load i32, ptr %ret, align 4
+  switch i32 %1, label %sw.default [
+    i32 -13, label %sw.bb
+  ]
+
+sw.bb:                                            ; preds = %entry
+  %call2 = call i32 (ptr, ...) @printf(ptr noundef @.str.3)
+  br label %sw.epilog
+
+sw.default:                                       ; preds = %entry
+  %call3 = call i32 (ptr, ...) @printf(ptr noundef @.str.4)
+  br label %sw.epilog
+
+sw.epilog:                                        ; preds = %sw.default, %sw.bb
   ret i32 0
 }
 
