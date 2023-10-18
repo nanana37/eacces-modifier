@@ -116,7 +116,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     Type *retType = Type::getVoidTy(Ctx);
                     FunctionType *logFuncType = FunctionType::get(retType, paramTypes, false);
                     FunctionCallee logFunc =
-                        F.getParent()->getOrInsertFunction("logop", logFuncType);
+                        F.getParent()->getOrInsertFunction("logcase", logFuncType);
 
                     // Insert a call
                     IRBuilder<> builder(ErrBB);
