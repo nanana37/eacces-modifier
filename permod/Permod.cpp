@@ -28,6 +28,7 @@ namespace {
 
 struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
+        bool modified = false;
         for (auto &F : M.functions()) {
             DEBUG_PRINT("Function: " << F.getName() << "\n");
 
@@ -63,7 +64,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 // Def-Use chain for the found return value
                 for (User *U : RetVal->users()) {
-                    /* DEBUG_PRINT("Checking User: " << *U << "\n"); */
+                    DEBUG_PRINT("Checking User: " << *U << "\n");
 
                     // Store instruction stores '-EACCES' (-13)
                     StoreInst *SI = dyn_cast<StoreInst>(U);
@@ -87,7 +88,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     // Find switch
                     SwitchInst *SwI = dyn_cast<SwitchInst>(PredBB->getTerminator());
                     if (!SwI) continue;
-                    DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
+                    /* DEBUG_PRINT("Switch Instruction: " << *SwI << "\n"); */
 
                     // Get the condition
                     // Get condition name: switch(THISNAME)
@@ -124,12 +125,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     Value *CondStr = builder.CreateGlobalStringPtr(CondName);
                     Value* args[] = {CondStr, dyn_cast<Value>(CaseInt)};
                     builder.CreateCall(logFunc, args);
+                    DEBUG_PRINT("Inserted logcase call\n");
 
                     // Declare the modification
-                    return PreservedAnalyses::none();
+                    modified = true;
                 }
             }
         }
+        if (modified) return PreservedAnalyses::none();
         return PreservedAnalyses::all();
     };
 };
