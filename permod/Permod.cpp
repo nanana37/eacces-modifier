@@ -90,16 +90,24 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if (!SwI) continue;
                     /* DEBUG_PRINT("Switch Instruction: " << *SwI << "\n"); */
 
-                    // Get the condition
-                    // Get condition name: switch(THISNAME)
+                    /* 
+                     * Get condition name: switch(THISNAME)
+                     * code example:
+                       store i32 %flag, ptr %flag.addr, align 4
+                       %0 = load i32, ptr %flag.addr, align 4
+                       switch i32 %0, label %sw.default [
+                    */
+                    // #3: use of condition 
                     Value *Cond = SwI->getCondition();
                     DEBUG_PRINT("Condition: " << *Cond << "\n");
 
+                    // #2: def of condition (ptr)
                     LoadInst *CondLI = dyn_cast<LoadInst>(Cond);
                     if (!CondLI) continue;
                     Cond = CondLI->getPointerOperand();
                     DEBUG_PRINT("Def of Condition: " << *Cond << "\n");
 
+                    // #1: use-def of condition (pointed original value)
                     for (User *UC : Cond->users()) { // User of Condition
                         DEBUG_PRINT("Checking User: " << *UC << "\n");
                         StoreInst *CondSI = dyn_cast<StoreInst>(UC);
@@ -108,9 +116,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                         Cond = CondSI->getValueOperand();
                     }
 
+                    // Get the name (default to "Condition")
                     StringRef CondName = Cond->getName();
                     if (CondName.empty()) CondName = "Condition";
 
+                    /*
+                     * Find case whose dest is Error-thrower BB
+                     */
                     // Find the case that matches the error
                     ConstantInt *CaseInt = SwI->findCaseDest(ErrBB);
                     if (!CaseInt) continue;
