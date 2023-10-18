@@ -121,7 +121,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     // Insert a call
                     IRBuilder<> builder(ErrBB);
                     builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
-                    Value* args[] = {Cond, dyn_cast<Value>(CaseInt)};
+                    Value *CondStr = builder.CreateGlobalStringPtr(CondName);
+                    Value* args[] = {CondStr, dyn_cast<Value>(CaseInt)};
                     builder.CreateCall(logFunc, args);
 
                     // Declare the modification
