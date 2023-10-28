@@ -70,17 +70,39 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if (CI->getSExtValue() != -EACCES) continue;
                     DEBUG_PRINT("'return -EACCES' found!\n");
 
+                    // Error-thrower BB (BB of store -EACCES)
                     BasicBlock *ErrBB = SI->getParent();
                     DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n");
 
-                    // Find the predecessor of the Error-thrower BB
+                    // Pred of Err-BB : BB of if
                     BasicBlock *PredBB = ErrBB->getSinglePredecessor();
                     if (!PredBB) continue;
-                    DEBUG_PRINT("Predecessor of Error-thrower BB: " << *PredBB << "\n");
+                    /* DEBUG_PRINT("Predecessor of Error-thrower BB: " << *PredBB << "\n"); */
 
-                    SwitchInst *SwI = dyn_cast<SwitchInst>(PredBB->getTerminator());
+                    BranchInst *BrI = dyn_cast<BranchInst>(PredBB->getTerminator());
+                    if (!BrI) continue;
+                    /* DEBUG_PRINT("Branch Instruction: " << *BrI << "\n"); */
+
+                    if (BrI->getNumSuccessors() != 2) {
+                        DEBUG_PRINT("* Branch suc is not 2\n");
+                        continue;
+                    }
+
+                    // NOTE: Err-BB is always the first (true) successor
+                    if (BrI->getSuccessor(0) != ErrBB) {
+                        DEBUG_PRINT("* Err-BB is not the first successor\n");
+                        continue;
+                    }
+
+
+                    // Pred of Pred of Err-BB : BB of switch
+                    BasicBlock *GrandPredBB = PredBB->getSinglePredecessor();
+                    if (!GrandPredBB) continue;
+                    DEBUG_PRINT("Predecessor of if: " << *GrandPredBB << "\n");
+
+                    SwitchInst *SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator());
                     if (!SwI) continue;
-                    /* DEBUG_PRINT("Switch Instruction: " << *SwI << "\n"); */
+                    DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
                     /* 
                      * Get condition name: switch(THISNAME)
@@ -116,7 +138,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                      * Find case whose dest is Error-thrower BB
                      */
                     // Find the case that matches the error
-                    ConstantInt *CaseInt = SwI->findCaseDest(ErrBB);
+                    ConstantInt *CaseInt = SwI->findCaseDest(PredBB);
                     if (!CaseInt) continue;
 
                     // Print the case
