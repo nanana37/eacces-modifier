@@ -1,11 +1,19 @@
 #include <stdio.h>
 #include <errno.h>
 
-int my_open (int flag) {
+int my_open (int mode, int flag) {
 
-    switch (flag) {
+    switch (mode) {
         case 123:
-            return -EACCES;
+            if (flag == 1) {
+                return -EACCES;
+            }
+            break;
+        case 456:
+            if (flag == 2) {
+                return -EACCES;
+            }
+            break;
         default:
             break;
     }
@@ -15,9 +23,11 @@ int my_open (int flag) {
 
 int main(int argc, const char** argv) {
 
-    int num;
-    scanf("%d", &num);
-    int ret = my_open(num);
+    int mode, flag;
+    printf("Enter mode and flag: ");
+    scanf("%d %d", &mode, &flag);
+
+    int ret = my_open(mode, flag);
 
     switch (ret) {
         case -EACCES:
