@@ -7,7 +7,7 @@
 
 #include <errno.h>
 
-/* #define DEBUG */
+#define DEBUG
 #ifdef DEBUG
     #define DEBUG_PRINT(x) do { errs() << x; } while (0)
 #else
@@ -29,6 +29,32 @@ namespace {
  */
 
 struct PermodPass : public PassInfoMixin<PermodPass> {
+
+    /* 
+    * Get original variable (%0 is %flag)
+    * code example:
+      store i32 %flag, ptr %flag.addr, align 4
+      %0 = load i32, ptr %flag.addr, align 4
+    */
+    Value* getOrigin(Value* V) {
+        DEBUG_PRINT("Getting origin of: " << *V << "\n");
+
+       // #2: %0 = load i32, ptr %flag.addr, align 4
+       LoadInst *LI = dyn_cast<LoadInst>(V);
+       if (!LI) return NULL;
+       V = LI->getPointerOperand(); // %flag.addr
+
+       // #1: store i32 %flag, ptr %flag.addr, align 4
+       for (User *U : V->users()) {
+           StoreInst *SI = dyn_cast<StoreInst>(U);
+           if (!SI) continue;
+           V = SI->getValueOperand(); // %flag
+       }
+
+       return V;
+    }
+
+
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         bool modified = false;
         for (auto &F : M.functions()) {
@@ -48,7 +74,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 // Check if this BB has a return instruction
                 ReturnInst *RI = dyn_cast<ReturnInst>(TI);
                 if (!RI) continue;
-                DEBUG_PRINT("~Found BB of Return\n");
+                /* DEBUG_PRINT("~Found BB of Return\n"); */
 
                 // Find when retval is loaded (load i32, ptr %retval)
                 Value *RetVal = RI->getReturnValue();
@@ -58,7 +84,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 // Find when retval is stored (store i32 -13, ptr %retval)
                 for (User *U : RetVal->users()) {
-                    DEBUG_PRINT("Checking User: " << *U << "\n");
+                    /* DEBUG_PRINT("Checking User: " << *U << "\n"); */
 
                     StoreInst *SI = dyn_cast<StoreInst>(U);
                     if (!SI) continue;
@@ -72,7 +98,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                     // Error-thrower BB (BB of store -EACCES)
                     BasicBlock *ErrBB = SI->getParent();
-                    DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n");
+                    /* DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n"); */
 
                     // Pred of Err-BB : BB of if
                     BasicBlock *PredBB = ErrBB->getSinglePredecessor();
@@ -98,37 +124,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     // Pred of Pred of Err-BB : BB of switch
                     BasicBlock *GrandPredBB = PredBB->getSinglePredecessor();
                     if (!GrandPredBB) continue;
-                    DEBUG_PRINT("Predecessor of if: " << *GrandPredBB << "\n");
+                    /* DEBUG_PRINT("Predecessor of if: " << *GrandPredBB << "\n"); */
 
                     SwitchInst *SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator());
                     if (!SwI) continue;
                     DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
-                    /* 
-                     * Get condition name: switch(THISNAME)
-                     * code example:
-                       store i32 %flag, ptr %flag.addr, align 4
-                       %0 = load i32, ptr %flag.addr, align 4
-                       switch i32 %0, label %sw.default [
-                    */
-                    // #3: use of condition 
                     Value *Cond = SwI->getCondition();
-                    DEBUG_PRINT("Condition: " << *Cond << "\n");
-
-                    // #2: def of condition (ptr)
-                    LoadInst *CondLI = dyn_cast<LoadInst>(Cond);
-                    if (!CondLI) continue;
-                    Cond = CondLI->getPointerOperand();
-                    DEBUG_PRINT("Def of Condition: " << *Cond << "\n");
-
-                    // #1: use-def of condition (pointed original value)
-                    for (User *UC : Cond->users()) { // User of Condition
-                        DEBUG_PRINT("Checking User: " << *UC << "\n");
-                        StoreInst *CondSI = dyn_cast<StoreInst>(UC);
-                        if (!CondSI) continue;
-                        DEBUG_PRINT("Store Instruction: " << *CondSI << "\n");
-                        Cond = CondSI->getValueOperand();
-                    }
+                    Cond = getOrigin(Cond);
+                    if (!Cond) continue;
 
                     // Get the name (default to "Condition")
                     StringRef CondName = Cond->getName();
