@@ -40,45 +40,36 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             }
 
 
-            // Search for Terminator BB (Contains return instruction)
+            // Search for return BB (Contains return instruction)
             for (auto &BB : F) {
-                /* DEBUG_PRINT("Basic Block:" << BB); */
-
-                // Get the Terminator Instruction
                 Instruction *TI = BB.getTerminator();
                 if (!TI) continue;
-                /* DEBUG_PRINT("Terminator Instruction: " << *TI << "\n"); */
 
-                // Check if this BB is a Terminator BB
+                // Check if this BB has a return instruction
                 ReturnInst *RI = dyn_cast<ReturnInst>(TI);
                 if (!RI) continue;
                 DEBUG_PRINT("~Found BB of Return\n");
 
-                // Use of return value
+                // Find when retval is loaded (load i32, ptr %retval)
                 Value *RetVal = RI->getReturnValue();
-                /* DEBUG_PRINT("Return Value: " << *RetVal << "\n"); */
-
-                // Def of return value
                 LoadInst *DefLI = dyn_cast<LoadInst>(RetVal);
                 if (!DefLI) continue;
                 RetVal = DefLI->getPointerOperand();
-                /* DEBUG_PRINT("Def of Return Value: " << *RetVal << "\n"); */
 
-                // Def-Use chain for the found return value
+                // Find when retval is stored (store i32 -13, ptr %retval)
                 for (User *U : RetVal->users()) {
                     DEBUG_PRINT("Checking User: " << *U << "\n");
 
-                    // Store instruction stores '-EACCES' (-13)
                     StoreInst *SI = dyn_cast<StoreInst>(U);
                     if (!SI) continue;
 
+                    // Check if storing value is -EACCES
                     Value *ValOp = SI->getValueOperand();
                     ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
                     if (!CI) continue;
                     if (CI->getSExtValue() != -EACCES) continue;
-                    /* DEBUG_PRINT("'return -EACCES' found!\n"); */
+                    DEBUG_PRINT("'return -EACCES' found!\n");
 
-                    // Where we found the 'return -EACCES'
                     BasicBlock *ErrBB = SI->getParent();
                     DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n");
 
@@ -87,7 +78,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if (!PredBB) continue;
                     DEBUG_PRINT("Predecessor of Error-thrower BB: " << *PredBB << "\n");
 
-                    // Find switch
                     SwitchInst *SwI = dyn_cast<SwitchInst>(PredBB->getTerminator());
                     if (!SwI) continue;
                     /* DEBUG_PRINT("Switch Instruction: " << *SwI << "\n"); */
@@ -132,7 +122,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     // Print the case
                     DEBUG_PRINT("EACCES Reason: '" << CondName << " == " << *CaseInt << "'\n\n");
 
-                    // TODO: When to get rtlib func?
                     // Get the function to call from our runtime library.
                     LLVMContext &Ctx = ErrBB->getContext();
                     std::vector<Type*> paramTypes = {Type::getInt32Ty(Ctx)};
