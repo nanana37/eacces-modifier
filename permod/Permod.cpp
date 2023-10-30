@@ -55,6 +55,22 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
 
+    /*
+     * Get variable name
+     */
+    StringRef getVarName(Value *V) {
+        StringRef Name = V->getName();
+        if (Name.empty()) Name = "Condition";
+        return Name;
+    }
+
+
+
+    /*
+     *****************
+     * main function *
+     *****************
+     */
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         bool modified = false;
         for (auto &F : M.functions()) {
@@ -74,7 +90,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 // Check if this BB has a return instruction
                 ReturnInst *RI = dyn_cast<ReturnInst>(TI);
                 if (!RI) continue;
-                /* DEBUG_PRINT("~Found BB of Return\n"); */
 
                 // Find when retval is loaded (load i32, ptr %retval)
                 Value *RetVal = RI->getReturnValue();
@@ -84,7 +99,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 // Find when retval is stored (store i32 -13, ptr %retval)
                 for (User *U : RetVal->users()) {
-                    /* DEBUG_PRINT("Checking User: " << *U << "\n"); */
 
                     StoreInst *SI = dyn_cast<StoreInst>(U);
                     if (!SI) continue;
@@ -130,13 +144,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if (!SwI) continue;
                     DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
-                    Value *Cond = SwI->getCondition();
-                    Cond = getOrigin(Cond);
-                    if (!Cond) continue;
-
-                    // Get the name (default to "Condition")
-                    StringRef CondName = Cond->getName();
-                    if (CondName.empty()) CondName = "Condition";
+                    Value *SwCond = getOrigin(SwI->getCondition());
+                    if (!SwCond) continue;
+                    StringRef SwCondName = getVarName(SwCond);
 
                     /*
                      * Find case whose dest is Error-thrower BB
@@ -146,7 +156,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if (!CaseInt) continue;
 
                     // Print the case
-                    DEBUG_PRINT("EACCES Reason: '" << CondName << " == " << *CaseInt << "'\n\n");
+                    DEBUG_PRINT("EACCES Reason: '" << SwCondName << " == " << *CaseInt << "'\n\n");
 
                     // Get the function to call from our runtime library.
                     LLVMContext &Ctx = ErrBB->getContext();
@@ -159,7 +169,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     // Insert a call
                     IRBuilder<> builder(ErrBB);
                     builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
-                    Value *CondStr = builder.CreateGlobalStringPtr(CondName);
+                    Value *CondStr = builder.CreateGlobalStringPtr(SwCondName);
                     Value* args[] = {CondStr, dyn_cast<Value>(CaseInt)};
                     builder.CreateCall(logFunc, args);
                     DEBUG_PRINT("Inserted logcase call\n");
