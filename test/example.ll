@@ -9,87 +9,87 @@ target triple = "x86_64-unknown-linux-gnu"
 @.str.3 = private unnamed_addr constant [18 x i8] c"my_open suceeded\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @my_open(i32 noundef %mode, i32 noundef %flag) #0 {
-entry:
-  %retval = alloca i32, align 4
-  %mode.addr = alloca i32, align 4
-  %flag.addr = alloca i32, align 4
-  store i32 %mode, ptr %mode.addr, align 4
-  store i32 %flag, ptr %flag.addr, align 4
-  %0 = load i32, ptr %mode.addr, align 4
-  switch i32 %0, label %sw.default [
-    i32 123, label %sw.bb
-    i32 456, label %sw.bb1
+define dso_local i32 @my_open(i32 noundef %0, i32 noundef %1) #0 {
+  %3 = alloca i32, align 4
+  %4 = alloca i32, align 4
+  %5 = alloca i32, align 4
+  store i32 %0, ptr %4, align 4
+  store i32 %1, ptr %5, align 4
+  %6 = load i32, ptr %4, align 4
+  switch i32 %6, label %19 [
+    i32 123, label %7
+    i32 456, label %13
   ]
 
-sw.bb:                                            ; preds = %entry
-  %1 = load i32, ptr %flag.addr, align 4
-  %cmp = icmp eq i32 %1, 1
-  br i1 %cmp, label %if.then, label %if.end
+7:                                                ; preds = %2
+  %8 = load i32, ptr %5, align 4
+  %9 = and i32 %8, 1
+  %10 = icmp ne i32 %9, 0
+  br i1 %10, label %11, label %12
 
-if.then:                                          ; preds = %sw.bb
-  store i32 -13, ptr %retval, align 4
-  br label %return
+11:                                               ; preds = %7
+  store i32 -13, ptr %3, align 4
+  br label %21
 
-if.end:                                           ; preds = %sw.bb
-  br label %sw.epilog
+12:                                               ; preds = %7
+  br label %20
 
-sw.bb1:                                           ; preds = %entry
-  %2 = load i32, ptr %flag.addr, align 4
-  %cmp2 = icmp eq i32 %2, 2
-  br i1 %cmp2, label %if.then3, label %if.end4
+13:                                               ; preds = %2
+  %14 = load i32, ptr %5, align 4
+  %15 = and i32 %14, 2
+  %16 = icmp ne i32 %15, 0
+  br i1 %16, label %18, label %17
 
-if.then3:                                         ; preds = %sw.bb1
-  store i32 -13, ptr %retval, align 4
-  br label %return
+17:                                               ; preds = %13
+  store i32 -13, ptr %3, align 4
+  br label %21
 
-if.end4:                                          ; preds = %sw.bb1
-  br label %sw.epilog
+18:                                               ; preds = %13
+  br label %20
 
-sw.default:                                       ; preds = %entry
-  br label %sw.epilog
+19:                                               ; preds = %2
+  br label %20
 
-sw.epilog:                                        ; preds = %sw.default, %if.end4, %if.end
-  store i32 5, ptr %retval, align 4
-  br label %return
+20:                                               ; preds = %19, %18, %12
+  store i32 5, ptr %3, align 4
+  br label %21
 
-return:                                           ; preds = %sw.epilog, %if.then3, %if.then
-  %3 = load i32, ptr %retval, align 4
-  ret i32 %3
+21:                                               ; preds = %20, %17, %11
+  %22 = load i32, ptr %3, align 4
+  ret i32 %22
 }
 
 ; Function Attrs: noinline nounwind optnone uwtable
-define dso_local i32 @main(i32 noundef %argc, ptr noundef %argv) #0 {
-entry:
-  %retval = alloca i32, align 4
-  %argc.addr = alloca i32, align 4
-  %argv.addr = alloca ptr, align 8
-  %mode = alloca i32, align 4
-  %flag = alloca i32, align 4
-  %ret = alloca i32, align 4
-  store i32 0, ptr %retval, align 4
-  store i32 %argc, ptr %argc.addr, align 4
-  store ptr %argv, ptr %argv.addr, align 8
-  %call = call i32 (ptr, ...) @printf(ptr noundef @.str)
-  %call1 = call i32 (ptr, ...) @__isoc99_scanf(ptr noundef @.str.1, ptr noundef %mode, ptr noundef %flag)
-  %0 = load i32, ptr %mode, align 4
-  %1 = load i32, ptr %flag, align 4
-  %call2 = call i32 @my_open(i32 noundef %0, i32 noundef %1)
-  store i32 %call2, ptr %ret, align 4
-  %2 = load i32, ptr %ret, align 4
-  switch i32 %2, label %sw.default [
-    i32 -13, label %sw.bb
+define dso_local i32 @main(i32 noundef %0, ptr noundef %1) #0 {
+  %3 = alloca i32, align 4
+  %4 = alloca i32, align 4
+  %5 = alloca ptr, align 8
+  %6 = alloca i32, align 4
+  %7 = alloca i32, align 4
+  %8 = alloca i32, align 4
+  store i32 0, ptr %3, align 4
+  store i32 %0, ptr %4, align 4
+  store ptr %1, ptr %5, align 8
+  %9 = call i32 (ptr, ...) @printf(ptr noundef @.str)
+  %10 = call i32 (ptr, ...) @__isoc99_scanf(ptr noundef @.str.1, ptr noundef %6, ptr noundef %7)
+  %11 = load i32, ptr %6, align 4
+  %12 = load i32, ptr %7, align 4
+  %13 = call i32 @my_open(i32 noundef %11, i32 noundef %12)
+  store i32 %13, ptr %8, align 4
+  %14 = load i32, ptr %8, align 4
+  switch i32 %14, label %17 [
+    i32 -13, label %15
   ]
 
-sw.bb:                                            ; preds = %entry
-  %call3 = call i32 (ptr, ...) @printf(ptr noundef @.str.2)
-  br label %sw.epilog
+15:                                               ; preds = %2
+  %16 = call i32 (ptr, ...) @printf(ptr noundef @.str.2)
+  br label %19
 
-sw.default:                                       ; preds = %entry
-  %call4 = call i32 (ptr, ...) @printf(ptr noundef @.str.3)
-  br label %sw.epilog
+17:                                               ; preds = %2
+  %18 = call i32 (ptr, ...) @printf(ptr noundef @.str.3)
+  br label %19
 
-sw.epilog:                                        ; preds = %sw.default, %sw.bb
+19:                                               ; preds = %17, %15
   ret i32 0
 }
 
