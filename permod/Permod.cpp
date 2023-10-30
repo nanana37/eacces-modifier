@@ -114,6 +114,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     BasicBlock *ErrBB = SI->getParent();
                     /* DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n"); */
 
+                    /*
+                     * if branch
+
+                      %1 = load i32, ptr %flag.addr, align 4
+                      %cmp = icmp eq i32 %1, 1
+                      br i1 %cmp, label %if.then, label %if.end
+
+                    */
+
                     // Pred of Err-BB : BB of if
                     BasicBlock *PredBB = ErrBB->getSinglePredecessor();
                     if (!PredBB) continue;
