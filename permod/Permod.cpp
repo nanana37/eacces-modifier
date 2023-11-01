@@ -12,7 +12,14 @@
     #define DEBUG_PRINT(x) do { errs() << x; } while (0)
 #else
     #define DEBUG_PRINT(x) do {} while (0)
-#endif
+#endif // DEBUG
+
+
+#ifdef DEBUG_CONCISE
+    #define ISNULL(x) ((x==NULL) ? (errs() << #x << " is NULL\n", true) : (errs() << #x << " is not NULL\n", false))
+#else
+    #define ISNULL(x) (x==NULL)
+#endif // DEBUG_CONCISE
 
 using namespace llvm;
 
@@ -36,6 +43,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       store i32 %flag, ptr %flag.addr, align 4
       %0 = load i32, ptr %flag.addr, align 4
     */
+    // TODO
     Value* getOrigin(Value* V) {
         DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
@@ -126,7 +134,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     // Pred of Err-BB : BB of if
                     BasicBlock *PredBB = ErrBB->getSinglePredecessor();
                     if (!PredBB) continue;
-                    /* DEBUG_PRINT("Predecessor of Error-thrower BB: " << *PredBB << "\n"); */
+                    DEBUG_PRINT("Predecessor of Error-thrower BB: " << *PredBB << "\n");
 
                     BranchInst *BrI = dyn_cast<BranchInst>(PredBB->getTerminator());
                     if (!BrI) continue;
@@ -137,11 +145,42 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                         continue;
                     }
 
-                    // NOTE: Err-BB is always the first (true) successor
+
+                    // NOTE: Err-BB is always the first successor
+                    if (BrI->getSuccessor(1) == ErrBB) BrI->swapSuccessors();
                     if (BrI->getSuccessor(0) != ErrBB) {
-                        DEBUG_PRINT("* Err-BB is not the first successor\n");
+                        DEBUG_PRINT("* Err-BB is not a successor\n");
                         continue;
                     }
+
+                    /* StringRef IfCondName = getVarName(CmpI->getOperand(0)); */
+                    /* DEBUG_PRINT("IfCondName: " << IfCondName << "\n"); */
+
+
+
+                    // Get the condition of the if branch
+                    Value *IfCond = BrI->getCondition();
+                    if (!IfCond) continue;
+                    DEBUG_PRINT("Condition: " << *IfCond << "\n");
+
+                    // NOTE: IfCond is always a cmp instruction
+                    CmpInst *CmpI = dyn_cast<CmpInst>(IfCond);
+                    if (!CmpI) continue;
+                    DEBUG_PRINT("Cmp Instruction: " << *CmpI << "\n");
+
+                    // %tobool = icmp ne i32 %and, 0
+                    BinaryOperator *AndI = dyn_cast<BinaryOperator>(CmpI->getOperand(0));
+                    DEBUG_PRINT("AndI: " << *AndI << "\n");
+
+                    IfCond = getOrigin(AndI->getOperand(0));
+                    DEBUG_PRINT("if Condition: " << *IfCond << "\n");
+
+                    // bottom-up from cmp
+                    bool isEq = CmpI->isEquality();
+                    ConstantInt *CmpCI = dyn_cast<ConstantInt>(CmpI->getOperand(1));
+
+                    StringRef IfCondName = getVarName(IfCond);
+                    DEBUG_PRINT("Reason about if: " << IfCondName <<  " is " << *CmpCI << "\n");
 
 
                     // Pred of Pred of Err-BB : BB of switch
@@ -161,11 +200,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                      * Find case whose dest is Error-thrower BB
                      */
                     // Find the case that matches the error
-                    ConstantInt *CaseInt = SwI->findCaseDest(PredBB);
-                    if (!CaseInt) continue;
+                    ConstantInt *SwCI = SwI->findCaseDest(PredBB);
+                    if (!SwCI) continue;
 
                     // Print the case
-                    DEBUG_PRINT("EACCES Reason: '" << SwCondName << " == " << *CaseInt << "'\n\n");
+                    DEBUG_PRINT("Reason about switch: '" << SwCondName << " is " << *SwCI << "'\n\n");
 
                     // Get the function to call from our runtime library.
                     LLVMContext &Ctx = ErrBB->getContext();
@@ -178,9 +217,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     // Insert a call
                     IRBuilder<> builder(ErrBB);
                     builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
+
                     Value *CondStr = builder.CreateGlobalStringPtr(SwCondName);
-                    Value* args[] = {CondStr, dyn_cast<Value>(CaseInt)};
+                    Value* args[] = {CondStr, dyn_cast<Value>(SwCI)};
                     builder.CreateCall(logFunc, args);
+
+                    CondStr = builder.CreateGlobalStringPtr(IfCondName);
+                    args[0] = CondStr;
+                    args[1] = dyn_cast<Value>(CmpCI);
+                    builder.CreateCall(logFunc, args);
+
                     DEBUG_PRINT("Inserted logcase call\n");
 
                     // Declare the modification
