@@ -38,12 +38,12 @@ namespace {
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
     /* 
+    * Backtrace from load to store
     * Get original variable (%0 is %flag)
     * code example:
       store i32 %flag, ptr %flag.addr, align 4
       %0 = load i32, ptr %flag.addr, align 4
     */
-    // TODO
     Value* getOrigin(Value* V) {
         DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
@@ -147,11 +147,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
 
                     // NOTE: Err-BB is always the first successor
-                    if (BrI->getSuccessor(1) == ErrBB) BrI->swapSuccessors();
-                    if (BrI->getSuccessor(0) != ErrBB) {
-                        DEBUG_PRINT("* Err-BB is not a successor\n");
-                        continue;
-                    }
+                    /* if (BrI->getSuccessor(1) == ErrBB) BrI->swapSuccessors(); */
+                    /* if (BrI->getSuccessor(0) != ErrBB) { */
+                    /*     DEBUG_PRINT("* Err-BB is not a successor\n"); */
+                    /*     continue; */
+                    /* } */
 
                     /* StringRef IfCondName = getVarName(CmpI->getOperand(0)); */
                     /* DEBUG_PRINT("IfCondName: " << IfCondName << "\n"); */
@@ -176,8 +176,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     DEBUG_PRINT("if Condition: " << *IfCond << "\n");
 
                     // bottom-up from cmp
-                    bool isEq = CmpI->isEquality();
-                    ConstantInt *CmpCI = dyn_cast<ConstantInt>(CmpI->getOperand(1));
+                    /* bool isEq = CmpI->isEquality(); */
+                    /* ConstantInt *CmpCI = dyn_cast<ConstantInt>(CmpI->getOperand(1)); */
+
+                    ConstantInt *CmpCI = dyn_cast<ConstantInt>(AndI->getOperand(1));
 
                     StringRef IfCondName = getVarName(IfCond);
                     DEBUG_PRINT("Reason about if: " << IfCondName <<  " is " << *CmpCI << "\n");

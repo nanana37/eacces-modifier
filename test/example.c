@@ -5,12 +5,12 @@ int my_open (int mode, int flag) {
 
     switch (mode) {
         case 123:
-            if (flag & 1) {
+            if (flag & 111) {
                 return -EACCES;
             }
             break;
         case 456:
-            if (!(flag & 1)) {
+            if (!(flag & 111)) {
                 return -EACCES;
             }
             break;
