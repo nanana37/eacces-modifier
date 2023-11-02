@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import os
+from sys import platform
 
 # Build
 build_command = "make"
@@ -25,7 +26,11 @@ print("Compile runtime library command:\n$ " + compile_rtlib_command)
 subprocess.run(compile_rtlib_command, shell=True)
 
 # Compile
-clang_flag = "-fpass-plugin=build/permod/PermodPass.so -fno-discard-value-names"
+if platform == "darwin":
+    extension = "dylib"
+else:
+    extension = "so"
+clang_flag = f"-fpass-plugin=build/permod/PermodPass.{extension} -fno-discard-value-names"
 compile_command = f"clang {clang_flag} -c {source_target} -o bin/{target}.o"
 print("Compile command:\n$ " + compile_command)
 subprocess.run(compile_command, shell=True)
