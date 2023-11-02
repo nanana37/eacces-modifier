@@ -189,12 +189,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // bottom-up from cmp
             /* bool isEq = CmpI->isEquality(); */
-            /* ConstantInt *CmpCI = dyn_cast<ConstantInt>(CmpI->getOperand(1)); */
+            /* ConstantInt *IfCI = dyn_cast<ConstantInt>(CmpI->getOperand(1)); */
 
-            ConstantInt *CmpCI = dyn_cast<ConstantInt>(AndI->getOperand(1));
+            ConstantInt *IfCI = dyn_cast<ConstantInt>(AndI->getOperand(1));
 
             StringRef IfCondName = getVarName(IfCond);
-            DEBUG_PRINT("Reason about if: " << IfCondName <<  " is " << *CmpCI << "\n");
+            DEBUG_PRINT("Reason about if: " << IfCondName <<  " is " << *IfCI << "\n");
 
 
             // Pred of Pred of Err-BB : BB of switch
@@ -238,7 +238,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             CondStr = builder.CreateGlobalStringPtr(IfCondName);
             args[0] = CondStr;
-            args[1] = dyn_cast<Value>(CmpCI);
+            args[1] = dyn_cast<Value>(IfCI);
             builder.CreateCall(logFunc, args);
 
             // Declare the modification
