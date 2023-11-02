@@ -194,7 +194,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             ConstantInt *IfCI = dyn_cast<ConstantInt>(AndI->getOperand(1));
 
             StringRef IfCondName = getVarName(IfCond);
-            DEBUG_PRINT("Reason about if: " << IfCondName <<  " is " << *IfCI << "\n");
+            DEBUG_PRINT("Reason about if: '" << IfCondName <<  " is " << *IfCI << "'\n");
 
 
             // Pred of Pred of Err-BB : BB of switch
