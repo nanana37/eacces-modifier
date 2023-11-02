@@ -72,7 +72,21 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return Name;
     }
 
+    IRBuilder* setInsertPoint(BasicBlock *BB)
+    {
+        IRBuilder<> builder(BB);
+        builder.SetInsertPoint(BB, BB->getFirstInsertionPt());
 
+        return *builder;
+    }
+
+    void insertLogFunction(IRBuilder *builder, FunctionCallee *logFunc, StringRef CondName, Value *CI) {
+        Value *CondStr = builder->CreateGlobalStringPtr(CondName);
+        Value* args[] = {CondStr, dyn_cast<Value>(CI)};
+        builder->CreateCall(&logFunc, args);
+
+        DEBUG_PRINT("Inserted logcase call\n");
+    }
 
     /*
      *****************
@@ -220,16 +234,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     IRBuilder<> builder(ErrBB);
                     builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
 
-                    Value *CondStr = builder.CreateGlobalStringPtr(SwCondName);
-                    Value* args[] = {CondStr, dyn_cast<Value>(SwCI)};
-                    builder.CreateCall(logFunc, args);
-
-                    CondStr = builder.CreateGlobalStringPtr(IfCondName);
-                    args[0] = CondStr;
-                    args[1] = dyn_cast<Value>(CmpCI);
-                    builder.CreateCall(logFunc, args);
-
-                    DEBUG_PRINT("Inserted logcase call\n");
+                    insertLogFunction(&builder, &logFunc, SwCondName, SwCI);
+                    insertLogFunction(&builder, &logFunc, IfCondName, CmpCI);
 
                     // Declare the modification
                     modified = true;
