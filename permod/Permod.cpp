@@ -94,29 +94,22 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return NULL;
     }
 
-    BasicBlock* getErrBB(Value *RetVal) {
-        // Get when retval '-EACCES' is stored (store i32 -13, ptr %retval)
-        for (User *U : RetVal->users()) {
+    BasicBlock* getErrBB(User *U) {
+        StoreInst *SI = dyn_cast<StoreInst>(U);
+        if (!SI) return NULL;
 
-            StoreInst *SI = dyn_cast<StoreInst>(U);
-            if (!SI) continue;
+        // Storing -EACCES?
+        Value *ValOp = SI->getValueOperand();
+        ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
+        if (!CI) return NULL;
+        if (CI->getSExtValue() != -EACCES) return NULL;
+        DEBUG_PRINT("'return -EACCES' found!\n");
 
-            // Storing -EACCES?
-            Value *ValOp = SI->getValueOperand();
-            ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
-            if (!CI) continue;
-            if (CI->getSExtValue() != -EACCES) continue;
-            DEBUG_PRINT("'return -EACCES' found!\n");
+        // Error-thrower BB (BB of store -EACCES)
+        BasicBlock *ErrBB = SI->getParent();
+        DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n");
 
-            // Error-thrower BB (BB of store -EACCES)
-            BasicBlock *ErrBB = SI->getParent();
-            DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n");
-
-            return ErrBB;
-        }
-
-        // Found nothing
-        return NULL;
+        return ErrBB;
     }
 
     /*
@@ -137,7 +130,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             Value *RetVal = getReturnValue(&F);
             if (!RetVal) continue;
 
-            BasicBlock *ErrBB = getErrBB(RetVal);
+        for (User *U : RetVal->users()) {
+            BasicBlock *ErrBB = getErrBB(U);
             if (!ErrBB) continue;
 
             /*
@@ -249,6 +243,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // Declare the modification
             modified = true;
+        }
         }
         if (modified) return PreservedAnalyses::none();
         return PreservedAnalyses::all();
