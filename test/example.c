@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-int my_open (int mode, int flag) {
+int may_open (int mode, int flag) {
 
     switch (mode) {
         case 123:
@@ -27,14 +27,14 @@ int main(int argc, const char** argv) {
     printf("Enter mode and flag: ");
     scanf("%d %d", &mode, &flag);
 
-    int ret = my_open(mode, flag);
+    int ret = may_open(mode, flag);
 
     switch (ret) {
         case -EACCES:
             printf("Permission denied\n");
             break;
         default:
-            printf("my_open suceeded\n");
+            printf("may_open suceeded\n");
             break;
     }
 

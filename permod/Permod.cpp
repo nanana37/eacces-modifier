@@ -120,12 +120,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         bool modified = false;
         for (auto &F : M.functions()) {
-            DEBUG_PRINT("Function: " << F.getName() << "\n");
+            /* DEBUG_PRINT("Function: " << F.getName() << "\n"); */
 
-            // Print arg name
-            for (auto &Arg : F.args()) {
-                DEBUG_PRINT("Arg: " << Arg.getName() << "\n");
-            }
+            // TODO: Only run on may_open()
+            if (F.getName() != "may_open") continue;
 
             Value *RetVal = getReturnValue(&F);
             if (!RetVal) continue;
