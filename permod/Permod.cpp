@@ -48,7 +48,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
        // #2: %0 = load i32, ptr %flag.addr, align 4
-       LoadInst *LI = dyn_cast<LoadInst>(V);
+       auto *LI = dyn_cast<LoadInst>(V);
        if (!LI) return NULL;
        V = LI->getPointerOperand(); // %flag.addr
 
@@ -79,12 +79,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             if (!TI) continue;
 
             // Search for return inst
-            ReturnInst *RI = dyn_cast<ReturnInst>(TI);
+            auto *RI = dyn_cast<ReturnInst>(TI);
             if (!RI) continue;
+
+            DEBUG_PRINT("Return Instruction: " << *RI << "\n");
 
             // What is ret value?
             Value *RetVal = RI->getReturnValue();
-            LoadInst *DefLI = dyn_cast<LoadInst>(RetVal);
+            auto *DefLI = dyn_cast_or_null<LoadInst>(RetVal);
             if (!DefLI) continue;
             RetVal = DefLI->getPointerOperand();
 
