@@ -124,6 +124,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // TODO: Only run on may_open()
             if (F.getName() != "may_open") continue;
+            DEBUG_PRINT("may_open found!\n");
 
             Value *RetVal = getReturnValue(&F);
             if (!RetVal) continue;
@@ -233,11 +234,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             Value *CondStr = builder.CreateGlobalStringPtr(SwCondName);
             Value* args[] = {CondStr, dyn_cast<Value>(SwCI)};
             builder.CreateCall(logFunc, args);
+            DEBUG_PRINT("Inserted log for switch\n");
 
             CondStr = builder.CreateGlobalStringPtr(IfCondName);
             args[0] = CondStr;
             args[1] = dyn_cast<Value>(IfCI);
             builder.CreateCall(logFunc, args);
+            DEBUG_PRINT("Inserted log for if\n");
 
             // Declare the modification
             modified = true;
