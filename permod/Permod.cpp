@@ -112,6 +112,64 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return ErrBB;
     }
 
+    class Condition {
+        public:
+            StringRef Name;
+            ConstantInt *Val;
+        Condition(StringRef Name, ConstantInt *Val) : Name(Name), Val(Val) {}
+    };
+
+    // Get if condition
+    // Returns: (Value*, ConstantInt)
+    // TODO: Predicts only true branch
+    Condition* getIfCond(BranchInst* BrI) {
+        // Get the condition of the if branch
+        Value *IfCond = BrI->getCondition();
+        if (!IfCond) return NULL;
+        DEBUG_PRINT("Condition: " << *IfCond << "\n");
+
+        // NOTE: IfCond is always a cmp instruction
+        CmpInst *CmpI = dyn_cast<CmpInst>(IfCond);
+        if (!CmpI) return NULL;
+        DEBUG_PRINT("Cmp Instruction: " << *CmpI << "\n");
+
+        // %tobool = icmp ne i32 %and, 0
+        BinaryOperator *AndI = dyn_cast<BinaryOperator>(CmpI->getOperand(0));
+        DEBUG_PRINT("AndI: " << *AndI << "\n");
+
+        IfCond = getOrigin(AndI->getOperand(0));
+        DEBUG_PRINT("if Condition: " << *IfCond << "\n");
+
+        // bottom-up from cmp
+        /* bool isEq = CmpI->isEquality(); */
+        /* ConstantInt *IfCI = dyn_cast<ConstantInt>(CmpI->getOperand(1)); */
+
+        ConstantInt *IfCI = dyn_cast<ConstantInt>(AndI->getOperand(1));
+
+        StringRef IfCondName = getVarName(IfCond);
+        DEBUG_PRINT("Reason about if: '" << IfCondName <<  " is " << *IfCI << "'\n");
+
+        return new Condition(IfCondName, IfCI);
+    }
+
+    // Get switch condition
+    Condition* getSwCond(SwitchInst* SwI, BasicBlock *PredBB) {
+        Value *SwCond = getOrigin(SwI->getCondition());
+        if (!SwCond) return NULL;
+        StringRef SwCondName = getVarName(SwCond);
+
+        /*
+         * Find case whose dest is Error-thrower BB
+         */
+        // Find the case that matches the error
+        ConstantInt *SwCI = SwI->findCaseDest(PredBB);
+        if (!SwCI) return NULL;
+        DEBUG_PRINT("Reason about switch: '" << SwCondName << " is " << *SwCI << "'\n");
+
+        return new Condition(SwCondName, SwCI);
+    }
+
+
     /*
      *****************
      * main function *
@@ -164,37 +222,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             /*     continue; */
             /* } */
 
-            /* StringRef IfCondName = getVarName(CmpI->getOperand(0)); */
-            /* DEBUG_PRINT("IfCondName: " << IfCondName << "\n"); */
-
-
-
-            // Get the condition of the if branch
-            Value *IfCond = BrI->getCondition();
+            Condition *IfCond = getIfCond(BrI);
             if (!IfCond) continue;
-            DEBUG_PRINT("Condition: " << *IfCond << "\n");
-
-            // NOTE: IfCond is always a cmp instruction
-            CmpInst *CmpI = dyn_cast<CmpInst>(IfCond);
-            if (!CmpI) continue;
-            DEBUG_PRINT("Cmp Instruction: " << *CmpI << "\n");
-
-            // %tobool = icmp ne i32 %and, 0
-            BinaryOperator *AndI = dyn_cast<BinaryOperator>(CmpI->getOperand(0));
-            DEBUG_PRINT("AndI: " << *AndI << "\n");
-
-            IfCond = getOrigin(AndI->getOperand(0));
-            DEBUG_PRINT("if Condition: " << *IfCond << "\n");
-
-            // bottom-up from cmp
-            /* bool isEq = CmpI->isEquality(); */
-            /* ConstantInt *IfCI = dyn_cast<ConstantInt>(CmpI->getOperand(1)); */
-
-            ConstantInt *IfCI = dyn_cast<ConstantInt>(AndI->getOperand(1));
-
-            StringRef IfCondName = getVarName(IfCond);
-            DEBUG_PRINT("Reason about if: '" << IfCondName <<  " is " << *IfCI << "'\n");
-
 
             // Pred of Pred of Err-BB : BB of switch
             BasicBlock *GrandPredBB = PredBB->getSinglePredecessor();
@@ -205,19 +234,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             if (!SwI) continue;
             DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
-            Value *SwCond = getOrigin(SwI->getCondition());
-            if (!SwCond) continue;
-            StringRef SwCondName = getVarName(SwCond);
-
-            /*
-             * Find case whose dest is Error-thrower BB
-             */
-            // Find the case that matches the error
-            ConstantInt *SwCI = SwI->findCaseDest(PredBB);
-            if (!SwCI) continue;
-
-            // Print the case
-            DEBUG_PRINT("Reason about switch: '" << SwCondName << " is " << *SwCI << "'\n\n");
+            Condition *SwCond = getSwCond(SwI, PredBB);
 
             // Get the function to call from our runtime library.
             LLVMContext &Ctx = ErrBB->getContext();
@@ -231,14 +248,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             IRBuilder<> builder(ErrBB);
             builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
 
-            Value *CondStr = builder.CreateGlobalStringPtr(SwCondName);
-            Value* args[] = {CondStr, dyn_cast<Value>(SwCI)};
+            Value *CondStr = builder.CreateGlobalStringPtr(SwCond->Name);
+            Value* args[] = {CondStr, dyn_cast<Value>(SwCond->Val)};
             builder.CreateCall(logFunc, args);
             DEBUG_PRINT("Inserted log for switch\n");
 
-            CondStr = builder.CreateGlobalStringPtr(IfCondName);
+            CondStr = builder.CreateGlobalStringPtr(IfCond->Name);
             args[0] = CondStr;
-            args[1] = dyn_cast<Value>(IfCI);
+            args[1] = dyn_cast<Value>(IfCond->Val);
             builder.CreateCall(logFunc, args);
             DEBUG_PRINT("Inserted log for if\n");
 
