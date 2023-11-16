@@ -3235,27 +3235,27 @@ static int may_open(struct mnt_idmap *idmap, const struct path *path,
 	if (!inode)
 		return -ENOENT;
 
-	switch (inode->i_mode & S_IFMT) {
-	case S_IFLNK:
-		return -ELOOP;
-	case S_IFDIR:
-		if (acc_mode & MAY_WRITE)
-			return -EISDIR;
-		if (acc_mode & MAY_EXEC)
-			return -EACCES;
+	switch (inode->i_mode & S_IFMT) {   // S_IFMT: 0170000
+	case S_IFLNK:   // 0120000
+		return -ELOOP;  // 40
+	case S_IFDIR:   // 0040000
+		if (acc_mode & MAY_WRITE)   // MAY_WRITE: 2
+			return -EISDIR; // 21
+		if (acc_mode & MAY_EXEC)    // MAY_EXEC: 1
+			return -EACCES; // 13
 		break;
-	case S_IFBLK:
-	case S_IFCHR:
+	case S_IFBLK:   // 0060000
+	case S_IFCHR:   // 0020000
 		if (!may_open_dev(path))
 			return -EACCES;
 		fallthrough;
-	case S_IFIFO:
-	case S_IFSOCK:
+	case S_IFIFO:   // 0010000
+	case S_IFSOCK:  // 0140000
 		if (acc_mode & MAY_EXEC)
 			return -EACCES;
-		flag &= ~O_TRUNC;
+		flag &= ~O_TRUNC;   // O_TRUNC: 01000
 		break;
-	case S_IFREG:
+	case S_IFREG:   // 0100000
 		if ((acc_mode & MAY_EXEC) && path_noexec(path))
 			return -EACCES;
 		break;
