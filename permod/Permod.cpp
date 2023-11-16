@@ -203,7 +203,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             // Pred of Err-BB : BB of if
             BasicBlock *PredBB = ErrBB->getSinglePredecessor();
             if (!PredBB) continue;
-            DEBUG_PRINT("Predecessor of Error-thrower BB: " << *PredBB << "\n");
+            DEBUG_PRINT("Predecessor of Error-thrower BB (if statement): " << *PredBB << "\n");
 
             BranchInst *BrI = dyn_cast<BranchInst>(PredBB->getTerminator());
             if (!BrI) continue;
@@ -226,12 +226,35 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             if (!IfCond) continue;
 
             // Pred of Pred of Err-BB : BB of switch
-            BasicBlock *GrandPredBB = PredBB->getSinglePredecessor();
-            if (!GrandPredBB) continue;
-            /* DEBUG_PRINT("Predecessor of if: " << *GrandPredBB << "\n"); */
+            BasicBlock *GrandPredBB = PredBB;
+            SwitchInst *SwI;
 
-            SwitchInst *SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator());
+            // Mutiple preds
+            for (auto *BB : predecessors(GrandPredBB)) {
+                DEBUG_PRINT("Getting preds:" << *BB << "\n");
+                SwI = dyn_cast<SwitchInst>(BB->getTerminator());
+                if (SwI) break;
+            }
             if (!SwI) continue;
+
+            // TODO:
+            /*
+            switch()
+            case:
+                if() return -EISDIR;
+                if() return -EACCES; //HERE!!
+            */
+            /* do { */
+            /*     GrandPredBB = GrandPredBB->getSinglePredecessor(); */
+            /*     DEBUG_PRINT("Predecessor of if: " << *GrandPredBB << "\n"); */
+            /*     if (!GrandPredBB) break; */
+            /*     SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator()); */
+            /* } while (!SwI); */
+            /* if (!SwI) continue; */
+
+            /* SwitchInst *SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator()); */
+            /* if (!SwI) continue; */
+
             DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
             Condition *SwCond = getSwCond(SwI, PredBB);
