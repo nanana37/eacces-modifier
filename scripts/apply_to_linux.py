@@ -47,7 +47,7 @@ rm_command = f"rm fs/namei.o"
 print("Remove command:\n$ " + rm_command)
 subprocess.run(rm_command, shell=True)
 
-apply_command = f"make CC=clang KCFLAGS=\"-fpass-plugin={home_dir}/Documents/eacces-modifier/build/permod/PermodPass.{extension}\" fs/namei.o"
+apply_command = f"make CC=clang KCFLAGS=\"-fno-discard-value-names -fpass-plugin={home_dir}/Documents/eacces-modifier/build/permod/PermodPass.{extension}\" fs/namei.o"
 print("Apply command:\n$ " + apply_command)
 subprocess.run(apply_command, shell=True)
 os.chdir(current_dir)
