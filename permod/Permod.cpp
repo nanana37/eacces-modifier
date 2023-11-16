@@ -169,19 +169,32 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
     // Get switch condition
+    // TODO: Find multiple cases (Or just print condition of switch (equals to case))
     Condition* getSwCond(SwitchInst* SwI, BasicBlock *PredBB) {
+        DEBUG_PRINT("Getting Condition of Switch: " << *SwI << "\n");
+        DEBUG_PRINT("PredBB: " << *PredBB << "\n");
+
         Value *SwCond = getOrigin(SwI->getCondition());
         if (!SwCond) return NULL;
         StringRef SwCondName = getVarName(SwCond);
+        DEBUG_PRINT("Switch name: " << SwCondName << "\n");
 
         /*
          * Find case whose dest is Error-thrower BB
          */
         // Find the case that matches the error
-        ConstantInt *SwCI = SwI->findCaseDest(PredBB);
-        if (!SwCI) return NULL;
-        DEBUG_PRINT("Reason about switch: '" << SwCondName << " is " << *SwCI << "'\n");
+        /* ConstantInt *SwCI = SwI->findCaseDest(PredBB); */
+        ConstantInt *SwCI = NULL;
+        for (auto Case : SwI->cases()) {
+            BasicBlock *CaseBB = Case.getCaseSuccessor();
+            DEBUG_PRINT("CaseBB: " << *CaseBB << "\n");
+            if (CaseBB != PredBB) continue;
 
+            SwCI = Case.getCaseValue();
+        }
+        if (!SwCI) return NULL;
+
+        DEBUG_PRINT("Reason about switch: '" << SwCondName << " is " << *SwCI << "'\n");
         return new Condition(SwCondName, SwCI);
     }
 
