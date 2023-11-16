@@ -47,16 +47,32 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value* getOrigin(Value* V) {
         DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
-       // #2: %0 = load i32, ptr %flag.addr, align 4
-       LoadInst *LI = dyn_cast<LoadInst>(V);
-       if (!LI) return NULL;
-       V = LI->getPointerOperand(); // %flag.addr
+        if (auto *LI = dyn_cast<LoadInst>(V)) {
+            V = LI->getPointerOperand();
+            DEBUG_PRINT("LoadInst: " << *V << "\n");
+        } else if (auto *AI = dyn_cast<BinaryOperator>(V)) {
+            V = AI->getOperand(0);
+            DEBUG_PRINT("BinaryOperator: " << *V << "\n");
+        } else {
+            DEBUG_PRINT("Unknown: " << *V << "\n");
+            return V;
+        }
 
        // #1: store i32 %flag, ptr %flag.addr, align 4
        for (User *U : V->users()) {
            StoreInst *SI = dyn_cast<StoreInst>(U);
            if (!SI) continue;
            V = SI->getValueOperand(); // %flag
+       }
+
+       // TODO: Special case for kernel
+       if (auto *ZI = dyn_cast<ZExtInst>(V)) {
+           V = ZI->getOperand(0);
+           DEBUG_PRINT("ZExtInst: " << *V << "\n");
+           if (auto *ZLI = dyn_cast<LoadInst>(V)) {
+               V = ZLI->getOperand(0);
+               DEBUG_PRINT("LoadInst: " << *V << "\n");
+           }
        }
 
        return V;
