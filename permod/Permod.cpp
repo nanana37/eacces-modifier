@@ -100,6 +100,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // What is ret value?
             Value *RetVal = RI->getReturnValue();
+            if (!RetVal) continue;
             LoadInst *DefLI = dyn_cast<LoadInst>(RetVal);
             if (!DefLI) continue;
             RetVal = DefLI->getPointerOperand();
@@ -151,9 +152,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // %tobool = icmp ne i32 %and, 0
         BinaryOperator *AndI = dyn_cast<BinaryOperator>(CmpI->getOperand(0));
+        if (!AndI) return NULL;
         DEBUG_PRINT("AndI: " << *AndI << "\n");
 
         IfCond = getOrigin(AndI->getOperand(0));
+        if (!IfCond) return NULL;
         DEBUG_PRINT("if Condition: " << *IfCond << "\n");
 
         // bottom-up from cmp
@@ -207,11 +210,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         bool modified = false;
         for (auto &F : M.functions()) {
-            /* DEBUG_PRINT("Function: " << F.getName() << "\n"); */
+            DEBUG_PRINT("Function: " << F.getName() << "\n");
 
             // TODO: Only run on may_open()
-            if (F.getName() != "may_open") continue;
-            DEBUG_PRINT("may_open found!\n");
+            /* if (F.getName() != "may_open") continue; */
+            /* DEBUG_PRINT("may_open found!\n"); */
 
             Value *RetVal = getReturnValue(&F);
             if (!RetVal) continue;
