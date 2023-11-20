@@ -6,3 +6,7 @@ a.out
 *.so
 
 tags
+
+log
+trace.dat
+log.list
