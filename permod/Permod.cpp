@@ -319,7 +319,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 /* SwitchInst *SwI =
                  * dyn_cast<SwitchInst>(GrandPredBB->getTerminator()); */
                 /* if (!SwI) continue; */
-
                 DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
                 Condition *SwCond = getSwCond(SwI, PredBB);
