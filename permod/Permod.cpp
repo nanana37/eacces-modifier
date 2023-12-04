@@ -337,8 +337,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 IRBuilder<> builder(ErrBB);
                 builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
 
-                Value *CondStr = builder.CreateGlobalStringPtr(SwCond->Name);
-                Value *args[] = {CondStr, dyn_cast<Value>(SwCond->Val)};
+                Value *CondStr;
+                Value *args[2];
+
+                CondStr = builder.CreateGlobalStringPtr(SwCond->Name);
+                args[0] = CondStr;
+                args[1] = dyn_cast<Value>(SwCond->Val);
                 builder.CreateCall(logFunc, args);
                 DEBUG_PRINT("Inserted log for switch\n");
 
