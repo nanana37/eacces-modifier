@@ -47,16 +47,32 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value* getOrigin(Value* V) {
         DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
-       // #2: %0 = load i32, ptr %flag.addr, align 4
-       LoadInst *LI = dyn_cast<LoadInst>(V);
-       if (!LI) return NULL;
-       V = LI->getPointerOperand(); // %flag.addr
+        if (auto *LI = dyn_cast<LoadInst>(V)) {
+            V = LI->getPointerOperand();
+            DEBUG_PRINT("LoadInst: " << *V << "\n");
+        } else if (auto *AI = dyn_cast<BinaryOperator>(V)) {
+            V = AI->getOperand(0);
+            DEBUG_PRINT("BinaryOperator: " << *V << "\n");
+        } else {
+            DEBUG_PRINT("Unknown: " << *V << "\n");
+            return V;
+        }
 
        // #1: store i32 %flag, ptr %flag.addr, align 4
        for (User *U : V->users()) {
            StoreInst *SI = dyn_cast<StoreInst>(U);
            if (!SI) continue;
            V = SI->getValueOperand(); // %flag
+       }
+
+       // TODO: Special case for kernel
+       if (auto *ZI = dyn_cast<ZExtInst>(V)) {
+           V = ZI->getOperand(0);
+           DEBUG_PRINT("ZExtInst: " << *V << "\n");
+           if (auto *ZLI = dyn_cast<LoadInst>(V)) {
+               V = ZLI->getOperand(0);
+               DEBUG_PRINT("LoadInst: " << *V << "\n");
+           }
        }
 
        return V;
@@ -84,6 +100,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // What is ret value?
             Value *RetVal = RI->getReturnValue();
+            if (!RetVal) continue;
             LoadInst *DefLI = dyn_cast<LoadInst>(RetVal);
             if (!DefLI) continue;
             RetVal = DefLI->getPointerOperand();
@@ -135,9 +152,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // %tobool = icmp ne i32 %and, 0
         BinaryOperator *AndI = dyn_cast<BinaryOperator>(CmpI->getOperand(0));
+        if (!AndI) return NULL;
         DEBUG_PRINT("AndI: " << *AndI << "\n");
 
         IfCond = getOrigin(AndI->getOperand(0));
+        if (!IfCond) return NULL;
         DEBUG_PRINT("if Condition: " << *IfCond << "\n");
 
         // bottom-up from cmp
@@ -153,19 +172,32 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
     // Get switch condition
+    // TODO: Find multiple cases (Or just print condition of switch (equals to case))
     Condition* getSwCond(SwitchInst* SwI, BasicBlock *PredBB) {
+        DEBUG_PRINT("Getting Condition of Switch: " << *SwI << "\n");
+        DEBUG_PRINT("PredBB: " << *PredBB << "\n");
+
         Value *SwCond = getOrigin(SwI->getCondition());
         if (!SwCond) return NULL;
         StringRef SwCondName = getVarName(SwCond);
+        DEBUG_PRINT("Switch name: " << SwCondName << "\n");
 
         /*
          * Find case whose dest is Error-thrower BB
          */
         // Find the case that matches the error
-        ConstantInt *SwCI = SwI->findCaseDest(PredBB);
-        if (!SwCI) return NULL;
-        DEBUG_PRINT("Reason about switch: '" << SwCondName << " is " << *SwCI << "'\n");
+        /* ConstantInt *SwCI = SwI->findCaseDest(PredBB); */
+        ConstantInt *SwCI = NULL;
+        for (auto Case : SwI->cases()) {
+            BasicBlock *CaseBB = Case.getCaseSuccessor();
+            DEBUG_PRINT("CaseBB: " << *CaseBB << "\n");
+            if (CaseBB != PredBB) continue;
 
+            SwCI = Case.getCaseValue();
+        }
+        if (!SwCI) return NULL;
+
+        DEBUG_PRINT("Reason about switch: '" << SwCondName << " is " << *SwCI << "'\n");
         return new Condition(SwCondName, SwCI);
     }
 
@@ -178,11 +210,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         bool modified = false;
         for (auto &F : M.functions()) {
-            /* DEBUG_PRINT("Function: " << F.getName() << "\n"); */
+            DEBUG_PRINT("Function: " << F.getName() << "\n");
 
             // TODO: Only run on may_open()
-            if (F.getName() != "may_open") continue;
-            DEBUG_PRINT("may_open found!\n");
+            /* if (F.getName() != "may_open") continue; */
+            /* DEBUG_PRINT("may_open found!\n"); */
 
             Value *RetVal = getReturnValue(&F);
             if (!RetVal) continue;
@@ -203,7 +235,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             // Pred of Err-BB : BB of if
             BasicBlock *PredBB = ErrBB->getSinglePredecessor();
             if (!PredBB) continue;
-            DEBUG_PRINT("Predecessor of Error-thrower BB: " << *PredBB << "\n");
+            DEBUG_PRINT("Predecessor of Error-thrower BB (if statement): " << *PredBB << "\n");
 
             BranchInst *BrI = dyn_cast<BranchInst>(PredBB->getTerminator());
             if (!BrI) continue;
@@ -226,12 +258,35 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             if (!IfCond) continue;
 
             // Pred of Pred of Err-BB : BB of switch
-            BasicBlock *GrandPredBB = PredBB->getSinglePredecessor();
-            if (!GrandPredBB) continue;
-            /* DEBUG_PRINT("Predecessor of if: " << *GrandPredBB << "\n"); */
+            BasicBlock *GrandPredBB = PredBB;
+            SwitchInst *SwI;
 
-            SwitchInst *SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator());
+            // Mutiple preds
+            for (auto *BB : predecessors(GrandPredBB)) {
+                DEBUG_PRINT("Getting preds:" << *BB << "\n");
+                SwI = dyn_cast<SwitchInst>(BB->getTerminator());
+                if (SwI) break;
+            }
             if (!SwI) continue;
+
+            // TODO:
+            /*
+            switch()
+            case:
+                if() return -EISDIR;
+                if() return -EACCES; //HERE!!
+            */
+            /* do { */
+            /*     GrandPredBB = GrandPredBB->getSinglePredecessor(); */
+            /*     DEBUG_PRINT("Predecessor of if: " << *GrandPredBB << "\n"); */
+            /*     if (!GrandPredBB) break; */
+            /*     SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator()); */
+            /* } while (!SwI); */
+            /* if (!SwI) continue; */
+
+            /* SwitchInst *SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator()); */
+            /* if (!SwI) continue; */
+
             DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
             Condition *SwCond = getSwCond(SwI, PredBB);
