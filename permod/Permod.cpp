@@ -225,6 +225,18 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return new Condition(SwCondName, SwCI);
     }
 
+    // Prepare function
+    FunctionCallee prepareFunction(std::string funcName, Function &F,
+                                   LLVMContext &Ctx) {
+        std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
+        Type *retType = Type::getVoidTy(Ctx);
+        FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+        FunctionCallee newFunc =
+            F.getParent()->getOrInsertFunction(funcName, funcType);
+
+        return newFunc;
+    }
+
     /*
      *****************
      * main function *
@@ -275,7 +287,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 }
 
                 // NOTE: Err-BB is always the first successor
-                /* if (BrI->getSuccessor(1) == ErrBB) BrI->swapSuccessors(); */
+                /* if (BrI->getSuccessor(1) == ErrBB) BrI->swapSuccessors();
+                 */
                 /* if (BrI->getSuccessor(0) != ErrBB) { */
                 /*     DEBUG_PRINT("* Err-BB is not a successor\n"); */
                 /*     continue; */
@@ -311,7 +324,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 /*     DEBUG_PRINT("Predecessor of if: " << *GrandPredBB <<
                  * "\n"); */
                 /*     if (!GrandPredBB) break; */
-                /*     SwI = dyn_cast<SwitchInst>(GrandPredBB->getTerminator());
+                /*     SwI =
+                 * dyn_cast<SwitchInst>(GrandPredBB->getTerminator());
                  */
                 /* } while (!SwI); */
                 /* if (!SwI) continue; */
@@ -323,14 +337,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 Condition *SwCond = getSwCond(SwI, PredBB);
 
-                // Get the function to call from our runtime library.
-                LLVMContext &Ctx = ErrBB->getContext();
-                std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
-                Type *retType = Type::getVoidTy(Ctx);
-                FunctionType *logFuncType =
-                    FunctionType::get(retType, paramTypes, false);
+                // Prepare function
                 FunctionCallee logFunc =
-                    F.getParent()->getOrInsertFunction("logcase", logFuncType);
+                    prepareFunction("logcase", F, ErrBB->getContext());
 
                 // Insert a call
                 IRBuilder<> builder(ErrBB);
