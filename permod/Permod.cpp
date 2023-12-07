@@ -225,6 +225,23 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return new Condition(SwCondName, SwCI);
     }
 
+    class SwCondition {
+      public:
+        StringRef Name;
+        Value *Val;
+        SwCondition(StringRef Name, Value *Val) : Name(Name), Val(Val) {}
+    };
+
+    SwCondition *dyn_getSwCond(SwitchInst *SwI) {
+        Value *SwCond = getOrigin(SwI->getCondition());
+        if (!SwCond)
+            return NULL;
+        StringRef SwCondName = getVarName(SwCond);
+        DEBUG_PRINT("Switch name: " << SwCondName << "\n");
+
+        return new SwCondition(SwCondName, SwCond);
+    }
+
     // Prepare function
     FunctionCallee prepareFunction(std::string funcName, Function &F,
                                    LLVMContext &Ctx) {
@@ -335,7 +352,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 /* if (!SwI) continue; */
                 DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
-                Condition *SwCond = getSwCond(SwI, PredBB);
+                /* Condition *SwCond = getSwCond(SwI, PredBB); */
+                SwCondition *SwCond = dyn_getSwCond(SwI);
 
                 // Prepare function
                 FunctionCallee logFunc =
@@ -350,7 +368,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 CondStr = builder.CreateGlobalStringPtr(SwCond->Name);
                 args[0] = CondStr;
-                args[1] = dyn_cast<Value>(SwCond->Val);
+                /* args[1] = dyn_cast<Value>(SwCond->Val); */
+                args[1] = SwCond->Val;
                 builder.CreateCall(logFunc, args);
                 DEBUG_PRINT("Inserted log for switch\n");
 
