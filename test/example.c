@@ -5,17 +5,13 @@ int may_open (int mode, int flag) {
 
     switch (mode) {
         case 123:
-            if (flag & 2) {
-                return -EACCES;
-            }
-            break;
         case 456:
-            if (!(flag & 2)) {
+            if (flag & 2) {
                 return -EACCES;
             }
             break;
         case 789:
-            if (flag & 2) {
+            if (!(flag & 2)) {
                 return -EACCES;
             }
             break;
