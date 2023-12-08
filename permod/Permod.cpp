@@ -7,6 +7,8 @@
 
 #include <errno.h>
 
+#define MAX_TRACE_DEPTH 3
+
 #define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(x)                                                         \
@@ -230,6 +232,23 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return new Condition(SwCondName, SwCond);
     }
 
+    /*
+     * Backtrace to find Switch Statement BB
+     * Returns: BasicBlock*
+     */
+    BasicBlock *getSwBB(BasicBlock *BB) {
+        for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
+            for (auto *PredBB : predecessors(BB)) {
+                if (isa<SwitchInst>(PredBB->getTerminator())) {
+                    DEBUG_PRINT("Switch BB: " << *PredBB << "\n");
+                    return PredBB;
+                }
+                BB = PredBB;
+            }
+        }
+        return NULL;
+    }
+
     // Prepare function
     FunctionCallee prepareFunction(std::string funcName, Function &F,
                                    LLVMContext &Ctx) {
@@ -270,8 +289,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 // Get If statement BB "IfBB"; Pred of ErrBB
                 BasicBlock *IfBB = ErrBB->getSinglePredecessor();
-                if (!IfBB)
+                if (!IfBB) {
+                    DEBUG_PRINT("* ErrBB has no single predecessor\n");
                     continue;
+                }
                 DEBUG_PRINT("If statement BB (Pred of ErrBB): " << *IfBB
                                                                 << "\n");
 
@@ -283,8 +304,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                   br i1 %cmp, label %if.then, label %if.end
                 */
                 BranchInst *BrI = dyn_cast<BranchInst>(IfBB->getTerminator());
-                if (!BrI)
+                if (!BrI) {
+                    DEBUG_PRINT("* IfBB terminator is not a branch\n");
                     continue;
+                }
                 /* DEBUG_PRINT("Branch Instruction: " << *BrI << "\n"); */
 
                 if (BrI->getNumSuccessors() != 2) {
@@ -306,43 +329,38 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     continue;
                 }
 
+
                 // Get Switch condition
                 /*
-                 * switch i32 %1, label %sw.default [
-                 *   // This is one of the cases
-                 *   i32 0, label %sw.bb
-                 *   // Sometimes 1 case has multiple preds
-                 *   i32 1, label %sw.bb1
-                 *   i32 2, label %sw.bb1
-                 * ]
+                   switch i32 %1, label %sw.default [
+                     // This is one of the cases
+                     i32 0, label %sw.bb
+                     // Sometimes 1 case has multiple preds
+                     i32 1, label %sw.bb1
+                     i32 2, label %sw.bb1
+                   ]
                  */
-
-                // NOTE: CaseBB (Case of switch) is IfBB
-                BasicBlock *CaseBB = IfBB;
-                SwitchInst *SwI;
-
-                // Get multiple preds of CaseBB, which is case of switch
-                for (auto *BB : predecessors(CaseBB)) {
-                    DEBUG_PRINT("Getting preds:" << *BB << "\n");
-                    SwI = dyn_cast<SwitchInst>(BB->getTerminator());
-                    if (SwI)
-                        break;
+                BasicBlock *SwBB = getSwBB(IfBB);
+                if (!SwBB) {
+                    DEBUG_PRINT("* Switch BB is NULL\n");
+                    continue;
                 }
+                DEBUG_PRINT("Switch BB: " << *SwBB << "\n");
+
+                // NOTE: getSwBB() already knows that SwI is not NULL
+                SwitchInst *SwI = dyn_cast<SwitchInst>(SwBB->getTerminator());
                 if (!SwI) {
-                    DEBUG_PRINT("* SwitchInst is NULL\n");
+                    DEBUG_PRINT("* Switch Instruction is NULL\n");
                     continue;
                 }
                 DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
                 Condition *SwCond = dyn_getSwCond(SwI);
+                if (!SwCond) {
+                    DEBUG_PRINT("* SwCond is NULL\n");
+                    continue;
+                }
 
-                // TODO:
-                /*
-                switch()
-                case:
-                    if() return -EISDIR;
-                    if() return -EACCES; //HERE!!
-                */
 
                 // Prepare function
                 FunctionCallee logFunc =
@@ -366,6 +384,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 args[1] = IfCond->Val;
                 builder.CreateCall(logFunc, args);
                 DEBUG_PRINT("Inserted log for if\n");
+                DEBUG_PRINT("\n///////////////////////////////////////\n");
 
                 // Declare the modification
                 modified = true;
