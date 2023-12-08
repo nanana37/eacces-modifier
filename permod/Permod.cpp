@@ -91,7 +91,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     StringRef getVarName(Value *V) {
         StringRef Name = V->getName();
         if (Name.empty())
-            Name = "Condition";
+            Name = "Unnamed Condition";
         return Name;
     }
 
@@ -150,8 +150,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     class Condition {
       public:
         StringRef Name;
-        ConstantInt *Val;
-        Condition(StringRef Name, ConstantInt *Val) : Name(Name), Val(Val) {}
+        Value *Val;
+        Condition(StringRef Name, Value *Val) : Name(Name), Val(Val) {}
     };
 
     // Get if condition
@@ -181,34 +181,23 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             return NULL;
         DEBUG_PRINT("if Condition: " << *IfCond << "\n");
 
-        // bottom-up from cmp
-        /* bool isEq = CmpI->isEquality(); */
-        /* ConstantInt *IfCI = dyn_cast<ConstantInt>(CmpI->getOperand(1)); */
 
-        ConstantInt *IfCI = dyn_cast<ConstantInt>(AndI->getOperand(1));
-
+        Value *IfVal = AndI->getOperand(1);
         StringRef IfCondName = getVarName(IfCond);
-        DEBUG_PRINT("Reason about if: '" << IfCondName << " is " << *IfCI
+        DEBUG_PRINT("Reason about if: '" << IfCondName << " is " << *IfVal
                                          << "'\n");
 
-        return new Condition(IfCondName, IfCI);
+        return new Condition(IfCondName, IfVal);
     }
 
-    class SwCondition {
-      public:
-        StringRef Name;
-        Value *Val;
-        SwCondition(StringRef Name, Value *Val) : Name(Name), Val(Val) {}
-    };
-
-    SwCondition *dyn_getSwCond(SwitchInst *SwI) {
+    Condition *dyn_getSwCond(SwitchInst *SwI) {
         Value *SwCond = getOrigin(SwI->getCondition());
         if (!SwCond)
             return NULL;
         StringRef SwCondName = getVarName(SwCond);
         DEBUG_PRINT("Switch name: " << SwCondName << "\n");
 
-        return new SwCondition(SwCondName, SwCond);
+        return new Condition(SwCondName, SwCond);
     }
 
     // Prepare function
@@ -317,7 +306,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 }
                 DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
-                SwCondition *SwCond = dyn_getSwCond(SwI);
+                Condition *SwCond = dyn_getSwCond(SwI);
 
                 // TODO:
                 /*
@@ -347,7 +336,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 CondStr = builder.CreateGlobalStringPtr(IfCond->Name);
                 args[0] = CondStr;
-                args[1] = dyn_cast<Value>(IfCond->Val);
+                args[1] = IfCond->Val;
                 builder.CreateCall(logFunc, args);
                 DEBUG_PRINT("Inserted log for if\n");
 
