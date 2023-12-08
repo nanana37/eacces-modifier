@@ -122,6 +122,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return NULL;
     }
 
+    /* Get error-thrower BB "ErrBB"
+       store i32 -13，ptr %1, align 4
+     * Returns: BasicBlock*
+     */
     BasicBlock *getErrBB(User *U) {
         StoreInst *SI = dyn_cast<StoreInst>(U);
         if (!SI)
@@ -193,9 +197,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // Get switch condition
     // TODO: Find multiple cases (Or just print condition of switch (equals to
     // case))
-    Condition *getSwCond(SwitchInst *SwI, BasicBlock *PredBB) {
+    Condition *getSwCond(SwitchInst *SwI, BasicBlock *CaseBB) {
         DEBUG_PRINT("Getting Condition of Switch: " << *SwI << "\n");
-        DEBUG_PRINT("PredBB: " << *PredBB << "\n");
+        DEBUG_PRINT("CaseBB: " << *CaseBB << "\n");
 
         Value *SwCond = getOrigin(SwI->getCondition());
         if (!SwCond)
@@ -207,12 +211,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
          * Find case whose dest is Error-thrower BB
          */
         // Find the case that matches the error
-        /* ConstantInt *SwCI = SwI->findCaseDest(PredBB); */
+        /* ConstantInt *SwCI = SwI->findCaseDest(CaseBB); */
         ConstantInt *SwCI = NULL;
         for (auto Case : SwI->cases()) {
             BasicBlock *CaseBB = Case.getCaseSuccessor();
             DEBUG_PRINT("CaseBB: " << *CaseBB << "\n");
-            if (CaseBB != PredBB)
+            if (CaseBB != CaseBB)
                 continue;
 
             SwCI = Case.getCaseValue();
@@ -273,27 +277,29 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 continue;
 
             for (User *U : RetVal->users()) {
+
+                // Get Error-thrower BB "ErrBB"
+                /* store -13, ptr %1, align 4 */
                 BasicBlock *ErrBB = getErrBB(U);
                 if (!ErrBB)
                     continue;
 
+                // Get If statement BB "IfBB"; Pred of ErrBB
+                BasicBlock *IfBB = ErrBB->getSinglePredecessor();
+                if (!IfBB)
+                    continue;
+                DEBUG_PRINT("If statement BB (Pred of ErrBB): " << *IfBB
+                                                                << "\n");
+
+
+                // Get If condition
                 /*
                  * if branch
-
                   %1 = load i32, ptr %flag.addr, align 4
                   %cmp = icmp eq i32 %1, 1
                   br i1 %cmp, label %if.then, label %if.end
-
                 */
-
-                // Pred of Err-BB : BB of if
-                BasicBlock *PredBB = ErrBB->getSinglePredecessor();
-                if (!PredBB)
-                    continue;
-                DEBUG_PRINT("Predecessor of Error-thrower BB (if statement): "
-                            << *PredBB << "\n");
-
-                BranchInst *BrI = dyn_cast<BranchInst>(PredBB->getTerminator());
+                BranchInst *BrI = dyn_cast<BranchInst>(IfBB->getTerminator());
                 if (!BrI)
                     continue;
                 /* DEBUG_PRINT("Branch Instruction: " << *BrI << "\n"); */
@@ -312,22 +318,38 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 /* } */
 
                 Condition *IfCond = getIfCond(BrI);
-                if (!IfCond)
+                if (!IfCond) {
+                    DEBUG_PRINT("* IfCond is NULL\n");
                     continue;
+                }
 
-                // Pred of Pred of Err-BB : BB of switch
-                BasicBlock *GrandPredBB = PredBB;
+
+                // Get Switch condition
+                /*
+                 * switch i32 %1, label %sw.default [
+                 *   // This is one of the cases
+                 *   i32 0, label %sw.bb
+                 *   // Sometimes 1 case has multiple preds
+                 *   i32 1, label %sw.bb1
+                 *   i32 2, label %sw.bb1
+                 * ]
+                 */
+
+                // NOTE: CaseBB (Case of switch) is IfBB
+                BasicBlock *CaseBB = IfBB;
                 SwitchInst *SwI;
 
-                // Mutiple preds
-                for (auto *BB : predecessors(GrandPredBB)) {
+                // Get multiple preds of CaseBB, which is case of switch
+                for (auto *BB : predecessors(CaseBB)) {
                     DEBUG_PRINT("Getting preds:" << *BB << "\n");
                     SwI = dyn_cast<SwitchInst>(BB->getTerminator());
                     if (SwI)
                         break;
                 }
-                if (!SwI)
+                if (!SwI) {
+                    DEBUG_PRINT("* SwitchInst is NULL\n");
                     continue;
+                }
 
                 // TODO:
                 /*
@@ -337,23 +359,24 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if() return -EACCES; //HERE!!
                 */
                 /* do { */
-                /*     GrandPredBB = GrandPredBB->getSinglePredecessor(); */
-                /*     DEBUG_PRINT("Predecessor of if: " << *GrandPredBB <<
+                /*     CaseBB = CaseBB->getSinglePredecessor(); */
+                /*     DEBUG_PRINT("Predecessor of if: " << *CaseBB <<
                  * "\n"); */
-                /*     if (!GrandPredBB) break; */
+                /*     if (!CaseBB) break; */
                 /*     SwI =
-                 * dyn_cast<SwitchInst>(GrandPredBB->getTerminator());
+                 * dyn_cast<SwitchInst>(CaseBB->getTerminator());
                  */
                 /* } while (!SwI); */
                 /* if (!SwI) continue; */
 
                 /* SwitchInst *SwI =
-                 * dyn_cast<SwitchInst>(GrandPredBB->getTerminator()); */
+                 * dyn_cast<SwitchInst>(CaseBB->getTerminator()); */
                 /* if (!SwI) continue; */
                 DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
-                /* Condition *SwCond = getSwCond(SwI, PredBB); */
+                /* Condition *SwCond = getSwCond(SwI, CaseBB); */
                 SwCondition *SwCond = dyn_getSwCond(SwI);
+
 
                 // Prepare function
                 FunctionCallee logFunc =
