@@ -194,41 +194,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return new Condition(IfCondName, IfCI);
     }
 
-    // Get switch condition
-    // TODO: Find multiple cases (Or just print condition of switch (equals to
-    // case))
-    Condition *getSwCond(SwitchInst *SwI, BasicBlock *CaseBB) {
-        DEBUG_PRINT("Getting Condition of Switch: " << *SwI << "\n");
-        DEBUG_PRINT("CaseBB: " << *CaseBB << "\n");
-
-        Value *SwCond = getOrigin(SwI->getCondition());
-        if (!SwCond)
-            return NULL;
-        StringRef SwCondName = getVarName(SwCond);
-        DEBUG_PRINT("Switch name: " << SwCondName << "\n");
-
-        /*
-         * Find case whose dest is Error-thrower BB
-         */
-        // Find the case that matches the error
-        /* ConstantInt *SwCI = SwI->findCaseDest(CaseBB); */
-        ConstantInt *SwCI = NULL;
-        for (auto Case : SwI->cases()) {
-            BasicBlock *CaseBB = Case.getCaseSuccessor();
-            DEBUG_PRINT("CaseBB: " << *CaseBB << "\n");
-            if (CaseBB != CaseBB)
-                continue;
-
-            SwCI = Case.getCaseValue();
-        }
-        if (!SwCI)
-            return NULL;
-
-        DEBUG_PRINT("Reason about switch: '" << SwCondName << " is " << *SwCI
-                                             << "'\n");
-        return new Condition(SwCondName, SwCI);
-    }
-
     class SwCondition {
       public:
         StringRef Name;
@@ -350,6 +315,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     DEBUG_PRINT("* SwitchInst is NULL\n");
                     continue;
                 }
+                DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
+
+                SwCondition *SwCond = dyn_getSwCond(SwI);
 
                 // TODO:
                 /*
@@ -358,24 +326,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if() return -EISDIR;
                     if() return -EACCES; //HERE!!
                 */
-                /* do { */
-                /*     CaseBB = CaseBB->getSinglePredecessor(); */
-                /*     DEBUG_PRINT("Predecessor of if: " << *CaseBB <<
-                 * "\n"); */
-                /*     if (!CaseBB) break; */
-                /*     SwI =
-                 * dyn_cast<SwitchInst>(CaseBB->getTerminator());
-                 */
-                /* } while (!SwI); */
-                /* if (!SwI) continue; */
-
-                /* SwitchInst *SwI =
-                 * dyn_cast<SwitchInst>(CaseBB->getTerminator()); */
-                /* if (!SwI) continue; */
-                DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
-
-                /* Condition *SwCond = getSwCond(SwI, CaseBB); */
-                SwCondition *SwCond = dyn_getSwCond(SwI);
 
 
                 // Prepare function
@@ -391,7 +341,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 CondStr = builder.CreateGlobalStringPtr(SwCond->Name);
                 args[0] = CondStr;
-                /* args[1] = dyn_cast<Value>(SwCond->Val); */
                 args[1] = SwCond->Val;
                 builder.CreateCall(logFunc, args);
                 DEBUG_PRINT("Inserted log for switch\n");
