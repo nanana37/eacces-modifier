@@ -12,6 +12,11 @@ int isOK(char* str) {
 int may_open (int mode, int flag) {
 
     switch (mode) {
+        case 0:
+            if (flag & 2) {
+                return -EACCES;
+            }
+            break;
         case 1:
             return -ELOOP;
         case 2:
