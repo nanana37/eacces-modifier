@@ -154,40 +154,65 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         Condition(StringRef Name, Value *Val) : Name(Name), Val(Val) {}
     };
 
-    // Get if condition
-    // Returns: (Value*, ConstantInt)
+    // Get name & value of if condition
+    // Returns: (StringRef, Value*)
     // TODO: Predicts only true branch
+    /*
+       if (func()) {}   // name:func, val:0
+    */
+    /*
+       Kinds of if condition:
+       * AndInst: if (flag & 2) {}
+            %1 = load i32, ptr %flag.addr, align 4
+            %and = and i32 %1, 2
+            %tobool = icmp ne i32 %and, 0
+       * CallInst: if (!func()) {}
+            %call = call i32 @function()
+            %tobool = icmp ne i32 %call, 0
+    */
     Condition *getIfCond(BranchInst *BrI) {
-        // Get the condition of the if branch
+        DEBUG_PRINT("Getting if condition from: " << *BrI << "\n");
+
+        StringRef name;
+        Value *val;
+
+        // Get if condition
+        // NOTE: IfCond is always a cmp instruction
+        /*
+           Kinds of CmpInst:
+               %tobool = icmp ne i32 %and, 0
+               %tobool = icmp ne i32 %call, 0
+         */
         Value *IfCond = BrI->getCondition();
         if (!IfCond)
             return NULL;
-        DEBUG_PRINT("Condition: " << *IfCond << "\n");
-
-        // NOTE: IfCond is always a cmp instruction
         CmpInst *CmpI = dyn_cast<CmpInst>(IfCond);
         if (!CmpI)
             return NULL;
         DEBUG_PRINT("Cmp Instruction: " << *CmpI << "\n");
 
-        // %tobool = icmp ne i32 %and, 0
-        BinaryOperator *AndI = dyn_cast<BinaryOperator>(CmpI->getOperand(0));
-        if (!AndI)
+        // Get name & val
+        if (auto *AndI = dyn_cast<BinaryOperator>(CmpI->getOperand(0))) {
+            DEBUG_PRINT("AndInst: " << *AndI << "\n");
+            IfCond = getOrigin(AndI->getOperand(0));
+            if (!IfCond)
+                return NULL;
+            name = getVarName(IfCond);
+            val = AndI->getOperand(1);
+        } else if (auto *CallI = dyn_cast<CallInst>(CmpI->getOperand(0))) {
+            DEBUG_PRINT("CallInst: " << *CallI << "\n");
+            Function *Callee = CallI->getCalledFunction();
+            if (!Callee)
+                return NULL;
+            name = getVarName(Callee);
+            val = CmpI->getOperand(1);
+        } else {
+            DEBUG_PRINT("Unexpected Instruction: " << *CmpI->getOperand(0)
+                                                   << "\n");
             return NULL;
-        DEBUG_PRINT("AndI: " << *AndI << "\n");
+        }
 
-        IfCond = getOrigin(AndI->getOperand(0));
-        if (!IfCond)
-            return NULL;
-        DEBUG_PRINT("if Condition: " << *IfCond << "\n");
-
-
-        Value *IfVal = AndI->getOperand(1);
-        StringRef IfCondName = getVarName(IfCond);
-        DEBUG_PRINT("Reason about if: '" << IfCondName << " is " << *IfVal
-                                         << "'\n");
-
-        return new Condition(IfCondName, IfVal);
+        return new Condition(name, val);
     }
 
     Condition *dyn_getSwCond(SwitchInst *SwI) {
@@ -245,7 +270,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 DEBUG_PRINT("If statement BB (Pred of ErrBB): " << *IfBB
                                                                 << "\n");
 
-
                 // Get If condition
                 /*
                  * if branch
@@ -276,7 +300,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     DEBUG_PRINT("* IfCond is NULL\n");
                     continue;
                 }
-
 
                 // Get Switch condition
                 /*
@@ -315,7 +338,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if() return -EISDIR;
                     if() return -EACCES; //HERE!!
                 */
-
 
                 // Prepare function
                 FunctionCallee logFunc =
