@@ -154,22 +154,23 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         Condition(StringRef Name, Value *Val) : Name(Name), Val(Val) {}
     };
 
-    // Get name & value of if condition
-    // Returns: (StringRef, Value*)
-    // TODO: Predicts only true branch
     /*
-       if (func()) {}   // name:func, val:0
-    */
-    /*
-       Kinds of if condition:
-       * AndInst: if (flag & 2) {}
+     * Get name & value of if condition
+
+     * Returns: (StringRef, Value*)
+       - if (flag & val) {}     // name:of flag, val:val
+       - if (!func()) {}   // name:of func, val:0
+
+     * Kinds of if condition:
+       - AndInst: if (flag & 2) {}
             %1 = load i32, ptr %flag.addr, align 4
             %and = and i32 %1, 2
             %tobool = icmp ne i32 %and, 0
-       * CallInst: if (!func()) {}
+       - CallInst: if (!func()) {}
             %call = call i32 @function()
             %tobool = icmp ne i32 %call, 0
     */
+    // TODO: Predicts only true branch
     Condition *getIfCond(BranchInst *BrI) {
         DEBUG_PRINT("Getting if condition from: " << *BrI << "\n");
 
@@ -215,6 +216,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return new Condition(name, val);
     }
 
+    /* Get name & value of switch condition
+     * Returns: (StringRef, Value*)
+       - switch (flag) {}     // name:of flag, val:of flag
+     */
     Condition *dyn_getSwCond(SwitchInst *SwI) {
         Value *SwCond = getOrigin(SwI->getCondition());
         if (!SwCond)
