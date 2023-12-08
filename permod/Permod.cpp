@@ -271,10 +271,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         for (auto &F : M.functions()) {
             DEBUG_PRINT("Function: " << F.getName() << "\n");
 
-            // TODO: Only run on may_open()
-            /* if (F.getName() != "may_open") continue; */
-            /* DEBUG_PRINT("may_open found!\n"); */
-
             Value *RetVal = getReturnValue(&F);
             if (!RetVal)
                 continue;
@@ -297,6 +293,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                                                                 << "\n");
 
                 // Get If condition
+                // TODO: "if(A && B){}" is not supported.
+                // This splits into two BBs; "if(A){ if(B){} }"
                 /*
                  * if branch
                   %1 = load i32, ptr %flag.addr, align 4
@@ -329,7 +327,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     continue;
                 }
 
-
                 // Get Switch condition
                 /*
                    switch i32 %1, label %sw.default [
@@ -343,6 +340,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 BasicBlock *SwBB = getSwBB(IfBB);
                 if (!SwBB) {
                     DEBUG_PRINT("* Switch BB is NULL\n");
+                    delete IfCond;
                     continue;
                 }
                 DEBUG_PRINT("Switch BB: " << *SwBB << "\n");
@@ -351,6 +349,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 SwitchInst *SwI = dyn_cast<SwitchInst>(SwBB->getTerminator());
                 if (!SwI) {
                     DEBUG_PRINT("* Switch Instruction is NULL\n");
+                    delete IfCond;
                     continue;
                 }
                 DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
@@ -358,9 +357,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 Condition *SwCond = dyn_getSwCond(SwI);
                 if (!SwCond) {
                     DEBUG_PRINT("* SwCond is NULL\n");
+                    delete IfCond;
                     continue;
                 }
-
 
                 // Prepare function
                 FunctionCallee logFunc =
@@ -385,6 +384,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 builder.CreateCall(logFunc, args);
                 DEBUG_PRINT("Inserted log for if\n");
                 DEBUG_PRINT("\n///////////////////////////////////////\n");
+
+                // release memory
+                delete IfCond;
+                delete SwCond;
 
                 // Declare the modification
                 modified = true;
