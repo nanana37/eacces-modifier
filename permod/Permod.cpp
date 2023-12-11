@@ -260,17 +260,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return NULL;
     }
 
-    // Prepare function
-    FunctionCallee prepareFunction(std::string funcName, Function &F,
-                                   LLVMContext &Ctx) {
-        std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
-        Type *retType = Type::getVoidTy(Ctx);
-        FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-        FunctionCallee newFunc =
-            F.getParent()->getOrInsertFunction(funcName, funcType);
-
-        return newFunc;
-    }
 
     /*
      *****************
@@ -403,34 +392,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 args.push_back(IfCond->Val);
                 builder.CreateCall(logFunc, args);
                 DEBUG_PRINT("Inserted log for if\n");
-
-                /*
-
-                // Prepare function
-                FunctionCallee logFunc =
-                    prepareFunction("logcase", F, ErrBB->getContext());
-
-                // Insert a call
-                IRBuilder<> builder(ErrBB);
-                builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
-
-                Value *CondStr;
-                Value *args[2];
-
-                CondStr = builder.CreateGlobalStringPtr(SwCond->Name);
-                args[0] = CondStr;
-                args[1] = SwCond->Val;
-                builder.CreateCall(logFunc, args);
-                DEBUG_PRINT("Inserted log for switch\n");
-
-                CondStr = builder.CreateGlobalStringPtr(IfCond->Name);
-                args[0] = CondStr;
-                args[1] = IfCond->Val;
-                builder.CreateCall(logFunc, args);
-                DEBUG_PRINT("Inserted log for if\n");
-                DEBUG_PRINT("\n///////////////////////////////////////\n");
-
-                */
 
                 // release memory
                 delete IfCond;
