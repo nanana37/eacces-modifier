@@ -285,6 +285,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 DEBUG_PRINT("\n///////////////////////////////////////\n");
                 DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
                 DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
+                DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) << "!!\n");
+
+                // Array of Condition
+                std::vector<Condition *> conds;
+                conds.push_back(new Condition(F.getName(), dyn_cast<StoreInst>(U)->getValueOperand()));
 
                 // Get If statement BB "IfBB"; Pred of ErrBB
                 BasicBlock *IfBB = ErrBB->getSinglePredecessor();
@@ -329,6 +334,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     DEBUG_PRINT("* IfCond is NULL\n");
                     continue;
                 }
+                conds.push_back(IfCond);
 
                 // Get Switch condition
                 /*
@@ -363,6 +369,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     delete IfCond;
                     continue;
                 }
+                conds.push_back(SwCond);
 
 
                 // Prepare function
@@ -380,22 +387,19 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 Twine format = Twine("[PERMOD] %s: %d\n");
                 Value *formatStr = builder.CreateGlobalStringPtr(format.getSingleStringRef());
 
-                args.push_back(builder.CreatePointerCast(formatStr, Type::getInt8PtrTy(Ctx)));
-                args.push_back(builder.CreateGlobalStringPtr(SwCond->Name));
-                args.push_back(SwCond->Val);
-                builder.CreateCall(logFunc, args);
-                DEBUG_PRINT("Inserted log for switch\n");
-                args.clear();
+                while (!conds.empty()) {
+                    Condition *cond = conds.back();
+                    conds.pop_back();
 
-                args.push_back(builder.CreatePointerCast(formatStr, Type::getInt8PtrTy(Ctx)));
-                args.push_back(builder.CreateGlobalStringPtr(IfCond->Name));
-                args.push_back(IfCond->Val);
-                builder.CreateCall(logFunc, args);
-                DEBUG_PRINT("Inserted log for if\n");
+                    args.push_back(builder.CreatePointerCast(formatStr, Type::getInt8PtrTy(Ctx)));
+                    args.push_back(builder.CreateGlobalStringPtr(cond->Name));
+                    args.push_back(cond->Val);
+                    builder.CreateCall(logFunc, args);
+                    DEBUG_PRINT("Inserted log for " << cond->Name << "\n");
+                    args.clear();
 
-                // release memory
-                delete IfCond;
-                delete SwCond;
+                    delete cond;
+                }
 
                 // Declare the modification
                 modified = true;
