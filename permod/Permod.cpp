@@ -174,7 +174,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             %tobool = icmp ne i32 %call, 0
     */
     // TODO: Predicts only true branch
-    Condition *getIfCond(BranchInst *BrI) {
+    bool getIfCond(BranchInst *BrI, std::vector<Condition *> &conds) {
         DEBUG_PRINT("Getting if condition from: " << *BrI << "\n");
 
         StringRef name;
@@ -182,6 +182,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // Get if condition
         // NOTE: IfCond is always a cmp instruction
+        // TODO: "if(A && B){}" is not supported. IfCond is BranchInst.
         /*
            Kinds of CmpInst:
                %tobool = icmp ne i32 %and, 0
@@ -189,10 +190,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
          */
         Value *IfCond = BrI->getCondition();
         if (!IfCond)
-            return NULL;
+            return false;
         CmpInst *CmpI = dyn_cast<CmpInst>(IfCond);
         if (!CmpI)
-            return NULL;
+            return false;
         DEBUG_PRINT("Cmp Instruction: " << *CmpI << "\n");
 
         // Get name & val
@@ -200,30 +201,31 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             DEBUG_PRINT("AndInst: " << *AndI << "\n");
             IfCond = getOrigin(AndI->getOperand(0));
             if (!IfCond)
-                return NULL;
+                return false;
             name = getVarName(IfCond);
             val = AndI->getOperand(1);
         } else if (auto *CallI = dyn_cast<CallInst>(CmpI->getOperand(0))) {
             DEBUG_PRINT("CallInst: " << *CallI << "\n");
             Function *Callee = CallI->getCalledFunction();
             if (!Callee)
-                return NULL;
+                return false;
             name = getVarName(Callee);
             val = CmpI->getOperand(1);
         } else {
             DEBUG_PRINT("Unexpected Instruction: " << *CmpI->getOperand(0)
                                                    << "\n");
-            return NULL;
+            return false;
         }
 
-        return new Condition(name, val);
+        conds.push_back(new Condition(name, val));
+        return true;
     }
 
     /* Get name & value of switch condition
      * Returns: (StringRef, Value*)
        - switch (flag) {}     // name:of flag, val:of flag
      */
-    Condition *dyn_getSwCond(SwitchInst *SwI) {
+    bool getSwCond(SwitchInst *SwI, std::vector<Condition *> &conds) {
         StringRef name;
         Value *val;
 
@@ -237,13 +239,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         // Get name
         SwCond = getOrigin(SwCond);
         if (!SwCond)
-            return NULL;
+            return false;
         DEBUG_PRINT("Original Switch condition: " << *SwCond << "\n");
 
         name = getVarName(SwCond);
         DEBUG_PRINT("Switch name: " << name << "\n");
 
-        return new Condition(name, val);
+        conds.push_back(new Condition(name, val));
+        return true;
     }
 
     /*
@@ -261,6 +264,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             }
         }
         return NULL;
+    }
+
+    void deleteAllCond(std::vector<Condition *> &conds) {
+        while (!conds.empty()) {
+            delete conds.back();
+            conds.pop_back();
+        }
     }
 
 
@@ -288,7 +298,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 DEBUG_PRINT("\n///////////////////////////////////////\n");
                 DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
                 DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
-                DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) << "!!\n");
+                /* DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) << "!!\n"); */
 
                 // Prepare Array of Condition
                 std::vector<Condition *> conds;
@@ -331,12 +341,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 /*     continue; */
                 /* } */
 
-                Condition *IfCond = getIfCond(BrI);
-                if (!IfCond) {
-                    DEBUG_PRINT("* IfCond is NULL\n");
+                if (!getIfCond(BrI, conds)) {
+                    DEBUG_PRINT("* getIfCond has failed.\n");
+                    deleteAllCond(conds);
                     continue;
                 }
-                conds.push_back(IfCond);
 
                 // Get Switch condition
                 /*
@@ -351,7 +360,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 BasicBlock *SwBB = getSwBB(IfBB);
                 if (!SwBB) {
                     DEBUG_PRINT("* Switch BB is NULL\n");
-                    delete IfCond;
+                    deleteAllCond(conds);
                     continue;
                 }
                 DEBUG_PRINT("Switch BB: " << *SwBB << "\n");
@@ -360,18 +369,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 SwitchInst *SwI = dyn_cast<SwitchInst>(SwBB->getTerminator());
                 if (!SwI) {
                     DEBUG_PRINT("* Switch Instruction is NULL\n");
-                    delete IfCond;
+                    deleteAllCond(conds);
                     continue;
                 }
                 DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
-                Condition *SwCond = dyn_getSwCond(SwI);
-                if (!SwCond) {
-                    DEBUG_PRINT("* SwCond is NULL\n");
-                    delete IfCond;
+                if (!getSwCond(SwI, conds)) {
+                    DEBUG_PRINT("* geSwCond has failed.\n");
+                    deleteAllCond(conds);
                     continue;
                 }
-                conds.push_back(SwCond);
 
 
                 /* Insert log */
