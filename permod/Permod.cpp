@@ -221,13 +221,26 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
        - switch (flag) {}     // name:of flag, val:of flag
      */
     Condition *dyn_getSwCond(SwitchInst *SwI) {
-        Value *SwCond = getOrigin(SwI->getCondition());
+        StringRef name;
+        Value *val;
+
+        Value *SwCond = SwI->getCondition();
+        DEBUG_PRINT("Switch condition: " << *SwCond << "\n");
+
+        // Get value
+        val = SwCond;
+        DEBUG_PRINT("Switch value: " << *val << "\n");
+
+        // Get name
+        SwCond = getOrigin(SwCond);
         if (!SwCond)
             return NULL;
-        StringRef SwCondName = getVarName(SwCond);
-        DEBUG_PRINT("Switch name: " << SwCondName << "\n");
+        DEBUG_PRINT("Original Switch condition: " << *SwCond << "\n");
 
-        return new Condition(SwCondName, SwCond);
+        name = getVarName(SwCond);
+        DEBUG_PRINT("Switch name: " << name << "\n");
+
+        return new Condition(name, val);
     }
 
     /*
