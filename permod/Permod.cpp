@@ -5,6 +5,9 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
+#include "llvm/IR/DebugLoc.h"
+#include "llvm/IR/DebugInfoMetadata.h"
+
 #include <errno.h>
 
 #define MAX_TRACE_DEPTH 3
@@ -287,9 +290,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
                 DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) << "!!\n");
 
-                // Array of Condition
+                // Prepare Array of Condition
                 std::vector<Condition *> conds;
-                conds.push_back(new Condition(F.getName(), dyn_cast<StoreInst>(U)->getValueOperand()));
 
                 // Get If statement BB "IfBB"; Pred of ErrBB
                 BasicBlock *IfBB = ErrBB->getSinglePredecessor();
@@ -372,17 +374,31 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 conds.push_back(SwCond);
 
 
-                // Prepare function
+                /* Insert log */
+                // Prepare builder
+                IRBuilder<> builder(ErrBB);
+                builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
                 LLVMContext &Ctx = ErrBB->getContext();
+
+                /*
+                // Debug info
+                // NOTE: need clang flag "-g"
+                StringRef filename = F.getParent()->getSourceFileName();
+                const DebugLoc &Loc = dyn_cast<Instruction>(U)->getDebugLoc();
+                unsigned line = Loc->getLine();
+                DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
+                Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
+                conds.push_back(new Condition(F.getName(), dyn_cast<StoreInst>(U)->getValueOperand()));
+                conds.push_back(new Condition(filename, lineVal));
+                */
+
+                // Prepare function
                 std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
                 Type *retType = Type::getVoidTy(Ctx);
                 FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
                 FunctionCallee logFunc = F.getParent()->getOrInsertFunction("_printk", funcType);
 
-                // Insert a call
-                IRBuilder<> builder(ErrBB);
-                builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
-
+                // Prepare arguments
                 std::vector<Value *> args;
                 Twine format = Twine("[PERMOD] %s: %d\n");
                 Value *formatStr = builder.CreateGlobalStringPtr(format.getSingleStringRef());
