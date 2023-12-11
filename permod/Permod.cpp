@@ -140,11 +140,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             return NULL;
         if (CI->getSExtValue() != -EACCES)
             return NULL;
-        DEBUG_PRINT("'return -EACCES' found!\n");
 
         // Error-thrower BB (BB of store -EACCES)
         BasicBlock *ErrBB = SI->getParent();
-        DEBUG_PRINT("-EACCES is stored by: " << *ErrBB << "\n");
 
         return ErrBB;
     }
@@ -269,7 +267,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
         bool modified = false;
         for (auto &F : M.functions()) {
-            DEBUG_PRINT("Function: " << F.getName() << "\n");
 
             Value *RetVal = getReturnValue(&F);
             if (!RetVal)
@@ -282,6 +279,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 BasicBlock *ErrBB = getErrBB(U);
                 if (!ErrBB)
                     continue;
+
+                DEBUG_PRINT("\n///////////////////////////////////////\n");
+                DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
+                DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
                 // Get If statement BB "IfBB"; Pred of ErrBB
                 BasicBlock *IfBB = ErrBB->getSinglePredecessor();
@@ -361,6 +362,37 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     continue;
                 }
 
+
+                // Prepare function
+                LLVMContext &Ctx = ErrBB->getContext();
+                std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
+                Type *retType = Type::getVoidTy(Ctx);
+                FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+                FunctionCallee logFunc = F.getParent()->getOrInsertFunction("_printk", funcType);
+
+                // Insert a call
+                IRBuilder<> builder(ErrBB);
+                builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
+
+                std::vector<Value *> args;
+                Twine format = Twine("[PERMOD] %s: %d\n");
+                Value *formatStr = builder.CreateGlobalStringPtr(format.getSingleStringRef());
+
+                args.push_back(builder.CreatePointerCast(formatStr, Type::getInt8PtrTy(Ctx)));
+                args.push_back(builder.CreateGlobalStringPtr(SwCond->Name));
+                args.push_back(SwCond->Val);
+                builder.CreateCall(logFunc, args);
+                DEBUG_PRINT("Inserted log for switch\n");
+                args.clear();
+
+                args.push_back(builder.CreatePointerCast(formatStr, Type::getInt8PtrTy(Ctx)));
+                args.push_back(builder.CreateGlobalStringPtr(IfCond->Name));
+                args.push_back(IfCond->Val);
+                builder.CreateCall(logFunc, args);
+                DEBUG_PRINT("Inserted log for if\n");
+
+                /*
+
                 // Prepare function
                 FunctionCallee logFunc =
                     prepareFunction("logcase", F, ErrBB->getContext());
@@ -384,6 +416,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 builder.CreateCall(logFunc, args);
                 DEBUG_PRINT("Inserted log for if\n");
                 DEBUG_PRINT("\n///////////////////////////////////////\n");
+
+                */
 
                 // release memory
                 delete IfCond;
