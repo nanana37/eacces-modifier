@@ -73,12 +73,25 @@ void check_imode (char *filename)
                 break;
             case 3:
                 // S_IFBLK
-                pathname = "blk";
+                printf ("isNODEV:");
+                int isNODEV = 0;
+                scanf ("%d", &isNODEV);
+                if (isNODEV) {
+                    pathname = "nodev/blk";
+                } else {
+                    pathname = "blk";
+                }
                 mknod(pathname, S_IFBLK | 0666, makedev(1, 1));
                 break;
             case 4:
                 // S_IFCHR
-                pathname = "chr";
+                printf ("isNODEV:");
+                scanf ("%d", &isNODEV);
+                if (isNODEV) {
+                    pathname = "nodev/chr";
+                } else {
+                    pathname = "chr";
+                }
                 mknod (pathname, S_IFCHR | 0777, 0);
                 break;
             case 5:
@@ -93,8 +106,11 @@ void check_imode (char *filename)
                 break;
              case 7:
                 // S_IFREG
-                pathname = "reg";
-                creat (pathname, 0777);
+                /* mknod ("reg", S_IFREG | 0777, 0); */
+                // After mount as noexec
+                // sudo mount -o noexec -t tmpfs tmpfs ./noexec
+                // hello.c is compiled as hello
+                pathname = "noexec/hello";
                 break;
             default:
                 pathname = "";
