@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <sys/sysmacros.h>
+#include <sys/mount.h>
 
 #include <linux/fs.h>
 #define MAY_EXEC 0x00000010
@@ -77,6 +78,8 @@ void check_imode (char *filename)
                 int isNODEV = 0;
                 scanf ("%d", &isNODEV);
                 if (isNODEV) {
+                    // sudo mount -o nodev -t tmpfs tmpfs ./nodev
+                    mount ("nodev", "nodev", "tmpfs", MS_NODEV, NULL);
                     pathname = "nodev/blk";
                 } else {
                     pathname = "blk";
@@ -88,6 +91,8 @@ void check_imode (char *filename)
                 printf ("isNODEV:");
                 scanf ("%d", &isNODEV);
                 if (isNODEV) {
+                    // sudo mount -o nodev -t tmpfs tmpfs ./nodev
+                    mount ("nodev", "nodev", "tmpfs", MS_NODEV, NULL);
                     pathname = "nodev/chr";
                 } else {
                     pathname = "chr";
@@ -109,8 +114,9 @@ void check_imode (char *filename)
                 /* mknod ("reg", S_IFREG | 0777, 0); */
                 // After mount as noexec
                 // sudo mount -o noexec -t tmpfs tmpfs ./noexec
-                // hello.c is compiled as hello
-                pathname = "noexec/hello";
+                mount ("noexec", "noexec", "tmpfs", MS_NOEXEC, NULL);
+                pathname = "noexec/reg";
+                mknod (pathname, S_IFREG | 0777, 0);
                 break;
             default:
                 pathname = "";
