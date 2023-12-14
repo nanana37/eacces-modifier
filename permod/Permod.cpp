@@ -5,8 +5,8 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
-#include "llvm/IR/DebugLoc.h"
 #include "llvm/IR/DebugInfoMetadata.h"
+#include "llvm/IR/DebugLoc.h"
 
 #include <errno.h>
 
@@ -183,42 +183,63 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         // Get if condition
         // NOTE: IfCond is always a cmp instruction
         // TODO: "if(A && B){}" is not supported. IfCond is BranchInst.
-        /*
-           Kinds of CmpInst:
-               %tobool = icmp ne i32 %and, 0
-               %tobool = icmp ne i32 %call, 0
-         */
         Value *IfCond = BrI->getCondition();
         if (!IfCond)
             return false;
-        CmpInst *CmpI = dyn_cast<CmpInst>(IfCond);
-        if (!CmpI)
-            return false;
-        DEBUG_PRINT("Cmp Instruction: " << *CmpI << "\n");
-
-        // Get name & val
-        if (auto *AndI = dyn_cast<BinaryOperator>(CmpI->getOperand(0))) {
-            DEBUG_PRINT("AndInst: " << *AndI << "\n");
-            IfCond = getOrigin(AndI->getOperand(0));
-            if (!IfCond)
-                return false;
-            name = getVarName(IfCond);
-            val = AndI->getOperand(1);
-        } else if (auto *CallI = dyn_cast<CallInst>(CmpI->getOperand(0))) {
-            DEBUG_PRINT("CallInst: " << *CallI << "\n");
-            Function *Callee = CallI->getCalledFunction();
+        /*
+            Kinds of IfCond:
+            - br i1 %call, label %if.end, label %if.then
+            - br i1 %tobool, label %if.then, label %if.end
+         */
+        // IfCond: br i1 %call, label %if.end, label %if.then
+        if (auto *BrCallI = dyn_cast<CallInst>(IfCond)) {
+            DEBUG_PRINT("IfCond is Call: " << *BrCallI << "\n");
+            Function *Callee = BrCallI->getCalledFunction();
             if (!Callee)
                 return false;
             name = getVarName(Callee);
-            val = CmpI->getOperand(1);
-        } else {
-            DEBUG_PRINT("Unexpected Instruction: " << *CmpI->getOperand(0)
-                                                   << "\n");
-            return false;
+            val = ConstantInt::get(Type::getInt32Ty(BrCallI->getContext()), 0);
+            conds.push_back(new Condition(name, val));
+            return true;
         }
 
-        conds.push_back(new Condition(name, val));
-        return true;
+        // IfCond: br i1 %tobool, label %if.then, label %if.end
+        // %tobool = icmp ne i32 %call/and, 0
+        if (auto *BrCmpI = dyn_cast<CmpInst>(IfCond)) {
+            DEBUG_PRINT("IfCond is Cmp: " << *BrCmpI << "\n");
+            IfCond = BrCmpI->getOperand(0);
+            if (!IfCond)
+                return false;
+            /*
+               Kinds of CmpInst:
+                   %tobool = icmp ne i32 %and, 0
+                   %tobool = icmp ne i32 %call, 0
+             */
+            if (auto *AndI = dyn_cast<BinaryOperator>(BrCmpI->getOperand(0))) {
+                DEBUG_PRINT("AndInst: " << *AndI << "\n");
+                IfCond = getOrigin(AndI->getOperand(0));
+                if (!IfCond)
+                    return false;
+                name = getVarName(IfCond);
+                val = AndI->getOperand(1);
+            } else if (auto *CallI =
+                           dyn_cast<CallInst>(BrCmpI->getOperand(0))) {
+                DEBUG_PRINT("CallInst: " << *CallI << "\n");
+                Function *Callee = CallI->getCalledFunction();
+                if (!Callee)
+                    return false;
+                name = getVarName(Callee);
+                val = BrCmpI->getOperand(1);
+            } else {
+                DEBUG_PRINT("Unexpected Instruction: " << *BrCmpI->getOperand(0)
+                                                       << "\n");
+                return false;
+            }
+            conds.push_back(new Condition(name, val));
+            return true;
+        }
+        DEBUG_PRINT("Unexpected Instruction: " << *IfCond << "\n");
+        return false;
     }
 
     /* Get name & value of switch condition
@@ -273,7 +294,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
     }
 
-
     /*
      *****************
      * main function *
@@ -298,7 +318,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 DEBUG_PRINT("\n///////////////////////////////////////\n");
                 DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
                 DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
-                /* DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) << "!!\n"); */
+                /* DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) <<
+                 * "!!\n"); */
 
                 // Prepare Array of Condition
                 std::vector<Condition *> conds;
@@ -380,7 +401,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     continue;
                 }
 
-
                 /* Insert log */
                 // Prepare builder
                 IRBuilder<> builder(ErrBB);
@@ -395,26 +415,31 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 unsigned line = Loc->getLine();
                 DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
                 Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
-                conds.push_back(new Condition(F.getName(), dyn_cast<StoreInst>(U)->getValueOperand()));
-                conds.push_back(new Condition(filename, lineVal));
+                conds.push_back(new Condition(F.getName(),
+                dyn_cast<StoreInst>(U)->getValueOperand())); conds.push_back(new
+                Condition(filename, lineVal));
                 */
 
                 // Prepare function
                 std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
                 Type *retType = Type::getVoidTy(Ctx);
-                FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-                FunctionCallee logFunc = F.getParent()->getOrInsertFunction("_printk", funcType);
+                FunctionType *funcType =
+                    FunctionType::get(retType, paramTypes, false);
+                FunctionCallee logFunc =
+                    F.getParent()->getOrInsertFunction("_printk", funcType);
 
                 // Prepare arguments
                 std::vector<Value *> args;
                 Twine format = Twine("[PERMOD] %s: %d\n");
-                Value *formatStr = builder.CreateGlobalStringPtr(format.getSingleStringRef());
+                Value *formatStr =
+                    builder.CreateGlobalStringPtr(format.getSingleStringRef());
 
                 while (!conds.empty()) {
                     Condition *cond = conds.back();
                     conds.pop_back();
 
-                    args.push_back(builder.CreatePointerCast(formatStr, Type::getInt8PtrTy(Ctx)));
+                    args.push_back(builder.CreatePointerCast(
+                        formatStr, Type::getInt8PtrTy(Ctx)));
                     args.push_back(builder.CreateGlobalStringPtr(cond->Name));
                     args.push_back(cond->Val);
                     builder.CreateCall(logFunc, args);
