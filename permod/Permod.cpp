@@ -24,13 +24,6 @@
     } while (0)
 #endif // DEBUG
 
-#ifdef DEBUG_CONCISE
-#define ISNULL(x)                                                              \
-    ((x == NULL) ? (errs() << #x << " is NULL\n", true)                        \
-                 : (errs() << #x << " is not NULL\n", false))
-#else
-#define ISNULL(x) (x == NULL)
-#endif // DEBUG_CONCISE
 
 using namespace llvm;
 
@@ -124,7 +117,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             return RetVal;
         }
 
-        return NULL;
+        return nullptr;
     }
 
     /* Get error-thrower BB "ErrBB"
@@ -134,15 +127,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     BasicBlock *getErrBB(User *U) {
         StoreInst *SI = dyn_cast<StoreInst>(U);
         if (!SI)
-            return NULL;
+            return nullptr;
 
         // Storing -EACCES?
         Value *ValOp = SI->getValueOperand();
         ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
         if (!CI)
-            return NULL;
+            return nullptr;
         if (CI->getSExtValue() != -EACCES)
-            return NULL;
+            return nullptr;
 
         // Error-thrower BB (BB of store -EACCES)
         BasicBlock *ErrBB = SI->getParent();
@@ -262,7 +255,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      * Returns: (StringRef, Value*)
        - switch (flag) {}     // name:of flag, val:of flag
      */
-    bool getSwCond(SwitchInst *SwI, std::vector<Condition *> &conds) {
+    Condition* getSwCond(SwitchInst *SwI) {
         StringRef name;
         Value *val;
 
@@ -276,14 +269,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         // Get name
         SwCond = getOrigin(SwCond);
         if (!SwCond)
-            return false;
+            return nullptr;
         DEBUG_PRINT("Original Switch condition: " << *SwCond << "\n");
 
         name = getVarName(SwCond);
         DEBUG_PRINT("Switch name: " << name << "\n");
 
-        conds.push_back(new Condition(name, val));
-        return true;
+        return new Condition(name, val);
     }
 
     /*
@@ -300,7 +292,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 BB = PredBB;
             }
         }
-        return NULL;
+        return nullptr;
     }
 
     void deleteAllCond(std::vector<Condition *> &conds) {
@@ -412,11 +404,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 }
                 DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
 
-                if (!getSwCond(SwI, conds)) {
+                cond = getSwCond(SwI);
+                if (!cond) {
                     DEBUG_PRINT("* geSwCond has failed.\n");
                     deleteAllCond(conds);
                     continue;
                 }
+                conds.push_back(cond);
 
                 /* Insert log */
                 // Prepare builder
