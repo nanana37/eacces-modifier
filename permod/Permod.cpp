@@ -94,7 +94,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      * Get variable name
      */
     StringRef getVarName(Value *V) {
-        StringRef Name = V->getName();
+        StringRef Name = getOrigin(V)->getName();
         if (Name.empty())
             Name = "Unnamed Condition";
         return Name;
@@ -157,89 +157,105 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         Condition(StringRef Name, Value *Val) : Name(Name), Val(Val) {}
     };
 
-    /*
-     * Get name & value of if condition
 
-     * Returns: (StringRef, Value*)
-       - if (flag & val) {}     // name:of flag, val:val
-       - if (!func()) {}   // name:of func, val:0
+    // Check whether the DestBB is true or false successor
+    bool isBranchTrue(BranchInst *BrI, BasicBlock *DestBB) {
+        if (BrI->getSuccessor(0) == DestBB)
+            return true;
+        return false;
+    }
 
-     * Kinds of if condition:
-       - AndInst: if (flag & 2) {}
-            %1 = load i32, ptr %flag.addr, align 4
-            %and = and i32 %1, 2
-            %tobool = icmp ne i32 %and, 0
-       - CallInst: if (!func()) {}
-            %call = call i32 @function()
-            %tobool = icmp ne i32 %call, 0
-    */
-    // TODO: Predicts only true branch
-    bool getIfCond(BranchInst *BrI, std::vector<Condition *> &conds) {
-        DEBUG_PRINT("Getting if condition from: " << *BrI << "\n");
-
+    /* Get name & value of if condition
+       - C
+        if (flag & 2) {}     // name:of flag, val:val
+       - IR
+        %and = and i32 %flag, 2
+        %tobool = icmp ne i32 %and, 0
+        br i1 %tobool, label %if.then, label %if.end
+     */
+    Condition* getIfCond_cmp(BranchInst *BrI, CmpInst *CmpI, BasicBlock *DestBB) {
         StringRef name;
         Value *val;
 
-        // Get if condition
-        // NOTE: IfCond is always a cmp instruction
-        // TODO: "if(A && B){}" is not supported. IfCond is BranchInst.
-        Value *IfCond = BrI->getCondition();
-        if (!IfCond)
-            return false;
-        /*
-            Kinds of IfCond:
-            - br i1 %call, label %if.end, label %if.then
-            - br i1 %tobool, label %if.then, label %if.end
-         */
-        // IfCond: br i1 %call, label %if.end, label %if.then
-        if (auto *BrCallI = dyn_cast<CallInst>(IfCond)) {
-            DEBUG_PRINT("IfCond is Call: " << *BrCallI << "\n");
-            Function *Callee = BrCallI->getCalledFunction();
-            if (!Callee)
-                return false;
-            name = getVarName(Callee);
-            val = ConstantInt::get(Type::getInt32Ty(BrCallI->getContext()), 0);
-            conds.push_back(new Condition(name, val));
-            return true;
+        Value *CmpOp = CmpI->getOperand(0);
+        if (!CmpOp)
+            return nullptr;
+
+        // CmpOp: %and = and i32 %flag, 2
+        if (auto *AndI = dyn_cast<BinaryOperator>(CmpOp)) {
+            DEBUG_PRINT("AndInst: " << *AndI << "\n");
+            CmpOp = AndI->getOperand(0);
+            if (!CmpOp)
+                return nullptr;
+            DEBUG_PRINT("AndInst operand: " << *CmpOp << "\n");
+            name = getVarName(CmpOp);
+            val = AndI->getOperand(1);
+            return new Condition(name, val);
         }
 
-        // IfCond: br i1 %tobool, label %if.then, label %if.end
-        // %tobool = icmp ne i32 %call/and, 0
-        if (auto *BrCmpI = dyn_cast<CmpInst>(IfCond)) {
-            DEBUG_PRINT("IfCond is Cmp: " << *BrCmpI << "\n");
-            IfCond = BrCmpI->getOperand(0);
-            if (!IfCond)
-                return false;
-            /*
-               Kinds of CmpInst:
-                   %tobool = icmp ne i32 %and, 0
-                   %tobool = icmp ne i32 %call, 0
-             */
-            if (auto *AndI = dyn_cast<BinaryOperator>(BrCmpI->getOperand(0))) {
-                DEBUG_PRINT("AndInst: " << *AndI << "\n");
-                IfCond = getOrigin(AndI->getOperand(0));
-                if (!IfCond)
-                    return false;
-                name = getVarName(IfCond);
-                val = AndI->getOperand(1);
-            } else if (auto *CallI =
-                           dyn_cast<CallInst>(BrCmpI->getOperand(0))) {
-                DEBUG_PRINT("CallInst: " << *CallI << "\n");
-                Function *Callee = CallI->getCalledFunction();
-                if (!Callee)
-                    return false;
-                name = getVarName(Callee);
-                val = BrCmpI->getOperand(1);
-            } else {
-                DEBUG_PRINT("Unexpected Instruction: " << *BrCmpI->getOperand(0)
-                                                       << "\n");
-                return false;
-            }
-            conds.push_back(new Condition(name, val));
-            return true;
+        // CmpOp: %call = call i32 @function()
+        if (auto *CallI = dyn_cast<CallInst>(CmpOp)) {
+            DEBUG_PRINT("CallInst: " << *CallI << "\n");
+            Function *Callee = CallI->getCalledFunction();
+            if (!Callee)
+                return nullptr;
+            name = getVarName(Callee);
+            int valInt = isBranchTrue(BrI, DestBB) ? 1 : 0;
+            val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), valInt);
+            return new Condition(name, val);
+        }
+
+        DEBUG_PRINT("Unexpected Instruction: " << *CmpOp << "\n");
+        return nullptr;
+    }
+
+    /* Get name & value of if condition
+       - C
+        if (!func()) {}   // name:of func, val:0
+       - IR
+        %call = call i32 @function()
+        br i1 %call, label %if.then, label %if.end
+     */
+    Condition* getIfCond_call(BranchInst *BrI, CallInst *CallI, BasicBlock *DestBB) {
+        StringRef name;
+        Value *val;
+
+        Function *Callee = CallI->getCalledFunction();
+        if (!Callee)
+            return nullptr;
+
+        name = getVarName(Callee);
+        int valInt = isBranchTrue(BrI, DestBB) ? 1 : 0;
+        val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), valInt);
+        return new Condition(name, val);
+    }
+
+    /* Get name & value of if condition
+       - And condition
+        if (flag & 2) {}
+       - Call condition
+        if (!func()) {}   // name:of func, val:0
+     */
+    Condition* getIfCond(BranchInst *BrI, BasicBlock *DestBB, std::vector<Condition *> &conds) {
+        StringRef name;
+        Value *val;
+
+        Value *IfCond = BrI->getCondition();
+        if (!IfCond)
+            return nullptr;
+
+        // And condition: if (flag & 2) {}
+        if (isa<CmpInst>(IfCond)) {
+            DEBUG_PRINT("IfCond is Cmp: " << *IfCond << "\n");
+            return getIfCond_cmp(BrI, dyn_cast<CmpInst>(IfCond), DestBB);
+        }
+        // Call condition: if (!func()) {}
+        if (isa<CallInst>(IfCond)) {
+            DEBUG_PRINT("IfCond is Call: " << *IfCond << "\n");
+            return getIfCond_call(BrI, dyn_cast<CallInst>(IfCond), DestBB);
         }
         DEBUG_PRINT("Unexpected Instruction: " << *IfCond << "\n");
-        return false;
+        return nullptr;
     }
 
     /* Get name & value of switch condition
@@ -361,12 +377,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 /*     DEBUG_PRINT("* Err-BB is not a successor\n"); */
                 /*     continue; */
                 /* } */
-
-                if (!getIfCond(BrI, conds)) {
+                Condition *cond = getIfCond(BrI, ErrBB, conds);
+                if (!cond) {
                     DEBUG_PRINT("* getIfCond has failed.\n");
                     deleteAllCond(conds);
                     continue;
                 }
+                conds.push_back(cond);
 
                 // Get Switch condition
                 /*
@@ -426,7 +443,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 FunctionType *funcType =
                     FunctionType::get(retType, paramTypes, false);
                 FunctionCallee logFunc =
-                    F.getParent()->getOrInsertFunction("_printk", funcType);
+                    F.getParent()->getOrInsertFunction("printf", funcType);
 
                 // Prepare arguments
                 std::vector<Value *> args;
