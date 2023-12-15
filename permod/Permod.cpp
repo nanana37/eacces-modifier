@@ -437,7 +437,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 FunctionType *funcType =
                     FunctionType::get(retType, paramTypes, false);
                 FunctionCallee logFunc =
-                    F.getParent()->getOrInsertFunction("printf", funcType);
+                    F.getParent()->getOrInsertFunction("_printk", funcType);
 
                 // Prepare arguments
                 std::vector<Value *> args;
