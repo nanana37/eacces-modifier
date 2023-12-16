@@ -415,7 +415,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
                 LLVMContext &Ctx = ErrBB->getContext();
 
-                /*
                 // Debug info
                 // NOTE: need clang flag "-g"
                 StringRef filename = F.getParent()->getSourceFileName();
@@ -423,10 +422,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 unsigned line = Loc->getLine();
                 DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
                 Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
-                conds.push_back(new Condition(F.getName(),
-                dyn_cast<StoreInst>(U)->getValueOperand())); conds.push_back(new
-                Condition(filename, lineVal));
-                */
+                conds.push_back(new Condition(
+                    F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(), true));
+                conds.push_back(new Condition(filename, lineVal, true));
 
                 // Prepare function
                 std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
@@ -450,9 +448,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     Condition *cond = conds.back();
                     conds.pop_back();
 
-                    Value *ins_formatStr = cond->isTrueBranchOrSwitch
-                                            ? formatStr
-                                            : formatStr_not;
+                    Value *ins_formatStr =
+                        cond->isTrueBranchOrSwitch ? formatStr : formatStr_not;
 
                     args.push_back(builder.CreatePointerCast(
                         ins_formatStr, Type::getInt8PtrTy(Ctx)));
