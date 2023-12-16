@@ -10,7 +10,7 @@
 
 #include <errno.h>
 
-#define MAX_TRACE_DEPTH 3
+#define MAX_TRACE_DEPTH 5
 
 #define DEBUG
 #ifdef DEBUG
@@ -23,7 +23,6 @@
     do {                                                                       \
     } while (0)
 #endif // DEBUG
-
 
 using namespace llvm;
 
@@ -150,7 +149,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         Condition(StringRef Name, Value *Val) : Name(Name), Val(Val) {}
     };
 
-
     // Check whether the DestBB is true or false successor
     bool isBranchTrue(BranchInst *BrI, BasicBlock *DestBB) {
         if (BrI->getSuccessor(0) == DestBB)
@@ -166,7 +164,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         %tobool = icmp ne i32 %and, 0
         br i1 %tobool, label %if.then, label %if.end
      */
-    Condition* getIfCond_cmp(BranchInst *BrI, CmpInst *CmpI, BasicBlock *DestBB) {
+    Condition *getIfCond_cmp(BranchInst *BrI, CmpInst *CmpI,
+                             BasicBlock *DestBB) {
         StringRef name;
         Value *val;
 
@@ -194,7 +193,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 return nullptr;
             name = getVarName(Callee);
             int valInt = isBranchTrue(BrI, DestBB) ? 1 : 0;
-            val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), valInt);
+            val =
+                ConstantInt::get(Type::getInt32Ty(CallI->getContext()), valInt);
             return new Condition(name, val);
         }
 
@@ -209,7 +209,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         %call = call i32 @function()
         br i1 %call, label %if.then, label %if.end
      */
-    Condition* getIfCond_call(BranchInst *BrI, CallInst *CallI, BasicBlock *DestBB) {
+    Condition *getIfCond_call(BranchInst *BrI, CallInst *CallI,
+                              BasicBlock *DestBB) {
         StringRef name;
         Value *val;
 
@@ -229,7 +230,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
        - Call condition
         if (!func()) {}   // name:of func, val:0
      */
-    Condition* getIfCond(BranchInst *BrI, BasicBlock *DestBB, std::vector<Condition *> &conds) {
+    Condition *getIfCond(BranchInst *BrI, BasicBlock *DestBB) {
         StringRef name;
         Value *val;
 
@@ -255,7 +256,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      * Returns: (StringRef, Value*)
        - switch (flag) {}     // name:of flag, val:of flag
      */
-    Condition* getSwCond(SwitchInst *SwI) {
+    Condition *getSwCond(SwitchInst *SwI) {
         StringRef name;
         Value *val;
 
@@ -295,6 +296,95 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return nullptr;
     }
 
+    /*
+     * Search predecessors for If/Switch Statement BB (CondBB)
+     * Returns: BasicBlock*
+     */
+    BasicBlock *searchPredsForCondBB(BasicBlock *BB) {
+        DEBUG_PRINT("Search preds of: " << *BB << "\n");
+        for (auto *PredBB : predecessors(BB)) {
+            Instruction *TI = PredBB->getTerminator();
+            if (isa<BranchInst>(TI)) {
+                DEBUG_PRINT("Branch BB: " << *PredBB << "\n");
+                // Branch sometimes has only one successor
+                // e.g. br label %if.end
+                if (TI->getNumSuccessors() != 2)
+                    continue;
+                return PredBB;
+            }
+            if (isa<SwitchInst>(TI)) {
+                DEBUG_PRINT("Switch BB: " << *PredBB << "\n");
+                return PredBB;
+            }
+            BB = PredBB;
+        }
+        return nullptr;
+    }
+
+    /*
+     * Get Condition from CondBB
+     */
+    Condition *getCondFromCondBB(BasicBlock *CondBB) {
+        DEBUG_PRINT("CondBB: " << *CondBB << "\n");
+
+        // Get Condition
+        /*
+         * if (flag & 2) {}     // name:of flag, val:val
+         * switch (flag) {}     // name:of flag, val:of flag
+         */
+        if (auto *BrI = dyn_cast<BranchInst>(CondBB->getTerminator())) {
+            return getIfCond(BrI, CondBB);
+        } else if (auto *SwI = dyn_cast<SwitchInst>(CondBB->getTerminator())) {
+            return getSwCond(SwI);
+        } else {
+            DEBUG_PRINT("* CondBB terminator is not a branch or switch\n");
+            return nullptr;
+        }
+    }
+
+    void backTraceToGetCondOfErrBB(BasicBlock *ErrBB,
+                                   std::vector<Condition *> &conds) {
+        BasicBlock *BB = ErrBB;
+        for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
+
+            // Get Condition BB
+            BasicBlock *CondBB = searchPredsForCondBB(BB);
+            if (!CondBB) {
+                DEBUG_PRINT("* No CondBB in preds\n");
+                break;
+            }
+            DEBUG_PRINT("CondBB found: " << *CondBB << "\n");
+
+            // Get Condition
+            Condition *cond = getCondFromCondBB(CondBB);
+            if (!cond) {
+                DEBUG_PRINT("* getCondFromCondBB has failed.\n");
+                break;
+            }
+
+            // Update BB
+            // NOTE: We need CondBB, not only its terminator
+            BB = CondBB;
+
+            // Add Condition
+            conds.push_back(cond);
+
+            // The loop reaches to the end?
+            if (CondBB == &CondBB->getParent()->getEntryBlock()) {
+                DEBUG_PRINT("* Reached to the end\n");
+                break;
+            }
+            if (i == MAX_TRACE_DEPTH - 1) {
+                DEBUG_PRINT("* Reached to the max depth\n");
+                break;
+            }
+        }
+    }
+
+    /*
+     * Delete all conditions
+     * Call this when you continue to next ErrBB
+     */
     void deleteAllCond(std::vector<Condition *> &conds) {
         while (!conds.empty()) {
             delete conds.back();
@@ -332,85 +422,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 // Prepare Array of Condition
                 std::vector<Condition *> conds;
 
-                // Get If statement BB "IfBB"; Pred of ErrBB
-                BasicBlock *IfBB = ErrBB->getSinglePredecessor();
-                if (!IfBB) {
-                    DEBUG_PRINT("* ErrBB has no single predecessor\n");
+                // Backtrace to find If/Switch Statement BB
+                backTraceToGetCondOfErrBB(ErrBB, conds);
+                if (conds.empty()) {
+                    DEBUG_PRINT("** conds is empty\n");
                     continue;
                 }
-                DEBUG_PRINT("If statement BB (Pred of ErrBB): " << *IfBB
-                                                                << "\n");
-
-                // Get If condition
-                // TODO: "if(A && B){}" is not supported.
-                // This splits into two BBs; "if(A){ if(B){} }"
-                /*
-                 * if branch
-                  %1 = load i32, ptr %flag.addr, align 4
-                  %cmp = icmp eq i32 %1, 1
-                  br i1 %cmp, label %if.then, label %if.end
-                */
-                BranchInst *BrI = dyn_cast<BranchInst>(IfBB->getTerminator());
-                if (!BrI) {
-                    DEBUG_PRINT("* IfBB terminator is not a branch\n");
-                    continue;
-                }
-                /* DEBUG_PRINT("Branch Instruction: " << *BrI << "\n"); */
-
-                if (BrI->getNumSuccessors() != 2) {
-                    DEBUG_PRINT("* Branch suc is not 2\n");
-                    continue;
-                }
-
-                // NOTE: Err-BB is always the first successor
-                /* if (BrI->getSuccessor(1) == ErrBB) BrI->swapSuccessors();
-                 */
-                /* if (BrI->getSuccessor(0) != ErrBB) { */
-                /*     DEBUG_PRINT("* Err-BB is not a successor\n"); */
-                /*     continue; */
-                /* } */
-                Condition *cond = getIfCond(BrI, ErrBB, conds);
-                if (!cond) {
-                    DEBUG_PRINT("* getIfCond has failed.\n");
-                    deleteAllCond(conds);
-                    continue;
-                }
-                conds.push_back(cond);
-
-                // Get Switch condition
-                /*
-                   switch i32 %1, label %sw.default [
-                     // This is one of the cases
-                     i32 0, label %sw.bb
-                     // Sometimes 1 case has multiple preds
-                     i32 1, label %sw.bb1
-                     i32 2, label %sw.bb1
-                   ]
-                 */
-                BasicBlock *SwBB = getSwBB(IfBB);
-                if (!SwBB) {
-                    DEBUG_PRINT("* Switch BB is NULL\n");
-                    deleteAllCond(conds);
-                    continue;
-                }
-                DEBUG_PRINT("Switch BB: " << *SwBB << "\n");
-
-                // NOTE: getSwBB() already knows that SwI is not NULL
-                SwitchInst *SwI = dyn_cast<SwitchInst>(SwBB->getTerminator());
-                if (!SwI) {
-                    DEBUG_PRINT("* Switch Instruction is NULL\n");
-                    deleteAllCond(conds);
-                    continue;
-                }
-                DEBUG_PRINT("Switch Instruction: " << *SwI << "\n");
-
-                cond = getSwCond(SwI);
-                if (!cond) {
-                    DEBUG_PRINT("* geSwCond has failed.\n");
-                    deleteAllCond(conds);
-                    continue;
-                }
-                conds.push_back(cond);
 
                 /* Insert log */
                 // Prepare builder
