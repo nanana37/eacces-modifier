@@ -10,7 +10,7 @@
 
 #include <errno.h>
 
-#define MAX_TRACE_DEPTH 5
+#define MAX_TRACE_DEPTH 100
 
 #define DEBUG
 #ifdef DEBUG
@@ -138,14 +138,30 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return ErrBB;
     }
 
+    /*
+     * Condition
+     */
+    // Condition type: This is for type of log
+    // NOTE: Used for array index!!
+    enum CondType {
+        CMPTRUE = 0,
+        CMPFALSE,
+        CALLTRUE,
+        CALLFALSE,
+        SWITCH,
+        DINFO,
+        HELLO,
+        NUM_OF_CONDTYPE
+    };
+
     class Condition {
       public:
         StringRef Name;
         Value *Val;
-        bool isTrueBranchOrSwitch;
-        Condition(StringRef Name, Value *Val, bool isTrueBranchOrSwitch)
-            : Name(Name), Val(Val), isTrueBranchOrSwitch(isTrueBranchOrSwitch) {
-        }
+        CondType Type;
+
+        Condition(StringRef name, Value *val, CondType type)
+            : Name(name), Val(val), Type(type) {}
     };
 
     // Check whether the DestBB is true or false successor
@@ -167,6 +183,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                              BasicBlock *DestBB) {
         StringRef name;
         Value *val;
+        CondType type;
 
         Value *CmpOp = CmpI->getOperand(0);
         if (!CmpOp)
@@ -180,7 +197,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 return nullptr;
             name = getVarName(CmpOp);
             val = AndI->getOperand(1);
-            return new Condition(name, val, isBranchTrue(BrI, DestBB));
+            type = isBranchTrue(BrI, DestBB) ? CMPTRUE : CMPFALSE;
+            return new Condition(name, val, type);
         }
 
         // CmpOp: %call = call i32 @function()
@@ -193,7 +211,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             int valInt = isBranchTrue(BrI, DestBB) ? 1 : 0;
             val =
                 ConstantInt::get(Type::getInt32Ty(CallI->getContext()), valInt);
-            return new Condition(name, val, isBranchTrue(BrI, DestBB));
+            type = isBranchTrue(BrI, DestBB) ? CALLTRUE : CALLFALSE;
+            return new Condition(name, val, type);
         }
 
         DEBUG_PRINT("Unexpected Instruction: " << *CmpOp << "\n");
@@ -211,6 +230,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                               BasicBlock *DestBB) {
         StringRef name;
         Value *val;
+        CondType type;
 
         Function *Callee = CallI->getCalledFunction();
         if (!Callee)
@@ -219,7 +239,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         name = getVarName(Callee);
         int valInt = isBranchTrue(BrI, DestBB) ? 1 : 0;
         val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), valInt);
-        return new Condition(name, val, isBranchTrue(BrI, DestBB));
+        type = isBranchTrue(BrI, DestBB) ? CALLTRUE : CALLFALSE;
+        return new Condition(name, val, type);
     }
 
     /* Get name & value of if condition
@@ -274,7 +295,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         name = getVarName(SwCond);
         DEBUG_PRINT("Switch name: " << name << "\n");
 
-        return new Condition(name, val, true);
+        return new Condition(name, val, SWITCH);
     }
 
     /*
@@ -373,6 +394,27 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
     /*
+     * Prepare format string
+     */
+    void prepareFormat(Value *format[], IRBuilder<> &builder,
+                       LLVMContext &Ctx) {
+        StringRef formatStr[NUM_OF_CONDTYPE];
+        formatStr[CMPTRUE] = "[Permod] %s: %d (true)\n";
+        formatStr[CMPFALSE] = "[Permod] %s: %d (false)\n";
+        formatStr[CALLTRUE] = "[Permod] %s(): %d (true)\n";
+        formatStr[CALLFALSE] = "[Permod] %s(): %d (false)\n";
+        formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
+        formatStr[DINFO] = "[Permod] %s: %d\n";
+        formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
+
+        for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
+            Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
+            format[i] =
+                builder.CreatePointerCast(formatVal, Type::getInt8PtrTy(Ctx));
+        }
+    }
+
+    /*
      *****************
      * main function *
      *****************
@@ -410,6 +452,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 }
 
                 /* Insert log */
+                DEBUG_PRINT("...Inserting log...\n");
                 // Prepare builder
                 IRBuilder<> builder(ErrBB);
                 builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
@@ -423,8 +466,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
                 Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
                 conds.push_back(new Condition(
-                    F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(), true));
-                conds.push_back(new Condition(filename, lineVal, true));
+                    F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(),
+                    CALLTRUE));
+                conds.push_back(new Condition(filename, lineVal, DINFO));
+                conds.push_back(new Condition("", NULL, HELLO));
 
                 // Prepare function
                 std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
@@ -436,23 +481,24 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
                 // Prepare arguments
                 std::vector<Value *> args;
-                Twine format = Twine("[PERMOD] %s: %d\n");
-                Value *formatStr =
-                    builder.CreateGlobalStringPtr(format.getSingleStringRef());
 
-                Twine format_not = Twine("[PERMOD] %s: %d (not)\n");
-                Value *formatStr_not = builder.CreateGlobalStringPtr(
-                    format_not.getSingleStringRef());
+                // Prepare format
+                Value *format[NUM_OF_CONDTYPE];
+                prepareFormat(format, builder, Ctx);
 
                 while (!conds.empty()) {
                     Condition *cond = conds.back();
                     conds.pop_back();
 
-                    Value *ins_formatStr =
-                        cond->isTrueBranchOrSwitch ? formatStr : formatStr_not;
-
-                    args.push_back(builder.CreatePointerCast(
-                        ins_formatStr, Type::getInt8PtrTy(Ctx)));
+                    if (cond->Type == HELLO) {
+                        args.push_back(format[cond->Type]);
+                        builder.CreateCall(logFunc, args);
+                        DEBUG_PRINT("Inserted log for HELLO\n");
+                        args.clear();
+                        delete cond;
+                        continue;
+                    }
+                    args.push_back(format[cond->Type]);
                     args.push_back(builder.CreateGlobalStringPtr(cond->Name));
                     args.push_back(cond->Val);
                     builder.CreateCall(logFunc, args);
