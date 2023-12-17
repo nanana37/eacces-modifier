@@ -372,7 +372,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // The loop reaches to the end?
             if (CondBB == &CondBB->getParent()->getEntryBlock()) {
-                DEBUG_PRINT("* Reached to the end\n");
+                DEBUG_PRINT("* Reached to the entry\n");
                 break;
             }
             if (i == MAX_TRACE_DEPTH - 1) {
