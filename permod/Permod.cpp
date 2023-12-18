@@ -52,11 +52,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         if (auto *LI = dyn_cast<LoadInst>(V)) {
             V = LI->getPointerOperand();
-        } else if (auto *AI = dyn_cast<BinaryOperator>(V)) {
+        }
+
+        if (auto *AI = dyn_cast<BinaryOperator>(V)) {
             V = AI->getOperand(0);
-        } else {
-            DEBUG_PRINT("Unknown: " << *V << "\n");
-            return V;
         }
 
         // #1: store i32 %flag, ptr %flag.addr, align 4
