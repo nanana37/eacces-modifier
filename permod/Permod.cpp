@@ -48,7 +48,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       %0 = load i32, ptr %flag.addr, align 4
     */
     Value *getOrigin(Value *V) {
-        DEBUG_PRINT("Getting origin of: " << *V << "\n");
+        /* DEBUG_PRINT("Getting origin of: " << *V << "\n"); */
 
         if (auto *LI = dyn_cast<LoadInst>(V)) {
             V = LI->getPointerOperand();
@@ -190,7 +190,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // CmpOp: %and = and i32 %flag, 2
         if (auto *AndI = dyn_cast<BinaryOperator>(CmpOp)) {
-            DEBUG_PRINT("AndInst: " << *AndI << "\n");
+            DEBUG_PRINT("AndI as CmpOp: " << *AndI << "\n");
             CmpOp = AndI->getOperand(0);
             if (!CmpOp)
                 return nullptr;
@@ -202,7 +202,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // CmpOp: %call = call i32 @function()
         if (auto *CallI = dyn_cast<CallInst>(CmpOp)) {
-            DEBUG_PRINT("CallInst: " << *CallI << "\n");
+            DEBUG_PRINT("CallI as CmpOp: " << *CallI << "\n");
             Function *Callee = CallI->getCalledFunction();
             if (!Callee)
                 return nullptr;
@@ -214,7 +214,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             return new Condition(name, val, type);
         }
 
-        DEBUG_PRINT("Unexpected Instruction: " << *CmpOp << "\n");
+        // CmpOp: %1 = load i32, i32* %flag.addr, align 4
+        // TODO: This causes error
+        /* if (auto *LoadI = dyn_cast<LoadInst>(CmpOp)) { */
+        /*     DEBUG_PRINT("!!!!LoadI as CmpOp: " << *LoadI << "\n"); */
+        /*     name = getVarName(LoadI); */
+        /*     val = LoadI; */
+        /*     type = isBranchTrue(BrI, DestBB) ? CMPTRUE : CMPFALSE; */
+        /*     return new Condition(name, val, type); */
+        /* } */
+
+        DEBUG_PRINT("** Unexpected as CmpOp: " << *CmpOp << "\n");
         return nullptr;
     }
 
@@ -266,7 +276,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             DEBUG_PRINT("IfCond is Call: " << *IfCond << "\n");
             return getIfCond_call(BrI, dyn_cast<CallInst>(IfCond), DestBB);
         }
-        DEBUG_PRINT("Unexpected Instruction: " << *IfCond << "\n");
+        DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
         return nullptr;
     }
 
@@ -302,7 +312,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      * Returns: BasicBlock*
      */
     BasicBlock *searchPredsForCondBB(BasicBlock *BB) {
-        DEBUG_PRINT("Search preds of: " << *BB << "\n");
+        /* DEBUG_PRINT("Search preds of: " << *BB << "\n"); */
         for (auto *PredBB : predecessors(BB)) {
             Instruction *TI = PredBB->getTerminator();
             if (isa<BranchInst>(TI)) {
@@ -368,6 +378,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // Add Condition
             conds.push_back(cond);
+            DEBUG_PRINT("Added condition: " << cond->Name << "\n\n");
 
             // The loop reaches to the end?
             if (CondBB == &CondBB->getParent()->getEntryBlock()) {
@@ -422,9 +433,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         bool modified = false;
         for (auto &F : M.functions()) {
 
+            // Skip
+            if (F.getName() == "_printk")
+                continue;
+            DEBUG_PRINT("Analyzing: " << F.getName() << "()\n");
+
             Value *RetVal = getReturnValue(&F);
             if (!RetVal)
                 continue;
+            DEBUG_PRINT("Return value: " << *RetVal << "\n\n");
 
             for (User *U : RetVal->users()) {
 
@@ -505,6 +522,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     args.clear();
 
                     delete cond;
+                }
+                if (conds.empty()) {
+                    DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
+                } else {
+                    DEBUG_PRINT("** Failed to insert all logs\n");
+                    deleteAllCond(conds);
                 }
 
                 // Declare the modification
