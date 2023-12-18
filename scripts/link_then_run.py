@@ -31,6 +31,14 @@ if platform == "darwin":
 else:
     extension = "so"
 clang_flag = f"-fpass-plugin=build/permod/PermodPass.{extension} -fno-discard-value-names"
+
+if len(sys.argv) > 2 and sys.argv[2] == "llvm":
+    clang_flag += " -S -emit-llvm"
+    compile_command = f"clang {clang_flag} -c {source_target} -o -"
+    print("Compile command:\n$ " + compile_command)
+    subprocess.run(compile_command, shell=True)
+    exit(0)
+
 compile_command = f"clang {clang_flag} -c {source_target} -o bin/{target}.o"
 print("Compile command:\n$ " + compile_command)
 subprocess.run(compile_command, shell=True)

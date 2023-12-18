@@ -1,0 +1,5 @@
+test
+!/test/src
+!/test/src/*
+!/test/log.list
+!/test/trace.dat

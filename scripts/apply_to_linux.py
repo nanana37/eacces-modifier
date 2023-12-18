@@ -39,15 +39,21 @@ else:
 ## Cd to the kernel directory
 current_dir = os.getcwd()
 home_dir = os.path.expanduser("~")
-kernel_dir=f"{home_dir}/Documents/b4-research/kernel/partial-v6-5/build"
+kernel_dir=f"{home_dir}/linux-mod"
 os.chdir(kernel_dir)
 
 ## Remove the old object file
-rm_command = f"rm fs/namei.o"
-print("Remove command:\n$ " + rm_command)
-subprocess.run(rm_command, shell=True)
+# rm_command = f"rm fs/namei.o"
+# print("Remove command:\n$ " + rm_command)
+# subprocess.run(rm_command, shell=True)
 
-apply_command = f"make CC=clang KCFLAGS=\"-fno-discard-value-names -fpass-plugin={home_dir}/Documents/eacces-modifier/build/permod/PermodPass.{extension}\" fs/namei.o"
+eacces_dir = f"{home_dir}/eacces-modifier" 
+# target = f"fs/namei.o {eacces_dir}/bin/rtlib.o"
+# target = f"fs/namei.o"
+# target = f"{eacces_dir}/bin/rtlib.o"
+target = ""
+make_flag = f"-fno-discard-value-names -fpass-plugin={eacces_dir}/build/permod/PermodPass.{extension}"
+apply_command = f"make -j 8 CC=clang KCFLAGS=\"{make_flag}\" {target}"
 print("Apply command:\n$ " + apply_command)
 subprocess.run(apply_command, shell=True)
 os.chdir(current_dir)
