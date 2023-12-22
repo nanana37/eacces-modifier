@@ -49,6 +49,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     * NOTE: This is recursive!
     */
     Value *getOrigin(Value *V) {
+        Value *Origin = V;
+
         DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
         if (auto *LI = dyn_cast<LoadInst>(V)) {
@@ -80,6 +82,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             }
         }
 
+        // GetElementPtrInst: Get struct from member
+        // TODO?: Is this necessary?
+        if (auto *GEP = dyn_cast<GetElementPtrInst>(V)) {
+            /* V = GEP->getPointerOperand(); */
+            DEBUG_PRINT("V was GEP: " << *V << "\n");
+            return V;
+        }
 
         // Stop the recursion
         if (!isa<Instruction>(V)) {
@@ -88,11 +97,38 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
         if (isa<CallInst>(V)) {
             DEBUG_PRINT("Origin: " << *V << "\n");
+            V = dyn_cast<CallInst>(V)->getCalledFunction();
+            return V;
+        }
+        if (isa<SExtInst>(V)) {
+            DEBUG_PRINT("Origin: " << *V << "\n");
+            V = dyn_cast<SExtInst>(V)->getOperand(0);
+            return V;
+        }
+        if (isa<AllocaInst>(V)) {
+            DEBUG_PRINT("Origin: " << *V << "\n");
+            return V;
+        }
+        if (V == Origin) {
+            DEBUG_PRINT("Cannot find origin anymore: " << *V << "\n");
             return V;
         }
 
         DEBUG_PRINT("Not Origin: " << *V << "\n");
         return getOrigin(V);
+    }
+
+    /*
+     * Get struct name, if the V is a member of struct
+     */
+    StringRef getStructName(Value *V) {
+        if (!isa<GetElementPtrInst>(V))
+            return "";
+        Value *PtrOp = dyn_cast<GetElementPtrInst>(V)->getPointerOperand();
+        if (!PtrOp)
+            return "";
+        DEBUG_PRINT("PtrOp: " << *PtrOp << "\n");
+        return getVarName(PtrOp);
     }
 
     /*
@@ -102,6 +138,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         StringRef Name = getOrigin(V)->getName();
         if (Name.empty())
             Name = "Unnamed Condition";
+        /* StringRef StructName = getStructName(V); */
+        /* if (!StructName.empty()) */
+        /*     Name = Twine(StructName) + "." + Twine(Name); */
+        DEBUG_PRINT("Name: " << Name << "\n");
         return Name;
     }
 
@@ -163,6 +203,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     enum CondType {
         CMPTRUE = 0,
         CMPFALSE,
+        CMPNULLTRUE,
+        CMPNULLFALSE,
         CALLTRUE,
         CALLFALSE,
         SWITCH,
@@ -238,11 +280,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             DEBUG_PRINT("!!!!LoadI as CmpOp: " << *LoadI << "\n");
             name = getVarName(LoadI);
             val = CmpI->getOperand(1);
-            
-            // TODO: if (!flag) {} -> name:flag, val:null
-            // But, we replace null with 0 because val is assumed to be int.
-            if (!val)
-                val = ConstantInt::get(Type::getInt32Ty(LoadI->getContext()), 0);
+
             type = isBranchTrue(BrI, DestBB) ? CMPTRUE : CMPFALSE;
             DEBUG_PRINT("name: " << name << "\n");
             DEBUG_PRINT("val: " << *val << "\n");
@@ -437,6 +475,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         StringRef formatStr[NUM_OF_CONDTYPE];
         formatStr[CMPTRUE] = "[Permod] %s: %d (true)\n";
         formatStr[CMPFALSE] = "[Permod] %s: %d (false)\n";
+        formatStr[CMPNULLTRUE] = "[Permod] %s: null (true)\n";
+        formatStr[CMPNULLFALSE] = "[Permod] %s: null (false)\n";
         formatStr[CALLTRUE] = "[Permod] %s(): %d (true)\n";
         formatStr[CALLFALSE] = "[Permod] %s(): %d (false)\n";
         formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
@@ -462,12 +502,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             // Skip
             if (F.getName() == "_printk")
                 continue;
-            DEBUG_PRINT("Analyzing: " << F.getName() << "()\n");
+            /* DEBUG_PRINT("Analyzing: " << F.getName() << "()\n"); */
 
             Value *RetVal = getReturnValue(&F);
             if (!RetVal)
                 continue;
-            DEBUG_PRINT("Return value: " << *RetVal << "\n\n");
+            /* DEBUG_PRINT("Return value: " << *RetVal << "\n\n"); */
 
             for (User *U : RetVal->users()) {
 
@@ -540,11 +580,26 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                         delete cond;
                         continue;
                     }
+
+                    // Check if the Value is ConstantPointerNull
+                    if (cond->Val && isa<ConstantPointerNull>(cond->Val)) {
+                        DEBUG_PRINT("Val is ConstantPointerNull\n");
+                        if (cond->Type == CMPTRUE)
+                            cond->Type = CMPNULLTRUE;
+                        else if (cond->Type == CMPFALSE)
+                            cond->Type = CMPNULLFALSE;
+                        else
+                            DEBUG_PRINT("** Unexpected type\n");
+                    }
+
+                    // Insert log
                     args.push_back(format[cond->Type]);
                     args.push_back(builder.CreateGlobalStringPtr(cond->Name));
                     args.push_back(cond->Val);
                     builder.CreateCall(logFunc, args);
                     DEBUG_PRINT("Inserted log for " << cond->Name << "\n");
+                    DEBUG_PRINT("Val: " << *cond->Val << "\n");
+                    DEBUG_PRINT("Type: " << cond->Type << "\n");
                     args.clear();
 
                     delete cond;
