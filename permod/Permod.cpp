@@ -46,16 +46,19 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     * code example:
       store i32 %flag, ptr %flag.addr, align 4
       %0 = load i32, ptr %flag.addr, align 4
+    * NOTE: This is recursive!
     */
     Value *getOrigin(Value *V) {
-        /* DEBUG_PRINT("Getting origin of: " << *V << "\n"); */
+        DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
         if (auto *LI = dyn_cast<LoadInst>(V)) {
             V = LI->getPointerOperand();
+            DEBUG_PRINT("V was Load: " << *V << "\n");
         }
 
         if (auto *AI = dyn_cast<BinaryOperator>(V)) {
             V = AI->getOperand(0);
+            DEBUG_PRINT("V was And: " << *V << "\n");
         }
 
         // #1: store i32 %flag, ptr %flag.addr, align 4
@@ -64,17 +67,32 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             if (!SI)
                 continue;
             V = SI->getValueOperand(); // %flag
+            DEBUG_PRINT("V was Store: " << *V << "\n");
         }
 
         // NOTE: Special case for kernel
         if (auto *ZI = dyn_cast<ZExtInst>(V)) {
             V = ZI->getOperand(0);
+            DEBUG_PRINT("V was ZExt: " << *V << "\n");
             if (auto *ZLI = dyn_cast<LoadInst>(V)) {
                 V = ZLI->getOperand(0);
+                DEBUG_PRINT("V was ZExt Load: " << *V << "\n");
             }
         }
 
-        return V;
+
+        // Stop the recursion
+        if (!isa<Instruction>(V)) {
+            DEBUG_PRINT("Origin: " << *V << "\n");
+            return V;
+        }
+        if (isa<CallInst>(V)) {
+            DEBUG_PRINT("Origin: " << *V << "\n");
+            return V;
+        }
+
+        DEBUG_PRINT("Not Origin: " << *V << "\n");
+        return getOrigin(V);
     }
 
     /*
@@ -215,14 +233,22 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
 
         // CmpOp: %1 = load i32, i32* %flag.addr, align 4
-        // TODO: This causes error
-        /* if (auto *LoadI = dyn_cast<LoadInst>(CmpOp)) { */
-        /*     DEBUG_PRINT("!!!!LoadI as CmpOp: " << *LoadI << "\n"); */
-        /*     name = getVarName(LoadI); */
-        /*     val = LoadI; */
-        /*     type = isBranchTrue(BrI, DestBB) ? CMPTRUE : CMPFALSE; */
-        /*     return new Condition(name, val, type); */
-        /* } */
+        // TODO: Try on some examples
+        if (auto *LoadI = dyn_cast<LoadInst>(CmpOp)) {
+            DEBUG_PRINT("!!!!LoadI as CmpOp: " << *LoadI << "\n");
+            name = getVarName(LoadI);
+            val = CmpI->getOperand(1);
+            
+            // TODO: if (!flag) {} -> name:flag, val:null
+            // But, we replace null with 0 because val is assumed to be int.
+            if (!val)
+                val = ConstantInt::get(Type::getInt32Ty(LoadI->getContext()), 0);
+            type = isBranchTrue(BrI, DestBB) ? CMPTRUE : CMPFALSE;
+            DEBUG_PRINT("name: " << name << "\n");
+            DEBUG_PRINT("val: " << *val << "\n");
+            DEBUG_PRINT("type: " << type << "\n");
+            return new Condition(name, val, type);
+        }
 
         DEBUG_PRINT("** Unexpected as CmpOp: " << *CmpOp << "\n");
         return nullptr;
