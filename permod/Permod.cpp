@@ -247,6 +247,27 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         Value *CmpOp = CmpI->getOperand(0);
         if (!CmpOp)
             return nullptr;
+        /* DEBUG_PRINT(*CmpI->getParent() << "\n"); */
+
+        Value *CmpOp2 = CmpI->getOperand(1);
+        if (!CmpOp2)
+            return nullptr;
+        /* if cmp with null
+         e.g. if (!inode):
+            %tobool = icmp ne %inode, null
+            br i1 %tobool, label %if.end, label %if.then
+         */
+        if (isa<ConstantPointerNull>(CmpOp2)) {
+            DEBUG_PRINT("CmpOp2 is null\n");
+            name = getVarName(CmpOp);
+            val = CmpOp2;
+            type = isBranchTrue(BrI, DestBB) ? CMPNULLFALSE : CMPNULLTRUE;
+            if (type == CMPNULLTRUE)
+                DEBUG_PRINT("Branch is true\n");
+            else
+                DEBUG_PRINT("Branch is false\n");
+            return new Condition(name, val, type);
+        }
 
         // CmpOp: %and = and i32 %flag, 2
         if (auto *AndI = dyn_cast<BinaryOperator>(CmpOp)) {
@@ -277,7 +298,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         // CmpOp: %1 = load i32, i32* %flag.addr, align 4
         // TODO: Try on some examples
         if (auto *LoadI = dyn_cast<LoadInst>(CmpOp)) {
-            DEBUG_PRINT("!!!!LoadI as CmpOp: " << *LoadI << "\n");
+            DEBUG_PRINT("LoadI as CmpOp: " << *LoadI << "\n");
             name = getVarName(LoadI);
             val = CmpI->getOperand(1);
 
@@ -473,12 +494,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     void prepareFormat(Value *format[], IRBuilder<> &builder,
                        LLVMContext &Ctx) {
         StringRef formatStr[NUM_OF_CONDTYPE];
-        formatStr[CMPTRUE] = "[Permod] %s: %d (true)\n";
-        formatStr[CMPFALSE] = "[Permod] %s: %d (false)\n";
-        formatStr[CMPNULLTRUE] = "[Permod] %s: null (true)\n";
-        formatStr[CMPNULLFALSE] = "[Permod] %s: null (false)\n";
-        formatStr[CALLTRUE] = "[Permod] %s(): %d (true)\n";
-        formatStr[CALLFALSE] = "[Permod] %s(): %d (false)\n";
+        formatStr[CMPTRUE] = "[Permod] %s: %d\n";
+        formatStr[CMPFALSE] = "[Permod] %s: not %d\n";
+        formatStr[CMPNULLTRUE] = "[Permod] %s: null\n";
+        formatStr[CMPNULLFALSE] = "[Permod] %s: not null\n";
+        formatStr[CALLTRUE] = "[Permod] %s(): %d\n";
+        formatStr[CALLFALSE] = "[Permod] %s(): not %d\n";
         formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
         formatStr[DINFO] = "[Permod] %s: %d\n";
         formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
@@ -589,7 +610,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                         else if (cond->Type == CMPFALSE)
                             cond->Type = CMPNULLFALSE;
                         else
-                            DEBUG_PRINT("** Unexpected type\n");
+                            DEBUG_PRINT("** Unexpected type:" << cond->Type <<"\n");
                     }
 
                     // Insert log
