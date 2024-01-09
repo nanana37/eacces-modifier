@@ -161,10 +161,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             Value *RetVal = RI->getReturnValue();
             if (!RetVal)
                 continue;
-            LoadInst *DefLI = dyn_cast<LoadInst>(RetVal);
-            if (!DefLI)
+            LoadInst *LI = dyn_cast<LoadInst>(RetVal);
+            if (!LI) {
+                DEBUG_PRINT("RetVal" << *RetVal << "\n");
+                DEBUG_PRINT("~~~ Return value is not LoadInst\n");
                 continue;
-            RetVal = DefLI->getPointerOperand();
+            }
+            RetVal = LI->getPointerOperand();
 
             return RetVal;
         }
@@ -606,9 +609,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     if (cond->Val && isa<ConstantPointerNull>(cond->Val)) {
                         DEBUG_PRINT("Val is ConstantPointerNull\n");
                         if (cond->Type == CMPTRUE)
-                            cond->Type = CMPNULLTRUE;
+                            cond->Type = CMPNULLTRUE;  // maybe never reached
                         else if (cond->Type == CMPFALSE)
-                            cond->Type = CMPNULLFALSE;
+                            cond->Type = CMPNULLFALSE;  // maybe never reached
                         else
                             DEBUG_PRINT("** Unexpected type:" << cond->Type <<"\n");
                     }
