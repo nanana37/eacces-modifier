@@ -497,6 +497,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     void prepareFormat(Value *format[], IRBuilder<> &builder,
                        LLVMContext &Ctx) {
         StringRef formatStr[NUM_OF_CONDTYPE];
+#ifdef DEBUG
         formatStr[CMPTRUE] = "[Permod] %s: %d\n";
         formatStr[CMPFALSE] = "[Permod] %s: not %d\n";
         formatStr[CMPNULLTRUE] = "[Permod] %s: null\n";
@@ -506,6 +507,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
         formatStr[DINFO] = "[Permod] %s: %d\n";
         formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
+#else
+        formatStr[CMPTRUE] = " %s: %d\n";
+        formatStr[CMPFALSE] = " %s: not %d\n";
+        formatStr[CMPNULLTRUE] = " %s: null\n";
+        formatStr[CMPNULLFALSE] = " %s: not null\n";
+        formatStr[CALLTRUE] = " %s(): %d\n";
+        formatStr[CALLFALSE] = " %s(): not %d\n";
+        formatStr[SWITCH] = " %s: %d (switch)\n";
+        formatStr[DINFO] = " %s: %d\n";
+        formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
+#endif // DEBUG
 
         for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
             Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
