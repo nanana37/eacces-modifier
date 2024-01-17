@@ -163,8 +163,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 continue;
             LoadInst *LI = dyn_cast<LoadInst>(RetVal);
             if (!LI) {
-                DEBUG_PRINT("RetVal" << *RetVal << "\n");
-                DEBUG_PRINT("~~~ Return value is not LoadInst\n");
+                /* DEBUG_PRINT("RetVal" << *RetVal << "\n"); */
+                /* DEBUG_PRINT("~~~ Return value is not LoadInst\n"); */
                 continue;
             }
             RetVal = LI->getPointerOperand();
@@ -290,11 +290,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             Function *Callee = CallI->getCalledFunction();
             if (!Callee)
                 return nullptr;
+
             name = getVarName(Callee);
-            int valInt = isBranchTrue(BrI, DestBB) ? 1 : 0;
-            val =
-                ConstantInt::get(Type::getInt32Ty(CallI->getContext()), valInt);
+            val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
             type = isBranchTrue(BrI, DestBB) ? CALLTRUE : CALLFALSE;
+            if (type == CALLTRUE)
+                DEBUG_PRINT("Branch is true\n");
+            else
+                DEBUG_PRINT("Branch is false\n");
             return new Condition(name, val, type);
         }
 
@@ -333,10 +336,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         if (!Callee)
             return nullptr;
 
+        DEBUG_PRINT("BrI: " << *BrI << "\n");
+        DEBUG_PRINT("CallI: " << *CallI << "\n");
+        DEBUG_PRINT("name of DestBB: " << DestBB->getName() << "\n");
+
         name = getVarName(Callee);
-        int valInt = isBranchTrue(BrI, DestBB) ? 1 : 0;
-        val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), valInt);
+        val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
         type = isBranchTrue(BrI, DestBB) ? CALLTRUE : CALLFALSE;
+        if (type == CALLTRUE)
+            DEBUG_PRINT("Branch is true\n");
+        else
+            DEBUG_PRINT("Branch is false\n");
         return new Condition(name, val, type);
     }
 
@@ -357,11 +367,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         // And condition: if (flag & 2) {}
         if (isa<CmpInst>(IfCond)) {
             DEBUG_PRINT("IfCond is Cmp: " << *IfCond << "\n");
+            DEBUG_PRINT("Parent: " << *BrI->getParent() << "\n");
             return getIfCond_cmp(BrI, dyn_cast<CmpInst>(IfCond), DestBB);
         }
         // Call condition: if (!func()) {}
         if (isa<CallInst>(IfCond)) {
             DEBUG_PRINT("IfCond is Call: " << *IfCond << "\n");
+            DEBUG_PRINT("Parent: " << *BrI->getParent() << "\n");
             return getIfCond_call(BrI, dyn_cast<CallInst>(IfCond), DestBB);
         }
         DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
@@ -502,8 +514,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         formatStr[CMPFALSE] = "[Permod] %s: not %d\n";
         formatStr[CMPNULLTRUE] = "[Permod] %s: null\n";
         formatStr[CMPNULLFALSE] = "[Permod] %s: not null\n";
-        formatStr[CALLTRUE] = "[Permod] %s(): %d\n";
-        formatStr[CALLFALSE] = "[Permod] %s(): not %d\n";
+        formatStr[CALLTRUE] = "[Permod] %s(): not %d\n";
+        formatStr[CALLFALSE] = "[Permod] %s(): %d\n";
         formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
         formatStr[DINFO] = "[Permod] %s: %d\n";
         formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
@@ -512,8 +524,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         formatStr[CMPFALSE] = " %s: not %d\n";
         formatStr[CMPNULLTRUE] = " %s: null\n";
         formatStr[CMPNULLFALSE] = " %s: not null\n";
-        formatStr[CALLTRUE] = " %s(): %d\n";
-        formatStr[CALLFALSE] = " %s(): not %d\n";
+        formatStr[CALLTRUE] = " %s(): not 0\n";
+        formatStr[CALLFALSE] = " %s(): 0\n";
         formatStr[SWITCH] = " %s: %d (switch)\n";
         formatStr[DINFO] = " %s: %d\n";
         formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
@@ -583,10 +595,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 unsigned line = Loc->getLine();
                 DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
                 Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
+                // The analyzing function
                 conds.push_back(new Condition(
                     F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(),
-                    CALLTRUE));
+                    CALLFALSE));
+                // File name and line number
                 conds.push_back(new Condition(filename, lineVal, DINFO));
+                // Hello
                 conds.push_back(new Condition("", NULL, HELLO));
 
                 // Prepare function
@@ -633,9 +648,46 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     args.push_back(builder.CreateGlobalStringPtr(cond->Name));
                     args.push_back(cond->Val);
                     builder.CreateCall(logFunc, args);
-                    DEBUG_PRINT("Inserted log for " << cond->Name << "\n");
-                    DEBUG_PRINT("Val: " << *cond->Val << "\n");
-                    DEBUG_PRINT("Type: " << cond->Type << "\n");
+                    /* DEBUG_PRINT("Inserted log for " << cond->Name << "\n"); */
+                    /* DEBUG_PRINT("Val: " << *cond->Val << "\n"); */
+                    /* DEBUG_PRINT("Type: " << cond->Type << "\n"); */
+#ifdef DEBUG
+                    DEBUG_PRINT( cond->Name << ": " << *cond->Val );
+                    switch (cond->Type) {
+                        case CMPTRUE:
+                            DEBUG_PRINT(" CMPTRUE\n");
+                            break;
+                        case CMPFALSE:
+                            DEBUG_PRINT(" CMPFALSE\n");
+                            break;
+                        case CMPNULLTRUE:
+                            DEBUG_PRINT(" CMPNULLTRUE\n");
+                            break;
+                        case CMPNULLFALSE:
+                            DEBUG_PRINT(" CMPNULLFALSE\n");
+                            break;
+                        case CALLTRUE:
+                            DEBUG_PRINT(" CALLTRUE\n");
+                            break;
+                        case CALLFALSE:
+                            DEBUG_PRINT(" CALLFALSE\n");
+                            break;
+                        case SWITCH:
+                            DEBUG_PRINT(" SWITCH\n");
+                            break;
+                        case DINFO:
+                            DEBUG_PRINT(" DINFO\n");
+                            break;
+                        case HELLO:
+                            DEBUG_PRINT(" HELLO\n");
+                            break;
+                        default:
+                            DEBUG_PRINT(" " << cond->Type << "\n");
+                            break;
+                    }
+#endif // DEBUG
+
+
                     args.clear();
 
                     delete cond;
