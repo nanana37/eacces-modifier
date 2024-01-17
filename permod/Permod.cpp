@@ -51,7 +51,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value *getOrigin(Value *V) {
         Value *Origin = V;
 
-        DEBUG_PRINT("Getting origin of: " << *V << "\n");
+        /* DEBUG_PRINT("Getting origin of: " << *V << "\n"); */
 
         if (auto *LI = dyn_cast<LoadInst>(V)) {
             V = LI->getPointerOperand();
@@ -336,6 +336,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         if (!Callee)
             return nullptr;
 
+
         DEBUG_PRINT("BrI: " << *BrI << "\n");
         DEBUG_PRINT("CallI: " << *CallI << "\n");
         DEBUG_PRINT("name of DestBB: " << DestBB->getName() << "\n");
@@ -427,7 +428,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 DEBUG_PRINT("Found SwitchInst: " << *TI << "\n");
                 return PredBB;
             }
-            BB = PredBB;
+            DEBUG_PRINT("OMG");
+            DEBUG_PRINT("**************PredBB terminator is not a branch or switch\n");
+            DEBUG_PRINT("**************PredBB: " << *PredBB << "\n");
         }
         return nullptr;
     }
@@ -461,7 +464,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             // Get Condition BB
             BasicBlock *CondBB = searchPredsForCondBB(BB);
             if (!CondBB) {
-                DEBUG_PRINT("* No CondBB in preds\n");
+                DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
                 break;
             }
 
