@@ -51,9 +51,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value *getOrigin(Value *V) {
         Value *Prev = V;
 
-        DEBUG_PRINT("Getting origin of: " << *V << "\n");
-
         for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
+            DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
             if (auto *LI = dyn_cast<LoadInst>(V)) {
                 V = LI->getPointerOperand();
@@ -67,11 +66,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
             // #1: store i32 %flag, ptr %flag.addr, align 4
             for (User *U : V->users()) {
+                DEBUG_PRINT("User: " << *U << "\n");
                 StoreInst *SI = dyn_cast<StoreInst>(U);
                 if (!SI)
                     continue;
                 V = SI->getValueOperand(); // %flag
                 DEBUG_PRINT("V was Store: " << *V << "\n");
+                break;
             }
 
             // NOTE: Special case for kernel
@@ -99,13 +100,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             }
             if (isa<CallInst>(V)) {
                 DEBUG_PRINT("Origin: " << *V << "\n");
-                V = dyn_cast<CallInst>(V)->getCalledFunction();
-                return V;
+                Value *Origin = dyn_cast<CallInst>(V)->getCalledFunction();
+                if (!Origin)
+                    continue;
+                return Origin;
             }
             if (isa<SExtInst>(V)) {
                 DEBUG_PRINT("Origin: " << *V << "\n");
-                V = dyn_cast<SExtInst>(V)->getOperand(0);
-                return V;
+                Value *Origin = dyn_cast<SExtInst>(V)->getOperand(0);
+                if (!Origin)
+                    continue;
+                return Origin;
             }
             if (isa<AllocaInst>(V)) {
                 DEBUG_PRINT("Origin: " << *V << "\n");
@@ -115,6 +120,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 DEBUG_PRINT("** Cannot find origin anymore: " << *V << "\n");
                 return V;
             }
+
+            Prev = V;
         }
 
         DEBUG_PRINT("** Too deep recursion: " << *V << "\n");
@@ -192,8 +199,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
         if (!CI)
             return nullptr;
+
         if (CI->getSExtValue() != -EACCES)
             return nullptr;
+
+        // TODO: Check ALL error codes
+        /* if (CI->getSExtValue() >= 0) */
+        /*     return nullptr; */
 
         // Error-thrower BB (BB of store -EACCES)
         BasicBlock *ErrBB = SI->getParent();
