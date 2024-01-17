@@ -78,6 +78,7 @@ void check_imode (char *filename)
                 int isNODEV = 0;
                 scanf ("%d", &isNODEV);
                 if (isNODEV) {
+                    mkdir ("nodev", 0777);
                     // sudo mount -o nodev -t tmpfs tmpfs ./nodev
                     mount ("nodev", "nodev", "tmpfs", MS_NODEV, NULL);
                     pathname = "nodev/blk";
@@ -91,6 +92,7 @@ void check_imode (char *filename)
                 printf ("isNODEV:");
                 scanf ("%d", &isNODEV);
                 if (isNODEV) {
+                    mkdir ("nodev", 0777);
                     // sudo mount -o nodev -t tmpfs tmpfs ./nodev
                     mount ("nodev", "nodev", "tmpfs", MS_NODEV, NULL);
                     pathname = "nodev/chr";
@@ -111,6 +113,7 @@ void check_imode (char *filename)
                 break;
              case 7:
                 // S_IFREG
+                mkdir ("noexec", 0777);
                 /* mknod ("reg", S_IFREG | 0777, 0); */
                 // After mount as noexec
                 // sudo mount -o noexec -t tmpfs tmpfs ./noexec
