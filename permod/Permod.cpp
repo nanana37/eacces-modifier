@@ -49,73 +49,76 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     * NOTE: This is recursive!
     */
     Value *getOrigin(Value *V) {
-        Value *Origin = V;
+        Value *Prev = V;
 
-        /* DEBUG_PRINT("Getting origin of: " << *V << "\n"); */
+        DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
-        if (auto *LI = dyn_cast<LoadInst>(V)) {
-            V = LI->getPointerOperand();
-            DEBUG_PRINT("V was Load: " << *V << "\n");
-        }
+        for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
 
-        if (auto *AI = dyn_cast<BinaryOperator>(V)) {
-            V = AI->getOperand(0);
-            DEBUG_PRINT("V was And: " << *V << "\n");
-        }
+            if (auto *LI = dyn_cast<LoadInst>(V)) {
+                V = LI->getPointerOperand();
+                DEBUG_PRINT("V was Load: " << *V << "\n");
+            }
 
-        // #1: store i32 %flag, ptr %flag.addr, align 4
-        for (User *U : V->users()) {
-            StoreInst *SI = dyn_cast<StoreInst>(U);
-            if (!SI)
-                continue;
-            V = SI->getValueOperand(); // %flag
-            DEBUG_PRINT("V was Store: " << *V << "\n");
-        }
+            if (auto *AI = dyn_cast<BinaryOperator>(V)) {
+                V = AI->getOperand(0);
+                DEBUG_PRINT("V was And: " << *V << "\n");
+            }
 
-        // NOTE: Special case for kernel
-        if (auto *ZI = dyn_cast<ZExtInst>(V)) {
-            V = ZI->getOperand(0);
-            DEBUG_PRINT("V was ZExt: " << *V << "\n");
-            if (auto *ZLI = dyn_cast<LoadInst>(V)) {
-                V = ZLI->getOperand(0);
-                DEBUG_PRINT("V was ZExt Load: " << *V << "\n");
+            // #1: store i32 %flag, ptr %flag.addr, align 4
+            for (User *U : V->users()) {
+                StoreInst *SI = dyn_cast<StoreInst>(U);
+                if (!SI)
+                    continue;
+                V = SI->getValueOperand(); // %flag
+                DEBUG_PRINT("V was Store: " << *V << "\n");
+            }
+
+            // NOTE: Special case for kernel
+            if (auto *ZI = dyn_cast<ZExtInst>(V)) {
+                V = ZI->getOperand(0);
+                DEBUG_PRINT("V was ZExt: " << *V << "\n");
+                if (auto *ZLI = dyn_cast<LoadInst>(V)) {
+                    V = ZLI->getOperand(0);
+                    DEBUG_PRINT("V was ZExt Load: " << *V << "\n");
+                }
+            }
+
+            // GetElementPtrInst: Get struct from member
+            // TODO?: Is this necessary?
+            if (auto *GEP = dyn_cast<GetElementPtrInst>(V)) {
+                /* V = GEP->getPointerOperand(); */
+                DEBUG_PRINT("V was GEP: " << *V << "\n");
+                return V;
+            }
+
+            // Stop the recursion
+            if (!isa<Instruction>(V)) {
+                DEBUG_PRINT("Origin: " << *V << "\n");
+                return V;
+            }
+            if (isa<CallInst>(V)) {
+                DEBUG_PRINT("Origin: " << *V << "\n");
+                V = dyn_cast<CallInst>(V)->getCalledFunction();
+                return V;
+            }
+            if (isa<SExtInst>(V)) {
+                DEBUG_PRINT("Origin: " << *V << "\n");
+                V = dyn_cast<SExtInst>(V)->getOperand(0);
+                return V;
+            }
+            if (isa<AllocaInst>(V)) {
+                DEBUG_PRINT("Origin: " << *V << "\n");
+                return V;
+            }
+            if (V == Prev) {
+                DEBUG_PRINT("** Cannot find origin anymore: " << *V << "\n");
+                return V;
             }
         }
 
-        // GetElementPtrInst: Get struct from member
-        // TODO?: Is this necessary?
-        if (auto *GEP = dyn_cast<GetElementPtrInst>(V)) {
-            /* V = GEP->getPointerOperand(); */
-            DEBUG_PRINT("V was GEP: " << *V << "\n");
-            return V;
-        }
-
-        // Stop the recursion
-        if (!isa<Instruction>(V)) {
-            DEBUG_PRINT("Origin: " << *V << "\n");
-            return V;
-        }
-        if (isa<CallInst>(V)) {
-            DEBUG_PRINT("Origin: " << *V << "\n");
-            V = dyn_cast<CallInst>(V)->getCalledFunction();
-            return V;
-        }
-        if (isa<SExtInst>(V)) {
-            DEBUG_PRINT("Origin: " << *V << "\n");
-            V = dyn_cast<SExtInst>(V)->getOperand(0);
-            return V;
-        }
-        if (isa<AllocaInst>(V)) {
-            DEBUG_PRINT("Origin: " << *V << "\n");
-            return V;
-        }
-        if (V == Origin) {
-            DEBUG_PRINT("Cannot find origin anymore: " << *V << "\n");
-            return V;
-        }
-
-        DEBUG_PRINT("Not Origin: " << *V << "\n");
-        return getOrigin(V);
+        DEBUG_PRINT("** Too deep recursion: " << *V << "\n");
+        return V;
     }
 
     /*
@@ -286,6 +289,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // CmpOp: %call = call i32 @function()
         if (auto *CallI = dyn_cast<CallInst>(CmpOp)) {
+            DEBUG_PRINT("************FIND ME**************\n");
+            DEBUG_PRINT("Parent: " << *CmpI->getParent() << "\n");
             DEBUG_PRINT("CallI as CmpOp: " << *CallI << "\n");
             Function *Callee = CallI->getCalledFunction();
             if (!Callee)
@@ -553,7 +558,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             // Skip
             if (F.getName() == "_printk")
                 continue;
-            /* DEBUG_PRINT("Analyzing: " << F.getName() << "()\n"); */
 
             Value *RetVal = getReturnValue(&F);
             if (!RetVal)
