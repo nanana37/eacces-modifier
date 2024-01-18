@@ -72,7 +72,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                     continue;
                 V = SI->getValueOperand(); // %flag
                 DEBUG_PRINT("V was Store: " << *V << "\n");
-                break;
             }
 
             // NOTE: Special case for kernel
