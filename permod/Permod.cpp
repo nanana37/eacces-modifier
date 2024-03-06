@@ -24,6 +24,14 @@
     } while (0)
 #endif // DEBUG
 
+/* #define TEST */
+#ifdef TEST
+#define LOGGER "printf"
+#else
+#define LOGGER "_printk"
+#endif
+  
+
 using namespace llvm;
 
 namespace {
@@ -628,7 +636,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                 FunctionType *funcType =
                     FunctionType::get(retType, paramTypes, false);
                 FunctionCallee logFunc =
-                    F.getParent()->getOrInsertFunction("_printk", funcType);
+                    F.getParent()->getOrInsertFunction(LOGGER, funcType);
 
                 // Prepare arguments
                 std::vector<Value *> args;
