@@ -11,7 +11,7 @@ Used [Adrian Sampson's LLLVM turorial](https://github.com/sampsyo/llvm-pass-skel
 
 - clang@17
   - The lower version may not work.
-  - We are using [the New Pass Manager](https://llvm.org/docs/NewPassManager.html)
+  - We are using [the New Pass Manager](https://llvm.org/docs/NewPassManager.html).
 
 ### Build command
 
@@ -56,8 +56,7 @@ Simple example:
 
 ```
 # In the build dir of Linux kernel
-$ make -j 8 \
-    CC=clang \
+$ make CC=clang \
     KCFLAGS="-fno-discard-value-names \
     -fpass-plugin=path_to_build/permod/PermodPass.so" \
     fs/namei.c
