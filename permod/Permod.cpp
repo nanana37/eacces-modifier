@@ -281,20 +281,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         br i1 %tobool, label %if.end, label %if.then
      */
     if (isa<ConstantPointerNull>(CmpOp2)) {
-      DEBUG_PRINT("CmpOp2 is null\n");
       name = getVarName(CmpOp);
       val = CmpOp2;
       type = isBranchTrue(BrI, DestBB) ? CMPNULLFALSE : CMPNULLTRUE;
-      if (type == CMPNULLTRUE)
-        DEBUG_PRINT("Branch is true\n");
-      else
-        DEBUG_PRINT("Branch is false\n");
       return new Condition(name, val, type);
     }
 
     // CmpOp: %and = and i32 %flag, 2
     if (auto *AndI = dyn_cast<BinaryOperator>(CmpOp)) {
-      DEBUG_PRINT("AndI as CmpOp: " << *AndI << "\n");
       CmpOp = AndI->getOperand(0);
       if (!CmpOp)
         return nullptr;
@@ -306,9 +300,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     // CmpOp: %call = call i32 @function()
     if (auto *CallI = dyn_cast<CallInst>(CmpOp)) {
-      DEBUG_PRINT("************FIND ME**************\n");
-      DEBUG_PRINT("Parent: " << *CmpI->getParent() << "\n");
-      DEBUG_PRINT("CallI as CmpOp: " << *CallI << "\n");
       Function *Callee = CallI->getCalledFunction();
       if (!Callee)
         return nullptr;
@@ -316,10 +307,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       name = getVarName(Callee);
       val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
       type = isBranchTrue(BrI, DestBB) ? CALLTRUE : CALLFALSE;
-      if (type == CALLTRUE)
-        DEBUG_PRINT("Branch is true\n");
-      else
-        DEBUG_PRINT("Branch is false\n");
       return new Condition(name, val, type);
     }
 
@@ -331,9 +318,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       val = CmpI->getOperand(1);
 
       type = isBranchTrue(BrI, DestBB) ? CMPTRUE : CMPFALSE;
-      DEBUG_PRINT("name: " << name << "\n");
-      DEBUG_PRINT("val: " << *val << "\n");
-      DEBUG_PRINT("type: " << type << "\n");
       return new Condition(name, val, type);
     }
 
@@ -358,17 +342,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (!Callee)
       return nullptr;
 
-    DEBUG_PRINT("BrI: " << *BrI << "\n");
-    DEBUG_PRINT("CallI: " << *CallI << "\n");
-    DEBUG_PRINT("name of DestBB: " << DestBB->getName() << "\n");
-
     name = getVarName(Callee);
     val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
     type = isBranchTrue(BrI, DestBB) ? CALLTRUE : CALLFALSE;
-    if (type == CALLTRUE)
-      DEBUG_PRINT("Branch is true\n");
-    else
-      DEBUG_PRINT("Branch is false\n");
     return new Condition(name, val, type);
   }
 
@@ -388,14 +364,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     // And condition: if (flag & 2) {}
     if (isa<CmpInst>(IfCond)) {
-      DEBUG_PRINT("IfCond is Cmp: " << *IfCond << "\n");
-      DEBUG_PRINT("Parent: " << *BrI->getParent() << "\n");
       return getIfCond_cmp(BrI, dyn_cast<CmpInst>(IfCond), DestBB);
     }
     // Call condition: if (!func()) {}
     if (isa<CallInst>(IfCond)) {
-      DEBUG_PRINT("IfCond is Call: " << *IfCond << "\n");
-      DEBUG_PRINT("Parent: " << *BrI->getParent() << "\n");
       return getIfCond_call(BrI, dyn_cast<CallInst>(IfCond), DestBB);
     }
     DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
@@ -409,22 +381,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   Condition *getSwCond(SwitchInst *SwI) {
     StringRef name;
     Value *val;
-
     Value *SwCond = SwI->getCondition();
-    DEBUG_PRINT("Switch condition: " << *SwCond << "\n");
 
     // Get value
     val = SwCond;
-    DEBUG_PRINT("Switch value: " << *val << "\n");
 
     // Get name
     SwCond = getOrigin(SwCond);
     if (!SwCond)
       return nullptr;
-    DEBUG_PRINT("Original Switch condition: " << *SwCond << "\n");
-
     name = getVarName(SwCond);
-    DEBUG_PRINT("Switch name: " << name << "\n");
 
     return new Condition(name, val, SWITCH);
   }
@@ -438,7 +404,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     for (auto *PredBB : predecessors(BB)) {
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
-        DEBUG_PRINT("Found BranchInst: " << *TI << "\n");
         // Branch sometimes has only one successor
         // e.g. br label %if.end
         if (TI->getNumSuccessors() != 2)
@@ -446,10 +411,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return PredBB;
       }
       if (isa<SwitchInst>(TI)) {
-        DEBUG_PRINT("Found SwitchInst: " << *TI << "\n");
         return PredBB;
       }
-      DEBUG_PRINT("OMG");
       DEBUG_PRINT(
           "**************PredBB terminator is not a branch or switch\n");
       DEBUG_PRINT("**************PredBB: " << *PredBB << "\n");
@@ -533,7 +496,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    */
   void prepareFormat(Value *format[], IRBuilder<> &builder, LLVMContext &Ctx) {
     StringRef formatStr[NUM_OF_CONDTYPE];
-#ifdef DEBUG
     formatStr[CMPTRUE] = "[Permod] %s: %d\n";
     formatStr[CMPFALSE] = "[Permod] %s: not %d\n";
     formatStr[CMPNULLTRUE] = "[Permod] %s: null\n";
@@ -543,17 +505,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
     formatStr[DINFO] = "[Permod] %s: %d\n";
     formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
-#else
-    formatStr[CMPTRUE] = " %s: %d\n";
-    formatStr[CMPFALSE] = " %s: not %d\n";
-    formatStr[CMPNULLTRUE] = " %s: null\n";
-    formatStr[CMPNULLFALSE] = " %s: not null\n";
-    formatStr[CALLTRUE] = " %s(): not 0\n";
-    formatStr[CALLFALSE] = " %s(): 0\n";
-    formatStr[SWITCH] = " %s: %d (switch)\n";
-    formatStr[DINFO] = " %s: %d\n";
-    formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
-#endif // DEBUG
 
     for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
       Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
