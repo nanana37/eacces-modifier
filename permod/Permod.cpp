@@ -513,7 +513,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     for (auto &F : M.functions()) {
 
       // Skip
-      if (F.getName() == "_printk")
+      if (F.getName() == LOGGER)
         continue;
 
       Value *RetVal = getReturnValue(&F);
