@@ -511,6 +511,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
     bool modified = false;
     for (auto &F : M.functions()) {
+      /* DEBUG_PRINT("FUNCTION: " << F.getName() << "\n"); */
+      /* if (F.getName() == "do_open_execat") */
+      /* DEBUG_PRINT(F); */
 
       // Skip
       if (F.getName() == LOGGER)
