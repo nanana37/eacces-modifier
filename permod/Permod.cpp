@@ -211,7 +211,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   /*
-   * Condition
+   * ****************************************************************************
+   *                                Condition
+   * ****************************************************************************
    */
   // Condition type: This is for type of log
   // NOTE: Used for array index!!
@@ -243,6 +245,33 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Condition(StringRef name, Value *val, CondType type)
         : Name(name), Val(val), Type(type) {}
   };
+
+  /*
+   * Prepare format string
+   */
+  void prepareFormat(Value *format[], IRBuilder<> &builder, LLVMContext &Ctx) {
+    StringRef formatStr[NUM_OF_CONDTYPE];
+    formatStr[CMPTRU] = "[Permod] %s: %d\n";
+    formatStr[CMPFLS] = "[Permod] %s: not %d\n";
+    formatStr[NLLTRU] = "[Permod] %s: null\n";
+    formatStr[NLLFLS] = "[Permod] %s: not null\n";
+    formatStr[CALTRU] = "[Permod] %s(): not %d\n";
+    formatStr[CALFLS] = "[Permod] %s(): %d\n";
+    formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
+    formatStr[DBINFO] = "[Permod] %s: %d\n";
+    formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
+
+    for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
+      Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
+      format[i] = builder.CreatePointerCast(formatVal, Type::getInt8PtrTy(Ctx));
+    }
+  }
+
+  /*
+   * ****************************************************************************
+   *                       Anlyzing Conditions
+   * ****************************************************************************
+   */
 
   // Check whether the DestBB is true or false successor
   bool isBranchTrue(BranchInst *BrI, BasicBlock *DestBB) {
@@ -485,27 +514,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     while (!conds.empty()) {
       delete conds.back();
       conds.pop_back();
-    }
-  }
-
-  /*
-   * Prepare format string
-   */
-  void prepareFormat(Value *format[], IRBuilder<> &builder, LLVMContext &Ctx) {
-    StringRef formatStr[NUM_OF_CONDTYPE];
-    formatStr[CMPTRU] = "[Permod] %s: %d\n";
-    formatStr[CMPFLS] = "[Permod] %s: not %d\n";
-    formatStr[NLLTRU] = "[Permod] %s: null\n";
-    formatStr[NLLFLS] = "[Permod] %s: not null\n";
-    formatStr[CALTRU] = "[Permod] %s(): not %d\n";
-    formatStr[CALFLS] = "[Permod] %s(): %d\n";
-    formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
-    formatStr[DBINFO] = "[Permod] %s: %d\n";
-    formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
-
-    for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
-      Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
-      format[i] = builder.CreatePointerCast(formatVal, Type::getInt8PtrTy(Ctx));
     }
   }
 
