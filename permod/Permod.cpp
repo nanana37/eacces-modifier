@@ -216,17 +216,23 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   // Condition type: This is for type of log
   // NOTE: Used for array index!!
   enum CondType {
-    CMPTRUE = 0,
-    CMPFALSE,
-    CMPNULLTRUE,
-    CMPNULLFALSE,
-    CALLTRUE,
-    CALLFALSE,
+    CMPTRU = 0,
+    CMPFLS,
+    NLLTRU,
+    NLLFLS,
+    CALTRU,
+    CALFLS,
     SWITCH,
-    DINFO,
-    HELLO,
+    DBINFO,
+    HELLOO,
     NUM_OF_CONDTYPE
   };
+
+#ifdef DEBUG
+  const char *condTypeStr[NUM_OF_CONDTYPE] = {"CMPTRU", "CMPFLS", "NLLTRU",
+                                              "NLLFLS", "CALTRU", "CALFLS",
+                                              "SWITCH", "DBINFO", "HELLOO"};
+#endif // DEBUG
 
   class Condition {
   public:
@@ -274,7 +280,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (isa<ConstantPointerNull>(CmpOp2)) {
       name = getVarName(CmpOp);
       val = CmpOp2;
-      type = isBranchTrue(BrI, DestBB) ? CMPNULLFALSE : CMPNULLTRUE;
+      type = isBranchTrue(BrI, DestBB) ? NLLFLS : NLLTRU;
       return new Condition(name, val, type);
     }
 
@@ -285,7 +291,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return nullptr;
       name = getVarName(CmpOp);
       val = AndI->getOperand(1);
-      type = isBranchTrue(BrI, DestBB) ? CMPTRUE : CMPFALSE;
+      type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
       return new Condition(name, val, type);
     }
 
@@ -297,7 +303,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       name = getVarName(Callee);
       val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
-      type = isBranchTrue(BrI, DestBB) ? CALLTRUE : CALLFALSE;
+      type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
       return new Condition(name, val, type);
     }
 
@@ -308,7 +314,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       name = getVarName(LoadI);
       val = CmpI->getOperand(1);
 
-      type = isBranchTrue(BrI, DestBB) ? CMPTRUE : CMPFALSE;
+      type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
       return new Condition(name, val, type);
     }
 
@@ -335,7 +341,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     name = getVarName(Callee);
     val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
-    type = isBranchTrue(BrI, DestBB) ? CALLTRUE : CALLFALSE;
+    type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
     return new Condition(name, val, type);
   }
 
@@ -487,15 +493,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    */
   void prepareFormat(Value *format[], IRBuilder<> &builder, LLVMContext &Ctx) {
     StringRef formatStr[NUM_OF_CONDTYPE];
-    formatStr[CMPTRUE] = "[Permod] %s: %d\n";
-    formatStr[CMPFALSE] = "[Permod] %s: not %d\n";
-    formatStr[CMPNULLTRUE] = "[Permod] %s: null\n";
-    formatStr[CMPNULLFALSE] = "[Permod] %s: not null\n";
-    formatStr[CALLTRUE] = "[Permod] %s(): not %d\n";
-    formatStr[CALLFALSE] = "[Permod] %s(): %d\n";
+    formatStr[CMPTRU] = "[Permod] %s: %d\n";
+    formatStr[CMPFLS] = "[Permod] %s: not %d\n";
+    formatStr[NLLTRU] = "[Permod] %s: null\n";
+    formatStr[NLLFLS] = "[Permod] %s: not null\n";
+    formatStr[CALTRU] = "[Permod] %s(): not %d\n";
+    formatStr[CALFLS] = "[Permod] %s(): %d\n";
     formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
-    formatStr[DINFO] = "[Permod] %s: %d\n";
-    formatStr[HELLO] = "--- Hello, I'm Permod ---\n";
+    formatStr[DBINFO] = "[Permod] %s: %d\n";
+    formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
 
     for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
       Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
@@ -564,11 +570,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
         // The analyzing function
         conds.push_back(new Condition(
-            F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(), CALLFALSE));
+            F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(), CALFLS));
         // File name and line number
-        conds.push_back(new Condition(filename, lineVal, DINFO));
+        conds.push_back(new Condition(filename, lineVal, DBINFO));
         // Hello
-        conds.push_back(new Condition("", NULL, HELLO));
+        conds.push_back(new Condition("", NULL, HELLOO));
 
         // Prepare function
         std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
@@ -588,10 +594,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           Condition *cond = conds.back();
           conds.pop_back();
 
-          if (cond->Type == HELLO) {
+          if (cond->Type == HELLOO) {
             args.push_back(format[cond->Type]);
             builder.CreateCall(logFunc, args);
-            DEBUG_PRINT("Inserted log for HELLO\n");
+            DEBUG_PRINT("Inserted log for HELLOO\n");
             args.clear();
             delete cond;
             continue;
@@ -600,10 +606,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           // Check if the Value is ConstantPointerNull
           if (cond->Val && isa<ConstantPointerNull>(cond->Val)) {
             DEBUG_PRINT("Val is ConstantPointerNull\n");
-            if (cond->Type == CMPTRUE)
-              cond->Type = CMPNULLTRUE; // maybe never reached
-            else if (cond->Type == CMPFALSE)
-              cond->Type = CMPNULLFALSE; // maybe never reached
+            if (cond->Type == CMPTRU)
+              cond->Type = NLLTRU; // maybe never reached
+            else if (cond->Type == CMPFLS)
+              cond->Type = NLLFLS; // maybe never reached
             else
               DEBUG_PRINT("** Unexpected type:" << cond->Type << "\n");
           }
@@ -613,43 +619,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           args.push_back(builder.CreateGlobalStringPtr(cond->Name));
           args.push_back(cond->Val);
           builder.CreateCall(logFunc, args);
-          /* DEBUG_PRINT("Inserted log for " << cond->Name << "\n"); */
-          /* DEBUG_PRINT("Val: " << *cond->Val << "\n"); */
-          /* DEBUG_PRINT("Type: " << cond->Type << "\n"); */
+
 #ifdef DEBUG
-          DEBUG_PRINT(cond->Name << ": " << *cond->Val);
-          switch (cond->Type) {
-          case CMPTRUE:
-            DEBUG_PRINT(" CMPTRUE\n");
-            break;
-          case CMPFALSE:
-            DEBUG_PRINT(" CMPFALSE\n");
-            break;
-          case CMPNULLTRUE:
-            DEBUG_PRINT(" CMPNULLTRUE\n");
-            break;
-          case CMPNULLFALSE:
-            DEBUG_PRINT(" CMPNULLFALSE\n");
-            break;
-          case CALLTRUE:
-            DEBUG_PRINT(" CALLTRUE\n");
-            break;
-          case CALLFALSE:
-            DEBUG_PRINT(" CALLFALSE\n");
-            break;
-          case SWITCH:
-            DEBUG_PRINT(" SWITCH\n");
-            break;
-          case DINFO:
-            DEBUG_PRINT(" DINFO\n");
-            break;
-          case HELLO:
-            DEBUG_PRINT(" HELLO\n");
-            break;
-          default:
-            DEBUG_PRINT(" " << cond->Type << "\n");
-            break;
-          }
+          DEBUG_PRINT(condTypeStr[cond->Type] << " " << cond->Name << ": "
+                                              << *cond->Val << "\n");
 #endif // DEBUG
 
           args.clear();
@@ -671,7 +644,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return PreservedAnalyses::none();
     return PreservedAnalyses::all();
   };
-};
+}; // namespace
 
 } // namespace
 
