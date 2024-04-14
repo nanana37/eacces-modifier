@@ -425,7 +425,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Search predecessors for If/Switch Statement BB (CondBB)
    * Returns: BasicBlock*
    */
-  BasicBlock *searchPredsForCondBB(BasicBlock *BB) {
+  BasicBlock *getCondBB(BasicBlock *BB) {
     /* DEBUG_PRINT("Search preds of: " << *BB << "\n"); */
     for (auto *PredBB : predecessors(BB)) {
       Instruction *TI = PredBB->getTerminator();
@@ -449,7 +449,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   /*
    * Get Condition from CondBB
    */
-  Condition *getCondFromCondBB(BasicBlock *CondBB, BasicBlock *DestBB) {
+  Condition *getCond(BasicBlock *CondBB, BasicBlock *DestBB) {
     DEBUG_PRINT("Getting condition\n");
 
     // Get Condition
@@ -467,22 +467,21 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
   }
 
-  void backTraceToGetCondOfErrBB(BasicBlock *ErrBB,
-                                 std::vector<Condition *> &conds) {
+  void findAllConditions(BasicBlock *ErrBB, std::vector<Condition *> &conds) {
     BasicBlock *BB = ErrBB;
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
 
       // Get Condition BB
-      BasicBlock *CondBB = searchPredsForCondBB(BB);
+      BasicBlock *CondBB = getCondBB(BB);
       if (!CondBB) {
         DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
         break;
       }
 
       // Get Condition
-      Condition *cond = getCondFromCondBB(CondBB, BB);
+      Condition *cond = getCond(CondBB, BB);
       if (!cond) {
-        DEBUG_PRINT("* getCondFromCondBB has failed.\n");
+        DEBUG_PRINT("* getCond has failed.\n");
         break;
       }
 
@@ -556,7 +555,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         std::vector<Condition *> conds;
 
         // Backtrace to find If/Switch Statement BB
-        backTraceToGetCondOfErrBB(ErrBB, conds);
+        findAllConditions(ErrBB, conds);
         if (conds.empty()) {
           DEBUG_PRINT("** conds is empty\n");
           continue;
