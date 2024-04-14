@@ -288,19 +288,20 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       %tobool = icmp ne i32 %and, 0
       br i1 %tobool, label %if.then, label %if.end
    */
-  Condition *getIfCond_cmp(BranchInst *BrI, CmpInst *CmpI, BasicBlock *DestBB) {
+  bool findIfCond_cmp(BranchInst *BrI, CmpInst *CmpI, BasicBlock *DestBB,
+                      std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
     CondType type;
 
     Value *CmpOp = CmpI->getOperand(0);
     if (!CmpOp)
-      return nullptr;
+      return false;
     /* DEBUG_PRINT(*CmpI->getParent() << "\n"); */
 
     Value *CmpOp2 = CmpI->getOperand(1);
     if (!CmpOp2)
-      return nullptr;
+      return false;
     /* if cmp with null
      e.g. if (!inode):
         %tobool = icmp ne %inode, null
@@ -310,30 +311,33 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       name = getVarName(CmpOp);
       val = CmpOp2;
       type = isBranchTrue(BrI, DestBB) ? NLLFLS : NLLTRU;
-      return new Condition(name, val, type);
+      conds.push_back(new Condition(name, val, type));
+      return true;
     }
 
     // CmpOp: %and = and i32 %flag, 2
     if (auto *AndI = dyn_cast<BinaryOperator>(CmpOp)) {
       CmpOp = AndI->getOperand(0);
       if (!CmpOp)
-        return nullptr;
+        return false;
       name = getVarName(CmpOp);
       val = AndI->getOperand(1);
       type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
-      return new Condition(name, val, type);
+      conds.push_back(new Condition(name, val, type));
+      return true;
     }
 
     // CmpOp: %call = call i32 @function()
     if (auto *CallI = dyn_cast<CallInst>(CmpOp)) {
       Function *Callee = CallI->getCalledFunction();
       if (!Callee)
-        return nullptr;
+        return false;
 
       name = getVarName(Callee);
       val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
       type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-      return new Condition(name, val, type);
+      conds.push_back(new Condition(name, val, type));
+      return true;
     }
 
     // CmpOp: %1 = load i32, i32* %flag.addr, align 4
@@ -344,11 +348,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       val = CmpI->getOperand(1);
 
       type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
-      return new Condition(name, val, type);
+      conds.push_back(new Condition(name, val, type));
+      return true;
     }
 
     DEBUG_PRINT("** Unexpected as CmpOp: " << *CmpOp << "\n");
-    return nullptr;
+    return false;
   }
 
   /* Get name & value of if condition
@@ -358,20 +363,21 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       %call = call i32 @function()
       br i1 %call, label %if.then, label %if.end
    */
-  Condition *getIfCond_call(BranchInst *BrI, CallInst *CallI,
-                            BasicBlock *DestBB) {
+  bool findIfCond_call(BranchInst *BrI, CallInst *CallI, BasicBlock *DestBB,
+                       std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
     CondType type;
 
     Function *Callee = CallI->getCalledFunction();
     if (!Callee)
-      return nullptr;
+      return false;
 
     name = getVarName(Callee);
     val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
     type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-    return new Condition(name, val, type);
+    conds.push_back(new Condition(name, val, type));
+    return true;
   }
 
   /* Get name & value of if condition
@@ -380,31 +386,32 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      - Call condition
       if (!func()) {}   // name:of func, val:0
    */
-  Condition *getIfCond(BranchInst *BrI, BasicBlock *DestBB) {
+  bool findIfCond(BranchInst *BrI, BasicBlock *DestBB,
+                  std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
 
     Value *IfCond = BrI->getCondition();
     if (!IfCond)
-      return nullptr;
+      return false;
 
     // And condition: if (flag & 2) {}
     if (isa<CmpInst>(IfCond)) {
-      return getIfCond_cmp(BrI, dyn_cast<CmpInst>(IfCond), DestBB);
+      return findIfCond_cmp(BrI, dyn_cast<CmpInst>(IfCond), DestBB, conds);
     }
     // Call condition: if (!func()) {}
     if (isa<CallInst>(IfCond)) {
-      return getIfCond_call(BrI, dyn_cast<CallInst>(IfCond), DestBB);
+      return findIfCond_call(BrI, dyn_cast<CallInst>(IfCond), DestBB, conds);
     }
     DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
-    return nullptr;
+    return false;
   }
 
   /* Get name & value of switch condition
    * Returns: (StringRef, Value*)
      - switch (flag) {}     // name:of flag, val:of flag
    */
-  Condition *getSwCond(SwitchInst *SwI) {
+  bool findSwCond(SwitchInst *SwI, std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
     Value *SwCond = SwI->getCondition();
@@ -415,10 +422,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // Get name
     SwCond = getOrigin(SwCond);
     if (!SwCond)
-      return nullptr;
+      return false;
     name = getVarName(SwCond);
 
-    return new Condition(name, val, SWITCH);
+    conds.push_back(new Condition(name, val, SWITCH));
+    return true;
   }
 
   /*
@@ -446,11 +454,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return nullptr;
   }
 
-  /*
-   * Get Condition from CondBB
-   */
-  Condition *getCond(BasicBlock *CondBB, BasicBlock *DestBB) {
-    DEBUG_PRINT("Getting condition\n");
+  bool findConditions(BasicBlock *CondBB, BasicBlock *DestBB,
+                      std::vector<Condition *> &conds) {
+    DEBUG_PRINT("Trying to get conditions\n");
 
     // Get Condition
     /*
@@ -458,15 +464,18 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      * switch (flag) {}     // name:of flag, val:of flag
      */
     if (auto *BrI = dyn_cast<BranchInst>(CondBB->getTerminator())) {
-      return getIfCond(BrI, DestBB);
+      DEBUG_PRINT("Pred has BranchInst\n");
+      return findIfCond(BrI, DestBB, conds);
     } else if (auto *SwI = dyn_cast<SwitchInst>(CondBB->getTerminator())) {
-      return getSwCond(SwI);
+      DEBUG_PRINT("Pred has SwitchInst\n");
+      return findSwCond(SwI, conds);
     } else {
       DEBUG_PRINT("* CondBB terminator is not a branch or switch\n");
-      return nullptr;
+      return false;
     }
   }
 
+  // Search from bottom to top (entry block)
   void findAllConditions(BasicBlock *ErrBB, std::vector<Condition *> &conds) {
     BasicBlock *BB = ErrBB;
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
@@ -479,19 +488,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
 
       // Get Condition
-      Condition *cond = getCond(CondBB, BB);
-      if (!cond) {
-        DEBUG_PRINT("* getCond has failed.\n");
+      // TODO: Should this return bool?
+      if (!findConditions(CondBB, BB, conds)) {
+        DEBUG_PRINT("* findCond has failed.\n");
         break;
       }
 
       // Update BB
       // NOTE: We need CondBB, not only its terminator
       BB = CondBB;
-
-      // Add Condition
-      conds.push_back(cond);
-      DEBUG_PRINT("Added condition: " << cond->Name << "\n\n");
 
       // The loop reaches to the end?
       if (CondBB == &CondBB->getParent()->getEntryBlock()) {
