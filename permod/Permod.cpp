@@ -1,7 +1,7 @@
 #include "permod.h"
 #include <errno.h>
 
-#define MAX_TRACE_DEPTH 100
+#define MAX_TRACE_DEPTH 10
 
 #define DEBUG
 #ifdef DEBUG
@@ -38,6 +38,43 @@ namespace {
 
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
+  // backward analyais
+  Value *getFromLoad(LoadInst *LI) {
+    DEBUG_PRINT("Getting from load: " << *LI << "\n");
+    return LI->getPointerOperand();
+  }
+  Value *getFromCall(CallInst *CI) {
+    DEBUG_PRINT("Getting from call: " << *CI << "\n");
+    Value *Called = CI->getCalledFunction();
+    // NOTE: this returns null, is indirect call.
+    DEBUG_PRINT("Called operand: " << Called << "\n");
+    if (!Called) {
+      DEBUG_PRINT("***CALL: Origin is null\n");
+    }
+    if (CI->isIndirectCall()) {
+      DEBUG_PRINT("It's IndirectCall\n");
+    }
+    return Called;
+  }
+
+  // TODO: Is binary operator always and?
+  Value *getFromAnd(BinaryOperator *AI) {
+    DEBUG_PRINT("Getting from and: " << *AI << "\n");
+    return AI->getOperand(0);
+  }
+  Value *getFromStore(StoreInst *SI) {
+    DEBUG_PRINT("Getting from store: " << *SI << "\n");
+    return SI->getValueOperand();
+  }
+  Value *getFromZExt(ZExtInst *ZI) {
+    DEBUG_PRINT("Getting from zext: " << *ZI << "\n");
+    return ZI->getOperand(0);
+  }
+  Value *getFromSExt(SExtInst *SI) {
+    DEBUG_PRINT("Getting from sext: " << *SI << "\n");
+    return SI->getOperand(0);
+  }
+
   /*
   * Backtrace from load to store
   * Get original variable (%0 is %flag)
@@ -52,67 +89,69 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
       DEBUG_PRINT("Getting origin of: " << *V << "\n");
 
-      if (auto *LI = dyn_cast<LoadInst>(V)) {
-        V = LI->getPointerOperand();
-        DEBUG_PRINT("V was Load: " << *V << "\n");
-      }
-
-      if (auto *AI = dyn_cast<BinaryOperator>(V)) {
-        V = AI->getOperand(0);
-        DEBUG_PRINT("V was And: " << *V << "\n");
-      }
-
-      // #1: store i32 %flag, ptr %flag.addr, align 4
-      for (User *U : V->users()) {
-        DEBUG_PRINT("User: " << *U << "\n");
-        StoreInst *SI = dyn_cast<StoreInst>(U);
-        if (!SI)
-          continue;
-        V = SI->getValueOperand(); // %flag
-        DEBUG_PRINT("V was Store: " << *V << "\n");
-      }
-
-      // NOTE: Special case for kernel
-      if (auto *ZI = dyn_cast<ZExtInst>(V)) {
-        V = ZI->getOperand(0);
-        DEBUG_PRINT("V was ZExt: " << *V << "\n");
-        if (auto *ZLI = dyn_cast<LoadInst>(V)) {
-          V = ZLI->getOperand(0);
-          DEBUG_PRINT("V was ZExt Load: " << *V << "\n");
-        }
-      }
-
-      // GetElementPtrInst: Get struct from member
-      // TODO?: Is this necessary?
-      if (auto *GEP = dyn_cast<GetElementPtrInst>(V)) {
-        /* V = GEP->getPointerOperand(); */
-        DEBUG_PRINT("V was GEP: " << *V << "\n");
-        return V;
-      }
-
-      // Stop the recursion
+      // Stop the iteration
       if (!isa<Instruction>(V)) {
         DEBUG_PRINT("Origin: " << *V << "\n");
         return V;
       }
       if (isa<CallInst>(V)) {
-        DEBUG_PRINT("Origin: " << *V << "\n");
-        Value *Origin = dyn_cast<CallInst>(V)->getCalledFunction();
-        if (!Origin)
+        Value *Origin = getFromCall(cast<CallInst>(V));
+        // NOTE: CallInst sometime calls null(unregistered function?)
+        /* Getting from call:   %call12 = call i32 %18(...) */
+        /* Called function: 0x0 */
+        /* ***CALL: Origin is null */
+        if (!Origin) {
+          DEBUG_PRINT("***CALL: Origin is null\n");
           continue;
-        return Origin;
+        }
+        V = Origin;
       }
       if (isa<SExtInst>(V)) {
-        DEBUG_PRINT("Origin: " << *V << "\n");
-        Value *Origin = dyn_cast<SExtInst>(V)->getOperand(0);
-        if (!Origin)
+        Value *Origin = getFromSExt(cast<SExtInst>(V));
+        if (!Origin) {
+          DEBUG_PRINT("***SE: Origin is null\n");
           continue;
+        }
         return Origin;
       }
       if (isa<AllocaInst>(V)) {
         DEBUG_PRINT("Origin: " << *V << "\n");
         return V;
       }
+      // TODO: Is this necessary?
+      if (isa<GetElementPtrInst>(V)) {
+        /* V = GEP->getPointerOperand(); */
+        DEBUG_PRINT("V was GEP: " << *V << "\n");
+        return V;
+      }
+
+      if (isa<LoadInst>(V)) {
+        V = getFromLoad(cast<LoadInst>(V));
+      }
+
+      if (isa<BinaryOperator>(V)) {
+        V = getFromAnd(cast<BinaryOperator>(V));
+      }
+
+      // #1: store i32 %flag, ptr %flag.addr, align 4
+      for (User *U : V->users()) {
+        DEBUG_PRINT("User: " << *U << "\n");
+        if (!isa<StoreInst>(U)) {
+          continue;
+        }
+        V = getFromStore(cast<StoreInst>(U));
+        break;
+      }
+
+      // NOTE: Special case for kernel
+      if (isa<ZExtInst>(V)) {
+        V = getFromZExt(cast<ZExtInst>(V));
+        // TODO: can we remove this?
+        if (isa<LoadInst>(V)) {
+          V = getFromLoad(cast<LoadInst>(V));
+        }
+      }
+
       if (V == Prev) {
         DEBUG_PRINT("** Cannot find origin anymore: " << *V << "\n");
         return V;
@@ -121,7 +160,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       Prev = V;
     }
 
-    DEBUG_PRINT("** Too deep recursion: " << *V << "\n");
+    DEBUG_PRINT("** Too deep: " << *V << "\n");
     return V;
   }
 
@@ -529,9 +568,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
     bool modified = false;
     for (auto &F : M.functions()) {
-      /* DEBUG_PRINT("FUNCTION: " << F.getName() << "\n"); */
+      DEBUG_PRINT("FUNCTION: " << F.getName() << "\n");
       /* if (F.getName() == "do_open_execat") */
-      /* DEBUG_PRINT(F); */
+      DEBUG_PRINT(F);
 
       // Skip
       if (F.getName() == LOGGER)
