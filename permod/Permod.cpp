@@ -1,15 +1,24 @@
-#include "permod.h"
-#include <errno.h>
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/Pass.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Passes/PassPlugin.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
-#define MAX_TRACE_DEPTH 100
+#include "llvm/IR/DebugInfoMetadata.h"
+#include "llvm/IR/DebugLoc.h"
+
+#include <errno.h>
 
 #define DEBUG
 #ifdef DEBUG
+#define MAX_TRACE_DEPTH 100
 #define DEBUG_PRINT(x)                                                         \
   do {                                                                         \
     errs() << x;                                                               \
   } while (0)
 #else
+#define MAX_TRACE_DEPTH 10
 #define DEBUG_PRINT(x)                                                         \
   do {                                                                         \
   } while (0)
@@ -38,11 +47,16 @@ namespace {
 
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
+  // ****************************************************************************
+  //                               Utility
+  // ****************************************************************************
+
   // backward analyais
   Value *getFromLoad(LoadInst *LI) {
     DEBUG_PRINT("Getting from load: " << *LI << "\n");
     return LI->getPointerOperand();
   }
+
   Value *getFromCall(CallInst *CI) {
     DEBUG_PRINT("Getting from call: " << *CI << "\n");
     if (CI->isIndirectCall()) {
@@ -77,17 +91,31 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   * code example:
     store i32 %flag, ptr %flag.addr, align 4
     %0 = load i32, ptr %flag.addr, align 4
-  * NOTE: This is recursive!
+  * TODO: may cause infinite loop
   */
   Value *getOrigin(Value *V) {
     Value *Prev = V;
 
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
-      DEBUG_PRINT("Getting origin of: " << *V << "\n");
+#ifdef DEBUG
+      if (isa<Function>(V)) {
+        DEBUG_PRINT("Getting Origin of function: "
+                    << cast<Function>(V)->getName() << "\n");
+      } else {
+        DEBUG_PRINT("Getting Origin of: " << *V << "\n");
+      }
+#endif // DEBUG
 
       // Stop the iteration
       if (!isa<Instruction>(V)) {
-        DEBUG_PRINT("Origin: " << *V << "\n");
+#ifdef DEBUG
+        if (isa<Function>(V)) {
+          DEBUG_PRINT("Origin function: " << cast<Function>(V)->getName()
+                                          << "\n");
+        } else {
+          DEBUG_PRINT("Origin: " << *V << "\n");
+        }
+#endif // DEBUG
         return V;
       }
       if (isa<CallInst>(V)) {
@@ -120,6 +148,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         V = getFromAnd(cast<BinaryOperator>(V));
       }
 
+      // TODO: This causes infinite loop!!!
       // #1: store i32 %flag, ptr %flag.addr, align 4
       for (User *U : V->users()) {
         DEBUG_PRINT("User: " << *U << "\n");
@@ -134,9 +163,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (isa<ZExtInst>(V)) {
         V = getFromZExt(cast<ZExtInst>(V));
         // TODO: can we remove this?
-        if (isa<LoadInst>(V)) {
-          V = getFromLoad(cast<LoadInst>(V));
-        }
+        /* if (isa<LoadInst>(V)) { */
+        /*   V = getFromLoad(cast<LoadInst>(V)); */
+        /* } */
       }
 
       if (V == Prev) {
@@ -557,7 +586,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     for (auto &F : M.functions()) {
       DEBUG_PRINT("FUNCTION: " << F.getName() << "\n");
       /* if (F.getName() == "do_open_execat") */
-      DEBUG_PRINT(F);
+      /* DEBUG_PRINT(F); */
 
       // Skip
       if (F.getName() == LOGGER)
