@@ -1,7 +1,7 @@
 #include "permod.h"
 #include <errno.h>
 
-#define MAX_TRACE_DEPTH 10
+#define MAX_TRACE_DEPTH 100
 
 #define DEBUG
 #ifdef DEBUG
