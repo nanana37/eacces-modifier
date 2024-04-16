@@ -45,16 +45,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
   Value *getFromCall(CallInst *CI) {
     DEBUG_PRINT("Getting from call: " << *CI << "\n");
-    Value *Called = CI->getCalledFunction();
-    // NOTE: this returns null, is indirect call.
-    DEBUG_PRINT("Called operand: " << Called << "\n");
-    if (!Called) {
-      DEBUG_PRINT("***CALL: Origin is null\n");
-    }
     if (CI->isIndirectCall()) {
       DEBUG_PRINT("It's IndirectCall\n");
+      return CI->getCalledOperand();
     }
-    return Called;
+    // NOTE: getCalledFunction() returns null for indirect call
+    return CI->getCalledFunction();
   }
 
   // TODO: Is binary operator always and?
@@ -95,16 +91,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return V;
       }
       if (isa<CallInst>(V)) {
-        Value *Origin = getFromCall(cast<CallInst>(V));
-        // NOTE: CallInst sometime calls null(unregistered function?)
-        /* Getting from call:   %call12 = call i32 %18(...) */
-        /* Called function: 0x0 */
-        /* ***CALL: Origin is null */
-        if (!Origin) {
-          DEBUG_PRINT("***CALL: Origin is null\n");
-          continue;
-        }
-        V = Origin;
+        V = getFromCall(cast<CallInst>(V));
       }
       if (isa<SExtInst>(V)) {
         Value *Origin = getFromSExt(cast<SExtInst>(V));
