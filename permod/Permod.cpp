@@ -8,6 +8,8 @@
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/IR/DebugLoc.h"
 
+#include "llvm/IR/InstVisitor.h"
+
 #include <errno.h>
 
 #define DEBUG
@@ -35,6 +37,48 @@ using namespace llvm;
 
 namespace {
 
+struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
+  Value *visitFunction(Function &F) {
+    DEBUG_PRINT("Visiting Function: " << F << "\n");
+    return nullptr;
+  }
+  // When visiting undefined by this visitor
+  Value *visitInstruction(Instruction &I) {
+    DEBUG_PRINT("Visiting Instruction: " << I << "\n");
+    return nullptr;
+  }
+  Value *visitLoadInst(LoadInst &LI) {
+    DEBUG_PRINT("Visiting Load\n");
+    return LI.getPointerOperand();
+  }
+  // NOTE: getCalledFunction() returns null for indirect call
+  Value *visitCallInst(CallInst &CI) {
+    DEBUG_PRINT("Visiting Call\n");
+    if (CI.isIndirectCall()) {
+      DEBUG_PRINT("It's IndirectCall\n");
+      return CI.getCalledOperand();
+    }
+    return CI.getCalledFunction();
+  }
+  Value *visitStoreInst(StoreInst &SI) {
+    DEBUG_PRINT("Visiting Store\n");
+    return SI.getValueOperand();
+  }
+  Value *visitZExtInst(ZExtInst &ZI) {
+    DEBUG_PRINT("Visiting ZExt\n");
+    return ZI.getOperand(0);
+  }
+  Value *visitSExtInst(SExtInst &SI) {
+    DEBUG_PRINT("Visiting SExt\n");
+    return SI.getOperand(0);
+  }
+  // TODO: Is binary operator always and?
+  Value *visitBinaryOperator(BinaryOperator &AI) {
+    DEBUG_PRINT("Visiting And\n");
+    return AI.getOperand(0);
+  }
+};
+
 /*
  * Find 'return -EACCES'
     * The statement turns into:
@@ -51,39 +95,21 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   //                               Utility
   // ****************************************************************************
 
-  // backward analyais
-  Value *getFromLoad(LoadInst *LI) {
-    DEBUG_PRINT("Getting from load: " << *LI << "\n");
-    return LI->getPointerOperand();
-  }
-
-  Value *getFromCall(CallInst *CI) {
-    DEBUG_PRINT("Getting from call: " << *CI << "\n");
-    if (CI->isIndirectCall()) {
-      DEBUG_PRINT("It's IndirectCall\n");
-      return CI->getCalledOperand();
+#ifdef DEBUG
+  void printValue(Value *V) {
+    if (!V) {
+      DEBUG_PRINT("Value is null\n");
+      return;
     }
-    // NOTE: getCalledFunction() returns null for indirect call
-    return CI->getCalledFunction();
+    if (isa<Function>(V)) {
+      DEBUG_PRINT("Function: " << V->getName() << "\n");
+    } else {
+      DEBUG_PRINT("Value: " << *V << "\n");
+    }
   }
-
-  // TODO: Is binary operator always and?
-  Value *getFromAnd(BinaryOperator *AI) {
-    DEBUG_PRINT("Getting from and: " << *AI << "\n");
-    return AI->getOperand(0);
-  }
-  Value *getFromStore(StoreInst *SI) {
-    DEBUG_PRINT("Getting from store: " << *SI << "\n");
-    return SI->getValueOperand();
-  }
-  Value *getFromZExt(ZExtInst *ZI) {
-    DEBUG_PRINT("Getting from zext: " << *ZI << "\n");
-    return ZI->getOperand(0);
-  }
-  Value *getFromSExt(SExtInst *SI) {
-    DEBUG_PRINT("Getting from sext: " << *SI << "\n");
-    return SI->getOperand(0);
-  }
+#else
+  void printValue(Value *V) {}
+#endif // DEBUG
 
   /*
   * Backtrace from load to store
@@ -94,59 +120,22 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   * TODO: may cause infinite loop
   */
   Value *getOrigin(Value *V) {
-    Value *Prev = V;
+    OriginFinder OF;
 
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
-#ifdef DEBUG
-      if (isa<Function>(V)) {
-        DEBUG_PRINT("Getting Origin of function: "
-                    << cast<Function>(V)->getName() << "\n");
-      } else {
-        DEBUG_PRINT("Getting Origin of: " << *V << "\n");
-      }
-#endif // DEBUG
+      DEBUG_PRINT("Getting Origin of ");
+      printValue(V);
 
-      // Stop the iteration
       if (!isa<Instruction>(V)) {
-#ifdef DEBUG
-        if (isa<Function>(V)) {
-          DEBUG_PRINT("Origin function: " << cast<Function>(V)->getName()
-                                          << "\n");
-        } else {
-          DEBUG_PRINT("Origin: " << *V << "\n");
-        }
-#endif // DEBUG
+        DEBUG_PRINT("** Not an instruction\n");
         return V;
       }
-      if (isa<CallInst>(V)) {
-        V = getFromCall(cast<CallInst>(V));
-      }
-      if (isa<SExtInst>(V)) {
-        Value *Origin = getFromSExt(cast<SExtInst>(V));
-        if (!Origin) {
-          DEBUG_PRINT("***SE: Origin is null\n");
-          continue;
-        }
-        return Origin;
-      }
-      if (isa<AllocaInst>(V)) {
-        DEBUG_PRINT("Origin: " << *V << "\n");
+      Value *newV = OF.visit(cast<Instruction>(V));
+      if (!newV) {
+        DEBUG_PRINT("** No newV\n");
         return V;
       }
-      // TODO: Is this necessary?
-      if (isa<GetElementPtrInst>(V)) {
-        /* V = GEP->getPointerOperand(); */
-        DEBUG_PRINT("V was GEP: " << *V << "\n");
-        return V;
-      }
-
-      if (isa<LoadInst>(V)) {
-        V = getFromLoad(cast<LoadInst>(V));
-      }
-
-      if (isa<BinaryOperator>(V)) {
-        V = getFromAnd(cast<BinaryOperator>(V));
-      }
+      V = newV;
 
       // TODO: This causes infinite loop!!!
       // #1: store i32 %flag, ptr %flag.addr, align 4
@@ -155,25 +144,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         if (!isa<StoreInst>(U)) {
           continue;
         }
-        V = getFromStore(cast<StoreInst>(U));
+        V = OF.visit(cast<StoreInst>(U));
         break;
       }
-
-      // NOTE: Special case for kernel
-      if (isa<ZExtInst>(V)) {
-        V = getFromZExt(cast<ZExtInst>(V));
-        // TODO: can we remove this?
-        /* if (isa<LoadInst>(V)) { */
-        /*   V = getFromLoad(cast<LoadInst>(V)); */
-        /* } */
-      }
-
-      if (V == Prev) {
-        DEBUG_PRINT("** Cannot find origin anymore: " << *V << "\n");
-        return V;
-      }
-
-      Prev = V;
     }
 
     DEBUG_PRINT("** Too deep: " << *V << "\n");
