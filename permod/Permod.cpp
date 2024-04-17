@@ -1,15 +1,26 @@
-#include "permod.h"
-#include <errno.h>
+#include "llvm/IR/IRBuilder.h"
+#include "llvm/Pass.h"
+#include "llvm/Passes/PassBuilder.h"
+#include "llvm/Passes/PassPlugin.h"
+#include "llvm/Support/raw_ostream.h"
+#include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
-#define MAX_TRACE_DEPTH 100
+#include "llvm/IR/DebugInfoMetadata.h"
+#include "llvm/IR/DebugLoc.h"
+
+#include "llvm/IR/InstVisitor.h"
+
+#include <errno.h>
 
 #define DEBUG
 #ifdef DEBUG
+#define MAX_TRACE_DEPTH 100
 #define DEBUG_PRINT(x)                                                         \
   do {                                                                         \
     errs() << x;                                                               \
   } while (0)
 #else
+#define MAX_TRACE_DEPTH 10
 #define DEBUG_PRINT(x)                                                         \
   do {                                                                         \
   } while (0)
@@ -26,6 +37,48 @@ using namespace llvm;
 
 namespace {
 
+struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
+  Value *visitFunction(Function &F) {
+    DEBUG_PRINT("Visiting Function: " << F << "\n");
+    return nullptr;
+  }
+  // When visiting undefined by this visitor
+  Value *visitInstruction(Instruction &I) {
+    DEBUG_PRINT("Visiting Instruction: " << I << "\n");
+    return nullptr;
+  }
+  Value *visitLoadInst(LoadInst &LI) {
+    DEBUG_PRINT("Visiting Load\n");
+    return LI.getPointerOperand();
+  }
+  // NOTE: getCalledFunction() returns null for indirect call
+  Value *visitCallInst(CallInst &CI) {
+    DEBUG_PRINT("Visiting Call\n");
+    if (CI.isIndirectCall()) {
+      DEBUG_PRINT("It's IndirectCall\n");
+      return CI.getCalledOperand();
+    }
+    return CI.getCalledFunction();
+  }
+  Value *visitStoreInst(StoreInst &SI) {
+    DEBUG_PRINT("Visiting Store\n");
+    return SI.getValueOperand();
+  }
+  Value *visitZExtInst(ZExtInst &ZI) {
+    DEBUG_PRINT("Visiting ZExt\n");
+    return ZI.getOperand(0);
+  }
+  Value *visitSExtInst(SExtInst &SI) {
+    DEBUG_PRINT("Visiting SExt\n");
+    return SI.getOperand(0);
+  }
+  // TODO: Is binary operator always and?
+  Value *visitBinaryOperator(BinaryOperator &AI) {
+    DEBUG_PRINT("Visiting And\n");
+    return AI.getOperand(0);
+  }
+};
+
 /*
  * Find 'return -EACCES'
     * The statement turns into:
@@ -38,90 +91,65 @@ namespace {
 
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
+  // ****************************************************************************
+  //                               Utility
+  // ****************************************************************************
+
+#ifdef DEBUG
+  void printValue(Value *V) {
+    if (!V) {
+      DEBUG_PRINT("Value is null\n");
+      return;
+    }
+    if (isa<Function>(V)) {
+      DEBUG_PRINT("Function: " << V->getName() << "\n");
+    } else {
+      DEBUG_PRINT("Value: " << *V << "\n");
+    }
+  }
+#else
+  void printValue(Value *V) {}
+#endif // DEBUG
+
   /*
   * Backtrace from load to store
   * Get original variable (%0 is %flag)
   * code example:
     store i32 %flag, ptr %flag.addr, align 4
     %0 = load i32, ptr %flag.addr, align 4
-  * NOTE: This is recursive!
+  * TODO: may cause infinite loop
   */
   Value *getOrigin(Value *V) {
-    Value *Prev = V;
+    OriginFinder OF;
 
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
-      DEBUG_PRINT("Getting origin of: " << *V << "\n");
+      DEBUG_PRINT("Getting Origin of ");
+      printValue(V);
 
-      if (auto *LI = dyn_cast<LoadInst>(V)) {
-        V = LI->getPointerOperand();
-        DEBUG_PRINT("V was Load: " << *V << "\n");
+      if (!isa<Instruction>(V)) {
+        DEBUG_PRINT("** Not an instruction\n");
+        return V;
       }
-
-      if (auto *AI = dyn_cast<BinaryOperator>(V)) {
-        V = AI->getOperand(0);
-        DEBUG_PRINT("V was And: " << *V << "\n");
+      Value *newV = OF.visit(cast<Instruction>(V));
+      if (!newV) {
+        DEBUG_PRINT("** No newV\n");
+        return V;
       }
+      V = newV;
 
+      // TODO: This causes infinite loop!!!
       // #1: store i32 %flag, ptr %flag.addr, align 4
       for (User *U : V->users()) {
         DEBUG_PRINT("User: " << *U << "\n");
-        StoreInst *SI = dyn_cast<StoreInst>(U);
-        if (!SI)
+        if (!isa<StoreInst>(U)) {
           continue;
-        V = SI->getValueOperand(); // %flag
-        DEBUG_PRINT("V was Store: " << *V << "\n");
-      }
-
-      // NOTE: Special case for kernel
-      if (auto *ZI = dyn_cast<ZExtInst>(V)) {
-        V = ZI->getOperand(0);
-        DEBUG_PRINT("V was ZExt: " << *V << "\n");
-        if (auto *ZLI = dyn_cast<LoadInst>(V)) {
-          V = ZLI->getOperand(0);
-          DEBUG_PRINT("V was ZExt Load: " << *V << "\n");
         }
+        V = OF.visit(cast<StoreInst>(U));
+        break;
       }
-
-      // GetElementPtrInst: Get struct from member
-      // TODO?: Is this necessary?
-      if (auto *GEP = dyn_cast<GetElementPtrInst>(V)) {
-        /* V = GEP->getPointerOperand(); */
-        DEBUG_PRINT("V was GEP: " << *V << "\n");
-        return V;
-      }
-
-      // Stop the recursion
-      if (!isa<Instruction>(V)) {
-        DEBUG_PRINT("Origin: " << *V << "\n");
-        return V;
-      }
-      if (isa<CallInst>(V)) {
-        DEBUG_PRINT("Origin: " << *V << "\n");
-        Value *Origin = dyn_cast<CallInst>(V)->getCalledFunction();
-        if (!Origin)
-          continue;
-        return Origin;
-      }
-      if (isa<SExtInst>(V)) {
-        DEBUG_PRINT("Origin: " << *V << "\n");
-        Value *Origin = dyn_cast<SExtInst>(V)->getOperand(0);
-        if (!Origin)
-          continue;
-        return Origin;
-      }
-      if (isa<AllocaInst>(V)) {
-        DEBUG_PRINT("Origin: " << *V << "\n");
-        return V;
-      }
-      if (V == Prev) {
-        DEBUG_PRINT("** Cannot find origin anymore: " << *V << "\n");
-        return V;
-      }
-
-      Prev = V;
     }
 
-    DEBUG_PRINT("** Too deep recursion: " << *V << "\n");
+    DEBUG_PRINT("** Too deep: " << *V << "\n");
     return V;
   }
 
@@ -288,19 +316,20 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       %tobool = icmp ne i32 %and, 0
       br i1 %tobool, label %if.then, label %if.end
    */
-  Condition *getIfCond_cmp(BranchInst *BrI, CmpInst *CmpI, BasicBlock *DestBB) {
+  bool findIfCond_cmp(BranchInst *BrI, CmpInst *CmpI, BasicBlock *DestBB,
+                      std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
     CondType type;
 
     Value *CmpOp = CmpI->getOperand(0);
     if (!CmpOp)
-      return nullptr;
+      return false;
     /* DEBUG_PRINT(*CmpI->getParent() << "\n"); */
 
     Value *CmpOp2 = CmpI->getOperand(1);
     if (!CmpOp2)
-      return nullptr;
+      return false;
     /* if cmp with null
      e.g. if (!inode):
         %tobool = icmp ne %inode, null
@@ -310,30 +339,33 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       name = getVarName(CmpOp);
       val = CmpOp2;
       type = isBranchTrue(BrI, DestBB) ? NLLFLS : NLLTRU;
-      return new Condition(name, val, type);
+      conds.push_back(new Condition(name, val, type));
+      return true;
     }
 
     // CmpOp: %and = and i32 %flag, 2
     if (auto *AndI = dyn_cast<BinaryOperator>(CmpOp)) {
       CmpOp = AndI->getOperand(0);
       if (!CmpOp)
-        return nullptr;
+        return false;
       name = getVarName(CmpOp);
       val = AndI->getOperand(1);
       type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
-      return new Condition(name, val, type);
+      conds.push_back(new Condition(name, val, type));
+      return true;
     }
 
     // CmpOp: %call = call i32 @function()
     if (auto *CallI = dyn_cast<CallInst>(CmpOp)) {
       Function *Callee = CallI->getCalledFunction();
       if (!Callee)
-        return nullptr;
+        return false;
 
       name = getVarName(Callee);
       val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
       type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-      return new Condition(name, val, type);
+      conds.push_back(new Condition(name, val, type));
+      return true;
     }
 
     // CmpOp: %1 = load i32, i32* %flag.addr, align 4
@@ -344,11 +376,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       val = CmpI->getOperand(1);
 
       type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
-      return new Condition(name, val, type);
+      conds.push_back(new Condition(name, val, type));
+      return true;
     }
 
     DEBUG_PRINT("** Unexpected as CmpOp: " << *CmpOp << "\n");
-    return nullptr;
+    return false;
   }
 
   /* Get name & value of if condition
@@ -358,20 +391,21 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       %call = call i32 @function()
       br i1 %call, label %if.then, label %if.end
    */
-  Condition *getIfCond_call(BranchInst *BrI, CallInst *CallI,
-                            BasicBlock *DestBB) {
+  bool findIfCond_call(BranchInst *BrI, CallInst *CallI, BasicBlock *DestBB,
+                       std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
     CondType type;
 
     Function *Callee = CallI->getCalledFunction();
     if (!Callee)
-      return nullptr;
+      return false;
 
     name = getVarName(Callee);
     val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
     type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-    return new Condition(name, val, type);
+    conds.push_back(new Condition(name, val, type));
+    return true;
   }
 
   /* Get name & value of if condition
@@ -380,31 +414,32 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      - Call condition
       if (!func()) {}   // name:of func, val:0
    */
-  Condition *getIfCond(BranchInst *BrI, BasicBlock *DestBB) {
+  bool findIfCond(BranchInst *BrI, BasicBlock *DestBB,
+                  std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
 
     Value *IfCond = BrI->getCondition();
     if (!IfCond)
-      return nullptr;
+      return false;
 
     // And condition: if (flag & 2) {}
     if (isa<CmpInst>(IfCond)) {
-      return getIfCond_cmp(BrI, dyn_cast<CmpInst>(IfCond), DestBB);
+      return findIfCond_cmp(BrI, dyn_cast<CmpInst>(IfCond), DestBB, conds);
     }
     // Call condition: if (!func()) {}
     if (isa<CallInst>(IfCond)) {
-      return getIfCond_call(BrI, dyn_cast<CallInst>(IfCond), DestBB);
+      return findIfCond_call(BrI, dyn_cast<CallInst>(IfCond), DestBB, conds);
     }
     DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
-    return nullptr;
+    return false;
   }
 
   /* Get name & value of switch condition
    * Returns: (StringRef, Value*)
      - switch (flag) {}     // name:of flag, val:of flag
    */
-  Condition *getSwCond(SwitchInst *SwI) {
+  bool findSwCond(SwitchInst *SwI, std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
     Value *SwCond = SwI->getCondition();
@@ -415,10 +450,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // Get name
     SwCond = getOrigin(SwCond);
     if (!SwCond)
-      return nullptr;
+      return false;
     name = getVarName(SwCond);
 
-    return new Condition(name, val, SWITCH);
+    conds.push_back(new Condition(name, val, SWITCH));
+    return true;
   }
 
   /*
@@ -446,11 +482,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return nullptr;
   }
 
-  /*
-   * Get Condition from CondBB
-   */
-  Condition *getCond(BasicBlock *CondBB, BasicBlock *DestBB) {
-    DEBUG_PRINT("Getting condition\n");
+  bool findConditions(BasicBlock *CondBB, BasicBlock *DestBB,
+                      std::vector<Condition *> &conds) {
+    DEBUG_PRINT("Trying to get conditions\n");
 
     // Get Condition
     /*
@@ -458,15 +492,18 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      * switch (flag) {}     // name:of flag, val:of flag
      */
     if (auto *BrI = dyn_cast<BranchInst>(CondBB->getTerminator())) {
-      return getIfCond(BrI, DestBB);
+      DEBUG_PRINT("Pred has BranchInst\n");
+      return findIfCond(BrI, DestBB, conds);
     } else if (auto *SwI = dyn_cast<SwitchInst>(CondBB->getTerminator())) {
-      return getSwCond(SwI);
+      DEBUG_PRINT("Pred has SwitchInst\n");
+      return findSwCond(SwI, conds);
     } else {
       DEBUG_PRINT("* CondBB terminator is not a branch or switch\n");
-      return nullptr;
+      return false;
     }
   }
 
+  // Search from bottom to top (entry block)
   void findAllConditions(BasicBlock *ErrBB, std::vector<Condition *> &conds) {
     BasicBlock *BB = ErrBB;
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
@@ -479,19 +516,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
 
       // Get Condition
-      Condition *cond = getCond(CondBB, BB);
-      if (!cond) {
-        DEBUG_PRINT("* getCond has failed.\n");
+      // TODO: Should this return bool?
+      if (!findConditions(CondBB, BB, conds)) {
+        DEBUG_PRINT("* findCond has failed.\n");
         break;
       }
 
       // Update BB
       // NOTE: We need CondBB, not only its terminator
       BB = CondBB;
-
-      // Add Condition
-      conds.push_back(cond);
-      DEBUG_PRINT("Added condition: " << cond->Name << "\n\n");
 
       // The loop reaches to the end?
       if (CondBB == &CondBB->getParent()->getEntryBlock()) {
@@ -524,7 +557,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
     bool modified = false;
     for (auto &F : M.functions()) {
-      /* DEBUG_PRINT("FUNCTION: " << F.getName() << "\n"); */
+      DEBUG_PRINT("FUNCTION: " << F.getName() << "\n");
       /* if (F.getName() == "do_open_execat") */
       /* DEBUG_PRINT(F); */
 
