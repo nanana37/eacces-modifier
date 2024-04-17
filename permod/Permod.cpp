@@ -37,6 +37,22 @@ using namespace llvm;
 
 namespace {
 
+#ifdef DEBUG
+void printValue(Value *V) {
+  if (!V) {
+    DEBUG_PRINT("Value is null\n");
+    return;
+  }
+  if (isa<Function>(V)) {
+    DEBUG_PRINT("Function: " << V->getName() << "\n");
+  } else {
+    DEBUG_PRINT("Value: " << *V << "\n");
+  }
+}
+#else
+void printValue(Value *V) {}
+#endif // DEBUG
+
 struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   Value *visitFunction(Function &F) {
     DEBUG_PRINT("Visiting Function: " << F << "\n");
@@ -77,6 +93,20 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
     DEBUG_PRINT("Visiting And\n");
     return AI.getOperand(0);
   }
+  // When facing %flag.addr, find below:
+  // store %flag, ptr %flag.addr, align 4
+  Value *visitAllocaInst(AllocaInst &AI) {
+    DEBUG_PRINT("Visiting Alloca\n");
+    for (User *U : AI.users()) {
+      DEBUG_PRINT("User: ");
+      printValue(U);
+      if (isa<StoreInst>(U)) {
+        DEBUG_PRINT("is Store\n");
+        return U;
+      }
+    }
+    return nullptr;
+  }
 };
 
 /*
@@ -94,22 +124,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   // ****************************************************************************
   //                               Utility
   // ****************************************************************************
-
-#ifdef DEBUG
-  void printValue(Value *V) {
-    if (!V) {
-      DEBUG_PRINT("Value is null\n");
-      return;
-    }
-    if (isa<Function>(V)) {
-      DEBUG_PRINT("Function: " << V->getName() << "\n");
-    } else {
-      DEBUG_PRINT("Value: " << *V << "\n");
-    }
-  }
-#else
-  void printValue(Value *V) {}
-#endif // DEBUG
 
   /*
   * Backtrace from load to store
@@ -136,17 +150,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return V;
       }
       V = newV;
-
-      // TODO: This causes infinite loop!!!
-      // #1: store i32 %flag, ptr %flag.addr, align 4
-      for (User *U : V->users()) {
-        DEBUG_PRINT("User: " << *U << "\n");
-        if (!isa<StoreInst>(U)) {
-          continue;
-        }
-        V = OF.visit(cast<StoreInst>(U));
-        break;
-      }
+      DEBUG_PRINT("New V: " << *V << "\n");
     }
 
     DEBUG_PRINT("** Too deep: " << *V << "\n");
@@ -170,6 +174,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Get variable name
    */
   StringRef getVarName(Value *V) {
+    DEBUG_PRINT("Getting name of ");
+    printValue(V);
     StringRef Name = getOrigin(V)->getName();
     if (Name.empty())
       Name = "Unnamed Condition";
