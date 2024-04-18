@@ -184,64 +184,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return Name;
   }
 
-  // NOTE: Expect as Function has only one ret inst
-  Value *getReturnValue(Function *F) {
-    for (auto &BB : *F) {
-      Instruction *TI = BB.getTerminator();
-      if (!TI)
-        continue;
-
-      // Search for return inst
-      ReturnInst *RI = dyn_cast<ReturnInst>(TI);
-      if (!RI)
-        continue;
-
-      // What is ret value?
-      Value *RetVal = RI->getReturnValue();
-      if (!RetVal)
-        continue;
-      LoadInst *LI = dyn_cast<LoadInst>(RetVal);
-      if (!LI) {
-        /* DEBUG_PRINT("RetVal" << *RetVal << "\n"); */
-        /* DEBUG_PRINT("~~~ Return value is not LoadInst\n"); */
-        continue;
-      }
-      RetVal = LI->getPointerOperand();
-
-      return RetVal;
-    }
-
-    return nullptr;
-  }
-
-  /* Get error-thrower BB "ErrBB"
-     store i32 -13，ptr %1, align 4
-   * Returns: BasicBlock*
-   */
-  BasicBlock *getErrBB(User *U) {
-    StoreInst *SI = dyn_cast<StoreInst>(U);
-    if (!SI)
-      return nullptr;
-
-    // Storing -EACCES?
-    Value *ValOp = SI->getValueOperand();
-    ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
-    if (!CI)
-      return nullptr;
-
-    if (CI->getSExtValue() != -EACCES)
-      return nullptr;
-
-    // TODO: Check ALL error codes
-    /* if (CI->getSExtValue() >= 0) */
-    /*     return nullptr; */
-
-    // Error-thrower BB (BB of store -EACCES)
-    BasicBlock *ErrBB = SI->getParent();
-
-    return ErrBB;
-  }
-
   /*
    * ****************************************************************************
    *                                Condition
@@ -551,6 +493,69 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       delete conds.back();
       conds.pop_back();
     }
+  }
+
+  /*
+   * ****************************************************************************
+   *                                Find 'return -EACCES'
+   * ****************************************************************************
+   */
+  // NOTE: Expect as Function has only one ret inst
+  Value *getReturnValue(Function *F) {
+    for (auto &BB : *F) {
+      Instruction *TI = BB.getTerminator();
+      if (!TI)
+        continue;
+
+      // Search for return inst
+      ReturnInst *RI = dyn_cast<ReturnInst>(TI);
+      if (!RI)
+        continue;
+
+      // What is ret value?
+      Value *RetVal = RI->getReturnValue();
+      if (!RetVal)
+        continue;
+      LoadInst *LI = dyn_cast<LoadInst>(RetVal);
+      if (!LI) {
+        /* DEBUG_PRINT("RetVal" << *RetVal << "\n"); */
+        /* DEBUG_PRINT("~~~ Return value is not LoadInst\n"); */
+        continue;
+      }
+      RetVal = LI->getPointerOperand();
+
+      return RetVal;
+    }
+
+    return nullptr;
+  }
+
+  /* Get error-thrower BB "ErrBB"
+     store i32 -13，ptr %1, align 4
+   * Returns: BasicBlock*
+   */
+  BasicBlock *getErrBB(User *U) {
+    StoreInst *SI = dyn_cast<StoreInst>(U);
+    if (!SI)
+      return nullptr;
+
+    // Storing -EACCES?
+    Value *ValOp = SI->getValueOperand();
+    ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
+    if (!CI)
+      return nullptr;
+
+    if (CI->getSExtValue() != -EACCES)
+      return nullptr;
+
+    // TODO: Check ALL error codes
+    /* if (CI->getSExtValue() >= 0) */
+    /*     return nullptr; */
+
+    // Error-thrower BB (BB of store -EACCES)
+    BasicBlock *ErrBB = SI->getParent();
+
+    return ErrBB;
   }
 
   /*
