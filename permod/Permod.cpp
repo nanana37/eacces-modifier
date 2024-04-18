@@ -38,19 +38,20 @@ using namespace llvm;
 namespace {
 
 #ifdef DEBUG
-void printValue(Value *V) {
-  if (!V) {
-    DEBUG_PRINT("Value is null\n");
-    return;
-  }
-  if (isa<Function>(V)) {
-    DEBUG_PRINT("Function: " << V->getName() << "\n");
-  } else {
-    DEBUG_PRINT("Value: " << *V << "\n");
-  }
-}
+#define PRINT_VALUE(s, x)                                                      \
+  do {                                                                         \
+    errs() << s << " ";                                                        \
+    if (!x)                                                                    \
+      errs() << "null\n";                                                      \
+    else if (isa<Function>(x))                                                 \
+      errs() << "Function: " << x->getName() << "\n";                          \
+    else                                                                       \
+      errs() << "Value: " << *x << "\n";                                       \
+  } while (0)
 #else
-void printValue(Value *V) {}
+#define PRINT_VALUE(s, x)                                                      \
+  do {                                                                         \
+  } while (0)
 #endif // DEBUG
 
 struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
@@ -98,8 +99,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   Value *visitAllocaInst(AllocaInst &AI) {
     DEBUG_PRINT("Visiting Alloca\n");
     for (User *U : AI.users()) {
-      DEBUG_PRINT("User: ");
-      printValue(U);
+      PRINT_VALUE("User", U);
       if (isa<StoreInst>(U)) {
         DEBUG_PRINT("is Store\n");
         return U;
@@ -137,8 +137,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     OriginFinder OF;
 
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
-      DEBUG_PRINT("Getting Origin of ");
-      printValue(V);
+      PRINT_VALUE("Getting origin of", V);
 
       if (!isa<Instruction>(V)) {
         DEBUG_PRINT("** Not an instruction\n");
@@ -174,8 +173,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Get variable name
    */
   StringRef getVarName(Value *V) {
-    DEBUG_PRINT("Getting name of ");
-    printValue(V);
+    PRINT_VALUE("Getting name of", V);
     StringRef Name = getOrigin(V)->getName();
     if (Name.empty())
       Name = "Unnamed Condition";
