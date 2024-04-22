@@ -569,8 +569,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     bool modified = false;
     for (auto &F : M.functions()) {
       DEBUG_PRINT("FUNCTION: " << F.getName() << "\n");
-      /* if (F.getName() == "do_open_execat") */
-      /* DEBUG_PRINT(F); */
+      if (F.getName() == "lookup_open")
+        DEBUG_PRINT(F);
 
       // Skip
       if (F.getName() == LOGGER)
@@ -580,6 +580,20 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (!RetVal)
         continue;
       DEBUG_PRINT("Return value: " << *RetVal << "\n\n");
+
+      // if RetVal is allocated as ptr
+      if (auto *AllocaI = dyn_cast<AllocaInst>(RetVal)) {
+        DEBUG_PRINT("RetVal is AllocaInst\n");
+        // alloca i32, align 4
+        if (AllocaI->getAllocatedType() == Type::getInt32Ty(F.getContext())) {
+          DEBUG_PRINT("RetVal is " << *AllocaI->getAllocatedType() << "\n");
+        }
+        // alloca ptr, align 8
+        if (AllocaI->getAllocatedType() == Type::getInt8PtrTy(F.getContext())) {
+          DEBUG_PRINT("RetVal is " << *AllocaI->getAllocatedType() << "\n");
+          /* RetVal = findReturnValue(*AllocaI->getParent()); */
+        }
+      }
 
       for (User *U : RetVal->users()) {
 
