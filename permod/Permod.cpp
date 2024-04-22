@@ -501,31 +501,35 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   // NOTE: Expect as Function has only one ret inst
   Value *getReturnValue(Function &F) {
     for (auto &BB : F) {
-      Instruction *TI = BB.getTerminator();
-      if (!TI)
-        continue;
-
-      // Search for return inst
-      ReturnInst *RI = dyn_cast<ReturnInst>(TI);
-      if (!RI)
-        continue;
-
-      // What is ret value?
-      Value *RetVal = RI->getReturnValue();
-      if (!RetVal)
-        continue;
-      LoadInst *LI = dyn_cast<LoadInst>(RetVal);
-      if (!LI) {
-        /* DEBUG_PRINT("RetVal" << *RetVal << "\n"); */
-        /* DEBUG_PRINT("~~~ Return value is not LoadInst\n"); */
-        continue;
-      }
-      RetVal = LI->getPointerOperand();
-
-      return RetVal;
+      Value *RetVal = findReturnValue(BB);
+      if (RetVal)
+        return RetVal;
     }
-
     return nullptr;
+  }
+
+  // NOTE: maybe to find alloca is better?
+  Value *findReturnValue(BasicBlock &BB) {
+    Instruction *TI = BB.getTerminator();
+    if (!TI)
+      return nullptr;
+
+    // Search for return inst
+    ReturnInst *RI = dyn_cast<ReturnInst>(TI);
+    if (!RI)
+      return nullptr;
+
+    // What is ret value?
+    Value *RetVal = RI->getReturnValue();
+    if (!RetVal)
+      return nullptr;
+    LoadInst *LI = dyn_cast<LoadInst>(RetVal);
+    if (!LI) {
+      return nullptr;
+    }
+    RetVal = LI->getPointerOperand();
+
+    return RetVal;
   }
 
   /* Get error-thrower BB "ErrBB"
@@ -575,7 +579,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       Value *RetVal = getReturnValue(F);
       if (!RetVal)
         continue;
-      /* DEBUG_PRINT("Return value: " << *RetVal << "\n\n"); */
+      DEBUG_PRINT("Return value: " << *RetVal << "\n\n");
 
       for (User *U : RetVal->users()) {
 
