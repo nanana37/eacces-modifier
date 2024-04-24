@@ -493,6 +493,86 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
   }
 
+  // Debug info
+  // NOTE: need clang flag "-g"
+  void getDebugInfo(User *U, Function &F, std::vector<Condition *> &conds) {
+    LLVMContext &Ctx = U->getContext();
+    StringRef filename = F.getParent()->getSourceFileName();
+    const DebugLoc &Loc = dyn_cast<Instruction>(U)->getDebugLoc();
+    unsigned line = Loc->getLine();
+    DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
+    Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
+    // The analyzing function
+    conds.push_back(new Condition(
+        F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(), CALFLS));
+    // File name and line number
+    conds.push_back(new Condition(filename, lineVal, DBINFO));
+    // Hello
+    conds.push_back(new Condition("", NULL, HELLOO));
+  }
+
+  void insertLoggers(BasicBlock *ErrBB, Function &F,
+                     std::vector<Condition *> &conds) {
+    DEBUG_PRINT("...Inserting log...\n");
+
+    // Prepare builder
+    IRBuilder<> builder(ErrBB);
+    builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
+    LLVMContext &Ctx = ErrBB->getContext();
+
+    // Prepare function
+    std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
+    Type *retType = Type::getVoidTy(Ctx);
+    FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+    FunctionCallee logFunc =
+        F.getParent()->getOrInsertFunction(LOGGER, funcType);
+
+    // Prepare format
+    Value *format[NUM_OF_CONDTYPE];
+    prepareFormat(format, builder, Ctx);
+
+    // Prepare arguments
+    std::vector<Value *> args;
+
+    while (!conds.empty()) {
+      Condition *cond = conds.back();
+      conds.pop_back();
+
+      if (cond->Type == HELLOO) {
+        args.push_back(format[cond->Type]);
+        builder.CreateCall(logFunc, args);
+        DEBUG_PRINT("Inserted log for HELLOO\n");
+        args.clear();
+        delete cond;
+        continue;
+      }
+
+      // Check if the Value is ConstantPointerNull
+      if (cond->Val && isa<ConstantPointerNull>(cond->Val)) {
+        DEBUG_PRINT("Val is ConstantPointerNull\n");
+        if (cond->Type == CMPTRU)
+          cond->Type = NLLTRU; // maybe never reached
+        else if (cond->Type == CMPFLS)
+          cond->Type = NLLFLS; // maybe never reached
+        else
+          DEBUG_PRINT("** Unexpected type:" << cond->Type << "\n");
+      }
+
+      // Insert log
+      args.push_back(format[cond->Type]);
+      args.push_back(builder.CreateGlobalStringPtr(cond->Name));
+      args.push_back(cond->Val);
+      builder.CreateCall(logFunc, args);
+
+#ifdef DEBUG
+      DEBUG_PRINT(condTypeStr[cond->Type] << " " << cond->Name << ": "
+                                          << *cond->Val << "\n");
+#endif // DEBUG
+
+      args.clear();
+    }
+  }
+
   /*
    * ****************************************************************************
    *                                Find 'return -EACCES'
@@ -536,8 +616,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      store i32 -13，ptr %1, align 4
    * Returns: BasicBlock*
    */
-  BasicBlock *getErrBB(User &U) {
-    StoreInst *SI = dyn_cast<StoreInst>(&U);
+  BasicBlock *getErrBB(User *U) {
+    StoreInst *SI = dyn_cast<StoreInst>(U);
     if (!SI)
       return nullptr;
 
@@ -599,7 +679,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // Get Error-thrower BB "ErrBB"
         /* store -13, ptr %1, align 4 */
-        BasicBlock *ErrBB = getErrBB(*U);
+        BasicBlock *ErrBB = getErrBB(U);
         if (!ErrBB)
           continue;
 
@@ -619,81 +699,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           continue;
         }
 
-        /* Insert log */
-        DEBUG_PRINT("...Inserting log...\n");
-        // Prepare builder
-        IRBuilder<> builder(ErrBB);
-        builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
-        LLVMContext &Ctx = ErrBB->getContext();
+        getDebugInfo(U, F, conds);
 
-        // Debug info
-        // NOTE: need clang flag "-g"
-        StringRef filename = F.getParent()->getSourceFileName();
-        const DebugLoc &Loc = dyn_cast<Instruction>(U)->getDebugLoc();
-        unsigned line = Loc->getLine();
-        DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
-        Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
-        // The analyzing function
-        conds.push_back(new Condition(
-            F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(), CALFLS));
-        // File name and line number
-        conds.push_back(new Condition(filename, lineVal, DBINFO));
-        // Hello
-        conds.push_back(new Condition("", NULL, HELLOO));
+        // Insert loggers
+        insertLoggers(ErrBB, F, conds);
 
-        // Prepare function
-        std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
-        Type *retType = Type::getVoidTy(Ctx);
-        FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-        FunctionCallee logFunc =
-            F.getParent()->getOrInsertFunction(LOGGER, funcType);
-
-        // Prepare arguments
-        std::vector<Value *> args;
-
-        // Prepare format
-        Value *format[NUM_OF_CONDTYPE];
-        prepareFormat(format, builder, Ctx);
-
-        while (!conds.empty()) {
-          Condition *cond = conds.back();
-          conds.pop_back();
-
-          if (cond->Type == HELLOO) {
-            args.push_back(format[cond->Type]);
-            builder.CreateCall(logFunc, args);
-            DEBUG_PRINT("Inserted log for HELLOO\n");
-            args.clear();
-            delete cond;
-            continue;
-          }
-
-          // Check if the Value is ConstantPointerNull
-          if (cond->Val && isa<ConstantPointerNull>(cond->Val)) {
-            DEBUG_PRINT("Val is ConstantPointerNull\n");
-            if (cond->Type == CMPTRU)
-              cond->Type = NLLTRU; // maybe never reached
-            else if (cond->Type == CMPFLS)
-              cond->Type = NLLFLS; // maybe never reached
-            else
-              DEBUG_PRINT("** Unexpected type:" << cond->Type << "\n");
-          }
-
-          // Insert log
-          args.push_back(format[cond->Type]);
-          args.push_back(builder.CreateGlobalStringPtr(cond->Name));
-          args.push_back(cond->Val);
-          builder.CreateCall(logFunc, args);
-
-#ifdef DEBUG
-          DEBUG_PRINT(condTypeStr[cond->Type] << " " << cond->Name << ": "
-                                              << *cond->Val << "\n");
-#endif // DEBUG
-
-          args.clear();
-
-          delete cond;
-        }
         if (conds.empty()) {
           DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
         } else {
@@ -702,6 +712,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
 
         // Declare the modification
+        // NOTE: always modified, because we insert at least debug info.
         modified = true;
       }
     }
