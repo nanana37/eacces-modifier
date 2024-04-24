@@ -661,7 +661,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         continue;
       DEBUG_PRINT("Return value: " << *RetVal << "\n\n");
 
-      // if RetVal is allocated as ptr
+      // Analysis for ERR_PTR
+      // Search again, if RetVal is alloca ptr
       if (auto *AllocaI = dyn_cast<AllocaInst>(RetVal)) {
         DEBUG_PRINT("RetVal is AllocaInst\n");
         // alloca i32, align 4
