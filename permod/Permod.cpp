@@ -138,6 +138,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value *val = &V;
 
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
+      DEBUG_PRINT("getOrigin: ");
+      if (isa<Function>(val)) {
+        DEBUG_PRINT(val->getName() << "\n");
+      } else {
+        DEBUG_PRINT(*val << "\n");
+      }
 
       if (!isa<Instruction>(val)) {
         DEBUG_PRINT("** Not an instruction\n");
