@@ -11,10 +11,11 @@
 #include "llvm/IR/InstVisitor.h"
 
 #include <errno.h>
+#include <llvm/IR/Instructions.h>
 
 #define DEBUG
 #ifdef DEBUG
-#define MAX_TRACE_DEPTH 100
+#define MAX_TRACE_DEPTH 20
 #define DEBUG_PRINT(x)                                                         \
   do {                                                                         \
     errs() << x;                                                               \
@@ -501,16 +502,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   // Debug info
   // NOTE: need clang flag "-g"
-  void getDebugInfo(User *U, Function &F, std::vector<Condition *> &conds) {
-    LLVMContext &Ctx = U->getContext();
+  void getDebugInfo(StoreInst &SI, Function &F,
+                    std::vector<Condition *> &conds) {
+    LLVMContext &Ctx = SI.getContext();
     StringRef filename = F.getParent()->getSourceFileName();
-    const DebugLoc &Loc = dyn_cast<Instruction>(U)->getDebugLoc();
+    const DebugLoc &Loc = dyn_cast<Instruction>(&SI)->getDebugLoc();
     unsigned line = Loc->getLine();
     DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
     Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
     // The analyzing function
     conds.push_back(new Condition(
-        F.getName(), dyn_cast<StoreInst>(U)->getValueOperand(), CALFLS));
+        F.getName(), dyn_cast<StoreInst>(&SI)->getValueOperand(), CALFLS));
     // File name and line number
     conds.push_back(new Condition(filename, lineVal, DBINFO));
     // Hello
@@ -618,32 +620,76 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return RetVal;
   }
 
+  // Check if the stored value is errno
+  bool isErrValue(StoreInst &SI) {
+    Value *ValOp = SI.getValueOperand();
+    ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
+    if (!CI)
+      return false;
+
+    if (CI->getSExtValue() != -EACCES)
+      return false;
+    // TODO: Check ALL error codes
+    /* if (CI->getSExtValue() >= 0) */
+    /*   return false; */
+
+    return true;
+  }
+
   /* Get error-thrower BB "ErrBB"
      store i32 -13，ptr %1, align 4
    * Returns: BasicBlock*
    */
-  BasicBlock *getErrBB(User *U) {
-    StoreInst *SI = dyn_cast<StoreInst>(U);
-    if (!SI)
+  BasicBlock *getErrBB(StoreInst &SI) {
+    if (!isErrValue(SI))
       return nullptr;
 
-    // Storing -EACCES?
-    Value *ValOp = SI->getValueOperand();
-    ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
+    return SI.getParent();
+  }
+
+  bool isStorePtr(StoreInst &SI) {
+    return SI.getValueOperand()->getType()->isPointerTy();
+  }
+
+  // store %call, ptr %1, align 8
+  Value *getErrValue(StoreInst &SI) {
+    CallInst *CI = dyn_cast<CallInst>(SI.getValueOperand());
     if (!CI)
       return nullptr;
 
-    if (CI->getSExtValue() != -EACCES)
+    OriginFinder OF;
+    Value *ErrVal = CI->getArgOperand(0);
+    ErrVal = getOrigin(*ErrVal);
+    if (!ErrVal)
       return nullptr;
+    DEBUG_PRINT("getErrValue: ");
+    if (isa<Function>(ErrVal)) {
+      DEBUG_PRINT(ErrVal->getName() << "\n");
+    } else {
+      DEBUG_PRINT(*ErrVal << "\n");
+    }
 
-    // TODO: Check ALL error codes
-    /* if (CI->getSExtValue() >= 0) */
-    /*     return nullptr; */
+    /* for (int i = 0; i < MAX_TRACE_DEPTH; i++) { */
+    /*   // TODO: make macro for this print --- */
+    /*   DEBUG_PRINT("getErrValue: "); */
+    /*   if (isa<Function>(ErrVal)) { */
+    /*     DEBUG_PRINT(ErrVal->getName() << "\n"); */
+    /*   } else { */
+    /*     DEBUG_PRINT(*ErrVal << "\n"); */
+    /*   } */
+    /*   // TODO: ----------------------------- */
+    /**/
+    /*   if (!isa<Instruction>(ErrVal)) */
+    /*     break; */
+    /*   if (isa<StoreInst>(ErrVal)) */
+    /*     break; */
+    /*   Value *newVal = OF.visit(*dyn_cast<Instruction>(ErrVal)); */
+    /*   if (!newVal) */
+    /*     break; */
+    /*   ErrVal = newVal; */
+    /* } */
 
-    // Error-thrower BB (BB of store -EACCES)
-    BasicBlock *ErrBB = SI->getParent();
-
-    return ErrBB;
+    return ErrVal;
   }
 
   /*
@@ -654,9 +700,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
     bool modified = false;
     for (auto &F : M.functions()) {
-      DEBUG_PRINT("FUNCTION: " << F.getName() << "\n");
-      if (F.getName() == "lookup_open")
-        DEBUG_PRINT(F);
+      DEBUG_PRINT("\nFUNCTION: " << F.getName() << "\n");
+      /* if (F.getName() == "lookup_open") */
+      /*   DEBUG_PRINT(F); */
 
       // Skip
       if (F.getName() == LOGGER)
@@ -683,10 +729,55 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
 
       for (User *U : RetVal->users()) {
+        StoreInst *SI = dyn_cast<StoreInst>(U);
+        if (!SI)
+          continue;
+        DEBUG_PRINT("StoreInst: " << *SI << "\n");
+
+        if (isStorePtr(*SI)) {
+          DEBUG_PRINT("StorePtr\n");
+          Value *ErrVal = getErrValue(*SI);
+          if (!ErrVal)
+            continue;
+          for (User *U : ErrVal->users()) {
+            StoreInst *SI = dyn_cast<StoreInst>(U);
+            if (!SI)
+              continue;
+            BasicBlock *ErrBB = getErrBB(*SI);
+            if (!ErrBB)
+              continue;
+            DEBUG_PRINT("\n///////////////////////////////////////\n");
+            DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
+            DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
+            /* DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) <<
+             * "!!\n"); */
+            // Prepare Array of Condition
+            std::vector<Condition *> conds;
+            // Backtrace to find If/Switch Statement BB
+            findAllConditions(*ErrBB, conds);
+            if (conds.empty()) {
+              DEBUG_PRINT("** conds is empty\n");
+              continue;
+            }
+            getDebugInfo(*SI, F, conds);
+            // Insert loggers
+            insertLoggers(ErrBB, F, conds);
+            if (conds.empty()) {
+              DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
+            } else {
+              DEBUG_PRINT("** Failed to insert all logs\n");
+              deleteAllCond(conds);
+            }
+            // Declare the modification
+            // NOTE: always modified, because we insert at least debug info.
+            modified = true;
+          }
+          continue;
+        }
 
         // Get Error-thrower BB "ErrBB"
         /* store -13, ptr %1, align 4 */
-        BasicBlock *ErrBB = getErrBB(U);
+        BasicBlock *ErrBB = getErrBB(*SI);
         if (!ErrBB)
           continue;
 
@@ -706,7 +797,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           continue;
         }
 
-        getDebugInfo(U, F, conds);
+        getDebugInfo(*SI, F, conds);
 
         // Insert loggers
         insertLoggers(ErrBB, F, conds);
