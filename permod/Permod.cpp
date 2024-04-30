@@ -38,20 +38,18 @@ using namespace llvm;
 
 namespace {
 
-// TODO
 #ifdef DEBUG
-#define PRINT_VALUE(s, x)                                                      \
+#define DEBUG_PRINT2(x)                                                        \
   do {                                                                         \
-    errs() << s << " ";                                                        \
     if (!x)                                                                    \
-      errs() << "null\n";                                                      \
+      errs() << "(null)\n";                                                    \
     else if (isa<Function>(x))                                                 \
-      errs() << "Function: " << x.getName() << "\n";                           \
+      errs() << "(Func)" << (x)->getName() << "\n";                            \
     else                                                                       \
-      errs() << "Value: " << x << "\n";                                        \
+      errs() << "(Val) " << *(x) << "\n";                                      \
   } while (0)
 #else
-#define PRINT_VALUE(s, x)                                                      \
+#define DEBUG_PRINT2(x)                                                        \
   do {                                                                         \
   } while (0)
 #endif // DEBUG
@@ -670,11 +668,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (!ErrVal)
       return nullptr;
     DEBUG_PRINT("getErrValue: ");
-    if (isa<Function>(ErrVal)) {
-      DEBUG_PRINT(ErrVal->getName() << "\n");
-    } else {
-      DEBUG_PRINT(*ErrVal << "\n");
-    }
+    DEBUG_PRINT2(ErrVal);
 
     /* for (int i = 0; i < MAX_TRACE_DEPTH; i++) { */
     /*   // TODO: make macro for this print --- */
