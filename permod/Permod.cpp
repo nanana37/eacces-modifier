@@ -88,16 +88,16 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   }
   // When facing %flag.addr, find below:
   // store %flag, ptr %flag.addr, align 4
-  // TODO: This causes inifinite
-  // TODO: Distinguish '%flag = alloca i32' (stop) & '%flag.addr = alloca i32' (continue)
   Value *visitAllocaInst(AllocaInst &AI) {
     DEBUG("Reach to AllocaInst\n");
-    for (User *U : AI.users()) {
-      DEBUG_PRINT("Alloca user: ");
-      DEBUG_PRINT2(U);
-      if (isa<StoreInst>(U)) {
-        DEBUG_PRINT("is Store\n");
-        return U;
+    if (AI.getName().endswith(".addr")) {
+      for (User *U : AI.users()) {
+        DEBUG_PRINT("Alloca user: ");
+        DEBUG_PRINT2(U);
+        if (isa<StoreInst>(U)) {
+          DEBUG_PRINT("is Store\n");
+          return U;
+        }
       }
     }
     return nullptr;
@@ -657,7 +657,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return nullptr;
 
     Value *ErrVal = CI->getArgOperand(0);
-    /* ErrVal = getOrigin(*ErrVal); */
     if (!ErrVal)
       return nullptr;
 
