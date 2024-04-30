@@ -617,6 +617,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
     RetVal = LI->getPointerOperand();
 
+    // Type is Alloca or GEP
+    /* DEBUG_PRINT("Type of RetVal is "); */
+    /* if (isa<AllocaInst>(RetVal)) { */
+    /*   DEBUG_PRINT("AllocaInst\n"); */
+    /* } else { */
+    /*   DEBUG_PRINT("not AllocaInst" << *RetVal << "\n"); */
+    /* } */
     return RetVal;
   }
 
@@ -692,6 +699,92 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return ErrVal;
   }
 
+  bool analysisForPtr(StoreInst &SI, Function &F) {
+    DEBUG_PRINT("StorePtr\n");
+    bool modified = false;
+
+    Value *ErrVal = getErrValue(SI);
+    if (!ErrVal)
+      return false;
+
+    for (User *U : ErrVal->users()) {
+      StoreInst *SI = dyn_cast<StoreInst>(U);
+      if (!SI)
+        continue;
+      BasicBlock *ErrBB = getErrBB(*SI);
+      if (!ErrBB)
+        continue;
+      DEBUG_PRINT("\n///////////////////////////////////////\n");
+      DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
+      DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
+
+      // Prepare Array of Condition
+      std::vector<Condition *> conds;
+
+      // Backtrace to find If/Switch Statement BB
+      findAllConditions(*ErrBB, conds);
+      if (conds.empty()) {
+        DEBUG_PRINT("** conds is empty\n");
+        continue;
+      }
+
+      getDebugInfo(*SI, F, conds);
+
+      // Insert loggers
+      insertLoggers(ErrBB, F, conds);
+      if (conds.empty()) {
+        DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
+      } else {
+        DEBUG_PRINT("** Failed to insert all logs\n");
+        deleteAllCond(conds);
+      }
+
+      // Declare the modification
+      modified = true;
+    }
+    return modified;
+  }
+
+  bool analysisForInt32(StoreInst &SI, Function &F) {
+    DEBUG_PRINT("StoreInt32\n");
+    bool modified = false;
+
+    // Get Error-thrower BB "ErrBB"
+    /* store -13, ptr %1, align 4 */
+    BasicBlock *ErrBB = getErrBB(SI);
+    if (!ErrBB)
+      return false;
+
+    DEBUG_PRINT("\n///////////////////////////////////////\n");
+    DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
+    DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
+
+    // Prepare Array of Condition
+    std::vector<Condition *> conds;
+
+    // Backtrace to find If/Switch Statement BB
+    findAllConditions(*ErrBB, conds);
+    if (conds.empty()) {
+      DEBUG_PRINT("** conds is empty\n");
+      return false;
+    }
+
+    getDebugInfo(SI, F, conds);
+
+    // Insert loggers
+    insertLoggers(ErrBB, F, conds);
+    if (conds.empty()) {
+      DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
+    } else {
+      DEBUG_PRINT("** Failed to insert all logs\n");
+      deleteAllCond(conds);
+    }
+
+    // Declare the modification
+    modified = true;
+    return true;
+  }
+
   /*
    *****************
    * main function *
@@ -735,83 +828,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         DEBUG_PRINT("StoreInst: " << *SI << "\n");
 
         if (isStorePtr(*SI)) {
-          DEBUG_PRINT("StorePtr\n");
-          Value *ErrVal = getErrValue(*SI);
-          if (!ErrVal)
-            continue;
-          for (User *U : ErrVal->users()) {
-            StoreInst *SI = dyn_cast<StoreInst>(U);
-            if (!SI)
-              continue;
-            BasicBlock *ErrBB = getErrBB(*SI);
-            if (!ErrBB)
-              continue;
-            DEBUG_PRINT("\n///////////////////////////////////////\n");
-            DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
-            DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
-            /* DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) <<
-             * "!!\n"); */
-            // Prepare Array of Condition
-            std::vector<Condition *> conds;
-            // Backtrace to find If/Switch Statement BB
-            findAllConditions(*ErrBB, conds);
-            if (conds.empty()) {
-              DEBUG_PRINT("** conds is empty\n");
-              continue;
-            }
-            getDebugInfo(*SI, F, conds);
-            // Insert loggers
-            insertLoggers(ErrBB, F, conds);
-            if (conds.empty()) {
-              DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
-            } else {
-              DEBUG_PRINT("** Failed to insert all logs\n");
-              deleteAllCond(conds);
-            }
-            // Declare the modification
-            // NOTE: always modified, because we insert at least debug info.
-            modified = true;
-          }
-          continue;
-        }
-
-        // Get Error-thrower BB "ErrBB"
-        /* store -13, ptr %1, align 4 */
-        BasicBlock *ErrBB = getErrBB(*SI);
-        if (!ErrBB)
-          continue;
-
-        DEBUG_PRINT("\n///////////////////////////////////////\n");
-        DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
-        DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
-        /* DEBUG_PRINT(*(dyn_cast<StoreInst>(U)->getValueOperand()) <<
-         * "!!\n"); */
-
-        // Prepare Array of Condition
-        std::vector<Condition *> conds;
-
-        // Backtrace to find If/Switch Statement BB
-        findAllConditions(*ErrBB, conds);
-        if (conds.empty()) {
-          DEBUG_PRINT("** conds is empty\n");
-          continue;
-        }
-
-        getDebugInfo(*SI, F, conds);
-
-        // Insert loggers
-        insertLoggers(ErrBB, F, conds);
-
-        if (conds.empty()) {
-          DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
+          modified |= analysisForPtr(*SI, F);
         } else {
-          DEBUG_PRINT("** Failed to insert all logs\n");
-          deleteAllCond(conds);
+          modified |= analysisForInt32(*SI, F);
         }
-
-        // Declare the modification
-        // NOTE: always modified, because we insert at least debug info.
-        modified = true;
       }
     }
     if (modified)
