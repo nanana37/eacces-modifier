@@ -56,21 +56,17 @@ namespace {
 
 struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   Value *visitFunction(Function &F) {
-    DEBUG_PRINT("Visiting Function: " << F.getName() << "\n");
     return nullptr;
   }
   // When visiting undefined by this visitor
   Value *visitInstruction(Instruction &I) {
-    DEBUG_PRINT("Visiting Instruction: " << I << "\n");
     return nullptr;
   }
   Value *visitLoadInst(LoadInst &LI) {
-    DEBUG_PRINT("Visiting Load\n");
     return LI.getPointerOperand();
   }
   // NOTE: getCalledFunction() returns null for indirect call
   Value *visitCallInst(CallInst &CI) {
-    DEBUG_PRINT("Visiting Call\n");
     if (CI.isIndirectCall()) {
       DEBUG_PRINT("It's IndirectCall\n");
       return CI.getCalledOperand();
@@ -78,27 +74,27 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
     return CI.getCalledFunction();
   }
   Value *visitStoreInst(StoreInst &SI) {
-    DEBUG_PRINT("Visiting Store\n");
     return SI.getValueOperand();
   }
   Value *visitZExtInst(ZExtInst &ZI) {
-    DEBUG_PRINT("Visiting ZExt\n");
     return ZI.getOperand(0);
   }
   Value *visitSExtInst(SExtInst &SI) {
-    DEBUG_PRINT("Visiting SExt\n");
     return SI.getOperand(0);
   }
   // TODO: Is binary operator always and?
   Value *visitBinaryOperator(BinaryOperator &AI) {
-    DEBUG_PRINT("Visiting And\n");
     return AI.getOperand(0);
   }
   // When facing %flag.addr, find below:
   // store %flag, ptr %flag.addr, align 4
+  // TODO: This causes inifinite
+  // TODO: Distinguish '%flag = alloca i32' (stop) & '%flag.addr = alloca i32' (continue)
   Value *visitAllocaInst(AllocaInst &AI) {
-    DEBUG_PRINT("Visiting Alloca\n");
+    DEBUG("Reach to AllocaInst\n");
     for (User *U : AI.users()) {
+      DEBUG_PRINT("Alloca user: ");
+      DEBUG_PRINT2(U);
       if (isa<StoreInst>(U)) {
         DEBUG_PRINT("is Store\n");
         return U;
@@ -138,11 +134,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
       DEBUG_PRINT("getOrigin: ");
-      if (isa<Function>(val)) {
-        DEBUG_PRINT(val->getName() << "\n");
-      } else {
-        DEBUG_PRINT(*val << "\n");
-      }
+      DEBUG_PRINT2(val);
 
       if (!isa<Instruction>(val)) {
         DEBUG_PRINT("** Not an instruction\n");
@@ -519,7 +511,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   void insertLoggers(BasicBlock *ErrBB, Function &F,
                      std::vector<Condition *> &conds) {
-    DEBUG_PRINT("...Inserting log...\n");
+    DEBUG_PRINT("\n...Inserting log...\n");
 
     // Prepare builder
     IRBuilder<> builder(ErrBB);
@@ -658,48 +650,46 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   // store %call, ptr %1, align 8
   Value *getErrValue(StoreInst &SI) {
+    DEBUG_PRINT("\ngetErrValue of " << SI << "\n");
+
     CallInst *CI = dyn_cast<CallInst>(SI.getValueOperand());
     if (!CI)
       return nullptr;
 
-    OriginFinder OF;
     Value *ErrVal = CI->getArgOperand(0);
-    ErrVal = getOrigin(*ErrVal);
+    /* ErrVal = getOrigin(*ErrVal); */
     if (!ErrVal)
       return nullptr;
-    DEBUG_PRINT("getErrValue: ");
-    DEBUG_PRINT2(ErrVal);
 
-    /* for (int i = 0; i < MAX_TRACE_DEPTH; i++) { */
-    /*   // TODO: make macro for this print --- */
-    /*   DEBUG_PRINT("getErrValue: "); */
-    /*   if (isa<Function>(ErrVal)) { */
-    /*     DEBUG_PRINT(ErrVal->getName() << "\n"); */
-    /*   } else { */
-    /*     DEBUG_PRINT(*ErrVal << "\n"); */
-    /*   } */
-    /*   // TODO: ----------------------------- */
-    /**/
-    /*   if (!isa<Instruction>(ErrVal)) */
-    /*     break; */
-    /*   if (isa<StoreInst>(ErrVal)) */
-    /*     break; */
-    /*   Value *newVal = OF.visit(*dyn_cast<Instruction>(ErrVal)); */
-    /*   if (!newVal) */
-    /*     break; */
-    /*   ErrVal = newVal; */
-    /* } */
+    OriginFinder OF;
+    for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
+      DEBUG_PRINT("getErrValue: ");
+      DEBUG_PRINT2(ErrVal);
+
+      if (!isa<Instruction>(ErrVal))
+        break;
+      if (isa<AllocaInst>(ErrVal))
+        break;
+      Value *newVal = OF.visit(*dyn_cast<Instruction>(ErrVal));
+      if (!newVal)
+        break;
+      ErrVal = newVal;
+    }
+
+    DEBUG_PRINT("getErrValue ends: " << *ErrVal << "\n");
 
     return ErrVal;
   }
 
   bool analysisForPtr(StoreInst &SI, Function &F) {
-    DEBUG_PRINT("StorePtr\n");
+    DEBUG_PRINT("\n==AnalysisForPtr==\n");
     bool modified = false;
 
     Value *ErrVal = getErrValue(SI);
     if (!ErrVal)
       return false;
+
+    DEBUG_PRINT2(ErrVal);
 
     for (User *U : ErrVal->users()) {
       StoreInst *SI = dyn_cast<StoreInst>(U);
@@ -727,7 +717,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       // Insert loggers
       insertLoggers(ErrBB, F, conds);
       if (conds.empty()) {
-        DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
+        DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
       } else {
         DEBUG_PRINT("** Failed to insert all logs\n");
         deleteAllCond(conds);
@@ -740,7 +730,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   bool analysisForInt32(StoreInst &SI, Function &F) {
-    DEBUG_PRINT("StoreInt32\n");
+    DEBUG_PRINT("\n==AnalysisForInt32==\n");
     bool modified = false;
 
     // Get Error-thrower BB "ErrBB"
@@ -768,7 +758,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // Insert loggers
     insertLoggers(ErrBB, F, conds);
     if (conds.empty()) {
-      DEBUG_PRINT("~~~ Inserted all logs ~~~\n");
+      DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
     } else {
       DEBUG_PRINT("** Failed to insert all logs\n");
       deleteAllCond(conds);
@@ -787,7 +777,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
     bool modified = false;
     for (auto &F : M.functions()) {
-      DEBUG_PRINT("\nFUNCTION: " << F.getName() << "\n");
+      DEBUG_PRINT("\n-FUNCTION: " << F.getName() << "\n");
       /* if (F.getName() == "lookup_open") */
       /*   DEBUG_PRINT(F); */
 
