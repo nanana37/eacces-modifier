@@ -545,17 +545,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         continue;
       }
 
-      // Check if the Value is ConstantPointerNull
-      if (cond->Val && isa<ConstantPointerNull>(cond->Val)) {
-        DEBUG_PRINT("Val is ConstantPointerNull\n");
-        if (cond->Type == CMPTRU)
-          cond->Type = NLLTRU; // maybe never reached
-        else if (cond->Type == CMPFLS)
-          cond->Type = NLLFLS; // maybe never reached
-        else
-          DEBUG_PRINT("** Unexpected type:" << cond->Type << "\n");
-      }
-
       // Insert log
       args.push_back(format[cond->Type]);
       args.push_back(builder.CreateGlobalStringPtr(cond->Name));
