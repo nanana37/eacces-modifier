@@ -55,16 +55,17 @@ namespace {
 #endif // DEBUG
 
 struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
-  Value *visitFunction(Function &F) {
-    return nullptr;
-  }
+  Value *visitFunction(Function &F) { return nullptr; }
   // When visiting undefined by this visitor
-  Value *visitInstruction(Instruction &I) {
-    return nullptr;
-  }
-  Value *visitLoadInst(LoadInst &LI) {
-    return LI.getPointerOperand();
-  }
+  Value *visitInstruction(Instruction &I) { return nullptr; }
+
+  Value *visitLoadInst(LoadInst &LI) { return LI.getPointerOperand(); }
+  Value *visitStoreInst(StoreInst &SI) { return SI.getValueOperand(); }
+  Value *visitZExtInst(ZExtInst &ZI) { return ZI.getOperand(0); }
+  Value *visitSExtInst(SExtInst &SI) { return SI.getOperand(0); }
+  // TODO: Is binary operator always and?
+  Value *visitBinaryOperator(BinaryOperator &AI) { return AI.getOperand(0); }
+
   // NOTE: getCalledFunction() returns null for indirect call
   Value *visitCallInst(CallInst &CI) {
     if (CI.isIndirectCall()) {
@@ -73,19 +74,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
     }
     return CI.getCalledFunction();
   }
-  Value *visitStoreInst(StoreInst &SI) {
-    return SI.getValueOperand();
-  }
-  Value *visitZExtInst(ZExtInst &ZI) {
-    return ZI.getOperand(0);
-  }
-  Value *visitSExtInst(SExtInst &SI) {
-    return SI.getOperand(0);
-  }
-  // TODO: Is binary operator always and?
-  Value *visitBinaryOperator(BinaryOperator &AI) {
-    return AI.getOperand(0);
-  }
+
   // When facing %flag.addr, find below:
   // store %flag, ptr %flag.addr, align 4
   Value *visitAllocaInst(AllocaInst &AI) {
@@ -596,7 +585,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
     RetVal = LI->getPointerOperand();
 
-    // Type is Alloca or GEP
+    // RetVal should be Alloca or GEP
     /* DEBUG_PRINT("Type of RetVal is "); */
     /* if (isa<AllocaInst>(RetVal)) { */
     /*   DEBUG_PRINT("AllocaInst\n"); */
