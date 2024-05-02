@@ -78,7 +78,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   // When facing %flag.addr, find below:
   // store %flag, ptr %flag.addr, align 4
   Value *visitAllocaInst(AllocaInst &AI) {
-    DEBUG("Reach to AllocaInst\n");
+    DEBUG_PRINT("Reach to AllocaInst\n");
     if (AI.getName().endswith(".addr")) {
       for (User *U : AI.users()) {
         DEBUG_PRINT("Alloca user: ");
@@ -144,10 +144,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   /*
    * Get struct name, if the V is a member of struct
    */
-  StringRef getStructName(Value &V) {
-    if (!isa<GetElementPtrInst>(V))
-      return "";
-    Value *PtrOp = cast<GetElementPtrInst>(V).getPointerOperand();
+  StringRef getStructName(GetElementPtrInst &GEP) {
+    Value *PtrOp = GEP.getPointerOperand();
     if (!PtrOp)
       return "";
     DEBUG_PRINT("PtrOp: " << *PtrOp << "\n");
@@ -158,12 +156,23 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Get variable name
    */
   StringRef getVarName(Value &V) {
-    StringRef Name = getOrigin(V)->getName();
+    DEBUG_PRINT("getVarName: ");
+    DEBUG_PRINT2(&V);
+    Value *origin = getOrigin(V);
+    StringRef Name = origin->getName();
     if (Name.empty())
       Name = "Unnamed Condition";
-    /* StringRef StructName = getStructName(V); */
-    /* if (!StructName.empty()) */
-    /*     Name = Twine(StructName) + "." + Twine(Name); */
+    DEBUG_PRINT("Origin: ");
+    DEBUG_PRINT2(origin);
+    if (isa<GetElementPtrInst>(origin)) {
+      SmallVector<char> Indices;
+      DEBUG_PRINT("Getting struct name\n");
+      GetElementPtrInst &GEP = cast<GetElementPtrInst>(*origin);
+      // NOTE: if failed to get struct name, return ".Name"
+      Twine newName = getStructName(GEP) + "." + Name;
+      DEBUG_PRINT("New Name: " << newName << "\n");
+      return newName.toStringRef(Indices);
+    }
     DEBUG_PRINT("Name: " << Name << "\n");
     return Name;
   }
