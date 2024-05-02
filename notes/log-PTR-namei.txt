@@ -1,0 +1,5002 @@
+rm: cannot remove 'fs/namei.o': No such file or directory
+
+-FUNCTION: getname_flags
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %42, ptr %retval, align 8, !dbg !8707
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %42, ptr %retval, align 8, !dbg !8707
+StoreInst:   store ptr %call93, ptr %retval, align 8, !dbg !8695
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call93, ptr %retval, align 8, !dbg !8695
+getErrValue: (Val) i64 -2
+getErrValue ends: i64 -2
+(Val) i64 -2
+StoreInst:   store ptr %call74, ptr %retval, align 8, !dbg !8671
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call74, ptr %retval, align 8, !dbg !8671
+getErrValue: (Val) i64 -36
+getErrValue ends: i64 -36
+(Val) i64 -36
+StoreInst:   store ptr %call62, ptr %retval, align 8, !dbg !8662
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call62, ptr %retval, align 8, !dbg !8662
+getErrValue: (Val)   %conv61 = sext i32 %27 to i64, !dbg !8660
+getErrValue: (Val)   %27 = load i32, ptr %len, align 4, !dbg !8660
+getErrValue: (Val)   %len = alloca i32, align 4, !DIAssignID !8579
+getErrValue ends:   %len = alloca i32, align 4, !DIAssignID !8579
+(Val)   %len = alloca i32, align 4, !DIAssignID !8579
+StoreInst:   store ptr %call46, ptr %retval, align 8, !dbg !8643
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call46, ptr %retval, align 8, !dbg !8643
+getErrValue: (Val) i64 -12
+getErrValue ends: i64 -12
+(Val) i64 -12
+StoreInst:   store ptr %call21, ptr %retval, align 8, !dbg !8625
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call21, ptr %retval, align 8, !dbg !8625
+getErrValue: (Val)   %conv20 = sext i32 %13 to i64, !dbg !8623
+getErrValue: (Val)   %13 = load i32, ptr %len, align 4, !dbg !8623
+getErrValue: (Val)   %len = alloca i32, align 4, !DIAssignID !8579
+getErrValue ends:   %len = alloca i32, align 4, !DIAssignID !8579
+(Val)   %len = alloca i32, align 4, !DIAssignID !8579
+StoreInst:   store ptr %call7, ptr %retval, align 8, !dbg !8604
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call7, ptr %retval, align 8, !dbg !8604
+getErrValue: (Val) i64 -12
+getErrValue ends: i64 -12
+(Val) i64 -12
+StoreInst:   store ptr %2, ptr %retval, align 8, !dbg !8596
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %2, ptr %retval, align 8, !dbg !8596
+
+-FUNCTION: llvm.dbg.declare
+
+-FUNCTION: llvm.lifetime.start.p0
+
+-FUNCTION: audit_reusename
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8572
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8572
+StoreInst:   store ptr %call3, ptr %retval, align 8, !dbg !8571
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call3, ptr %retval, align 8, !dbg !8571
+getErrValue: (Val)   %0 = load ptr, ptr %name.addr, align 8, !dbg !8569
+getErrValue: (Val)   %name.addr = alloca ptr, align 8, !DIAssignID !8563
+getErrValue ends:   %name.addr = alloca ptr, align 8, !DIAssignID !8563
+(Val)   %name.addr = alloca ptr, align 8, !DIAssignID !8563
+
+-FUNCTION: kmem_cache_alloc
+
+-FUNCTION: llvm.expect.i64
+
+-FUNCTION: ERR_PTR
+
+-FUNCTION: strncpy_from_user
+
+-FUNCTION: kmem_cache_free
+
+-FUNCTION: kzalloc
+
+-FUNCTION: kfree
+
+-FUNCTION: llvm.lifetime.end.p0
+
+-FUNCTION: putname
+
+-FUNCTION: audit_getname
+
+-FUNCTION: getname_uflags
+
+-FUNCTION: getname
+
+-FUNCTION: getname_kernel
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %65, ptr %retval, align 8, !dbg !8685
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %65, ptr %retval, align 8, !dbg !8685
+StoreInst:   store ptr %call30, ptr %retval, align 8, !dbg !8635
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call30, ptr %retval, align 8, !dbg !8635
+getErrValue: (Val) i64 -36
+getErrValue ends: i64 -36
+(Val) i64 -36
+StoreInst:   store ptr %call25, ptr %retval, align 8, !dbg !8622
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call25, ptr %retval, align 8, !dbg !8622
+getErrValue: (Val) i64 -12
+getErrValue ends: i64 -12
+(Val) i64 -12
+StoreInst:   store ptr %call6, ptr %retval, align 8, !dbg !8595
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call6, ptr %retval, align 8, !dbg !8595
+getErrValue: (Val) i64 -12
+getErrValue ends: i64 -12
+(Val) i64 -12
+
+-FUNCTION: _Z16__fortify_strlenPKcU25pass_dynamic_object_size1
+Return value:   %retval = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %9, ptr %retval, align 8, !dbg !8599
+
+==AnalysisForInt32==
+StoreInst:   store i64 %call, ptr %retval, align 8, !dbg !8586
+
+==AnalysisForInt32==
+
+-FUNCTION: llvm.objectsize.i64.p0
+
+-FUNCTION: kmalloc
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call13, ptr %retval, align 8, !dbg !8607
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call13, ptr %retval, align 8, !dbg !8607
+getErrValue: (Val)   %18 = load i64, ptr %size.addr, align 8, !dbg !8604
+getErrValue: (Val)   %size.addr = alloca i64, align 8, !DIAssignID !8568
+getErrValue ends:   %size.addr = alloca i64, align 8, !DIAssignID !8568
+(Val)   %size.addr = alloca i64, align 8, !DIAssignID !8568
+StoreInst:   store ptr %call11, ptr %retval, align 8, !dbg !8602
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call11, ptr %retval, align 8, !dbg !8602
+getErrValue: (Val)   %15 = load ptr, ptr %arrayidx10, align 8, !dbg !8597
+getErrValue: (Val)   %arrayidx10 = getelementptr [14 x ptr], ptr %arrayidx, i64 0, i64 %idxprom9, !dbg !8597
+getErrValue ends:   %arrayidx10 = getelementptr [14 x ptr], ptr %arrayidx, i64 0, i64 %idxprom9, !dbg !8597
+(Val)   %arrayidx10 = getelementptr [14 x ptr], ptr %arrayidx, i64 0, i64 %idxprom9, !dbg !8597
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !8591
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !8591
+getErrValue: (Val)   %4 = load i64, ptr %size.addr, align 8, !dbg !8587
+getErrValue: (Val)   %size.addr = alloca i64, align 8, !DIAssignID !8568
+getErrValue ends:   %size.addr = alloca i64, align 8, !DIAssignID !8568
+(Val)   %size.addr = alloca i64, align 8, !DIAssignID !8568
+
+-FUNCTION: _Z18fortify_memcpy_chkmmmmmPKc
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8651
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8650
+
+==AnalysisForInt32==
+
+-FUNCTION: __ubsan_handle_load_invalid_value
+
+-FUNCTION: __warn_printk
+
+-FUNCTION: __ubsan_handle_shift_out_of_bounds
+
+-FUNCTION: llvm.memcpy.p0.p0.i64
+
+-FUNCTION: IS_ERR
+
+-FUNCTION: generic_permission
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8636
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+generic_permission has 'return -EACCES'
+Error-thrower BB: 
+if.end32:                                         ; preds = %if.end31, %lor.lhs.false
+  store i32 -13, ptr %retval, align 4, !dbg !8636
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8636
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %conv25 = zext i16 %18 to i32, !dbg !8625
+getOrigin: (Val)   %18 = load i16, ptr %i_mode24, align 8, !dbg !8626
+getOrigin: (Val)   %i_mode24 = getelementptr inbounds %struct.inode, ptr %17, i32 0, i32 0, !dbg !8626
+** No original
+Name: i_mode24
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+** Too deep: 0x55849fef8db0
+Name: Unnamed Condition
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+getOrigin: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+** Too deep: 0x55849fef8db0
+Name: Unnamed Condition
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %conv = zext i16 %6 to i32, !dbg !8586
+getOrigin: (Val)   %6 = load i16, ptr %i_mode, align 8, !dbg !8586
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8586
+** No original
+Name: i_mode
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %3 = load i32, ptr %ret, align 4, !dbg !8580
+getOrigin: (Val)   %3 = load i32, ptr %ret, align 4, !dbg !8580
+getOrigin: (Val)   %ret = alloca i32, align 4, !DIAssignID !8569
+** No original
+Name: ret
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/namei.c:441
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 441
+CALFLS generic_permission: i32 -13
+CMPFLS ret: i32 -13
+CMPFLS i_mode: i32 61440
+CMPFLS Unnamed Condition: i32 4
+CMPTRU Unnamed Condition: i32 1
+CMPFLS i_mode24: i32 73
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8634
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8619
+
+==AnalysisForInt32==
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8607
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+generic_permission has 'return -EACCES'
+Error-thrower BB: 
+if.end12:                                         ; preds = %if.end9
+  store i32 -13, ptr %retval, align 4, !dbg !8607
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8607
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)capable_wrt_inode_uidgid
+** Not an instruction
+Name: capable_wrt_inode_uidgid
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %7 = load i32, ptr %mask.addr, align 4, !dbg !8589
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+getOrigin: (Val)   %12 = load i32, ptr %mask.addr, align 4, !dbg !8608
+getOrigin: (Val)   %mask.addr = alloca i32, align 4, !DIAssignID !8568
+Alloca user: (Val)   %16 = load i32, ptr %mask.addr, align 4, !dbg !8621
+Alloca user: (Val)   %13 = load i32, ptr %mask.addr, align 4, !dbg !8610
+Alloca user: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i32 %and14, ptr %mask.addr, align 4, !dbg !8608, !DIAssignID !8609
+getOrigin: (Val)   %and14 = and i32 %12, 7, !dbg !8608
+** Too deep: 0x55849fef8db0
+Name: Unnamed Condition
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %conv = zext i16 %6 to i32, !dbg !8586
+getOrigin: (Val)   %6 = load i16, ptr %i_mode, align 8, !dbg !8586
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8586
+** No original
+Name: i_mode
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %3 = load i32, ptr %ret, align 4, !dbg !8580
+getOrigin: (Val)   %3 = load i32, ptr %ret, align 4, !dbg !8580
+getOrigin: (Val)   %ret = alloca i32, align 4, !DIAssignID !8569
+** No original
+Name: ret
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/namei.c:420
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 420
+CALFLS generic_permission: i32 -13
+CMPFLS ret: i32 -13
+CMPTRU i_mode: i32 61440
+CMPTRU Unnamed Condition: i32 2
+CALFLS capable_wrt_inode_uidgid: i32 0
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8606
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8599
+
+==AnalysisForInt32==
+StoreInst:   store i32 %4, ptr %retval, align 4, !dbg !8585
+
+==AnalysisForInt32==
+
+-FUNCTION: acl_permission_check
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %cond43, ptr %retval, align 4, !dbg !8663
+
+==AnalysisForInt32==
+StoreInst:   store i32 %22, ptr %retval, align 4, !dbg !8633
+
+==AnalysisForInt32==
+StoreInst:   store i32 %cond, ptr %retval, align 4, !dbg !8615
+
+==AnalysisForInt32==
+
+-FUNCTION: capable_wrt_inode_uidgid
+
+-FUNCTION: inode_permission
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call22, ptr %retval, align 4, !dbg !8626
+
+==AnalysisForInt32==
+StoreInst:   store i32 %19, ptr %retval, align 4, !dbg !8622
+
+==AnalysisForInt32==
+StoreInst:   store i32 %15, ptr %retval, align 4, !dbg !8612
+
+==AnalysisForInt32==
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8600
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+inode_permission has 'return -EACCES'
+Error-thrower BB: 
+if.then11:                                        ; preds = %if.end9
+  store i32 -13, ptr %retval, align 4, !dbg !8600
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8600
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)HAS_UNMAPPED_ID
+** Not an instruction
+Name: HAS_UNMAPPED_ID
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %8 = load i32, ptr %i_flags, align 4, !dbg !8589
+getOrigin: (Val)   %i_flags = getelementptr inbounds %struct.inode, ptr %7, i32 0, i32 4, !dbg !8589
+** No original
+Name: i_flags
+Trying to get conditions
+Pred has BranchInst
+** Unexpected as IfCond: i1 true
+* findCond has failed.
+Debug info: /home/hiron/repo/linux/fs/namei.c:525
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 525
+CALFLS inode_permission: i32 -13
+CMPFLS i_flags: i32 8
+CALTRU HAS_UNMAPPED_ID: i32 0
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8594
+
+==AnalysisForInt32==
+StoreInst:   store i32 %5, ptr %retval, align 4, !dbg !8585
+
+==AnalysisForInt32==
+
+-FUNCTION: sb_permission
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8598
+
+==AnalysisForInt32==
+StoreInst:   store i32 -30, ptr %retval, align 4, !dbg !8595
+
+==AnalysisForInt32==
+
+-FUNCTION: HAS_UNMAPPED_ID
+
+-FUNCTION: do_inode_permission
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call21, ptr %retval, align 4, !dbg !8599
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %retval, align 4, !dbg !8584
+
+==AnalysisForInt32==
+
+-FUNCTION: devcgroup_inode_permission
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call30, ptr %retval, align 4, !dbg !8616
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8594
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8581
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_permission
+
+-FUNCTION: path_get
+
+-FUNCTION: mntget
+
+-FUNCTION: dget
+Return value:   %dentry.addr = alloca ptr, align 8, !DIAssignID !8564
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %dentry, ptr %dentry.addr, align 8, !DIAssignID !8566
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %dentry, ptr %dentry.addr, align 8, !DIAssignID !8566
+
+-FUNCTION: path_put
+
+-FUNCTION: dput
+
+-FUNCTION: mntput
+
+-FUNCTION: nd_jump_link
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %21, ptr %retval, align 4, !dbg !8626
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8621
+
+==AnalysisForInt32==
+
+-FUNCTION: get_current
+Return value:   %tmp1 = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %5, ptr %tmp1, align 8, !dbg !8576
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %5, ptr %tmp1, align 8, !dbg !8576
+
+-FUNCTION: llvm.dbg.label
+
+-FUNCTION: init_fs_namei_sysctls
+
+-FUNCTION: may_linkat
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8605
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8603
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8593
+
+==AnalysisForInt32==
+StoreInst:   store i32 -75, ptr %retval, align 4, !dbg !8589
+
+==AnalysisForInt32==
+
+-FUNCTION: vfsuid_valid
+
+-FUNCTION: i_uid_into_vfsuid
+Return value:   %coerce.dive3 = getelementptr inbounds %struct.vfsuid_t, ptr %retval, i32 0, i32 0, !dbg !8576
+
+
+-FUNCTION: vfsgid_valid
+
+-FUNCTION: i_gid_into_vfsgid
+Return value:   %coerce.dive3 = getelementptr inbounds %struct.vfsgid_t, ptr %retval, i32 0, i32 0, !dbg !8576
+
+
+-FUNCTION: safe_hardlink_source
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8598
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8597
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8591
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8585
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8580
+
+==AnalysisForInt32==
+
+-FUNCTION: inode_owner_or_capable
+
+-FUNCTION: audit_log_path_denied
+
+-FUNCTION: follow_up
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !8618
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8593
+
+==AnalysisForInt32==
+
+-FUNCTION: real_mount
+Return value:   %tmp = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %add.ptr, ptr %tmp, align 8, !dbg !8571
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %add.ptr, ptr %tmp, align 8, !dbg !8571
+
+-FUNCTION: read_seqlock_excl
+
+-FUNCTION: read_sequnlock_excl
+
+-FUNCTION: follow_down_one
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8595
+
+==AnalysisForInt32==
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !8594
+
+==AnalysisForInt32==
+
+-FUNCTION: lookup_mnt
+
+-FUNCTION: follow_down
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8573
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %ret, align 4, !dbg !8586, !DIAssignID !8587
+
+==AnalysisForInt32==
+
+-FUNCTION: traverse_mounts
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call17, ptr %retval, align 4, !dbg !8612
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8605
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %retval, align 4, !dbg !8604
+
+==AnalysisForInt32==
+
+-FUNCTION: lookup_one_qstr_excl
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %21, ptr %retval, align 8, !dbg !8632
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %21, ptr %retval, align 8, !dbg !8632
+StoreInst:   store ptr %call19, ptr %retval, align 8, !dbg !8612
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call19, ptr %retval, align 8, !dbg !8612
+getErrValue: (Val) i64 -12
+getErrValue ends: i64 -12
+(Val) i64 -12
+StoreInst:   store ptr %call5, ptr %retval, align 8, !dbg !8602
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call5, ptr %retval, align 8, !dbg !8602
+getErrValue: (Val) i64 -2
+getErrValue ends: i64 -2
+(Val) i64 -2
+StoreInst:   store ptr %6, ptr %retval, align 8, !dbg !8596
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %6, ptr %retval, align 8, !dbg !8596
+
+-FUNCTION: lookup_dcache
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %10, ptr %retval, align 8, !dbg !8611
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %10, ptr %retval, align 8, !dbg !8611
+StoreInst:   store ptr %call8, ptr %retval, align 8, !dbg !8607
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call8, ptr %retval, align 8, !dbg !8607
+getErrValue: (Val)   %conv7 = sext i32 %9 to i64, !dbg !8605
+getErrValue: (Val)   %9 = load i32, ptr %error, align 4, !dbg !8605
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8575
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8575
+(Val)   %error = alloca i32, align 4, !DIAssignID !8575
+
+-FUNCTION: d_alloc
+
+-FUNCTION: full_name_hash
+
+-FUNCTION: load_unaligned_zeropad
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8568
+
+RetVal is AllocaInst
+StoreInst:   store i64 %1, ptr %ret, align 8, !dbg !8572, !DIAssignID !8574
+
+==AnalysisForInt32==
+
+-FUNCTION: rol64
+
+-FUNCTION: fold_hash
+
+-FUNCTION: hashlen_string
+
+-FUNCTION: has_zero
+Return value:   %mask = alloca i64, align 8, !DIAssignID !8578
+
+RetVal is AllocaInst
+StoreInst:   store i64 %and1, ptr %mask, align 8, !dbg !8593, !DIAssignID !8594
+
+==AnalysisForInt32==
+
+-FUNCTION: prep_zero_mask
+Return value:   %bits.addr = alloca i64, align 8, !DIAssignID !8575
+
+RetVal is AllocaInst
+StoreInst:   store i64 %bits, ptr %bits.addr, align 8, !DIAssignID !8578
+
+==AnalysisForInt32==
+
+-FUNCTION: create_zero_mask
+
+-FUNCTION: find_zero
+
+-FUNCTION: filename_lookup
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %19, ptr %retval, align 4, !dbg !8632
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %retval, align 4, !dbg !8591
+
+==AnalysisForInt32==
+
+-FUNCTION: PTR_ERR
+
+-FUNCTION: set_nameidata
+
+-FUNCTION: path_lookupat
+Return value:   %err = alloca i32, align 4, !DIAssignID !8573
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -20, ptr %err, align 4, !dbg !8654, !DIAssignID !8655
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call40, ptr %err, align 4, !dbg !8638, !DIAssignID !8639
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call35, ptr %err, align 4, !dbg !8627, !DIAssignID !8628
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call17, ptr %err, align 4, !dbg !8608, !DIAssignID !8609
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call4, ptr %err, align 4, !dbg !8593, !DIAssignID !8594
+
+==AnalysisForInt32==
+
+-FUNCTION: audit_inode
+
+-FUNCTION: restore_nameidata
+
+-FUNCTION: kern_path_locked
+Return value:   %res = alloca ptr, align 8, !DIAssignID !8571
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call1, ptr %res, align 8, !dbg !8583, !DIAssignID !8584
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %res, align 8, !dbg !8583, !DIAssignID !8584
+getErrValue: (Val)   %1 = load ptr, ptr %filename, align 8, !dbg !8580
+getErrValue: (Val)   %filename = alloca ptr, align 8, !DIAssignID !8570
+getErrValue ends:   %filename = alloca ptr, align 8, !DIAssignID !8570
+(Val)   %filename = alloca ptr, align 8, !DIAssignID !8570
+
+-FUNCTION: __kern_path_locked
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %16, ptr %retval, align 8, !dbg !8622
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %16, ptr %retval, align 8, !dbg !8622
+StoreInst:   store ptr %call7, ptr %retval, align 8, !dbg !8599
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call7, ptr %retval, align 8, !dbg !8599
+getErrValue: (Val) i64 -22
+getErrValue ends: i64 -22
+(Val) i64 -22
+StoreInst:   store ptr %call1, ptr %retval, align 8, !dbg !8591
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %retval, align 8, !dbg !8591
+getErrValue: (Val)   %conv = sext i32 %3 to i64, !dbg !8589
+getErrValue: (Val)   %3 = load i32, ptr %error, align 4, !dbg !8589
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8575
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8575
+(Val)   %error = alloca i32, align 4, !DIAssignID !8575
+
+-FUNCTION: kern_path
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8573
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call1, ptr %ret, align 4, !dbg !8587, !DIAssignID !8588
+
+==AnalysisForInt32==
+
+-FUNCTION: vfs_path_parent_lookup
+
+-FUNCTION: __filename_parentat
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %20, ptr %retval, align 4, !dbg !8643
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %retval, align 4, !dbg !8597
+
+==AnalysisForInt32==
+
+-FUNCTION: vfs_path_lookup
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8579
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call3, ptr %ret, align 4, !dbg !8601, !DIAssignID !8602
+
+==AnalysisForInt32==
+
+-FUNCTION: try_lookup_one_len
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call35, ptr %retval, align 8, !dbg !8616
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call35, ptr %retval, align 8, !dbg !8616
+getErrValue: (Val)   %this = alloca %struct.qstr, align 8, !DIAssignID !8577
+getErrValue ends:   %this = alloca %struct.qstr, align 8, !DIAssignID !8577
+(Val)   %this = alloca %struct.qstr, align 8, !DIAssignID !8577
+StoreInst:   store ptr %call33, ptr %retval, align 8, !dbg !8613
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call33, ptr %retval, align 8, !dbg !8613
+getErrValue: (Val)   %conv32 = sext i32 %10 to i64, !dbg !8611
+getErrValue: (Val)   %10 = load i32, ptr %err, align 4, !dbg !8611
+getErrValue: (Val)   %err = alloca i32, align 4, !DIAssignID !8578
+getErrValue ends:   %err = alloca i32, align 4, !DIAssignID !8578
+(Val)   %err = alloca i32, align 4, !DIAssignID !8578
+
+-FUNCTION: inode_is_locked
+
+-FUNCTION: lookup_one_common
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call39, ptr %retval, align 4, !dbg !8667
+
+==AnalysisForInt32==
+StoreInst:   store i32 %30, ptr %retval, align 4, !dbg !8660
+
+==AnalysisForInt32==
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8639
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+lookup_one_common has 'return -EACCES'
+Error-thrower BB: 
+if.then26:                                        ; preds = %lor.lhs.false23, %while.body
+  store i32 -13, ptr %retval, align 4, !dbg !8639
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8639
+
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %21 = load i32, ptr %c, align 4, !dbg !8636
+getOrigin: (Val)   %21 = load i32, ptr %c, align 4, !dbg !8636
+getOrigin: (Val)   %c = alloca i32, align 4, !DIAssignID !8579
+** No original
+Name: c
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %20 = load i32, ptr %c, align 4, !dbg !8632
+getOrigin: (Val)   %20 = load i32, ptr %c, align 4, !dbg !8632
+getOrigin: (Val)   %c = alloca i32, align 4, !DIAssignID !8579
+** No original
+Name: c
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+** Too deep: 0x5584a0801c60
+Name: Unnamed Condition
+*OMGOMGOMGOMG No CondBB in preds
+Debug info: /home/hiron/repo/linux/fs/namei.c:2674
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 2674
+CALFLS lookup_one_common: i32 -13
+CMPTRU Unnamed Condition: i32 0
+CMPFLS c: i32 47
+CMPTRU c: i32 0
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8621
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+lookup_one_common has 'return -EACCES'
+Error-thrower BB: 
+if.then16:                                        ; preds = %land.lhs.true, %if.then7
+  store i32 -13, ptr %retval, align 4, !dbg !8621
+  br label %return, !dbg !8621
+
+Trying to get conditions
+Pred has BranchInst
+** Unexpected as CmpOp:   %conv13 = zext i8 %16 to i32, !dbg !8618
+* findCond has failed.
+** conds is empty
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8606
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+lookup_one_common has 'return -EACCES'
+Error-thrower BB: 
+if.then:                                          ; preds = %entry
+  store i32 -13, ptr %retval, align 4, !dbg !8606
+  br label %return, !dbg !8606
+
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %10 = load i32, ptr %len.addr, align 4, !dbg !8603
+getOrigin: (Val)   %10 = load i32, ptr %len.addr, align 4, !dbg !8603
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+getOrigin: (Val)   %17 = load i32, ptr %len.addr, align 4, !dbg !8624
+getOrigin: (Val)   %len.addr = alloca i32, align 4, !DIAssignID !8577
+Alloca user: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+is Store
+getOrigin: (Val)   store i32 %dec, ptr %len.addr, align 4, !dbg !8624, !DIAssignID !8625
+getOrigin: (Val)   %dec = add i32 %17, -1, !dbg !8624
+** Too deep: 0x5584a0801c60
+Name: Unnamed Condition
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/namei.c:2664
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 2664
+CALFLS lookup_one_common: i32 -13
+CMPFLS Unnamed Condition: i32 0
+~~~ Inserted all logs ~~~
+
+
+-FUNCTION: lookup_one_len
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %cond, ptr %retval, align 8, !dbg !8625
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %cond, ptr %retval, align 8, !dbg !8625
+StoreInst:   store ptr %call33, ptr %retval, align 8, !dbg !8616
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call33, ptr %retval, align 8, !dbg !8616
+getErrValue: (Val)   %conv32 = sext i32 %10 to i64, !dbg !8614
+getErrValue: (Val)   %10 = load i32, ptr %err, align 4, !dbg !8614
+getErrValue: (Val)   %err = alloca i32, align 4, !DIAssignID !8580
+getErrValue ends:   %err = alloca i32, align 4, !DIAssignID !8580
+(Val)   %err = alloca i32, align 4, !DIAssignID !8580
+
+-FUNCTION: __lookup_slow
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %29, ptr %retval, align 8, !dbg !8667
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %29, ptr %retval, align 8, !dbg !8667
+StoreInst:   store ptr %9, ptr %retval, align 8, !dbg !8614
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %9, ptr %retval, align 8, !dbg !8614
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !8602
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !8602
+getErrValue: (Val) i64 -2
+getErrValue ends: i64 -2
+(Val) i64 -2
+
+-FUNCTION: lookup_one
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %cond, ptr %retval, align 8, !dbg !8629
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %cond, ptr %retval, align 8, !dbg !8629
+StoreInst:   store ptr %call33, ptr %retval, align 8, !dbg !8620
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call33, ptr %retval, align 8, !dbg !8620
+getErrValue: (Val)   %conv32 = sext i32 %11 to i64, !dbg !8618
+getErrValue: (Val)   %11 = load i32, ptr %err, align 4, !dbg !8618
+getErrValue: (Val)   %err = alloca i32, align 4, !DIAssignID !8582
+getErrValue ends:   %err = alloca i32, align 4, !DIAssignID !8582
+(Val)   %err = alloca i32, align 4, !DIAssignID !8582
+
+-FUNCTION: lookup_one_unlocked
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %9, ptr %retval, align 8, !dbg !8611
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %9, ptr %retval, align 8, !dbg !8611
+StoreInst:   store ptr %call1, ptr %retval, align 8, !dbg !8597
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %retval, align 8, !dbg !8597
+getErrValue: (Val)   %conv = sext i32 %5 to i64, !dbg !8595
+getErrValue: (Val)   %5 = load i32, ptr %err, align 4, !dbg !8595
+getErrValue: (Val)   %err = alloca i32, align 4, !DIAssignID !8576
+getErrValue ends:   %err = alloca i32, align 4, !DIAssignID !8576
+(Val)   %err = alloca i32, align 4, !DIAssignID !8576
+
+-FUNCTION: lookup_slow
+Return value:   %res = alloca ptr, align 8, !DIAssignID !8573
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call, ptr %res, align 8, !dbg !8589, !DIAssignID !8590
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %res, align 8, !dbg !8589, !DIAssignID !8590
+getErrValue: (Val)   %3 = load ptr, ptr %name.addr, align 8, !dbg !8585
+getErrValue: (Val)   %name.addr = alloca ptr, align 8, !DIAssignID !8568
+getErrValue ends:   %name.addr = alloca ptr, align 8, !DIAssignID !8568
+(Val)   %name.addr = alloca ptr, align 8, !DIAssignID !8568
+
+-FUNCTION: lookup_one_positive_unlocked
+Return value:   %ret = alloca ptr, align 8, !DIAssignID !8576
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call7, ptr %ret, align 8, !dbg !8610, !DIAssignID !8611
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call7, ptr %ret, align 8, !dbg !8610, !DIAssignID !8611
+getErrValue: (Val) i64 -2
+getErrValue ends: i64 -2
+(Val) i64 -2
+StoreInst:   store ptr %call, ptr %ret, align 8, !dbg !8589, !DIAssignID !8590
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %ret, align 8, !dbg !8589, !DIAssignID !8590
+getErrValue: (Val)   %0 = load ptr, ptr %idmap.addr, align 8, !dbg !8584
+getErrValue: (Val)   %idmap.addr = alloca ptr, align 8, !DIAssignID !8571
+getErrValue ends:   %idmap.addr = alloca ptr, align 8, !DIAssignID !8571
+(Val)   %idmap.addr = alloca ptr, align 8, !DIAssignID !8571
+
+-FUNCTION: d_flags_negative
+
+-FUNCTION: lookup_one_len_unlocked
+
+-FUNCTION: lookup_positive_unlocked
+
+-FUNCTION: path_pts
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8613
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %retval, align 4, !dbg !8604
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %retval, align 4, !dbg !8589
+
+==AnalysisForInt32==
+
+-FUNCTION: dget_parent
+
+-FUNCTION: path_connected
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 %call, ptr %retval, align 1, !dbg !8589
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8584
+
+==AnalysisForInt32==
+
+-FUNCTION: d_hash_and_lookup
+
+-FUNCTION: user_path_at_empty
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8577
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call1, ptr %ret, align 4, !dbg !8596, !DIAssignID !8597
+
+==AnalysisForInt32==
+
+-FUNCTION: __check_sticky
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %lnot.ext, ptr %retval, align 4, !dbg !8601
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8596
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8589
+
+==AnalysisForInt32==
+
+-FUNCTION: vfsuid_eq_kuid
+
+-FUNCTION: lock_rename
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !8587
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !8587
+getErrValue: (Val)   %6 = load ptr, ptr %p1.addr, align 8, !dbg !8584
+getErrValue: (Val)   %p1.addr = alloca ptr, align 8, !DIAssignID !8565
+getErrValue ends:   %p1.addr = alloca ptr, align 8, !DIAssignID !8565
+(Val)   %p1.addr = alloca ptr, align 8, !DIAssignID !8565
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8579
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8579
+
+-FUNCTION: inode_lock_nested
+
+-FUNCTION: mutex_lock
+
+-FUNCTION: lock_two_directories
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8612
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8612
+StoreInst:   store ptr %15, ptr %retval, align 8, !dbg !8606
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %15, ptr %retval, align 8, !dbg !8606
+StoreInst:   store ptr %7, ptr %retval, align 8, !dbg !8589
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %7, ptr %retval, align 8, !dbg !8589
+
+-FUNCTION: lock_rename_child
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8609
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8609
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !8601
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !8601
+getErrValue: (Val)   %17 = load ptr, ptr %d_parent18, align 8, !dbg !8598
+getErrValue: (Val)   %d_parent18 = getelementptr inbounds %struct.dentry, ptr %16, i32 0, i32 3, !dbg !8598
+getErrValue ends:   %d_parent18 = getelementptr inbounds %struct.dentry, ptr %16, i32 0, i32 3, !dbg !8598
+(Val)   %d_parent18 = getelementptr inbounds %struct.dentry, ptr %16, i32 0, i32 3, !dbg !8598
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8585
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8585
+
+-FUNCTION: inode_unlock
+
+-FUNCTION: mutex_unlock
+
+-FUNCTION: unlock_rename
+
+-FUNCTION: vfs_create
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %29, ptr %retval, align 4, !dbg !8632
+
+==AnalysisForInt32==
+StoreInst:   store i32 %15, ptr %retval, align 4, !dbg !8613
+
+==AnalysisForInt32==
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8596
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+vfs_create has 'return -EACCES'
+Error-thrower BB: 
+if.then2:                                         ; preds = %if.end
+  store i32 -13, ptr %retval, align 4, !dbg !8596
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8596
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %7 = load ptr, ptr %create, align 8, !dbg !8594
+getOrigin: (Val)   %create = getelementptr inbounds %struct.inode_operations, ptr %6, i32 0, i32 5, !dbg !8594
+** No original
+Name: create
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %3 = load i32, ptr %error, align 4, !dbg !8586
+getOrigin: (Val)   %3 = load i32, ptr %error, align 4, !dbg !8586
+getOrigin: (Val)   %error = alloca i32, align 4, !DIAssignID !8573
+** No original
+Name: error
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/namei.c:3188
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 3188
+CALFLS vfs_create: i32 -13
+CMPFLS error: i32 0
+NLLTRU create: ptr null
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 %4, ptr %retval, align 4, !dbg !8590
+
+==AnalysisForInt32==
+
+-FUNCTION: may_create
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call6, ptr %retval, align 4, !dbg !8596
+
+==AnalysisForInt32==
+StoreInst:   store i32 -75, ptr %retval, align 4, !dbg !8592
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %retval, align 4, !dbg !8585
+
+==AnalysisForInt32==
+StoreInst:   store i32 -17, ptr %retval, align 4, !dbg !8580
+
+==AnalysisForInt32==
+
+-FUNCTION: vfs_prepare_mode
+Return value:   %mode.addr = alloca i16, align 2, !DIAssignID !8571
+
+RetVal is AllocaInst
+StoreInst:   store i16 %conv8, ptr %mode.addr, align 2, !dbg !8596, !DIAssignID !8597
+
+==AnalysisForInt32==
+StoreInst:   store i16 %conv4, ptr %mode.addr, align 2, !dbg !8592, !DIAssignID !8593
+
+==AnalysisForInt32==
+StoreInst:   store i16 %call1, ptr %mode.addr, align 2, !dbg !8588, !DIAssignID !8589
+
+==AnalysisForInt32==
+StoreInst:   store i16 %call, ptr %mode.addr, align 2, !dbg !8583, !DIAssignID !8584
+
+==AnalysisForInt32==
+StoreInst:   store i16 %mode, ptr %mode.addr, align 2, !DIAssignID !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_create
+
+-FUNCTION: fsnotify_create
+
+-FUNCTION: vfs_mkobj
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %21, ptr %retval, align 4, !dbg !8628
+
+==AnalysisForInt32==
+StoreInst:   store i32 %13, ptr %retval, align 4, !dbg !8614
+
+==AnalysisForInt32==
+StoreInst:   store i32 %6, ptr %retval, align 4, !dbg !8599
+
+==AnalysisForInt32==
+
+-FUNCTION: may_open_dev
+
+-FUNCTION: kernel_tmpfile_open
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %11, ptr %retval, align 8, !dbg !8615
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %11, ptr %retval, align 8, !dbg !8615
+StoreInst:   store ptr %3, ptr %retval, align 8, !dbg !8595
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %3, ptr %retval, align 8, !dbg !8595
+
+-FUNCTION: alloc_empty_file_noaccount
+
+-FUNCTION: vfs_tmpfile
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8697
+
+==AnalysisForInt32==
+StoreInst:   store i32 %39, ptr %retval, align 4, !dbg !8672
+
+==AnalysisForInt32==
+StoreInst:   store i32 %33, ptr %retval, align 4, !dbg !8659
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !8624
+
+==AnalysisForInt32==
+StoreInst:   store i32 -95, ptr %retval, align 4, !dbg !8615
+
+==AnalysisForInt32==
+StoreInst:   store i32 %7, ptr %retval, align 4, !dbg !8609
+
+==AnalysisForInt32==
+
+-FUNCTION: fput
+
+-FUNCTION: do_filp_open
+Return value:   %filp = alloca ptr, align 8, !DIAssignID !8585
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call16, ptr %filp, align 8, !dbg !8621, !DIAssignID !8622
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call16, ptr %filp, align 8, !dbg !8621, !DIAssignID !8622
+getErrValue: (Val)   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+getErrValue ends:   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+(Val)   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+StoreInst:   store ptr %call3, ptr %filp, align 8, !dbg !8611, !DIAssignID !8612
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call3, ptr %filp, align 8, !dbg !8611, !DIAssignID !8612
+getErrValue: (Val)   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+getErrValue ends:   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+(Val)   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+StoreInst:   store ptr %call, ptr %filp, align 8, !dbg !8603, !DIAssignID !8604
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %filp, align 8, !dbg !8603, !DIAssignID !8604
+getErrValue: (Val)   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+getErrValue ends:   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+(Val)   %nd = alloca %struct.nameidata, align 8, !DIAssignID !8583
+
+-FUNCTION: path_openat
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call96, ptr %retval, align 8, !dbg !8721
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call96, ptr %retval, align 8, !dbg !8721
+getErrValue: (Val)   %conv95 = sext i32 %41 to i64, !dbg !8719
+getErrValue: (Val)   %41 = load i32, ptr %error, align 4, !dbg !8719
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8594
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8594
+(Val)   %error = alloca i32, align 4, !DIAssignID !8594
+StoreInst:   store ptr %33, ptr %retval, align 8, !dbg !8684
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %33, ptr %retval, align 8, !dbg !8684
+StoreInst:   store ptr %5, ptr %retval, align 8, !dbg !8620
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %5, ptr %retval, align 8, !dbg !8620
+
+-FUNCTION: do_file_open_root
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %20, ptr %retval, align 8, !dbg !8653
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %20, ptr %retval, align 8, !dbg !8653
+StoreInst:   store ptr %call5, ptr %retval, align 8, !dbg !8620
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call5, ptr %retval, align 8, !dbg !8620
+getErrValue: (Val)   %8 = load ptr, ptr %filename, align 8, !dbg !8618
+getErrValue: (Val)   %filename = alloca ptr, align 8, !DIAssignID !8586
+getErrValue ends:   %filename = alloca ptr, align 8, !DIAssignID !8586
+(Val)   %filename = alloca ptr, align 8, !DIAssignID !8586
+StoreInst:   store ptr %call1, ptr %retval, align 8, !dbg !8609
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %retval, align 8, !dbg !8609
+getErrValue: (Val) i64 -40
+getErrValue ends: i64 -40
+(Val) i64 -40
+
+-FUNCTION: d_is_symlink
+
+-FUNCTION: ERR_CAST
+Return value:   %ptr.addr = alloca ptr, align 8, !DIAssignID !8565
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %ptr, ptr %ptr.addr, align 8, !DIAssignID !8567
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %ptr, ptr %ptr.addr, align 8, !DIAssignID !8567
+
+-FUNCTION: kern_path_create
+Return value:   %res = alloca ptr, align 8, !DIAssignID !8575
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call1, ptr %res, align 8, !dbg !8591, !DIAssignID !8592
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %res, align 8, !dbg !8591, !DIAssignID !8592
+getErrValue: (Val)   %1 = load i32, ptr %dfd.addr, align 4, !dbg !8586
+getErrValue: (Val)   %dfd.addr = alloca i32, align 4, !DIAssignID !8569
+getErrValue ends:   %dfd.addr = alloca i32, align 4, !DIAssignID !8569
+(Val)   %dfd.addr = alloca i32, align 4, !DIAssignID !8569
+
+-FUNCTION: filename_create
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %40, ptr %retval, align 8, !dbg !8713
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %40, ptr %retval, align 8, !dbg !8713
+StoreInst:   store ptr %30, ptr %retval, align 8, !dbg !8689
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %30, ptr %retval, align 8, !dbg !8689
+StoreInst:   store ptr %call4, ptr %retval, align 8, !dbg !8628
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call4, ptr %retval, align 8, !dbg !8628
+getErrValue: (Val)   %conv = sext i32 %7 to i64, !dbg !8626
+getErrValue: (Val)   %7 = load i32, ptr %error, align 4, !dbg !8626
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8590
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8590
+(Val)   %error = alloca i32, align 4, !DIAssignID !8590
+
+-FUNCTION: done_path_create
+
+-FUNCTION: mnt_drop_write
+
+-FUNCTION: user_path_create
+Return value:   %res = alloca ptr, align 8, !DIAssignID !8575
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call1, ptr %res, align 8, !dbg !8591, !DIAssignID !8592
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %res, align 8, !dbg !8591, !DIAssignID !8592
+getErrValue: (Val)   %1 = load i32, ptr %dfd.addr, align 4, !dbg !8586
+getErrValue: (Val)   %dfd.addr = alloca i32, align 4, !DIAssignID !8569
+getErrValue ends:   %dfd.addr = alloca i32, align 4, !DIAssignID !8569
+(Val)   %dfd.addr = alloca i32, align 4, !DIAssignID !8569
+
+-FUNCTION: vfs_mknod
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %42, ptr %retval, align 4, !dbg !8664
+
+==AnalysisForInt32==
+StoreInst:   store i32 %30, ptr %retval, align 4, !dbg !8646
+
+==AnalysisForInt32==
+StoreInst:   store i32 %24, ptr %retval, align 4, !dbg !8634
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8616
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8610
+
+==AnalysisForInt32==
+StoreInst:   store i32 %7, ptr %retval, align 4, !dbg !8599
+
+==AnalysisForInt32==
+
+-FUNCTION: capable
+
+-FUNCTION: devcgroup_inode_mknod
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %retval, align 4, !dbg !8600
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8586
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8579
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_mknod
+
+-FUNCTION: __x64_sys_mknodat
+
+-FUNCTION: __se_sys_mknodat
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8573
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8578, !DIAssignID !8579
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_mknodat
+
+-FUNCTION: __x64_sys_mknod
+
+-FUNCTION: __se_sys_mknod
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8571
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8575, !DIAssignID !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_mknod
+
+-FUNCTION: vfs_mkdir
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %34, ptr %retval, align 4, !dbg !8644
+
+==AnalysisForInt32==
+StoreInst:   store i32 -31, ptr %retval, align 4, !dbg !8627
+
+==AnalysisForInt32==
+StoreInst:   store i32 %18, ptr %retval, align 4, !dbg !8618
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8601
+
+==AnalysisForInt32==
+StoreInst:   store i32 %7, ptr %retval, align 4, !dbg !8595
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_mkdir
+
+-FUNCTION: fsnotify_mkdir
+
+-FUNCTION: do_mkdirat
+Return value:   %error = alloca i32, align 4, !DIAssignID !8578
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call10, ptr %error, align 4, !dbg !8624, !DIAssignID !8625
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call5, ptr %error, align 4, !dbg !8611, !DIAssignID !8612
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %error, align 4, !dbg !8598, !DIAssignID !8599
+
+==AnalysisForInt32==
+
+-FUNCTION: security_path_mkdir
+
+-FUNCTION: mode_strip_umask
+Return value:   %mode.addr = alloca i16, align 2, !DIAssignID !8567
+
+RetVal is AllocaInst
+StoreInst:   store i16 %conv2, ptr %mode.addr, align 2, !dbg !8576, !DIAssignID !8577
+
+==AnalysisForInt32==
+StoreInst:   store i16 %mode, ptr %mode.addr, align 2, !DIAssignID !8569
+
+==AnalysisForInt32==
+
+-FUNCTION: mnt_idmap
+Return value:   %tmp4 = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %3, ptr %tmp4, align 8, !dbg !8574
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %3, ptr %tmp4, align 8, !dbg !8574
+
+-FUNCTION: retry_estale
+
+-FUNCTION: __x64_sys_mkdirat
+
+-FUNCTION: __se_sys_mkdirat
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8571
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8575, !DIAssignID !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_mkdirat
+
+-FUNCTION: __x64_sys_mkdir
+
+-FUNCTION: __se_sys_mkdir
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8569
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8572, !DIAssignID !8573
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_mkdir
+
+-FUNCTION: vfs_rmdir
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %36, ptr %retval, align 4, !dbg !8657
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8593
+
+==AnalysisForInt32==
+StoreInst:   store i32 %4, ptr %retval, align 4, !dbg !8587
+
+==AnalysisForInt32==
+
+-FUNCTION: may_delete
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8691
+
+==AnalysisForInt32==
+StoreInst:   store i32 -16, ptr %retval, align 4, !dbg !8690
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %retval, align 4, !dbg !8684
+
+==AnalysisForInt32==
+StoreInst:   store i32 -21, ptr %retval, align 4, !dbg !8680
+
+==AnalysisForInt32==
+StoreInst:   store i32 -16, ptr %retval, align 4, !dbg !8674
+
+==AnalysisForInt32==
+StoreInst:   store i32 -20, ptr %retval, align 4, !dbg !8670
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8661
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8644
+
+==AnalysisForInt32==
+StoreInst:   store i32 %18, ptr %retval, align 4, !dbg !8639
+
+==AnalysisForInt32==
+StoreInst:   store i32 -75, ptr %retval, align 4, !dbg !8626
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %retval, align 4, !dbg !8590
+
+==AnalysisForInt32==
+
+-FUNCTION: inode_lock
+
+-FUNCTION: is_local_mountpoint
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 %call1, ptr %retval, align 1, !dbg !8574
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8571
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_rmdir
+
+-FUNCTION: shrink_dcache_parent
+
+-FUNCTION: dont_mount
+
+-FUNCTION: detach_mounts
+
+-FUNCTION: d_delete_notify
+
+-FUNCTION: do_rmdir
+Return value:   %error = alloca i32, align 4, !DIAssignID !8579
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call26, ptr %error, align 4, !dbg !8665, !DIAssignID !8666
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call18, ptr %error, align 4, !dbg !8653, !DIAssignID !8654
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %error, align 4, !dbg !8647, !DIAssignID !8649
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %error, align 4, !dbg !8636, !DIAssignID !8637
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call3, ptr %error, align 4, !dbg !8620, !DIAssignID !8621
+
+==AnalysisForInt32==
+StoreInst:   store i32 -16, ptr %error, align 4, !dbg !8615, !DIAssignID !8616
+
+==AnalysisForInt32==
+StoreInst:   store i32 -22, ptr %error, align 4, !dbg !8612, !DIAssignID !8613
+
+==AnalysisForInt32==
+StoreInst:   store i32 -39, ptr %error, align 4, !dbg !8608, !DIAssignID !8610
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %error, align 4, !dbg !8600, !DIAssignID !8601
+
+==AnalysisForInt32==
+
+-FUNCTION: filename_parentat
+
+-FUNCTION: mnt_want_write
+
+-FUNCTION: security_path_rmdir
+
+-FUNCTION: __x64_sys_rmdir
+
+-FUNCTION: __se_sys_rmdir
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8567
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8569, !DIAssignID !8570
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_rmdir
+
+-FUNCTION: vfs_unlink
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %38, ptr %retval, align 4, !dbg !8683
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8604
+
+==AnalysisForInt32==
+StoreInst:   store i32 %6, ptr %retval, align 4, !dbg !8598
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_unlink
+
+-FUNCTION: try_break_deleg
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8570
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %ret, align 4, !dbg !8576, !DIAssignID !8577
+
+==AnalysisForInt32==
+
+-FUNCTION: fsnotify_unlink
+
+-FUNCTION: fsnotify_link_count
+
+-FUNCTION: do_unlinkat
+Return value:   %error = alloca i32, align 4, !DIAssignID !8584
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -20, ptr %error, align 4, !dbg !8747, !DIAssignID !8748
+
+==AnalysisForInt32==
+StoreInst:   store i32 -21, ptr %error, align 4, !dbg !8744, !DIAssignID !8745
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %error, align 4, !dbg !8737, !DIAssignID !8738
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call38, ptr %error, align 4, !dbg !8703, !DIAssignID !8704
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call29, ptr %error, align 4, !dbg !8681, !DIAssignID !8682
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call21, ptr %error, align 4, !dbg !8669, !DIAssignID !8670
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %error, align 4, !dbg !8645, !DIAssignID !8646
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call3, ptr %error, align 4, !dbg !8628, !DIAssignID !8629
+
+==AnalysisForInt32==
+StoreInst:   store i32 -21, ptr %error, align 4, !dbg !8619, !DIAssignID !8620
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %error, align 4, !dbg !8613, !DIAssignID !8614
+
+==AnalysisForInt32==
+
+-FUNCTION: d_is_negative
+
+-FUNCTION: ihold
+
+-FUNCTION: security_path_unlink
+
+-FUNCTION: iput
+
+-FUNCTION: break_deleg_wait
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8568
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %ret, align 4, !dbg !8574, !DIAssignID !8575
+
+==AnalysisForInt32==
+
+-FUNCTION: d_is_dir
+
+-FUNCTION: __x64_sys_unlinkat
+
+-FUNCTION: __se_sys_unlinkat
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8571
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8575, !DIAssignID !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_unlinkat
+
+-FUNCTION: __x64_sys_unlink
+
+-FUNCTION: __se_sys_unlink
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8567
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8569, !DIAssignID !8570
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_unlink
+
+-FUNCTION: vfs_symlink
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %23, ptr %retval, align 4, !dbg !8621
+
+==AnalysisForInt32==
+StoreInst:   store i32 %12, ptr %retval, align 4, !dbg !8604
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8593
+
+==AnalysisForInt32==
+StoreInst:   store i32 %4, ptr %retval, align 4, !dbg !8587
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_symlink
+
+-FUNCTION: do_symlinkat
+Return value:   %error = alloca i32, align 4, !DIAssignID !8576
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call13, ptr %error, align 4, !dbg !8633, !DIAssignID !8634
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call8, ptr %error, align 4, !dbg !8620, !DIAssignID !8621
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv4, ptr %error, align 4, !dbg !8609, !DIAssignID !8610
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %error, align 4, !dbg !8596, !DIAssignID !8597
+
+==AnalysisForInt32==
+
+-FUNCTION: security_path_symlink
+
+-FUNCTION: __x64_sys_symlinkat
+
+-FUNCTION: __se_sys_symlinkat
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8571
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8575, !DIAssignID !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_symlinkat
+
+-FUNCTION: __x64_sys_symlink
+
+-FUNCTION: __se_sys_symlink
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8569
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8572, !DIAssignID !8573
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_symlink
+
+-FUNCTION: vfs_link
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %63, ptr %retval, align 4, !dbg !8729
+
+==AnalysisForInt32==
+StoreInst:   store i32 %30, ptr %retval, align 4, !dbg !8654
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8643
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8639
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8633
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8627
+
+==AnalysisForInt32==
+StoreInst:   store i32 -18, ptr %retval, align 4, !dbg !8620
+
+==AnalysisForInt32==
+StoreInst:   store i32 %10, ptr %retval, align 4, !dbg !8612
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %retval, align 4, !dbg !8601
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_link
+
+-FUNCTION: spin_lock
+
+-FUNCTION: spin_unlock
+
+-FUNCTION: fsnotify_link
+
+-FUNCTION: do_linkat
+Return value:   %error = alloca i32, align 4, !DIAssignID !8591
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call41, ptr %error, align 4, !dbg !8707, !DIAssignID !8708
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call38, ptr %error, align 4, !dbg !8696, !DIAssignID !8697
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call32, ptr %error, align 4, !dbg !8684, !DIAssignID !8685
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call25, ptr %error, align 4, !dbg !8675, !DIAssignID !8676
+
+==AnalysisForInt32==
+StoreInst:   store i32 -18, ptr %error, align 4, !dbg !8661, !DIAssignID !8662
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %error, align 4, !dbg !8654, !DIAssignID !8655
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call8, ptr %error, align 4, !dbg !8639, !DIAssignID !8640
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %error, align 4, !dbg !8622, !DIAssignID !8624
+
+==AnalysisForInt32==
+StoreInst:   store i32 -22, ptr %error, align 4, !dbg !8612, !DIAssignID !8614
+
+==AnalysisForInt32==
+
+-FUNCTION: security_path_link
+
+-FUNCTION: __x64_sys_linkat
+
+-FUNCTION: __se_sys_linkat
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8575
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8581, !DIAssignID !8582
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_linkat
+
+-FUNCTION: __x64_sys_link
+
+-FUNCTION: __se_sys_link
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8569
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8572, !DIAssignID !8573
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_link
+
+-FUNCTION: vfs_rename
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %182, ptr %retval, align 4, !dbg !8988
+
+==AnalysisForInt32==
+StoreInst:   store i32 %82, ptr %retval, align 4, !dbg !8790
+
+==AnalysisForInt32==
+StoreInst:   store i32 %75, ptr %retval, align 4, !dbg !8775
+
+==AnalysisForInt32==
+StoreInst:   store i32 %66, ptr %retval, align 4, !dbg !8755
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8734
+
+==AnalysisForInt32==
+StoreInst:   store i32 %53, ptr %retval, align 4, !dbg !8728
+
+==AnalysisForInt32==
+StoreInst:   store i32 %30, ptr %retval, align 4, !dbg !8684
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8670
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_rename
+
+-FUNCTION: take_dentry_name_snapshot
+
+-FUNCTION: lock_two_inodes
+
+-FUNCTION: d_move
+
+-FUNCTION: d_exchange
+
+-FUNCTION: fsnotify_move
+
+-FUNCTION: release_dentry_name_snapshot
+
+-FUNCTION: do_renameat2
+Return value:   %error = alloca i32, align 4, !DIAssignID !8622
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call149, ptr %error, align 4, !dbg !8925, !DIAssignID !8926
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call144, ptr %error, align 4, !dbg !8907, !DIAssignID !8908
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call129, ptr %error, align 4, !dbg !8865, !DIAssignID !8866
+
+==AnalysisForInt32==
+StoreInst:   store i32 -39, ptr %error, align 4, !dbg !8852, !DIAssignID !8853
+
+==AnalysisForInt32==
+StoreInst:   store i32 -22, ptr %error, align 4, !dbg !8839, !DIAssignID !8840
+
+==AnalysisForInt32==
+StoreInst:   store i32 -20, ptr %error, align 4, !dbg !8819, !DIAssignID !8821
+
+==AnalysisForInt32==
+StoreInst:   store i32 -20, ptr %error, align 4, !dbg !8804, !DIAssignID !8806
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %error, align 4, !dbg !8792, !DIAssignID !8794
+
+==AnalysisForInt32==
+StoreInst:   store i32 -17, ptr %error, align 4, !dbg !8776, !DIAssignID !8777
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv64, ptr %error, align 4, !dbg !8769, !DIAssignID !8770
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %error, align 4, !dbg !8753, !DIAssignID !8754
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %error, align 4, !dbg !8746, !DIAssignID !8747
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call46, ptr %error, align 4, !dbg !8727, !DIAssignID !8728
+
+==AnalysisForInt32==
+StoreInst:   store i32 -17, ptr %error, align 4, !dbg !8717, !DIAssignID !8718
+
+==AnalysisForInt32==
+StoreInst:   store i32 -16, ptr %error, align 4, !dbg !8705, !DIAssignID !8706
+
+==AnalysisForInt32==
+StoreInst:   store i32 -18, ptr %error, align 4, !dbg !8697, !DIAssignID !8698
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call26, ptr %error, align 4, !dbg !8691, !DIAssignID !8692
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %error, align 4, !dbg !8681, !DIAssignID !8682
+
+==AnalysisForInt32==
+StoreInst:   store i32 -22, ptr %error, align 4, !dbg !8646, !DIAssignID !8647
+
+==AnalysisForInt32==
+
+-FUNCTION: d_is_positive
+
+-FUNCTION: security_path_rename
+
+-FUNCTION: __x64_sys_renameat2
+
+-FUNCTION: __se_sys_renameat2
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8575
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8581, !DIAssignID !8582
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_renameat2
+
+-FUNCTION: __x64_sys_renameat
+
+-FUNCTION: __se_sys_renameat
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8573
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8578, !DIAssignID !8579
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_renameat
+
+-FUNCTION: __x64_sys_rename
+
+-FUNCTION: __se_sys_rename
+Return value:   %ret = alloca i64, align 8, !DIAssignID !8569
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !8572, !DIAssignID !8573
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_rename
+
+-FUNCTION: readlink_copy
+Return value:   %len = alloca i32, align 4, !DIAssignID !8572
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -14, ptr %len, align 4, !dbg !8604, !DIAssignID !8605
+
+==AnalysisForInt32==
+StoreInst:   store i32 %6, ptr %len, align 4, !dbg !8595, !DIAssignID !8596
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv3, ptr %len, align 4, !dbg !8587, !DIAssignID !8588
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %len, align 4, !dbg !8579, !DIAssignID !8580
+
+==AnalysisForInt32==
+
+-FUNCTION: copy_to_user
+Return value:   %n.addr = alloca i64, align 8, !DIAssignID !8570
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call1, ptr %n.addr, align 8, !dbg !8583, !DIAssignID !8584
+
+==AnalysisForInt32==
+StoreInst:   store i64 %n, ptr %n.addr, align 8, !DIAssignID !8573
+
+==AnalysisForInt32==
+
+-FUNCTION: vfs_readlink
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %32, ptr %retval, align 4, !dbg !8650
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv32, ptr %retval, align 4, !dbg !8640
+
+==AnalysisForInt32==
+StoreInst:   store i32 -22, ptr %retval, align 4, !dbg !8606
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call16, ptr %retval, align 4, !dbg !8601
+
+==AnalysisForInt32==
+
+-FUNCTION: d_inode
+Return value:   %d_inode = getelementptr inbounds %struct.dentry, ptr %0, i32 0, i32 5, !dbg !8568
+
+
+-FUNCTION: llvm.memset.p0.i64
+
+-FUNCTION: do_delayed_call
+
+-FUNCTION: vfs_get_link
+Return value:   %res = alloca ptr, align 8, !DIAssignID !8570
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call6, ptr %res, align 8, !dbg !8602, !DIAssignID !8603
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call6, ptr %res, align 8, !dbg !8602, !DIAssignID !8603
+getErrValue: (Val)   %7 = load ptr, ptr %dentry.addr, align 8, !dbg !8599
+getErrValue: (Val)   %dentry.addr = alloca ptr, align 8, !DIAssignID !8567
+getErrValue ends:   %dentry.addr = alloca ptr, align 8, !DIAssignID !8567
+(Val)   %dentry.addr = alloca ptr, align 8, !DIAssignID !8567
+StoreInst:   store ptr %call4, ptr %res, align 8, !dbg !8591, !DIAssignID !8592
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call4, ptr %res, align 8, !dbg !8591, !DIAssignID !8592
+getErrValue: (Val)   %conv = sext i32 %call3 to i64, !dbg !8589
+getErrValue: (Val)   %call3 = call i32 @security_inode_readlink(ptr noundef %2) #29, !dbg !8589
+getErrValue: (Func)security_inode_readlink
+getErrValue ends: ; Function Attrs: noredzone null_pointer_is_valid
+declare !dbg !16775 dso_local i32 @security_inode_readlink(ptr noundef) #4
+
+(Func)security_inode_readlink
+StoreInst:   store ptr %call, ptr %res, align 8, !dbg !8576, !DIAssignID !8577
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %res, align 8, !dbg !8576, !DIAssignID !8577
+getErrValue: (Val) i64 -22
+getErrValue ends: i64 -22
+(Val) i64 -22
+
+-FUNCTION: security_inode_readlink
+
+-FUNCTION: page_get_link
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %17, ptr %retval, align 8, !dbg !8643
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %17, ptr %retval, align 8, !dbg !8643
+StoreInst:   store ptr %9, ptr %retval, align 8, !dbg !8617
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %9, ptr %retval, align 8, !dbg !8617
+StoreInst:   store ptr %call7, ptr %retval, align 8, !dbg !8605
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call7, ptr %retval, align 8, !dbg !8605
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %call3, ptr %retval, align 8, !dbg !8596
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call3, ptr %retval, align 8, !dbg !8596
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+
+-FUNCTION: find_get_page
+
+-FUNCTION: PageUptodate
+
+-FUNCTION: put_page
+
+-FUNCTION: read_mapping_page
+
+-FUNCTION: set_delayed_call
+
+-FUNCTION: page_put_link
+
+-FUNCTION: mapping_gfp_mask
+Return value:   %gfp_mask = getelementptr inbounds %struct.address_space, ptr %0, i32 0, i32 3, !dbg !8568
+
+
+-FUNCTION: lowmem_page_address
+
+-FUNCTION: nd_terminate_link
+
+-FUNCTION: page_readlink
+Return value:   %res = alloca i32, align 4, !DIAssignID !8571
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call2, ptr %res, align 4, !dbg !8585, !DIAssignID !8586
+
+==AnalysisForInt32==
+
+-FUNCTION: page_symlink
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %63, ptr %retval, align 4, !dbg !8699
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8696
+
+==AnalysisForInt32==
+
+-FUNCTION: mapping_gfp_constraint
+
+-FUNCTION: memalloc_nofs_save
+Return value:   %flags = alloca i32, align 4, !DIAssignID !8565
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %and, ptr %flags, align 4, !dbg !8571, !DIAssignID !8572
+
+==AnalysisForInt32==
+
+-FUNCTION: memalloc_nofs_restore
+
+-FUNCTION: mark_inode_dirty
+
+-FUNCTION: audit_dummy_context
+
+-FUNCTION: __audit_reusename
+
+-FUNCTION: audit_context
+Return value:   %audit_context = getelementptr inbounds %struct.task_struct, ptr %call, i32 0, i32 126, !dbg !8564
+
+
+-FUNCTION: __audit_getname
+
+-FUNCTION: strlen
+
+-FUNCTION: _Z7strnlenPKcU25pass_dynamic_object_size1m
+Return value:   %retval = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %34, ptr %retval, align 8, !dbg !8648
+
+==AnalysisForInt32==
+StoreInst:   store i64 %24, ptr %retval, align 8, !dbg !8626
+
+==AnalysisForInt32==
+
+-FUNCTION: fortify_panic
+
+-FUNCTION: llvm.is.constant.i8
+
+-FUNCTION: llvm.is.constant.i64
+
+-FUNCTION: strnlen
+
+-FUNCTION: kmalloc_large
+
+-FUNCTION: __kmalloc_index
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8709
+
+==AnalysisForInt32==
+StoreInst:   store i32 21, ptr %retval, align 4, !dbg !8691
+
+==AnalysisForInt32==
+StoreInst:   store i32 20, ptr %retval, align 4, !dbg !8686
+
+==AnalysisForInt32==
+StoreInst:   store i32 19, ptr %retval, align 4, !dbg !8681
+
+==AnalysisForInt32==
+StoreInst:   store i32 18, ptr %retval, align 4, !dbg !8676
+
+==AnalysisForInt32==
+StoreInst:   store i32 17, ptr %retval, align 4, !dbg !8671
+
+==AnalysisForInt32==
+StoreInst:   store i32 16, ptr %retval, align 4, !dbg !8666
+
+==AnalysisForInt32==
+StoreInst:   store i32 15, ptr %retval, align 4, !dbg !8661
+
+==AnalysisForInt32==
+StoreInst:   store i32 14, ptr %retval, align 4, !dbg !8656
+
+==AnalysisForInt32==
+StoreInst:   store i32 13, ptr %retval, align 4, !dbg !8651
+
+==AnalysisForInt32==
+StoreInst:   store i32 12, ptr %retval, align 4, !dbg !8646
+
+==AnalysisForInt32==
+StoreInst:   store i32 11, ptr %retval, align 4, !dbg !8641
+
+==AnalysisForInt32==
+StoreInst:   store i32 10, ptr %retval, align 4, !dbg !8636
+
+==AnalysisForInt32==
+StoreInst:   store i32 9, ptr %retval, align 4, !dbg !8631
+
+==AnalysisForInt32==
+StoreInst:   store i32 8, ptr %retval, align 4, !dbg !8626
+
+==AnalysisForInt32==
+StoreInst:   store i32 7, ptr %retval, align 4, !dbg !8621
+
+==AnalysisForInt32==
+StoreInst:   store i32 6, ptr %retval, align 4, !dbg !8616
+
+==AnalysisForInt32==
+StoreInst:   store i32 5, ptr %retval, align 4, !dbg !8611
+
+==AnalysisForInt32==
+StoreInst:   store i32 4, ptr %retval, align 4, !dbg !8606
+
+==AnalysisForInt32==
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !8601
+
+==AnalysisForInt32==
+StoreInst:   store i32 2, ptr %retval, align 4, !dbg !8596
+
+==AnalysisForInt32==
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !8588
+
+==AnalysisForInt32==
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !8580
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8573
+
+==AnalysisForInt32==
+
+-FUNCTION: kmalloc_trace
+
+-FUNCTION: kmalloc_type
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !8581
+
+==AnalysisForInt32==
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !8580
+
+==AnalysisForInt32==
+StoreInst:   store i32 2, ptr %retval, align 4, !dbg !8575
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8570
+
+==AnalysisForInt32==
+
+-FUNCTION: __ubsan_handle_out_of_bounds
+
+-FUNCTION: __kmalloc
+
+-FUNCTION: __compiletime_assert_139
+
+-FUNCTION: llvm.is.constant.i32
+
+-FUNCTION: __write_overflow
+
+-FUNCTION: __read_overflow2
+
+-FUNCTION: __write_overflow_field
+
+-FUNCTION: __read_overflow2_field
+
+-FUNCTION: check_acl
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -11, ptr %retval, align 4, !dbg !8629
+
+==AnalysisForInt32==
+StoreInst:   store i32 %17, ptr %retval, align 4, !dbg !8627
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %retval, align 4, !dbg !8613
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call6, ptr %retval, align 4, !dbg !8602
+
+==AnalysisForInt32==
+StoreInst:   store i32 -10, ptr %retval, align 4, !dbg !8596
+
+==AnalysisForInt32==
+StoreInst:   store i32 -11, ptr %retval, align 4, !dbg !8591
+
+==AnalysisForInt32==
+
+-FUNCTION: vfsgid_in_group_p
+
+-FUNCTION: get_cached_acl_rcu
+
+-FUNCTION: is_uncached_acl
+
+-FUNCTION: posix_acl_permission
+
+-FUNCTION: get_inode_acl
+
+-FUNCTION: posix_acl_release
+
+-FUNCTION: refcount_dec_and_test
+
+-FUNCTION: kvfree_call_rcu
+
+-FUNCTION: __refcount_dec_and_test
+
+-FUNCTION: __refcount_sub_and_test
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8612
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8606
+
+==AnalysisForInt32==
+
+-FUNCTION: atomic_fetch_sub_release
+
+-FUNCTION: refcount_warn_saturate
+
+-FUNCTION: instrument_atomic_read_write
+
+-FUNCTION: raw_atomic_fetch_sub_release
+
+-FUNCTION: kasan_check_write
+
+-FUNCTION: kcsan_check_access
+
+-FUNCTION: arch_atomic_fetch_sub
+Return value:   %tmp = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %4, ptr %tmp, align 4, !dbg !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: sb_rdonly
+
+-FUNCTION: devcgroup_check_permission
+
+-FUNCTION: imajor
+
+-FUNCTION: iminor
+
+-FUNCTION: lockref_get
+
+-FUNCTION: __register_sysctl_init
+
+-FUNCTION: proc_dointvec_minmax
+
+-FUNCTION: __vfsuid_val
+Return value:   %val = getelementptr inbounds %struct.vfsuid_t, ptr %uid, i32 0, i32 0, !dbg !8567
+
+
+-FUNCTION: make_vfsuid
+
+-FUNCTION: i_user_ns
+Return value:   %s_user_ns = getelementptr inbounds %struct.super_block, ptr %1, i32 0, i32 52, !dbg !8569
+
+
+-FUNCTION: __vfsgid_val
+Return value:   %val = getelementptr inbounds %struct.vfsgid_t, ptr %gid, i32 0, i32 0, !dbg !8567
+
+
+-FUNCTION: make_vfsgid
+
+-FUNCTION: __traverse_mounts
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8589
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -2, ptr %ret, align 4, !dbg !8739, !DIAssignID !8740
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %ret, align 4, !dbg !8720, !DIAssignID !8721
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call33, ptr %ret, align 4, !dbg !8697, !DIAssignID !8698
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %ret, align 4, !dbg !8623, !DIAssignID !8624
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %ret, align 4, !dbg !8610, !DIAssignID !8611
+
+==AnalysisForInt32==
+
+-FUNCTION: follow_automount
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call7, ptr %retval, align 4, !dbg !8602
+
+==AnalysisForInt32==
+StoreInst:   store i32 -40, ptr %retval, align 4, !dbg !8595
+
+==AnalysisForInt32==
+StoreInst:   store i32 -21, ptr %retval, align 4, !dbg !8587
+
+==AnalysisForInt32==
+
+-FUNCTION: finish_automount
+
+-FUNCTION: d_lookup
+
+-FUNCTION: d_revalidate
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !8577
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %retval, align 4, !dbg !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: d_invalidate
+
+-FUNCTION: count_masked_bytes
+
+-FUNCTION: __set_nameidata
+
+-FUNCTION: path_init
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %134, ptr %retval, align 8, !dbg !8974
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %134, ptr %retval, align 8, !dbg !8974
+StoreInst:   store ptr %call192, ptr %retval, align 8, !dbg !8897
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call192, ptr %retval, align 8, !dbg !8897
+getErrValue: (Val) i64 -20
+getErrValue ends: i64 -20
+(Val) i64 -20
+StoreInst:   store ptr %call174, ptr %retval, align 8, !dbg !8882
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call174, ptr %retval, align 8, !dbg !8882
+getErrValue: (Val) i64 -9
+getErrValue ends: i64 -9
+(Val) i64 -9
+StoreInst:   store ptr %54, ptr %retval, align 8, !dbg !8799
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %54, ptr %retval, align 8, !dbg !8799
+StoreInst:   store ptr %call99, ptr %retval, align 8, !dbg !8797
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call99, ptr %retval, align 8, !dbg !8797
+getErrValue: (Val)   %conv98 = sext i32 %53 to i64, !dbg !8795
+getErrValue: (Val)   %53 = load i32, ptr %error, align 4, !dbg !8795
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8614
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8614
+(Val)   %error = alloca i32, align 4, !DIAssignID !8614
+StoreInst:   store ptr %46, ptr %retval, align 8, !dbg !8773
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %46, ptr %retval, align 8, !dbg !8773
+StoreInst:   store ptr %call42, ptr %retval, align 8, !dbg !8731
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call42, ptr %retval, align 8, !dbg !8731
+getErrValue: (Val) i64 -20
+getErrValue ends: i64 -20
+(Val) i64 -20
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !8658
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !8658
+getErrValue: (Val) i64 -11
+getErrValue ends: i64 -11
+(Val) i64 -11
+
+-FUNCTION: handle_lookup_down
+
+-FUNCTION: link_path_walk
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -20, ptr %retval, align 4, !dbg !8840
+
+==AnalysisForInt32==
+StoreInst:   store i32 -10, ptr %retval, align 4, !dbg !8838
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv115, ptr %retval, align 4, !dbg !8809
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8781
+
+==AnalysisForInt32==
+StoreInst:   store i32 %42, ptr %retval, align 4, !dbg !8717
+
+==AnalysisForInt32==
+StoreInst:   store i32 %16, ptr %retval, align 4, !dbg !8653
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8632
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %retval, align 4, !dbg !8615
+
+==AnalysisForInt32==
+
+-FUNCTION: lookup_last
+
+-FUNCTION: complete_walk
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %28, ptr %retval, align 4, !dbg !8649
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8641
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8628
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8624
+
+==AnalysisForInt32==
+StoreInst:   store i32 -18, ptr %retval, align 4, !dbg !8619
+
+==AnalysisForInt32==
+StoreInst:   store i32 -10, ptr %retval, align 4, !dbg !8606
+
+==AnalysisForInt32==
+
+-FUNCTION: d_can_lookup
+
+-FUNCTION: terminate_walk
+
+-FUNCTION: rcu_read_lock
+
+-FUNCTION: __seqprop_spinlock_sequence
+Return value:   %seq = alloca i32, align 4, !DIAssignID !8569
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %2, ptr %seq, align 4, !dbg !8571, !DIAssignID !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: cpu_relax
+
+-FUNCTION: kcsan_atomic_next
+
+-FUNCTION: nd_jump_root
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8668
+
+==AnalysisForInt32==
+StoreInst:   store i32 -10, ptr %retval, align 4, !dbg !8644
+
+==AnalysisForInt32==
+StoreInst:   store i32 %14, ptr %retval, align 4, !dbg !8614
+
+==AnalysisForInt32==
+StoreInst:   store i32 -18, ptr %retval, align 4, !dbg !8599
+
+==AnalysisForInt32==
+StoreInst:   store i32 -18, ptr %retval, align 4, !dbg !8580
+
+==AnalysisForInt32==
+
+-FUNCTION: do_read_seqcount_retry
+
+-FUNCTION: __seqprop_spinlock_ptr
+
+-FUNCTION: get_fs_pwd
+
+-FUNCTION: fdget_raw
+Return value:   %retval = alloca %struct.fd, align 8
+
+RetVal is AllocaInst
+
+-FUNCTION: fdput
+
+-FUNCTION: __rcu_read_lock
+
+-FUNCTION: rep_nop
+
+-FUNCTION: set_root
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8669
+
+==AnalysisForInt32==
+StoreInst:   store i32 -131, ptr %retval, align 4, !dbg !8618
+
+==AnalysisForInt32==
+
+-FUNCTION: get_fs_root
+
+-FUNCTION: do___read_seqcount_retry
+
+-FUNCTION: __to_fd
+Return value:   %retval = alloca %struct.fd, align 8
+
+RetVal is AllocaInst
+
+-FUNCTION: __fdget_raw
+
+-FUNCTION: step_into
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call79, ptr %retval, align 8, !dbg !8684
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call79, ptr %retval, align 8, !dbg !8684
+getErrValue: (Val)   %39 = load ptr, ptr %nd.addr, align 8, !dbg !8680
+getErrValue: (Val)   %nd.addr = alloca ptr, align 8, !DIAssignID !8569
+getErrValue ends:   %nd.addr = alloca ptr, align 8, !DIAssignID !8569
+(Val)   %nd.addr = alloca ptr, align 8, !DIAssignID !8569
+StoreInst:   store ptr %call66, ptr %retval, align 8, !dbg !8668
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call66, ptr %retval, align 8, !dbg !8668
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8657
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8657
+StoreInst:   store ptr %call38, ptr %retval, align 8, !dbg !8627
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call38, ptr %retval, align 8, !dbg !8627
+getErrValue: (Val) i64 -2
+getErrValue ends: i64 -2
+(Val) i64 -2
+StoreInst:   store ptr %call25, ptr %retval, align 8, !dbg !8622
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call25, ptr %retval, align 8, !dbg !8622
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %call1, ptr %retval, align 8, !dbg !8593
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %retval, align 8, !dbg !8593
+getErrValue: (Val)   %conv = sext i32 %3 to i64, !dbg !8591
+getErrValue: (Val)   %3 = load i32, ptr %err, align 4, !dbg !8591
+getErrValue: (Val)   %err = alloca i32, align 4, !DIAssignID !8575
+getErrValue ends:   %err = alloca i32, align 4, !DIAssignID !8575
+(Val)   %err = alloca i32, align 4, !DIAssignID !8575
+
+-FUNCTION: handle_mounts
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %40, ptr %retval, align 4, !dbg !8672
+
+==AnalysisForInt32==
+StoreInst:   store i32 -10, ptr %retval, align 4, !dbg !8626
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8606
+
+==AnalysisForInt32==
+
+-FUNCTION: pick_link
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8795
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8795
+StoreInst:   store ptr %79, ptr %retval, align 8, !dbg !8791
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %79, ptr %retval, align 8, !dbg !8791
+StoreInst:   store ptr %call126, ptr %retval, align 8, !dbg !8778
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call126, ptr %retval, align 8, !dbg !8778
+getErrValue: (Val)   %conv125 = sext i32 %74 to i64, !dbg !8776
+getErrValue: (Val)   %74 = load i32, ptr %error, align 4, !dbg !8776
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8581
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8581
+(Val)   %error = alloca i32, align 4, !DIAssignID !8581
+StoreInst:   store ptr %69, ptr %retval, align 8, !dbg !8760
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %69, ptr %retval, align 8, !dbg !8760
+StoreInst:   store ptr %call79, ptr %retval, align 8, !dbg !8697
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call79, ptr %retval, align 8, !dbg !8697
+getErrValue: (Val)   %conv78 = sext i32 %41 to i64, !dbg !8695
+getErrValue: (Val)   %41 = load i32, ptr %error, align 4, !dbg !8695
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8581
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8581
+(Val)   %error = alloca i32, align 4, !DIAssignID !8581
+StoreInst:   store ptr %call60, ptr %retval, align 8, !dbg !8678
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call60, ptr %retval, align 8, !dbg !8678
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %call47, ptr %retval, align 8, !dbg !8653
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call47, ptr %retval, align 8, !dbg !8653
+getErrValue: (Val) i64 -40
+getErrValue ends: i64 -40
+(Val) i64 -40
+StoreInst:   store ptr %call24, ptr %retval, align 8, !dbg !8645
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call24, ptr %retval, align 8, !dbg !8645
+getErrValue: (Val)   %conv23 = sext i32 %21 to i64, !dbg !8643
+getErrValue: (Val)   %21 = load i32, ptr %error, align 4, !dbg !8643
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8581
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8581
+(Val)   %error = alloca i32, align 4, !DIAssignID !8581
+StoreInst:   store ptr %call7, ptr %retval, align 8, !dbg !8609
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call7, ptr %retval, align 8, !dbg !8609
+getErrValue: (Val)   %conv6 = sext i32 %6 to i64, !dbg !8607
+getErrValue: (Val)   %6 = load i32, ptr %error, align 4, !dbg !8607
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8581
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8581
+(Val)   %error = alloca i32, align 4, !DIAssignID !8581
+
+-FUNCTION: __follow_mount_rcu
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 %lnot74, ptr %retval, align 1, !dbg !8711
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8705
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8695
+
+==AnalysisForInt32==
+StoreInst:   store i1 %cmp, ptr %retval, align 1, !dbg !8631
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8615
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8611
+
+==AnalysisForInt32==
+
+-FUNCTION: try_to_unlazy_next
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8649
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8643
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8629
+
+==AnalysisForInt32==
+
+-FUNCTION: __lookup_mnt
+
+-FUNCTION: read_seqretry
+
+-FUNCTION: kcsan_flat_atomic_end
+
+-FUNCTION: legitimize_links
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8619
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8610
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8583
+
+==AnalysisForInt32==
+
+-FUNCTION: __legitimize_mnt
+
+-FUNCTION: lockref_get_not_dead
+
+-FUNCTION: legitimize_root
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 %call, ptr %retval, align 1, !dbg !8584
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8574
+
+==AnalysisForInt32==
+
+-FUNCTION: leave_rcu
+
+-FUNCTION: drop_links
+
+-FUNCTION: legitimize_path
+
+-FUNCTION: clear_delayed_call
+
+-FUNCTION: __legitimize_path
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 %lnot26, ptr %retval, align 1, !dbg !8607
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8604
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8596
+
+==AnalysisForInt32==
+
+-FUNCTION: rcu_read_unlock
+
+-FUNCTION: __rcu_read_unlock
+
+-FUNCTION: reserve_stack
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !8618
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8615
+
+==AnalysisForInt32==
+StoreInst:   store i32 -10, ptr %retval, align 4, !dbg !8610
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8590
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8586
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8582
+
+==AnalysisForInt32==
+StoreInst:   store i32 -40, ptr %retval, align 4, !dbg !8578
+
+==AnalysisForInt32==
+
+-FUNCTION: may_follow_link
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8631
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+may_follow_link has 'return -EACCES'
+Error-thrower BB: 
+if.end25:                                         ; preds = %if.end21
+  %18 = load ptr, ptr %nd.addr, align 8, !dbg !8623
+  %name = getelementptr inbounds %struct.nameidata, ptr %18, i32 0, i32 15, !dbg !8624
+  %19 = load ptr, ptr %name, align 8, !dbg !8624
+  %20 = load ptr, ptr %nd.addr, align 8, !dbg !8625
+  %stack = getelementptr inbounds %struct.nameidata, ptr %20, i32 0, i32 13, !dbg !8626
+  %21 = load ptr, ptr %stack, align 8, !dbg !8626
+  %arrayidx = getelementptr %struct.saved, ptr %21, i64 0, !dbg !8627
+  %link = getelementptr inbounds %struct.saved, ptr %arrayidx, i32 0, i32 0, !dbg !8627
+  %dentry = getelementptr inbounds %struct.path, ptr %link, i32 0, i32 1, !dbg !8628
+  %22 = load ptr, ptr %dentry, align 8, !dbg !8628
+  call void @audit_inode(ptr noundef %19, ptr noundef %22, i32 noundef 0) #29, !dbg !8629
+  call void @audit_log_path_denied(i32 noundef 1702, ptr noundef @.str.63) #29, !dbg !8630
+  store i32 -13, ptr %retval, align 4, !dbg !8631
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8631
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %17 = load i32, ptr %flags, align 8, !dbg !8619
+getOrigin: (Val)   %flags = getelementptr inbounds %struct.nameidata, ptr %16, i32 0, i32 4, !dbg !8619
+** No original
+Name: flags
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)vfsuid_eq
+** Not an instruction
+Name: vfsuid_eq
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)vfsuid_valid
+** Not an instruction
+Name: vfsuid_valid
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %conv = zext i16 %10 to i32, !dbg !8600
+getOrigin: (Val)   %10 = load i16, ptr %dir_mode, align 4, !dbg !8602
+getOrigin: (Val)   %dir_mode = getelementptr inbounds %struct.nameidata, ptr %9, i32 0, i32 20, !dbg !8602
+** No original
+Name: dir_mode
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)vfsuid_eq_kuid
+** Not an instruction
+Name: vfsuid_eq_kuid
+*OMGOMGOMGOMG No CondBB in preds
+Debug info: /home/hiron/repo/linux/fs/namei.c:1125
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 1125
+CALFLS may_follow_link: i32 -13
+CALFLS vfsuid_eq_kuid: i32 0
+CMPFLS dir_mode: i32 514
+CALTRU vfsuid_valid: i32 0
+CALFLS vfsuid_eq: i32 0
+CMPFLS flags: i32 64
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 -10, ptr %retval, align 4, !dbg !8622
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8616
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8606
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8599
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8579
+
+==AnalysisForInt32==
+
+-FUNCTION: touch_atime
+
+-FUNCTION: __might_resched
+
+-FUNCTION: _cond_resched
+
+-FUNCTION: atime_needs_update
+
+-FUNCTION: try_to_unlazy
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8626
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8613
+
+==AnalysisForInt32==
+
+-FUNCTION: security_inode_follow_link
+
+-FUNCTION: put_link
+
+-FUNCTION: nd_alloc_stack
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8630
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8588
+
+==AnalysisForInt32==
+
+-FUNCTION: kmalloc_array
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call5, ptr %retval, align 8, !dbg !8595
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call5, ptr %retval, align 8, !dbg !8595
+getErrValue: (Val)   %11 = load i64, ptr %bytes, align 8, !dbg !8592
+getErrValue: (Val)   %bytes = alloca i64, align 8, !DIAssignID !8571
+getErrValue ends:   %bytes = alloca i64, align 8, !DIAssignID !8571
+(Val)   %bytes = alloca i64, align 8, !DIAssignID !8571
+StoreInst:   store ptr %call3, ptr %retval, align 8, !dbg !8591
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call3, ptr %retval, align 8, !dbg !8591
+getErrValue: (Val)   %9 = load i64, ptr %bytes, align 8, !dbg !8588
+getErrValue: (Val)   %bytes = alloca i64, align 8, !DIAssignID !8571
+getErrValue ends:   %bytes = alloca i64, align 8, !DIAssignID !8571
+(Val)   %bytes = alloca i64, align 8, !DIAssignID !8571
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8580
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8580
+
+-FUNCTION: __must_check_overflow
+
+-FUNCTION: llvm.umul.with.overflow.i64
+
+-FUNCTION: vfsuid_eq
+
+-FUNCTION: __SCT__cond_resched
+
+-FUNCTION: may_lookup
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call5, ptr %retval, align 4, !dbg !8601
+
+==AnalysisForInt32==
+StoreInst:   store i32 %7, ptr %retval, align 4, !dbg !8594
+
+==AnalysisForInt32==
+
+-FUNCTION: hash_name
+
+-FUNCTION: walk_component
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call38, ptr %retval, align 8, !dbg !8637
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call38, ptr %retval, align 8, !dbg !8637
+getErrValue: (Val)   %24 = load ptr, ptr %nd.addr, align 8, !dbg !8633
+getErrValue: (Val)   %nd.addr = alloca ptr, align 8, !DIAssignID !8566
+getErrValue ends:   %nd.addr = alloca ptr, align 8, !DIAssignID !8566
+(Val)   %nd.addr = alloca ptr, align 8, !DIAssignID !8566
+StoreInst:   store ptr %call28, ptr %retval, align 8, !dbg !8622
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call28, ptr %retval, align 8, !dbg !8622
+getErrValue: (Val)   %19 = load ptr, ptr %dentry, align 8, !dbg !8620
+getErrValue: (Val)   %dentry = alloca ptr, align 8, !DIAssignID !8569
+getErrValue ends:   %dentry = alloca ptr, align 8, !DIAssignID !8569
+(Val)   %dentry = alloca ptr, align 8, !DIAssignID !8569
+StoreInst:   store ptr %call10, ptr %retval, align 8, !dbg !8601
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call10, ptr %retval, align 8, !dbg !8601
+getErrValue: (Val)   %11 = load ptr, ptr %dentry, align 8, !dbg !8599
+getErrValue: (Val)   %dentry = alloca ptr, align 8, !DIAssignID !8569
+getErrValue ends:   %dentry = alloca ptr, align 8, !DIAssignID !8569
+(Val)   %dentry = alloca ptr, align 8, !DIAssignID !8569
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !8590
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !8590
+getErrValue: (Val)   %6 = load ptr, ptr %nd.addr, align 8, !dbg !8586
+getErrValue: (Val)   %nd.addr = alloca ptr, align 8, !DIAssignID !8566
+getErrValue ends:   %nd.addr = alloca ptr, align 8, !DIAssignID !8566
+(Val)   %nd.addr = alloca ptr, align 8, !DIAssignID !8566
+
+-FUNCTION: handle_dots
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8659
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8659
+StoreInst:   store ptr %call52, ptr %retval, align 8, !dbg !8655
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call52, ptr %retval, align 8, !dbg !8655
+getErrValue: (Val) i64 -11
+getErrValue ends: i64 -11
+(Val) i64 -11
+StoreInst:   store ptr %call46, ptr %retval, align 8, !dbg !8650
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call46, ptr %retval, align 8, !dbg !8650
+getErrValue: (Val) i64 -11
+getErrValue ends: i64 -11
+(Val) i64 -11
+StoreInst:   store ptr %15, ptr %retval, align 8, !dbg !8631
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %15, ptr %retval, align 8, !dbg !8631
+StoreInst:   store ptr %call13, ptr %retval, align 8, !dbg !8621
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call13, ptr %retval, align 8, !dbg !8621
+getErrValue: (Val)   %11 = load ptr, ptr %parent, align 8, !dbg !8619
+getErrValue: (Val)   %parent = alloca ptr, align 8, !DIAssignID !8574
+getErrValue ends:   %parent = alloca ptr, align 8, !DIAssignID !8574
+(Val)   %parent = alloca ptr, align 8, !DIAssignID !8574
+StoreInst:   store ptr %5, ptr %retval, align 8, !dbg !8599
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %5, ptr %retval, align 8, !dbg !8599
+
+-FUNCTION: lookup_fast
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %34, ptr %retval, align 8, !dbg !8674
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %34, ptr %retval, align 8, !dbg !8674
+StoreInst:   store ptr %call70, ptr %retval, align 8, !dbg !8672
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call70, ptr %retval, align 8, !dbg !8672
+getErrValue: (Val)   %conv69 = sext i32 %33 to i64, !dbg !8670
+getErrValue: (Val)   %33 = load i32, ptr %status, align 4, !dbg !8670
+getErrValue: (Val)   %status = alloca i32, align 4, !DIAssignID !8571
+getErrValue ends:   %status = alloca i32, align 4, !DIAssignID !8571
+(Val)   %status = alloca i32, align 4, !DIAssignID !8571
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8652
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8652
+StoreInst:   store ptr %call31, ptr %retval, align 8, !dbg !8629
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call31, ptr %retval, align 8, !dbg !8629
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %16, ptr %retval, align 8, !dbg !8622
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %16, ptr %retval, align 8, !dbg !8622
+StoreInst:   store ptr %call15, ptr %retval, align 8, !dbg !8611
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call15, ptr %retval, align 8, !dbg !8611
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8606
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8606
+StoreInst:   store ptr %call9, ptr %retval, align 8, !dbg !8605
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call9, ptr %retval, align 8, !dbg !8605
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+
+-FUNCTION: follow_dotdot_rcu
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %46, ptr %retval, align 8, !dbg !8699
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %46, ptr %retval, align 8, !dbg !8699
+StoreInst:   store ptr %call91, ptr %retval, align 8, !dbg !8690
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call91, ptr %retval, align 8, !dbg !8690
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %call78, ptr %retval, align 8, !dbg !8685
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call78, ptr %retval, align 8, !dbg !8685
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %37, ptr %retval, align 8, !dbg !8677
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %37, ptr %retval, align 8, !dbg !8677
+StoreInst:   store ptr %call72, ptr %retval, align 8, !dbg !8675
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call72, ptr %retval, align 8, !dbg !8675
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %call57, ptr %retval, align 8, !dbg !8670
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call57, ptr %retval, align 8, !dbg !8670
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %call31, ptr %retval, align 8, !dbg !8634
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call31, ptr %retval, align 8, !dbg !8634
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %call23, ptr %retval, align 8, !dbg !8615
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call23, ptr %retval, align 8, !dbg !8615
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+
+-FUNCTION: follow_dotdot
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call62, ptr %retval, align 8, !dbg !8641
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call62, ptr %retval, align 8, !dbg !8641
+getErrValue: (Val)   %27 = load ptr, ptr %dentry61, align 8, !dbg !8639
+getErrValue: (Val)   %dentry61 = getelementptr inbounds %struct.path, ptr %path60, i32 0, i32 1, !dbg !8639
+getErrValue ends:   %dentry61 = getelementptr inbounds %struct.path, ptr %path60, i32 0, i32 1, !dbg !8639
+(Val)   %dentry61 = getelementptr inbounds %struct.path, ptr %path60, i32 0, i32 1, !dbg !8639
+StoreInst:   store ptr %call58, ptr %retval, align 8, !dbg !8636
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call58, ptr %retval, align 8, !dbg !8636
+getErrValue: (Val) i64 -18
+getErrValue ends: i64 -18
+(Val) i64 -18
+StoreInst:   store ptr %23, ptr %retval, align 8, !dbg !8630
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %23, ptr %retval, align 8, !dbg !8630
+StoreInst:   store ptr %call45, ptr %retval, align 8, !dbg !8628
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call45, ptr %retval, align 8, !dbg !8628
+getErrValue: (Val) i64 -2
+getErrValue ends: i64 -2
+(Val) i64 -2
+StoreInst:   store ptr %call26, ptr %retval, align 8, !dbg !8612
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call26, ptr %retval, align 8, !dbg !8612
+getErrValue: (Val) i64 -18
+getErrValue ends: i64 -18
+(Val) i64 -18
+
+-FUNCTION: path_equal
+
+-FUNCTION: choose_mountpoint_rcu
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8645
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8642
+
+==AnalysisForInt32==
+
+-FUNCTION: mnt_has_parent
+
+-FUNCTION: choose_mountpoint
+
+-FUNCTION: read_seqbegin
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8574
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %5, ptr %ret, align 4, !dbg !8598, !DIAssignID !8599
+
+==AnalysisForInt32==
+
+-FUNCTION: kcsan_flat_atomic_begin
+
+-FUNCTION: __d_lookup_rcu
+
+-FUNCTION: __d_lookup
+
+-FUNCTION: path_is_under
+
+-FUNCTION: __d_entry_type
+
+-FUNCTION: __audit_inode
+
+-FUNCTION: path_parentat
+Return value:   %err = alloca i32, align 4, !DIAssignID !8573
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call2, ptr %err, align 4, !dbg !8594, !DIAssignID !8595
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call1, ptr %err, align 4, !dbg !8587, !DIAssignID !8588
+
+==AnalysisForInt32==
+
+-FUNCTION: rwsem_is_locked
+
+-FUNCTION: atomic_long_read
+
+-FUNCTION: instrument_atomic_read
+
+-FUNCTION: raw_atomic_long_read
+
+-FUNCTION: kasan_check_read
+
+-FUNCTION: raw_atomic64_read
+
+-FUNCTION: arch_atomic64_read
+Return value:   %counter = getelementptr inbounds %struct.atomic64_t, ptr %0, i32 0, i32 0, !dbg !8570
+
+
+-FUNCTION: d_alloc_parallel
+
+-FUNCTION: d_in_lookup
+
+-FUNCTION: d_lookup_done
+
+-FUNCTION: __d_lookup_unhash_wake
+
+-FUNCTION: inode_lock_shared
+
+-FUNCTION: inode_unlock_shared
+
+-FUNCTION: down_read
+
+-FUNCTION: up_read
+
+-FUNCTION: is_subdir
+
+-FUNCTION: __kuid_val
+Return value:   %val = getelementptr inbounds %struct.kuid_t, ptr %uid, i32 0, i32 0, !dbg !8567
+
+
+-FUNCTION: down_write
+
+-FUNCTION: d_ancestor
+
+-FUNCTION: up_write
+
+-FUNCTION: audit_inode_child
+
+-FUNCTION: fsuidgid_has_mapping
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 %12, ptr %retval, align 1, !dbg !8604
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8598
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8590
+
+==AnalysisForInt32==
+
+-FUNCTION: __audit_inode_child
+
+-FUNCTION: mapped_fsuid
+Return value:   %coerce.dive5 = getelementptr inbounds %struct.kuid_t, ptr %retval, i32 0, i32 0, !dbg !8580
+
+
+-FUNCTION: uid_valid
+
+-FUNCTION: mapped_fsgid
+Return value:   %coerce.dive5 = getelementptr inbounds %struct.kgid_t, ptr %retval, i32 0, i32 0, !dbg !8580
+
+
+-FUNCTION: gid_valid
+
+-FUNCTION: kuid_has_mapping
+
+-FUNCTION: kgid_has_mapping
+
+-FUNCTION: from_vfsuid
+
+-FUNCTION: from_vfsgid
+
+-FUNCTION: __kgid_val
+Return value:   %val = getelementptr inbounds %struct.kgid_t, ptr %gid, i32 0, i32 0, !dbg !8567
+
+
+-FUNCTION: from_kuid
+
+-FUNCTION: from_kgid
+
+-FUNCTION: mode_strip_sgid
+
+-FUNCTION: fsnotify_dirent
+
+-FUNCTION: fsnotify_name
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call1, ptr %retval, align 4, !dbg !8597
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8589
+
+==AnalysisForInt32==
+
+-FUNCTION: fsnotify
+
+-FUNCTION: may_open
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8678
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8677
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8667
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8662
+
+==AnalysisForInt32==
+StoreInst:   store i32 %18, ptr %retval, align 4, !dbg !8648
+
+==AnalysisForInt32==
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8635
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+may_open has 'return -EACCES'
+Error-thrower BB: 
+if.then25:                                        ; preds = %land.lhs.true
+  store i32 -13, ptr %retval, align 4, !dbg !8635
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8635
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)path_noexec
+** Not an instruction
+Name: path_noexec
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %12 = load i32, ptr %acc_mode.addr, align 4, !dbg !8628
+getOrigin: (Val)   %acc_mode.addr = alloca i32, align 4, !DIAssignID !8573
+Alloca user: (Val)   %16 = load i32, ptr %acc_mode.addr, align 4, !dbg !8639
+Alloca user: (Val)   %12 = load i32, ptr %acc_mode.addr, align 4, !dbg !8628
+Alloca user: (Val)   %10 = load i32, ptr %acc_mode.addr, align 4, !dbg !8620
+Alloca user: (Val)   %8 = load i32, ptr %acc_mode.addr, align 4, !dbg !8608
+Alloca user: (Val)   %7 = load i32, ptr %acc_mode.addr, align 4, !dbg !8603
+Alloca user: (Val)   store i32 %acc_mode, ptr %acc_mode.addr, align 4, !DIAssignID !8580
+is Store
+getOrigin: (Val)   store i32 %acc_mode, ptr %acc_mode.addr, align 4, !DIAssignID !8580
+getOrigin: (Val) i32 %acc_mode
+** Not an instruction
+Name: acc_mode
+Trying to get conditions
+Pred has SwitchInst
+getOrigin: (Val)   %and = and i32 %conv, 61440, !dbg !8599
+getOrigin: (Val)   %conv = zext i16 %6 to i32, !dbg !8597
+getOrigin: (Val)   %6 = load i16, ptr %i_mode, align 8, !dbg !8598
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8598
+** No original
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8598
+** No original
+Name: i_mode
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %4 = load ptr, ptr %inode, align 8, !dbg !8593
+getOrigin: (Val)   %inode = alloca ptr, align 8, !DIAssignID !8576
+** No original
+Name: inode
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/namei.c:3260
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 3260
+CALFLS may_open: i32 -13
+NLLFLS inode: ptr null
+SWITCH i_mode:   %and = and i32 %conv, 61440, !dbg !8599
+CMPTRU acc_mode: i32 1
+CALTRU path_noexec: i32 0
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8624
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+may_open has 'return -EACCES'
+Error-thrower BB: 
+if.then17:                                        ; preds = %sw.bb14
+  store i32 -13, ptr %retval, align 4, !dbg !8624
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8624
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %10 = load i32, ptr %acc_mode.addr, align 4, !dbg !8620
+getOrigin: (Val)   %acc_mode.addr = alloca i32, align 4, !DIAssignID !8573
+Alloca user: (Val)   %16 = load i32, ptr %acc_mode.addr, align 4, !dbg !8639
+Alloca user: (Val)   %12 = load i32, ptr %acc_mode.addr, align 4, !dbg !8628
+Alloca user: (Val)   %10 = load i32, ptr %acc_mode.addr, align 4, !dbg !8620
+Alloca user: (Val)   %8 = load i32, ptr %acc_mode.addr, align 4, !dbg !8608
+Alloca user: (Val)   %7 = load i32, ptr %acc_mode.addr, align 4, !dbg !8603
+Alloca user: (Val)   store i32 %acc_mode, ptr %acc_mode.addr, align 4, !DIAssignID !8580
+is Store
+getOrigin: (Val)   store i32 %acc_mode, ptr %acc_mode.addr, align 4, !DIAssignID !8580
+getOrigin: (Val) i32 %acc_mode
+** Not an instruction
+Name: acc_mode
+Trying to get conditions
+Pred has SwitchInst
+getOrigin: (Val)   %and = and i32 %conv, 61440, !dbg !8599
+getOrigin: (Val)   %conv = zext i16 %6 to i32, !dbg !8597
+getOrigin: (Val)   %6 = load i16, ptr %i_mode, align 8, !dbg !8598
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8598
+** No original
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8598
+** No original
+Name: i_mode
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %4 = load ptr, ptr %inode, align 8, !dbg !8593
+getOrigin: (Val)   %inode = alloca ptr, align 8, !DIAssignID !8576
+** No original
+Name: inode
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/namei.c:3255
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 3255
+CALFLS may_open: i32 -13
+NLLFLS inode: ptr null
+SWITCH i_mode:   %and = and i32 %conv, 61440, !dbg !8599
+CMPTRU acc_mode: i32 1
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8618
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+may_open has 'return -EACCES'
+Error-thrower BB: 
+if.then12:                                        ; preds = %sw.bb11
+  store i32 -13, ptr %retval, align 4, !dbg !8618
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8618
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)may_open_dev
+** Not an instruction
+Name: may_open_dev
+Trying to get conditions
+Pred has SwitchInst
+getOrigin: (Val)   %and = and i32 %conv, 61440, !dbg !8599
+getOrigin: (Val)   %conv = zext i16 %6 to i32, !dbg !8597
+getOrigin: (Val)   %6 = load i16, ptr %i_mode, align 8, !dbg !8598
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8598
+** No original
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8598
+** No original
+Name: i_mode
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %4 = load ptr, ptr %inode, align 8, !dbg !8593
+getOrigin: (Val)   %inode = alloca ptr, align 8, !DIAssignID !8576
+** No original
+Name: inode
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/namei.c:3250
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 3250
+CALFLS may_open: i32 -13
+NLLFLS inode: ptr null
+SWITCH i_mode:   %and = and i32 %conv, 61440, !dbg !8599
+CALFLS may_open_dev: i32 0
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8612
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+may_open has 'return -EACCES'
+Error-thrower BB: 
+if.then9:                                         ; preds = %if.end6
+  store i32 -13, ptr %retval, align 4, !dbg !8612
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !8612
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %8 = load i32, ptr %acc_mode.addr, align 4, !dbg !8608
+getOrigin: (Val)   %acc_mode.addr = alloca i32, align 4, !DIAssignID !8573
+Alloca user: (Val)   %16 = load i32, ptr %acc_mode.addr, align 4, !dbg !8639
+Alloca user: (Val)   %12 = load i32, ptr %acc_mode.addr, align 4, !dbg !8628
+Alloca user: (Val)   %10 = load i32, ptr %acc_mode.addr, align 4, !dbg !8620
+Alloca user: (Val)   %8 = load i32, ptr %acc_mode.addr, align 4, !dbg !8608
+Alloca user: (Val)   %7 = load i32, ptr %acc_mode.addr, align 4, !dbg !8603
+Alloca user: (Val)   store i32 %acc_mode, ptr %acc_mode.addr, align 4, !DIAssignID !8580
+is Store
+getOrigin: (Val)   store i32 %acc_mode, ptr %acc_mode.addr, align 4, !DIAssignID !8580
+getOrigin: (Val) i32 %acc_mode
+** Not an instruction
+Name: acc_mode
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %7 = load i32, ptr %acc_mode.addr, align 4, !dbg !8603
+getOrigin: (Val)   %acc_mode.addr = alloca i32, align 4, !DIAssignID !8573
+Alloca user: (Val)   %16 = load i32, ptr %acc_mode.addr, align 4, !dbg !8639
+Alloca user: (Val)   %12 = load i32, ptr %acc_mode.addr, align 4, !dbg !8628
+Alloca user: (Val)   %10 = load i32, ptr %acc_mode.addr, align 4, !dbg !8620
+Alloca user: (Val)   %8 = load i32, ptr %acc_mode.addr, align 4, !dbg !8608
+Alloca user: (Val)   %7 = load i32, ptr %acc_mode.addr, align 4, !dbg !8603
+Alloca user: (Val)   store i32 %acc_mode, ptr %acc_mode.addr, align 4, !DIAssignID !8580
+is Store
+getOrigin: (Val)   store i32 %acc_mode, ptr %acc_mode.addr, align 4, !DIAssignID !8580
+getOrigin: (Val) i32 %acc_mode
+** Not an instruction
+Name: acc_mode
+Trying to get conditions
+Pred has SwitchInst
+getOrigin: (Val)   %and = and i32 %conv, 61440, !dbg !8599
+getOrigin: (Val)   %conv = zext i16 %6 to i32, !dbg !8597
+getOrigin: (Val)   %6 = load i16, ptr %i_mode, align 8, !dbg !8598
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8598
+** No original
+getOrigin: (Val)   %i_mode = getelementptr inbounds %struct.inode, ptr %5, i32 0, i32 0, !dbg !8598
+** No original
+Name: i_mode
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %4 = load ptr, ptr %inode, align 8, !dbg !8593
+getOrigin: (Val)   %inode = alloca ptr, align 8, !DIAssignID !8576
+** No original
+Name: inode
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/namei.c:3245
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 3245
+CALFLS may_open: i32 -13
+NLLFLS inode: ptr null
+SWITCH i_mode:   %and = and i32 %conv, 61440, !dbg !8599
+CMPFLS acc_mode: i32 2
+CMPTRU acc_mode: i32 1
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 -21, ptr %retval, align 4, !dbg !8607
+
+==AnalysisForInt32==
+StoreInst:   store i32 -40, ptr %retval, align 4, !dbg !8601
+
+==AnalysisForInt32==
+StoreInst:   store i32 -2, ptr %retval, align 4, !dbg !8596
+
+==AnalysisForInt32==
+
+-FUNCTION: file_inode
+Return value:   %f_inode = getelementptr inbounds %struct.file, ptr %0, i32 0, i32 11, !dbg !8568
+
+
+-FUNCTION: ima_post_create_tmpfile
+
+-FUNCTION: path_noexec
+
+-FUNCTION: alloc_empty_file
+
+-FUNCTION: do_tmpfile
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %16, ptr %retval, align 4, !dbg !8637
+
+==AnalysisForInt32==
+StoreInst:   store i32 %3, ptr %retval, align 4, !dbg !8604
+
+==AnalysisForInt32==
+
+-FUNCTION: do_o_path
+Return value:   %error = alloca i32, align 4, !DIAssignID !8573
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call1, ptr %error, align 4, !dbg !8594, !DIAssignID !8595
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %error, align 4, !dbg !8582, !DIAssignID !8583
+
+==AnalysisForInt32==
+
+-FUNCTION: open_last_lookups
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %89, ptr %retval, align 8, !dbg !8802
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %89, ptr %retval, align 8, !dbg !8802
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !8781
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !8781
+StoreInst:   store ptr %call112, ptr %retval, align 8, !dbg !8765
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call112, ptr %retval, align 8, !dbg !8765
+getErrValue: (Val)   %74 = load ptr, ptr %dentry2, align 8, !dbg !8763
+getErrValue: (Val)   %dentry2 = alloca ptr, align 8, !DIAssignID !8589
+getErrValue ends:   %dentry2 = alloca ptr, align 8, !DIAssignID !8589
+(Val)   %dentry2 = alloca ptr, align 8, !DIAssignID !8589
+StoreInst:   store ptr %call70, ptr %retval, align 8, !dbg !8698
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call70, ptr %retval, align 8, !dbg !8698
+getErrValue: (Val) i64 -21
+getErrValue ends: i64 -21
+(Val) i64 -21
+StoreInst:   store ptr %call51, ptr %retval, align 8, !dbg !8688
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call51, ptr %retval, align 8, !dbg !8688
+getErrValue: (Val) i64 -10
+getErrValue ends: i64 -10
+(Val) i64 -10
+StoreInst:   store ptr %call17, ptr %retval, align 8, !dbg !8658
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call17, ptr %retval, align 8, !dbg !8658
+getErrValue: (Val)   %27 = load ptr, ptr %dentry2, align 8, !dbg !8656
+getErrValue: (Val)   %dentry2 = alloca ptr, align 8, !DIAssignID !8589
+getErrValue ends:   %dentry2 = alloca ptr, align 8, !DIAssignID !8589
+(Val)   %dentry2 = alloca ptr, align 8, !DIAssignID !8589
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !8631
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !8631
+getErrValue: (Val)   %13 = load ptr, ptr %nd.addr, align 8, !dbg !8627
+getErrValue: (Val)   %nd.addr = alloca ptr, align 8, !DIAssignID !8582
+getErrValue ends:   %nd.addr = alloca ptr, align 8, !DIAssignID !8582
+(Val)   %nd.addr = alloca ptr, align 8, !DIAssignID !8582
+
+-FUNCTION: do_open
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %72, ptr %retval, align 4, !dbg !8804
+
+==AnalysisForInt32==
+StoreInst:   store i32 %42, ptr %retval, align 4, !dbg !8730
+
+==AnalysisForInt32==
+StoreInst:   store i32 -20, ptr %retval, align 4, !dbg !8692
+
+==AnalysisForInt32==
+StoreInst:   store i32 %26, ptr %retval, align 4, !dbg !8680
+
+==AnalysisForInt32==
+StoreInst:   store i32 -21, ptr %retval, align 4, !dbg !8666
+
+==AnalysisForInt32==
+StoreInst:   store i32 -17, ptr %retval, align 4, !dbg !8659
+
+==AnalysisForInt32==
+StoreInst:   store i32 %6, ptr %retval, align 4, !dbg !8627
+
+==AnalysisForInt32==
+
+-FUNCTION: vfs_open
+
+-FUNCTION: lookup_open
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call160, ptr %retval, align 8, !dbg !8888
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call160, ptr %retval, align 8, !dbg !8888
+getErrValue: (Val)   %conv159 = sext i32 %107 to i64, !dbg !8886
+getErrValue: (Val)   %107 = load i32, ptr %error, align 4, !dbg !8886
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8600
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8600
+(Val)   %error = alloca i32, align 4, !DIAssignID !8600
+
+///////////////////////////////////////
+lookup_open has 'return -EACCES'
+Error-thrower BB: 
+if.then135:                                       ; preds = %if.then131
+  store i32 -13, ptr %error, align 4, !dbg !8850, !DIAssignID !8852
+  call void @llvm.dbg.assign(metadata i32 -13, metadata !8582, metadata !DIExpression(), metadata !8852, metadata ptr %error, metadata !DIExpression()), !dbg !8591
+  br label %out_dput, !dbg !8853
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %91 = load ptr, ptr %create, align 8, !dbg !8848
+getOrigin: (Val)   %create = getelementptr inbounds %struct.inode_operations, ptr %90, i32 0, i32 5, !dbg !8848
+** No original
+Name: create
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %84 = load i32, ptr %open_flag, align 4, !dbg !8835
+getOrigin: (Val)   %open_flag = alloca i32, align 4, !DIAssignID !8598
+** No original
+Name: open_flag
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %83 = load ptr, ptr %d_inode126, align 8, !dbg !8833
+getOrigin: (Val)   %d_inode126 = getelementptr inbounds %struct.dentry, ptr %82, i32 0, i32 5, !dbg !8833
+** No original
+Name: d_inode126
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)d_in_lookup
+** Not an instruction
+Name: d_in_lookup
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %58 = load ptr, ptr %atomic_open, align 16, !dbg !8769
+getOrigin: (Val)   %atomic_open = getelementptr inbounds %struct.inode_operations, ptr %57, i32 0, i32 18, !dbg !8769
+** No original
+Name: atomic_open
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %54 = load i32, ptr %create_error, align 4, !dbg !8760
+getOrigin: (Val)   %54 = load i32, ptr %create_error, align 4, !dbg !8760
+getOrigin: (Val)   %create_error = alloca i32, align 4, !DIAssignID !8601
+** No original
+Name: create_error
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %38 = load i32, ptr %open_flag, align 4, !dbg !8724
+getOrigin: (Val)   %open_flag = alloca i32, align 4, !DIAssignID !8598
+** No original
+Name: open_flag
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)llvm.expect.i64
+** Not an instruction
+Name: llvm.expect.i64
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %32 = load i8, ptr %got_write.addr, align 1, !dbg !8712
+getOrigin: (Val)   %32 = load i8, ptr %got_write.addr, align 1, !dbg !8712
+getOrigin: (Val)   %got_write.addr = alloca i8, align 1, !DIAssignID !8594
+Alloca user: (Val)   %47 = load i8, ptr %got_write.addr, align 1, !dbg !8745
+Alloca user: (Val)   %32 = load i8, ptr %got_write.addr, align 1, !dbg !8712
+Alloca user: (Val)   store i8 %frombool, ptr %got_write.addr, align 1, !DIAssignID !8609
+is Store
+getOrigin: (Val)   store i8 %frombool, ptr %got_write.addr, align 1, !DIAssignID !8609
+getOrigin: (Val)   %frombool = zext i1 %got_write to i8
+getOrigin: (Val) i1 %got_write
+** Not an instruction
+Name: got_write
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %30 = load ptr, ptr %d_inode36, align 8, !dbg !8707
+getOrigin: (Val)   %d_inode36 = getelementptr inbounds %struct.dentry, ptr %29, i32 0, i32 5, !dbg !8707
+** No original
+Name: d_inode36
+*OMGOMGOMGOMG No CondBB in preds
+Debug info: /home/hiron/repo/linux/fs/namei.c:3488
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 3488
+CALFLS lookup_open: i32 -13
+NLLTRU d_inode36: ptr null
+CMPTRU got_write: i8 1
+CALFLS llvm.expect.i64: i32 0
+CMPFLS open_flag: i32 64
+CMPFLS create_error: i32 0
+NLLTRU atomic_open: ptr null
+CALFLS d_in_lookup: i32 0
+NLLTRU d_inode126: ptr null
+CMPTRU open_flag: i32 64
+NLLTRU create: ptr null
+~~~ Inserted all logs ~~~
+
+StoreInst:   store ptr %105, ptr %retval, align 8, !dbg !8882
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %105, ptr %retval, align 8, !dbg !8882
+StoreInst:   store ptr %67, ptr %retval, align 8, !dbg !8793
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %67, ptr %retval, align 8, !dbg !8793
+StoreInst:   store ptr %31, ptr %retval, align 8, !dbg !8711
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %31, ptr %retval, align 8, !dbg !8711
+StoreInst:   store ptr %20, ptr %retval, align 8, !dbg !8674
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %20, ptr %retval, align 8, !dbg !8674
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !8645
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !8645
+getErrValue: (Val) i64 -2
+getErrValue ends: i64 -2
+(Val) i64 -2
+
+-FUNCTION: may_o_create
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call12, ptr %retval, align 4, !dbg !8616
+
+==AnalysisForInt32==
+StoreInst:   store i32 %14, ptr %retval, align 4, !dbg !8609
+
+==AnalysisForInt32==
+StoreInst:   store i32 -75, ptr %retval, align 4, !dbg !8597
+
+==AnalysisForInt32==
+StoreInst:   store i32 %4, ptr %retval, align 4, !dbg !8589
+
+==AnalysisForInt32==
+
+-FUNCTION: atomic_open
+Return value:   %dentry.addr = alloca ptr, align 8, !DIAssignID !8583
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call83, ptr %dentry.addr, align 8, !dbg !8712, !DIAssignID !8713
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call83, ptr %dentry.addr, align 8, !dbg !8712, !DIAssignID !8713
+getErrValue: (Val)   %conv82 = sext i32 %42 to i64, !dbg !8710
+getErrValue: (Val)   %42 = load i32, ptr %error, align 4, !dbg !8710
+getErrValue: (Val)   %error = alloca i32, align 4, !DIAssignID !8589
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !8589
+(Val)   %error = alloca i32, align 4, !DIAssignID !8589
+StoreInst:   store ptr %38, ptr %dentry.addr, align 8, !dbg !8694, !DIAssignID !8695
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %38, ptr %dentry.addr, align 8, !dbg !8694, !DIAssignID !8695
+StoreInst:   store ptr %call19, ptr %dentry.addr, align 8, !dbg !8659, !DIAssignID !8660
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call19, ptr %dentry.addr, align 8, !dbg !8659, !DIAssignID !8660
+getErrValue: (Val)   %27 = load ptr, ptr %dentry18, align 8, !dbg !8657
+getErrValue: (Val)   %dentry18 = getelementptr inbounds %struct.path, ptr %f_path17, i32 0, i32 1, !dbg !8657
+getErrValue ends:   %dentry18 = getelementptr inbounds %struct.path, ptr %f_path17, i32 0, i32 1, !dbg !8657
+(Val)   %dentry18 = getelementptr inbounds %struct.path, ptr %f_path17, i32 0, i32 1, !dbg !8657
+StoreInst:   store ptr %dentry, ptr %dentry.addr, align 8, !DIAssignID !8595
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %dentry, ptr %dentry.addr, align 8, !DIAssignID !8595
+
+-FUNCTION: security_path_mknod
+
+-FUNCTION: open_to_namei_flags
+Return value:   %flag.addr = alloca i32, align 4, !DIAssignID !8562
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %dec, ptr %flag.addr, align 4, !dbg !8570, !DIAssignID !8571
+
+==AnalysisForInt32==
+StoreInst:   store i32 %flag, ptr %flag.addr, align 4, !DIAssignID !8564
+
+==AnalysisForInt32==
+
+-FUNCTION: may_create_in_sticky
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8643
+
+==AnalysisForInt32==
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !8641
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+may_create_in_sticky has 'return -EACCES'
+Error-thrower BB: 
+if.then66:                                        ; preds = %land.lhs.true60, %land.lhs.true51, %if.end
+  call void @llvm.lifetime.start.p0(i64 8, ptr %operation) #28, !dbg !8635
+  %28 = load ptr, ptr %inode.addr, align 8, !dbg !8636
+  %i_mode67 = getelementptr inbounds %struct.inode, ptr %28, i32 0, i32 0, !dbg !8636
+  %29 = load i16, ptr %i_mode67, align 8, !dbg !8636
+  %conv68 = zext i16 %29 to i32, !dbg !8636
+  %and69 = and i32 %conv68, 61440, !dbg !8636
+  %cmp70 = icmp eq i32 %and69, 4096, !dbg !8636
+  %30 = zext i1 %cmp70 to i64, !dbg !8636
+  %cond = select i1 %cmp70, ptr @.str.64, ptr @.str.65, !dbg !8636
+  store ptr %cond, ptr %operation, align 8, !dbg !8637, !DIAssignID !8638
+  call void @llvm.dbg.assign(metadata ptr %cond, metadata !8569, metadata !DIExpression(), metadata !8638, metadata ptr %operation, metadata !DIExpression()), !dbg !8579
+  %31 = load ptr, ptr %operation, align 8, !dbg !8639
+  call void @audit_log_path_denied(i32 noundef 1703, ptr noundef %31) #29, !dbg !8640
+  store i32 -13, ptr %retval, align 4, !dbg !8641
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  call void @llvm.lifetime.end.p0(i64 8, ptr %operation) #28, !dbg !8642
+  br label %cleanup
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %conv62 = zext i16 %27 to i32, !dbg !8633
+getOrigin: (Val)   %27 = load i16, ptr %i_mode61, align 8, !dbg !8633
+getOrigin: (Val)   %i_mode61 = getelementptr inbounds %struct.inode, ptr %26, i32 0, i32 0, !dbg !8633
+** No original
+Name: i_mode61
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %25 = load i32, ptr @sysctl_protected_regular, align 4, !dbg !8630
+getOrigin: (Val)   %25 = load i32, ptr @sysctl_protected_regular, align 4, !dbg !8630
+getOrigin: (Val) @sysctl_protected_regular = internal global i32 0, section ".data..read_mostly", align 4, !dbg !8371
+** Not an instruction
+Name: sysctl_protected_regular
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %conv53 = zext i16 %24 to i32, !dbg !8628
+getOrigin: (Val)   %24 = load i16, ptr %i_mode52, align 8, !dbg !8628
+getOrigin: (Val)   %i_mode52 = getelementptr inbounds %struct.inode, ptr %23, i32 0, i32 0, !dbg !8628
+** No original
+Name: i_mode52
+Trying to get conditions
+Pred has BranchInst
+LoadI as CmpOp:   %22 = load i32, ptr @sysctl_protected_fifos, align 4, !dbg !8625
+getOrigin: (Val)   %22 = load i32, ptr @sysctl_protected_fifos, align 4, !dbg !8625
+getOrigin: (Val) @sysctl_protected_fifos = internal global i32 0, section ".data..read_mostly", align 4, !dbg !8369
+** Not an instruction
+Name: sysctl_protected_fifos
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %conv45 = zext i16 %21 to i32, !dbg !8622
+getOrigin: (Val)   %21 = load i16, ptr %dir_mode, align 2, !dbg !8622
+getOrigin: (Val)   %dir_mode = alloca i16, align 2, !DIAssignID !8576
+** No original
+Name: dir_mode
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)llvm.expect.i64
+** Not an instruction
+Name: llvm.expect.i64
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)vfsuid_eq_kuid
+** Not an instruction
+Name: vfsuid_eq_kuid
+*OMGOMGOMGOMG No CondBB in preds
+Debug info: /home/hiron/repo/linux/fs/namei.c:1255
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/namei.c: i32 1255
+CALFLS may_create_in_sticky: i32 -13
+CALFLS vfsuid_eq_kuid: i32 0
+CALFLS llvm.expect.i64: i32 0
+CMPTRU dir_mode: i32 16
+CMPTRU sysctl_protected_fifos: i32 2
+CMPFLS i_mode52: i32 61440
+CMPTRU sysctl_protected_regular: i32 2
+CMPTRU i_mode61: i32 61440
+~~~ Inserted all logs ~~~
+
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8619
+
+==AnalysisForInt32==
+
+-FUNCTION: d_backing_inode
+Return value:   %inode = alloca ptr, align 8, !DIAssignID !8567
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %1, ptr %inode, align 8, !dbg !8572, !DIAssignID !8573
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %1, ptr %inode, align 8, !dbg !8572, !DIAssignID !8573
+
+-FUNCTION: d_is_reg
+
+-FUNCTION: ima_file_check
+
+-FUNCTION: handle_truncate
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %14, ptr %retval, align 4, !dbg !8620
+
+==AnalysisForInt32==
+StoreInst:   store i32 %6, ptr %retval, align 4, !dbg !8596
+
+==AnalysisForInt32==
+
+-FUNCTION: get_write_access
+
+-FUNCTION: security_file_truncate
+
+-FUNCTION: do_truncate
+
+-FUNCTION: put_write_access
+
+-FUNCTION: atomic_inc_unless_negative
+
+-FUNCTION: raw_atomic_inc_unless_negative
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8591
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8581
+
+==AnalysisForInt32==
+
+-FUNCTION: raw_atomic_read
+
+-FUNCTION: raw_atomic_try_cmpxchg
+
+-FUNCTION: arch_atomic_read
+Return value:   %counter = getelementptr inbounds %struct.atomic_t, ptr %0, i32 0, i32 0, !dbg !8570
+
+
+-FUNCTION: arch_atomic_try_cmpxchg
+
+-FUNCTION: llvm.assume
+
+-FUNCTION: atomic_dec
+
+-FUNCTION: raw_atomic_dec
+
+-FUNCTION: arch_atomic_dec
+
+-FUNCTION: __do_sys_mknodat
+
+-FUNCTION: do_mknodat
+Return value:   %error = alloca i32, align 4, !DIAssignID !8583
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call28, ptr %error, align 4, !dbg !8673, !DIAssignID !8674
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call24, ptr %error, align 4, !dbg !8664, !DIAssignID !8665
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call16, ptr %error, align 4, !dbg !8647, !DIAssignID !8648
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call8, ptr %error, align 4, !dbg !8627, !DIAssignID !8628
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %error, align 4, !dbg !8613, !DIAssignID !8614
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %error, align 4, !dbg !8598, !DIAssignID !8599
+
+==AnalysisForInt32==
+
+-FUNCTION: may_mknod
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -22, ptr %retval, align 4, !dbg !8573
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !8572
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8570
+
+==AnalysisForInt32==
+
+-FUNCTION: ima_post_path_mknod
+
+-FUNCTION: new_decode_dev
+
+-FUNCTION: __do_sys_mknod
+
+-FUNCTION: current_umask
+
+-FUNCTION: __do_sys_mkdirat
+
+-FUNCTION: __do_sys_mkdir
+
+-FUNCTION: check_sticky
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %retval, align 4, !dbg !8583
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8578
+
+==AnalysisForInt32==
+
+-FUNCTION: d_mountpoint
+
+-FUNCTION: __is_local_mountpoint
+
+-FUNCTION: __detach_mounts
+
+-FUNCTION: d_delete
+
+-FUNCTION: fsnotify_delete
+
+-FUNCTION: __do_sys_rmdir
+
+-FUNCTION: break_deleg
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8589
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call5, ptr %retval, align 4, !dbg !8588
+
+==AnalysisForInt32==
+
+-FUNCTION: list_empty_careful
+
+-FUNCTION: __break_lease
+
+-FUNCTION: list_is_head
+
+-FUNCTION: fsnotify_inode
+
+-FUNCTION: d_is_miss
+
+-FUNCTION: d_is_autodir
+
+-FUNCTION: __do_sys_unlinkat
+Return value:   %retval = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %conv7, ptr %retval, align 8, !dbg !8592
+
+==AnalysisForInt32==
+StoreInst:   store i64 %conv, ptr %retval, align 8, !dbg !8587
+
+==AnalysisForInt32==
+StoreInst:   store i64 -22, ptr %retval, align 8, !dbg !8578
+
+==AnalysisForInt32==
+
+-FUNCTION: __do_sys_unlink
+
+-FUNCTION: __do_sys_symlinkat
+
+-FUNCTION: __do_sys_symlink
+
+-FUNCTION: _raw_spin_lock
+
+-FUNCTION: _raw_spin_unlock
+
+-FUNCTION: __do_sys_linkat
+
+-FUNCTION: __do_sys_link
+
+-FUNCTION: fsnotify_get_cookie
+
+-FUNCTION: __do_sys_renameat2
+
+-FUNCTION: __do_sys_renameat
+
+-FUNCTION: __do_sys_rename
+
+-FUNCTION: check_copy_size
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8630
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8625
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8610
+
+==AnalysisForInt32==
+
+-FUNCTION: _copy_to_user
+
+-FUNCTION: copy_overflow
+
+-FUNCTION: __bad_copy_from
+
+-FUNCTION: __bad_copy_to
+
+-FUNCTION: check_object_size
+
+-FUNCTION: __copy_overflow
+
+-FUNCTION: __check_object_size
+
+-FUNCTION: pagecache_get_page
+
+-FUNCTION: folio_test_uptodate
+
+-FUNCTION: _compound_head
+Return value:   %retval = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %7, ptr %retval, align 8, !dbg !8585
+
+==AnalysisForInt32==
+StoreInst:   store i64 %sub, ptr %retval, align 8, !dbg !8581
+
+==AnalysisForInt32==
+
+-FUNCTION: _test_bit
+
+-FUNCTION: folio_flags
+
+-FUNCTION: arch_test_bit
+
+-FUNCTION: constant_test_bit
+
+-FUNCTION: variable_test_bit
+
+-FUNCTION: page_fixed_fake_head
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %24, ptr %retval, align 8, !dbg !8609
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %24, ptr %retval, align 8, !dbg !8609
+StoreInst:   store ptr %23, ptr %retval, align 8, !dbg !8605
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %23, ptr %retval, align 8, !dbg !8605
+StoreInst:   store ptr %4, ptr %retval, align 8, !dbg !8587
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %4, ptr %retval, align 8, !dbg !8587
+
+-FUNCTION: arch_static_branch
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !8578
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8576
+
+==AnalysisForInt32==
+
+-FUNCTION: const_test_bit
+
+-FUNCTION: put_devmap_managed_page
+
+-FUNCTION: folio_put
+
+-FUNCTION: put_devmap_managed_page_refs
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 %call6, ptr %retval, align 1, !dbg !8593
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8589
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !8584
+
+==AnalysisForInt32==
+
+-FUNCTION: is_zone_device_page
+
+-FUNCTION: __put_devmap_managed_page_refs
+
+-FUNCTION: page_zonenum
+
+-FUNCTION: kcsan_set_access_mask
+
+-FUNCTION: __kcsan_check_access
+
+-FUNCTION: folio_put_testzero
+
+-FUNCTION: __folio_put
+
+-FUNCTION: put_page_testzero
+
+-FUNCTION: page_ref_dec_and_test
+Return value:   %ret = alloca i32, align 4, !DIAssignID !8568
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %conv, ptr %ret, align 4, !dbg !8574, !DIAssignID !8575
+
+==AnalysisForInt32==
+
+-FUNCTION: atomic_dec_and_test
+
+-FUNCTION: raw_atomic_dec_and_test
+
+-FUNCTION: arch_atomic_dec_and_test
+
+-FUNCTION: read_cache_page
+
+-FUNCTION: __mark_inode_dirty
+
+-FUNCTION: llvm.dbg.assign
+
+-FUNCTION: _printk

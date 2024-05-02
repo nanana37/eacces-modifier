@@ -1,0 +1,1831 @@
+rm: cannot remove 'fs/exec.o': No such file or directory
+
+-FUNCTION: __register_binfmt
+
+-FUNCTION: llvm.dbg.declare
+
+-FUNCTION: _raw_write_lock
+
+-FUNCTION: list_add
+
+-FUNCTION: list_add_tail
+
+-FUNCTION: _raw_write_unlock
+
+-FUNCTION: unregister_binfmt
+
+-FUNCTION: list_del
+
+-FUNCTION: path_noexec
+
+-FUNCTION: __x64_sys_uselib
+
+-FUNCTION: __se_sys_uselib
+Return value:   %ret = alloca i64, align 8, !DIAssignID !7848
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !7850, !DIAssignID !7851
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_uselib
+
+-FUNCTION: copy_string_kernel
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7969
+
+==AnalysisForInt32==
+StoreInst:   store i32 -7, ptr %retval, align 4, !dbg !7952
+
+==AnalysisForInt32==
+StoreInst:   store i32 -7, ptr %retval, align 4, !dbg !7917
+
+==AnalysisForInt32==
+StoreInst:   store i32 -7, ptr %retval, align 4, !dbg !7902
+
+==AnalysisForInt32==
+StoreInst:   store i32 -14, ptr %retval, align 4, !dbg !7896
+
+==AnalysisForInt32==
+
+-FUNCTION: llvm.lifetime.start.p0
+
+-FUNCTION: _Z7strnlenPKcU25pass_dynamic_object_size1m
+Return value:   %retval = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %34, ptr %retval, align 8, !dbg !7928
+
+==AnalysisForInt32==
+StoreInst:   store i64 %24, ptr %retval, align 8, !dbg !7906
+
+==AnalysisForInt32==
+
+-FUNCTION: llvm.objectsize.i64.p0
+
+-FUNCTION: __ubsan_handle_shift_out_of_bounds
+
+-FUNCTION: valid_arg_len
+
+-FUNCTION: llvm.lifetime.end.p0
+
+-FUNCTION: get_arg_page
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %25, ptr %retval, align 8, !dbg !7923
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %25, ptr %retval, align 8, !dbg !7923
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !7914
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !7914
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !7896
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !7896
+
+-FUNCTION: flush_arg_page
+
+-FUNCTION: memcpy_to_page
+
+-FUNCTION: put_arg_page
+
+-FUNCTION: setup_arg_pages
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %conv179, ptr %retval, align 4, !dbg !8074
+
+==AnalysisForInt32==
+StoreInst:   store i32 -4, ptr %retval, align 4, !dbg !7934
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !7902
+
+==AnalysisForInt32==
+
+-FUNCTION: get_current
+Return value:   %tmp1 = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %5, ptr %tmp1, align 8, !dbg !7857
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %5, ptr %tmp1, align 8, !dbg !7857
+
+-FUNCTION: arch_align_stack
+
+-FUNCTION: llvm.expect.i64
+
+-FUNCTION: mmap_write_lock_killable
+Return value:   %ret = alloca i32, align 4, !DIAssignID !7849
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %ret, align 4, !dbg !7857, !DIAssignID !7858
+
+==AnalysisForInt32==
+
+-FUNCTION: vma_iter_init
+
+-FUNCTION: tlb_gather_mmu
+
+-FUNCTION: mprotect_fixup
+
+-FUNCTION: tlb_finish_mmu
+
+-FUNCTION: __ubsan_handle_load_invalid_value
+
+-FUNCTION: _printk
+
+-FUNCTION: shift_arg_pages
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call41, ptr %retval, align 4, !dbg !7987
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !7950
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !7939
+
+==AnalysisForInt32==
+StoreInst:   store i32 -14, ptr %retval, align 4, !dbg !7930
+
+==AnalysisForInt32==
+
+-FUNCTION: vm_flags_clear
+
+-FUNCTION: expand_stack_locked
+
+-FUNCTION: llvm.dbg.label
+
+-FUNCTION: mmap_write_unlock
+
+-FUNCTION: open_exec
+Return value:   %f = alloca ptr, align 8, !DIAssignID !7850
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call3, ptr %f, align 8, !dbg !7869, !DIAssignID !7870
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call3, ptr %f, align 8, !dbg !7869, !DIAssignID !7870
+getErrValue: (Val) i32 -100
+getErrValue ends: i32 -100
+(Val) i32 -100
+StoreInst:   store ptr %call1, ptr %f, align 8, !dbg !7860, !DIAssignID !7861
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %f, align 8, !dbg !7860, !DIAssignID !7861
+getErrValue: (Val)   %1 = load ptr, ptr %filename, align 8, !dbg !7858
+getErrValue: (Val)   %filename = alloca ptr, align 8, !DIAssignID !7849
+getErrValue ends:   %filename = alloca ptr, align 8, !DIAssignID !7849
+(Val)   %filename = alloca ptr, align 8, !DIAssignID !7849
+
+-FUNCTION: getname_kernel
+
+-FUNCTION: ERR_CAST
+Return value:   %ptr.addr = alloca ptr, align 8, !DIAssignID !7846
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %ptr, ptr %ptr.addr, align 8, !DIAssignID !7848
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %ptr, ptr %ptr.addr, align 8, !DIAssignID !7848
+
+-FUNCTION: IS_ERR
+
+-FUNCTION: do_open_execat
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call58, ptr %retval, align 8, !dbg !7944
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call58, ptr %retval, align 8, !dbg !7944
+getErrValue: (Val)   %conv57 = sext i32 %20 to i64, !dbg !7942
+getErrValue: (Val)   %20 = load i32, ptr %err, align 4, !dbg !7942
+getErrValue: (Val)   %err = alloca i32, align 4, !DIAssignID !7863
+getErrValue ends:   %err = alloca i32, align 4, !DIAssignID !7863
+(Val)   %err = alloca i32, align 4, !DIAssignID !7863
+
+///////////////////////////////////////
+do_open_execat has 'return -EACCES'
+Error-thrower BB: 
+if.end13:                                         ; preds = %if.end9
+  store i32 -13, ptr %err, align 4, !dbg !7910, !DIAssignID !7911
+  call void @llvm.dbg.assign(metadata i32 -13, metadata !7848, metadata !DIExpression(), metadata !7911, metadata ptr %err, metadata !DIExpression()), !dbg !7859
+  call void @llvm.lifetime.start.p0(i64 4, ptr %__ret_warn_on) #30, !dbg !7912
+  %8 = load ptr, ptr %file, align 8, !dbg !7912
+  %call14 = call ptr @file_inode(ptr noundef %8) #31, !dbg !7912
+  %i_mode = getelementptr inbounds %struct.inode, ptr %call14, i32 0, i32 0, !dbg !7912
+  %9 = load i16, ptr %i_mode, align 8, !dbg !7912
+  %conv = zext i16 %9 to i32, !dbg !7912
+  %and15 = and i32 %conv, 61440, !dbg !7912
+  %cmp16 = icmp eq i32 %and15, 32768, !dbg !7912
+  br i1 %cmp16, label %lor.rhs, label %lor.end, !dbg !7912
+
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Func)IS_ERR
+** Not an instruction
+Name: IS_ERR
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %3 = load i32, ptr %flags.addr, align 4, !dbg !7892
+getOrigin: (Val)   %flags.addr = alloca i32, align 4, !DIAssignID !7861
+Alloca user: (Val)   %3 = load i32, ptr %flags.addr, align 4, !dbg !7892
+Alloca user: (Val)   %1 = load i32, ptr %flags.addr, align 4, !dbg !7884
+Alloca user: (Val)   %0 = load i32, ptr %flags.addr, align 4, !dbg !7877
+Alloca user: (Val)   store i32 %flags, ptr %flags.addr, align 4, !DIAssignID !7871
+is Store
+getOrigin: (Val)   store i32 %flags, ptr %flags.addr, align 4, !DIAssignID !7871
+getOrigin: (Val) i32 %flags
+** Not an instruction
+Name: flags
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %1 = load i32, ptr %flags.addr, align 4, !dbg !7884
+getOrigin: (Val)   %flags.addr = alloca i32, align 4, !DIAssignID !7861
+Alloca user: (Val)   %3 = load i32, ptr %flags.addr, align 4, !dbg !7892
+Alloca user: (Val)   %1 = load i32, ptr %flags.addr, align 4, !dbg !7884
+Alloca user: (Val)   %0 = load i32, ptr %flags.addr, align 4, !dbg !7877
+Alloca user: (Val)   store i32 %flags, ptr %flags.addr, align 4, !DIAssignID !7871
+is Store
+getOrigin: (Val)   store i32 %flags, ptr %flags.addr, align 4, !DIAssignID !7871
+getOrigin: (Val) i32 %flags
+** Not an instruction
+Name: flags
+Trying to get conditions
+Pred has BranchInst
+getOrigin: (Val)   %0 = load i32, ptr %flags.addr, align 4, !dbg !7877
+getOrigin: (Val)   %flags.addr = alloca i32, align 4, !DIAssignID !7861
+Alloca user: (Val)   %3 = load i32, ptr %flags.addr, align 4, !dbg !7892
+Alloca user: (Val)   %1 = load i32, ptr %flags.addr, align 4, !dbg !7884
+Alloca user: (Val)   %0 = load i32, ptr %flags.addr, align 4, !dbg !7877
+Alloca user: (Val)   store i32 %flags, ptr %flags.addr, align 4, !DIAssignID !7871
+is Store
+getOrigin: (Val)   store i32 %flags, ptr %flags.addr, align 4, !DIAssignID !7871
+getOrigin: (Val) i32 %flags
+** Not an instruction
+Name: flags
+* Reached to the entry
+Debug info: /home/hiron/repo/linux/fs/exec.c:932
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO /home/hiron/repo/linux/fs/exec.c: i32 932
+CALFLS do_open_execat: i32 -13
+CMPFLS flags: i32 -4353
+CMPFLS flags: i32 256
+CMPFLS flags: i32 4096
+CALFLS IS_ERR: i32 0
+~~~ Inserted all logs ~~~
+
+StoreInst:   store ptr %18, ptr %retval, align 8, !dbg !7938
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %18, ptr %retval, align 8, !dbg !7938
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !7883
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !7883
+getErrValue: (Val) i64 -22
+getErrValue ends: i64 -22
+(Val) i64 -22
+
+-FUNCTION: putname
+
+-FUNCTION: __get_task_comm
+Return value:   %buf.addr = alloca ptr, align 8, !DIAssignID !7847
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %buf, ptr %buf.addr, align 8, !DIAssignID !7851
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %buf, ptr %buf.addr, align 8, !DIAssignID !7851
+
+-FUNCTION: task_lock
+
+-FUNCTION: strscpy_pad
+
+-FUNCTION: task_unlock
+
+-FUNCTION: __set_task_comm
+
+-FUNCTION: trace_task_rename
+
+-FUNCTION: perf_event_comm
+
+-FUNCTION: begin_new_exec
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %94, ptr %retval, align 4, !dbg !8107
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8099
+
+==AnalysisForInt32==
+StoreInst:   store i32 %2, ptr %retval, align 4, !dbg !7865
+
+==AnalysisForInt32==
+
+-FUNCTION: bprm_creds_from_file
+
+-FUNCTION: de_thread
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -11, ptr %retval, align 4, !dbg !8104
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !8094
+
+==AnalysisForInt32==
+StoreInst:   store i32 -11, ptr %retval, align 4, !dbg !7892
+
+==AnalysisForInt32==
+
+-FUNCTION: io_uring_task_cancel
+
+-FUNCTION: unshare_files
+
+-FUNCTION: set_mm_exe_file
+
+-FUNCTION: would_dump
+
+-FUNCTION: acct_arg_size
+
+-FUNCTION: exec_mmap
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7968
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7965
+
+==AnalysisForInt32==
+StoreInst:   store i32 %14, ptr %retval, align 4, !dbg !7902
+
+==AnalysisForInt32==
+StoreInst:   store i32 %8, ptr %retval, align 4, !dbg !7884
+
+==AnalysisForInt32==
+
+-FUNCTION: exec_task_namespaces
+
+-FUNCTION: spin_lock_irq
+
+-FUNCTION: posix_cpu_timers_exit
+
+-FUNCTION: spin_unlock_irq
+
+-FUNCTION: exit_itimers
+
+-FUNCTION: flush_itimer_signals
+
+-FUNCTION: unshare_sighand
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7960
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !7881
+
+==AnalysisForInt32==
+
+-FUNCTION: flush_thread
+
+-FUNCTION: clear_bit
+
+-FUNCTION: do_close_on_exec
+
+-FUNCTION: uid_eq
+
+-FUNCTION: llvm.memcpy.p0.p0.i64
+
+-FUNCTION: gid_eq
+
+-FUNCTION: set_dumpable
+
+-FUNCTION: perf_event_exec
+
+-FUNCTION: kbasename
+
+-FUNCTION: flush_signal_handlers
+
+-FUNCTION: set_cred_ucounts
+
+-FUNCTION: security_bprm_committing_creds
+
+-FUNCTION: commit_creds
+
+-FUNCTION: get_dumpable
+
+-FUNCTION: perf_event_exit_task
+
+-FUNCTION: security_bprm_committed_creds
+
+-FUNCTION: get_unused_fd_flags
+
+-FUNCTION: fd_install
+
+-FUNCTION: up_write
+
+-FUNCTION: file_inode
+Return value:   %f_inode = getelementptr inbounds %struct.file, ptr %0, i32 0, i32 11, !dbg !7849
+
+
+-FUNCTION: file_mnt_idmap
+
+-FUNCTION: inode_permission
+
+-FUNCTION: privileged_wrt_inode_uidgid
+
+-FUNCTION: get_user_ns
+Return value:   %ns.addr = alloca ptr, align 8, !DIAssignID !7845
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %ns, ptr %ns.addr, align 8, !DIAssignID !7847
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %ns, ptr %ns.addr, align 8, !DIAssignID !7847
+
+-FUNCTION: put_user_ns
+
+-FUNCTION: setup_new_exec
+
+-FUNCTION: arch_pick_mmap_layout
+
+-FUNCTION: arch_setup_new_exec
+
+-FUNCTION: test_ti_thread_flag
+
+-FUNCTION: task_size_max
+Return value:   %ret = alloca i64, align 8, !DIAssignID !7846
+
+RetVal is AllocaInst
+StoreInst:   store i64 %0, ptr %ret, align 8, !dbg !7849, !DIAssignID !7851
+
+==AnalysisForInt32==
+
+-FUNCTION: mutex_unlock
+
+-FUNCTION: finalize_exec
+
+-FUNCTION: __ubsan_handle_out_of_bounds
+
+-FUNCTION: bprm_change_interp
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7871
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !7870
+
+==AnalysisForInt32==
+
+-FUNCTION: kfree
+
+-FUNCTION: kstrdup
+
+-FUNCTION: remove_arg_zero
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %24, ptr %retval, align 4, !dbg !7936
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7865
+
+==AnalysisForInt32==
+
+-FUNCTION: kmap_local_page
+
+-FUNCTION: __kunmap_local
+
+-FUNCTION: kernel_execve
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %49, ptr %retval, align 4, !dbg !8038
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv36, ptr %retval, align 4, !dbg !7916
+
+==AnalysisForInt32==
+StoreInst:   store i32 -22, ptr %retval, align 4, !dbg !7905
+
+==AnalysisForInt32==
+
+-FUNCTION: PTR_ERR
+
+-FUNCTION: alloc_bprm
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call32, ptr %retval, align 8, !dbg !7932
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call32, ptr %retval, align 8, !dbg !7932
+getErrValue: (Val)   %conv31 = sext i32 %29 to i64, !dbg !7930
+getErrValue: (Val)   %29 = load i32, ptr %retval1, align 4, !dbg !7930
+getErrValue: (Val)   %retval1 = alloca i32, align 4, !DIAssignID !7854
+getErrValue ends:   %retval1 = alloca i32, align 4, !DIAssignID !7854
+(Val)   %retval1 = alloca i32, align 4, !DIAssignID !7854
+StoreInst:   store ptr %27, ptr %retval, align 8, !dbg !7925
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %27, ptr %retval, align 8, !dbg !7925
+
+-FUNCTION: count_strings_kernel
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %7, ptr %retval, align 4, !dbg !7884
+
+==AnalysisForInt32==
+StoreInst:   store i32 -514, ptr %retval, align 4, !dbg !7873
+
+==AnalysisForInt32==
+StoreInst:   store i32 -7, ptr %retval, align 4, !dbg !7868
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7854
+
+==AnalysisForInt32==
+
+-FUNCTION: bprm_stack_limits
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7910
+
+==AnalysisForInt32==
+StoreInst:   store i32 -7, ptr %retval, align 4, !dbg !7899
+
+==AnalysisForInt32==
+
+-FUNCTION: copy_strings_kernel
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7885
+
+==AnalysisForInt32==
+StoreInst:   store i32 -514, ptr %retval, align 4, !dbg !7879
+
+==AnalysisForInt32==
+StoreInst:   store i32 %6, ptr %retval, align 4, !dbg !7874
+
+==AnalysisForInt32==
+
+-FUNCTION: bprm_execve
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %24, ptr %retval, align 4, !dbg !7970
+
+==AnalysisForInt32==
+StoreInst:   store i32 %21, ptr %retval, align 4, !dbg !7948
+
+==AnalysisForInt32==
+StoreInst:   store i32 %2, ptr %retval, align 4, !dbg !7873
+
+==AnalysisForInt32==
+
+-FUNCTION: free_bprm
+
+-FUNCTION: set_binfmt
+
+-FUNCTION: module_put
+
+-FUNCTION: __module_get
+
+-FUNCTION: instrument_atomic_read_write
+
+-FUNCTION: instrument_read_write
+
+-FUNCTION: llvm.assume
+
+-FUNCTION: __x64_sys_execve
+
+-FUNCTION: __se_sys_execve
+Return value:   %ret = alloca i64, align 8, !DIAssignID !7852
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !7856, !DIAssignID !7857
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_execve
+
+-FUNCTION: __x64_sys_execveat
+
+-FUNCTION: __se_sys_execveat
+Return value:   %ret = alloca i64, align 8, !DIAssignID !7856
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call, ptr %ret, align 8, !dbg !7862, !DIAssignID !7863
+
+==AnalysisForInt32==
+
+-FUNCTION: __ia32_sys_execveat
+
+-FUNCTION: __ia32_compat_sys_execve
+
+-FUNCTION: __se_compat_sys_execve
+
+-FUNCTION: __ia32_compat_sys_execveat
+
+-FUNCTION: __se_compat_sys_execveat
+
+-FUNCTION: init_fs_exec_sysctls
+
+-FUNCTION: __list_add
+
+-FUNCTION: __list_add_valid
+
+-FUNCTION: __list_del_entry
+
+-FUNCTION: __list_del_entry_valid
+
+-FUNCTION: __list_del
+
+-FUNCTION: __do_sys_uselib
+
+-FUNCTION: getname
+
+-FUNCTION: do_filp_open
+
+-FUNCTION: _raw_read_lock
+
+-FUNCTION: try_module_get
+
+-FUNCTION: _raw_read_unlock
+
+-FUNCTION: put_binfmt
+
+-FUNCTION: fput
+
+-FUNCTION: llvm.is.constant.i8
+
+-FUNCTION: strlen
+
+-FUNCTION: llvm.is.constant.i64
+
+-FUNCTION: strnlen
+
+-FUNCTION: fortify_panic
+
+-FUNCTION: mmap_write_lock
+
+-FUNCTION: expand_downwards
+
+-FUNCTION: mmap_write_downgrade
+
+-FUNCTION: mmap_read_lock
+
+-FUNCTION: get_user_pages_remote
+
+-FUNCTION: mmap_read_unlock
+
+-FUNCTION: vma_pages
+
+-FUNCTION: __mmap_lock_trace_start_locking
+
+-FUNCTION: down_write
+
+-FUNCTION: __mmap_lock_trace_acquire_returned
+
+-FUNCTION: static_key_false
+
+-FUNCTION: __mmap_lock_do_trace_start_locking
+
+-FUNCTION: arch_static_branch
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !7859
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !7857
+
+==AnalysisForInt32==
+
+-FUNCTION: __mmap_lock_do_trace_acquire_returned
+
+-FUNCTION: vma_end_write_all
+
+-FUNCTION: downgrade_write
+
+-FUNCTION: mmap_assert_write_locked
+
+-FUNCTION: down_read
+
+-FUNCTION: __mmap_lock_trace_released
+
+-FUNCTION: up_read
+
+-FUNCTION: __mmap_lock_do_trace_released
+
+-FUNCTION: flush_cache_page
+
+-FUNCTION: _Z18fortify_memcpy_chkmmmmmPKc
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !7932
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !7931
+
+==AnalysisForInt32==
+
+-FUNCTION: __warn_printk
+
+-FUNCTION: flush_dcache_page
+
+-FUNCTION: llvm.is.constant.i32
+
+-FUNCTION: __write_overflow
+
+-FUNCTION: __read_overflow2
+
+-FUNCTION: __write_overflow_field
+
+-FUNCTION: __read_overflow2_field
+
+-FUNCTION: put_page
+
+-FUNCTION: _compound_head
+Return value:   %retval = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %7, ptr %retval, align 8, !dbg !7866
+
+==AnalysisForInt32==
+StoreInst:   store i64 %sub, ptr %retval, align 8, !dbg !7862
+
+==AnalysisForInt32==
+
+-FUNCTION: put_devmap_managed_page
+
+-FUNCTION: folio_put
+
+-FUNCTION: page_fixed_fake_head
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %24, ptr %retval, align 8, !dbg !7890
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %24, ptr %retval, align 8, !dbg !7890
+StoreInst:   store ptr %23, ptr %retval, align 8, !dbg !7886
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %23, ptr %retval, align 8, !dbg !7886
+StoreInst:   store ptr %4, ptr %retval, align 8, !dbg !7868
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %4, ptr %retval, align 8, !dbg !7868
+
+-FUNCTION: const_test_bit
+
+-FUNCTION: _test_bit
+
+-FUNCTION: instrument_atomic_read
+
+-FUNCTION: arch_test_bit
+
+-FUNCTION: kasan_check_read
+
+-FUNCTION: kcsan_check_access
+
+-FUNCTION: constant_test_bit
+
+-FUNCTION: variable_test_bit
+
+-FUNCTION: put_devmap_managed_page_refs
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 %call6, ptr %retval, align 1, !dbg !7874
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !7870
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !7865
+
+==AnalysisForInt32==
+
+-FUNCTION: is_zone_device_page
+
+-FUNCTION: __put_devmap_managed_page_refs
+
+-FUNCTION: page_zonenum
+
+-FUNCTION: kcsan_set_access_mask
+
+-FUNCTION: __kcsan_check_access
+
+-FUNCTION: kcsan_atomic_next
+
+-FUNCTION: folio_put_testzero
+
+-FUNCTION: __folio_put
+
+-FUNCTION: put_page_testzero
+
+-FUNCTION: page_ref_dec_and_test
+Return value:   %ret = alloca i32, align 4, !DIAssignID !7849
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %conv, ptr %ret, align 4, !dbg !7855, !DIAssignID !7856
+
+==AnalysisForInt32==
+
+-FUNCTION: atomic_dec_and_test
+
+-FUNCTION: raw_atomic_dec_and_test
+
+-FUNCTION: arch_atomic_dec_and_test
+
+-FUNCTION: down_write_killable
+
+-FUNCTION: mas_init
+
+-FUNCTION: _Z18fortify_memset_chkmmm
+
+-FUNCTION: llvm.memset.p0.i64
+
+-FUNCTION: vma_next
+
+-FUNCTION: vma_expand
+
+-FUNCTION: move_page_tables
+
+-FUNCTION: lru_add_drain
+
+-FUNCTION: free_pgd_range
+
+-FUNCTION: vma_prev
+
+-FUNCTION: vma_shrink
+
+-FUNCTION: mas_find
+
+-FUNCTION: mas_prev
+
+-FUNCTION: vma_start_write
+
+-FUNCTION: __is_vma_write_locked
+
+-FUNCTION: ERR_PTR
+
+-FUNCTION: deny_write_access
+
+-FUNCTION: atomic_dec_unless_positive
+
+-FUNCTION: raw_atomic_dec_unless_positive
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !7872
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !7862
+
+==AnalysisForInt32==
+
+-FUNCTION: raw_atomic_read
+
+-FUNCTION: raw_atomic_try_cmpxchg
+
+-FUNCTION: arch_atomic_read
+Return value:   %counter = getelementptr inbounds %struct.atomic_t, ptr %0, i32 0, i32 0, !dbg !7851
+
+
+-FUNCTION: arch_atomic_try_cmpxchg
+
+-FUNCTION: spin_lock
+
+-FUNCTION: _raw_spin_lock
+
+-FUNCTION: spin_unlock
+
+-FUNCTION: _raw_spin_unlock
+
+-FUNCTION: cpu_online
+
+-FUNCTION: __preempt_count_add
+
+-FUNCTION: __SCT__tp_func_task_rename
+
+-FUNCTION: __preempt_count_dec_and_test
+
+-FUNCTION: llvm.read_register.i64
+
+-FUNCTION: llvm.write_register.i64
+
+-FUNCTION: cpumask_test_cpu
+
+-FUNCTION: cpumask_check
+Return value:   %cpu.addr = alloca i32, align 4, !DIAssignID !7845
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %cpu, ptr %cpu.addr, align 4, !DIAssignID !7847
+
+==AnalysisForInt32==
+
+-FUNCTION: cpu_max_bits_warn
+
+-FUNCTION: thread_group_empty
+
+-FUNCTION: zap_other_threads
+
+-FUNCTION: thread_group_leader
+
+-FUNCTION: schedule
+
+-FUNCTION: __fatal_signal_pending
+
+-FUNCTION: cgroup_threadgroup_change_begin
+
+-FUNCTION: _raw_write_lock_irq
+
+-FUNCTION: _raw_write_unlock_irq
+
+-FUNCTION: cgroup_threadgroup_change_end
+
+-FUNCTION: same_thread_group
+
+-FUNCTION: exchange_tids
+
+-FUNCTION: transfer_pid
+
+-FUNCTION: list_replace_rcu
+
+-FUNCTION: list_replace_init
+
+-FUNCTION: __wake_up_parent
+
+-FUNCTION: release_task
+
+-FUNCTION: list_empty
+
+-FUNCTION: sigismember
+
+-FUNCTION: percpu_down_read
+
+-FUNCTION: might_resched
+
+-FUNCTION: rcu_sync_is_idle
+
+-FUNCTION: __percpu_down_read
+
+-FUNCTION: __SCT__might_resched
+
+-FUNCTION: percpu_up_read
+
+-FUNCTION: rcuwait_wake_up
+
+-FUNCTION: list_replace
+
+-FUNCTION: INIT_LIST_HEAD
+
+-FUNCTION: __io_uring_cancel
+
+-FUNCTION: add_mm_counter
+
+-FUNCTION: percpu_counter_add
+
+-FUNCTION: mm_trace_rss_stat
+
+-FUNCTION: percpu_counter_add_batch
+
+-FUNCTION: exec_mm_release
+
+-FUNCTION: sync_mm_rss
+
+-FUNCTION: mmap_read_lock_killable
+Return value:   %ret = alloca i32, align 4, !DIAssignID !7849
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %ret, align 4, !dbg !7857, !DIAssignID !7858
+
+==AnalysisForInt32==
+
+-FUNCTION: membarrier_exec_mmap
+
+-FUNCTION: arch_local_irq_disable
+
+-FUNCTION: mm_init_cid
+
+-FUNCTION: arch_local_irq_enable
+
+-FUNCTION: paravirt_enter_mmap
+
+-FUNCTION: switch_mm
+
+-FUNCTION: lru_gen_add_mm
+
+-FUNCTION: lru_gen_use_mm
+
+-FUNCTION: setmax_mm_hiwater_rss
+
+-FUNCTION: mm_update_next_owner
+
+-FUNCTION: mmput
+
+-FUNCTION: mmdrop_lazy_tlb
+
+-FUNCTION: down_read_killable
+
+-FUNCTION: find_next_bit
+Return value:   %retval = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call19, ptr %retval, align 8, !dbg !7884
+
+==AnalysisForInt32==
+StoreInst:   store i64 %cond17, ptr %retval, align 8, !dbg !7878
+
+==AnalysisForInt32==
+StoreInst:   store i64 %6, ptr %retval, align 8, !dbg !7867
+
+==AnalysisForInt32==
+
+-FUNCTION: cpumask_clear
+
+-FUNCTION: mm_cidmask
+
+-FUNCTION: llvm.cttz.i64
+
+-FUNCTION: variable__ffs
+Return value:   %word.addr = alloca i64, align 8, !DIAssignID !7846
+
+RetVal is AllocaInst
+StoreInst:   store i64 %1, ptr %word.addr, align 8, !dbg !7850, !DIAssignID !7852
+
+==AnalysisForInt32==
+StoreInst:   store i64 %word, ptr %word.addr, align 8, !DIAssignID !7848
+
+==AnalysisForInt32==
+
+-FUNCTION: _find_next_bit
+
+-FUNCTION: bitmap_zero
+
+-FUNCTION: cpumask_size
+
+-FUNCTION: get_mm_hiwater_rss
+Return value:   %tmp = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %cond, ptr %tmp, align 8, !dbg !7854
+
+==AnalysisForInt32==
+
+-FUNCTION: get_mm_rss
+
+-FUNCTION: get_mm_counter
+
+-FUNCTION: percpu_counter_read_positive
+Return value:   %retval = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 0, ptr %retval, align 8, !dbg !7864
+
+==AnalysisForInt32==
+StoreInst:   store i64 %4, ptr %retval, align 8, !dbg !7863
+
+==AnalysisForInt32==
+
+-FUNCTION: mmdrop
+
+-FUNCTION: __mmdrop
+
+-FUNCTION: _raw_spin_lock_irq
+
+-FUNCTION: _raw_spin_unlock_irq
+
+-FUNCTION: refcount_read
+
+-FUNCTION: kmem_cache_alloc
+
+-FUNCTION: refcount_set
+
+-FUNCTION: __cleanup_sighand
+
+-FUNCTION: atomic_read
+
+-FUNCTION: atomic_set
+
+-FUNCTION: instrument_atomic_write
+
+-FUNCTION: raw_atomic_set
+
+-FUNCTION: kasan_check_write
+
+-FUNCTION: arch_atomic_set
+
+-FUNCTION: arch_clear_bit
+
+-FUNCTION: __kuid_val
+Return value:   %val = getelementptr inbounds %struct.kuid_t, ptr %uid, i32 0, i32 0, !dbg !7848
+
+
+-FUNCTION: __kgid_val
+Return value:   %val = getelementptr inbounds %struct.kgid_t, ptr %gid, i32 0, i32 0, !dbg !7848
+
+
+-FUNCTION: strrchr
+
+-FUNCTION: __get_dumpable
+
+-FUNCTION: mnt_idmap
+Return value:   %tmp4 = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %3, ptr %tmp4, align 8, !dbg !7855
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %3, ptr %tmp4, align 8, !dbg !7855
+
+-FUNCTION: refcount_inc
+
+-FUNCTION: __refcount_inc
+
+-FUNCTION: __refcount_add
+
+-FUNCTION: atomic_fetch_add_relaxed
+
+-FUNCTION: refcount_warn_saturate
+
+-FUNCTION: raw_atomic_fetch_add_relaxed
+
+-FUNCTION: arch_atomic_fetch_add
+Return value:   %tmp = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %4, ptr %tmp, align 4, !dbg !7857
+
+==AnalysisForInt32==
+
+-FUNCTION: refcount_dec_and_test
+
+-FUNCTION: __put_user_ns
+
+-FUNCTION: __refcount_dec_and_test
+
+-FUNCTION: __refcount_sub_and_test
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !7893
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !7887
+
+==AnalysisForInt32==
+
+-FUNCTION: atomic_fetch_sub_release
+
+-FUNCTION: raw_atomic_fetch_sub_release
+
+-FUNCTION: arch_atomic_fetch_sub
+Return value:   %tmp = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %4, ptr %tmp, align 4, !dbg !7857
+
+==AnalysisForInt32==
+
+-FUNCTION: bprm_fill_uid
+
+-FUNCTION: security_bprm_creds_from_file
+
+-FUNCTION: mnt_may_suid
+
+-FUNCTION: task_no_new_privs
+
+-FUNCTION: inode_lock
+
+-FUNCTION: i_uid_into_vfsuid
+Return value:   %coerce.dive3 = getelementptr inbounds %struct.vfsuid_t, ptr %retval, i32 0, i32 0, !dbg !7857
+
+
+-FUNCTION: i_gid_into_vfsgid
+Return value:   %coerce.dive3 = getelementptr inbounds %struct.vfsgid_t, ptr %retval, i32 0, i32 0, !dbg !7857
+
+
+-FUNCTION: inode_unlock
+
+-FUNCTION: vfsuid_has_mapping
+
+-FUNCTION: vfsgid_has_mapping
+
+-FUNCTION: vfsuid_into_kuid
+Return value:   %coerce.dive2 = getelementptr inbounds %struct.kuid_t, ptr %retval, i32 0, i32 0, !dbg !7849
+
+
+-FUNCTION: vfsgid_into_kgid
+Return value:   %coerce.dive2 = getelementptr inbounds %struct.kgid_t, ptr %retval, i32 0, i32 0, !dbg !7849
+
+
+-FUNCTION: make_vfsuid
+
+-FUNCTION: i_user_ns
+Return value:   %s_user_ns = getelementptr inbounds %struct.super_block, ptr %1, i32 0, i32 52, !dbg !7850
+
+
+-FUNCTION: make_vfsgid
+
+-FUNCTION: from_kuid
+
+-FUNCTION: __vfsuid_val
+Return value:   %val = getelementptr inbounds %struct.vfsuid_t, ptr %uid, i32 0, i32 0, !dbg !7848
+
+
+-FUNCTION: from_kgid
+
+-FUNCTION: __vfsgid_val
+Return value:   %val = getelementptr inbounds %struct.vfsgid_t, ptr %gid, i32 0, i32 0, !dbg !7848
+
+
+-FUNCTION: lowmem_page_address
+
+-FUNCTION: kzalloc
+
+-FUNCTION: kasprintf
+
+-FUNCTION: bprm_mm_init
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %11, ptr %retval, align 4, !dbg !7900
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7887
+
+==AnalysisForInt32==
+
+-FUNCTION: kmalloc
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call13, ptr %retval, align 8, !dbg !7888
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call13, ptr %retval, align 8, !dbg !7888
+getErrValue: (Val)   %18 = load i64, ptr %size.addr, align 8, !dbg !7885
+getErrValue: (Val)   %size.addr = alloca i64, align 8, !DIAssignID !7849
+getErrValue ends:   %size.addr = alloca i64, align 8, !DIAssignID !7849
+(Val)   %size.addr = alloca i64, align 8, !DIAssignID !7849
+StoreInst:   store ptr %call11, ptr %retval, align 8, !dbg !7883
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call11, ptr %retval, align 8, !dbg !7883
+getErrValue: (Val)   %15 = load ptr, ptr %arrayidx10, align 8, !dbg !7878
+getErrValue: (Val)   %arrayidx10 = getelementptr [14 x ptr], ptr %arrayidx, i64 0, i64 %idxprom9, !dbg !7878
+getErrValue ends:   %arrayidx10 = getelementptr [14 x ptr], ptr %arrayidx, i64 0, i64 %idxprom9, !dbg !7878
+(Val)   %arrayidx10 = getelementptr [14 x ptr], ptr %arrayidx, i64 0, i64 %idxprom9, !dbg !7878
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !7872
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !7872
+getErrValue: (Val)   %4 = load i64, ptr %size.addr, align 8, !dbg !7868
+getErrValue: (Val)   %size.addr = alloca i64, align 8, !DIAssignID !7849
+getErrValue ends:   %size.addr = alloca i64, align 8, !DIAssignID !7849
+(Val)   %size.addr = alloca i64, align 8, !DIAssignID !7849
+
+-FUNCTION: kmalloc_large
+
+-FUNCTION: __kmalloc_index
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !7990
+
+==AnalysisForInt32==
+StoreInst:   store i32 21, ptr %retval, align 4, !dbg !7972
+
+==AnalysisForInt32==
+StoreInst:   store i32 20, ptr %retval, align 4, !dbg !7967
+
+==AnalysisForInt32==
+StoreInst:   store i32 19, ptr %retval, align 4, !dbg !7962
+
+==AnalysisForInt32==
+StoreInst:   store i32 18, ptr %retval, align 4, !dbg !7957
+
+==AnalysisForInt32==
+StoreInst:   store i32 17, ptr %retval, align 4, !dbg !7952
+
+==AnalysisForInt32==
+StoreInst:   store i32 16, ptr %retval, align 4, !dbg !7947
+
+==AnalysisForInt32==
+StoreInst:   store i32 15, ptr %retval, align 4, !dbg !7942
+
+==AnalysisForInt32==
+StoreInst:   store i32 14, ptr %retval, align 4, !dbg !7937
+
+==AnalysisForInt32==
+StoreInst:   store i32 13, ptr %retval, align 4, !dbg !7932
+
+==AnalysisForInt32==
+StoreInst:   store i32 12, ptr %retval, align 4, !dbg !7927
+
+==AnalysisForInt32==
+StoreInst:   store i32 11, ptr %retval, align 4, !dbg !7922
+
+==AnalysisForInt32==
+StoreInst:   store i32 10, ptr %retval, align 4, !dbg !7917
+
+==AnalysisForInt32==
+StoreInst:   store i32 9, ptr %retval, align 4, !dbg !7912
+
+==AnalysisForInt32==
+StoreInst:   store i32 8, ptr %retval, align 4, !dbg !7907
+
+==AnalysisForInt32==
+StoreInst:   store i32 7, ptr %retval, align 4, !dbg !7902
+
+==AnalysisForInt32==
+StoreInst:   store i32 6, ptr %retval, align 4, !dbg !7897
+
+==AnalysisForInt32==
+StoreInst:   store i32 5, ptr %retval, align 4, !dbg !7892
+
+==AnalysisForInt32==
+StoreInst:   store i32 4, ptr %retval, align 4, !dbg !7887
+
+==AnalysisForInt32==
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !7882
+
+==AnalysisForInt32==
+StoreInst:   store i32 2, ptr %retval, align 4, !dbg !7877
+
+==AnalysisForInt32==
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !7869
+
+==AnalysisForInt32==
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !7861
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7854
+
+==AnalysisForInt32==
+
+-FUNCTION: kmalloc_trace
+
+-FUNCTION: kmalloc_type
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !7862
+
+==AnalysisForInt32==
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !7861
+
+==AnalysisForInt32==
+StoreInst:   store i32 2, ptr %retval, align 4, !dbg !7856
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7851
+
+==AnalysisForInt32==
+
+-FUNCTION: __kmalloc
+
+-FUNCTION: __compiletime_assert_139
+
+-FUNCTION: mm_alloc
+
+-FUNCTION: __bprm_mm_init
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %38, ptr %retval, align 4, !dbg !7947
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7936
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !7873
+
+==AnalysisForInt32==
+
+-FUNCTION: vm_area_alloc
+
+-FUNCTION: vma_set_anonymous
+
+-FUNCTION: __compiletime_assert_738
+
+-FUNCTION: vm_flags_init
+
+-FUNCTION: vm_get_page_prot
+
+-FUNCTION: insert_vm_struct
+
+-FUNCTION: vm_area_free
+
+-FUNCTION: fatal_signal_pending
+
+-FUNCTION: __might_resched
+
+-FUNCTION: _cond_resched
+
+-FUNCTION: task_sigpending
+
+-FUNCTION: test_tsk_thread_flag
+
+-FUNCTION: __SCT__cond_resched
+
+-FUNCTION: prepare_bprm_creds
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -12, ptr %retval, align 4, !dbg !7865
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7860
+
+==AnalysisForInt32==
+StoreInst:   store i32 -513, ptr %retval, align 4, !dbg !7852
+
+==AnalysisForInt32==
+
+-FUNCTION: check_unsafe_exec
+
+-FUNCTION: sched_mm_cid_before_execve
+
+-FUNCTION: sched_exec
+
+-FUNCTION: get_close_on_exec
+
+-FUNCTION: security_bprm_creds_for_exec
+
+-FUNCTION: exec_binprm
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !7950
+
+==AnalysisForInt32==
+StoreInst:   store i32 -8, ptr %retval, align 4, !dbg !7924
+
+==AnalysisForInt32==
+StoreInst:   store i32 %5, ptr %retval, align 4, !dbg !7893
+
+==AnalysisForInt32==
+StoreInst:   store i32 -40, ptr %retval, align 4, !dbg !7883
+
+==AnalysisForInt32==
+
+-FUNCTION: sched_mm_cid_after_execve
+
+-FUNCTION: rseq_execve
+
+-FUNCTION: user_events_execve
+
+-FUNCTION: acct_update_integrals
+
+-FUNCTION: task_numa_free
+
+-FUNCTION: force_fatal_sig
+
+-FUNCTION: mutex_lock_interruptible
+
+-FUNCTION: prepare_exec_creds
+
+-FUNCTION: rcu_read_lock
+
+-FUNCTION: next_thread
+Return value:   %tmp1 = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %add.ptr, ptr %tmp1, align 8, !dbg !7854
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %add.ptr, ptr %tmp1, align 8, !dbg !7854
+
+-FUNCTION: rcu_read_unlock
+
+-FUNCTION: __rcu_read_lock
+
+-FUNCTION: __rcu_read_unlock
+
+-FUNCTION: task_pid_nr_ns
+
+-FUNCTION: task_active_pid_ns
+
+-FUNCTION: search_binary_handler
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %62, ptr %retval, align 4, !dbg !7958
+
+==AnalysisForInt32==
+StoreInst:   store i32 %61, ptr %retval, align 4, !dbg !7953
+
+==AnalysisForInt32==
+StoreInst:   store i32 %58, ptr %retval, align 4, !dbg !7947
+
+==AnalysisForInt32==
+StoreInst:   store i32 %18, ptr %retval, align 4, !dbg !7923
+
+==AnalysisForInt32==
+StoreInst:   store i32 %5, ptr %retval, align 4, !dbg !7886
+
+==AnalysisForInt32==
+StoreInst:   store i32 %2, ptr %retval, align 4, !dbg !7877
+
+==AnalysisForInt32==
+
+-FUNCTION: allow_write_access
+
+-FUNCTION: audit_bprm
+
+-FUNCTION: trace_sched_process_exec
+
+-FUNCTION: ptrace_event
+
+-FUNCTION: proc_exec_connector
+
+-FUNCTION: __task_pid_nr_ns
+
+-FUNCTION: prepare_binprm
+
+-FUNCTION: security_bprm_check
+
+-FUNCTION: __request_module
+
+-FUNCTION: kernel_read
+
+-FUNCTION: atomic_inc
+
+-FUNCTION: raw_atomic_inc
+
+-FUNCTION: arch_atomic_inc
+
+-FUNCTION: audit_dummy_context
+
+-FUNCTION: __audit_bprm
+
+-FUNCTION: audit_context
+Return value:   %audit_context = getelementptr inbounds %struct.task_struct, ptr %call, i32 0, i32 126, !dbg !7845
+
+
+-FUNCTION: __SCT__tp_func_sched_process_exec
+
+-FUNCTION: ptrace_event_enabled
+
+-FUNCTION: ptrace_notify
+
+-FUNCTION: send_sig
+
+-FUNCTION: free_arg_pages
+
+-FUNCTION: abort_creds
+
+-FUNCTION: __do_sys_execve
+
+-FUNCTION: do_execve
+
+-FUNCTION: do_execveat_common
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %88, ptr %retval, align 4, !dbg !8032
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %retval, align 4, !dbg !7868
+
+==AnalysisForInt32==
+
+-FUNCTION: is_rlimit_overlimit
+
+-FUNCTION: rlimit
+
+-FUNCTION: count
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %14, ptr %retval, align 4, !dbg !7906
+
+==AnalysisForInt32==
+StoreInst:   store i32 -514, ptr %retval, align 4, !dbg !7896
+
+==AnalysisForInt32==
+StoreInst:   store i32 -7, ptr %retval, align 4, !dbg !7889
+
+==AnalysisForInt32==
+StoreInst:   store i32 -14, ptr %retval, align 4, !dbg !7883
+
+==AnalysisForInt32==
+
+-FUNCTION: copy_strings
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %64, ptr %retval, align 4, !dbg !8088
+
+==AnalysisForInt32==
+
+-FUNCTION: task_rlimit
+Return value:   %tmp = alloca i64, align 8
+
+RetVal is AllocaInst
+StoreInst:   store i64 %6, ptr %tmp, align 8, !dbg !7855
+
+==AnalysisForInt32==
+
+-FUNCTION: get_user_arg_ptr
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %33, ptr %retval, align 8, !dbg !7919
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %33, ptr %retval, align 8, !dbg !7919
+StoreInst:   store ptr %call31, ptr %retval, align 8, !dbg !7917
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call31, ptr %retval, align 8, !dbg !7917
+getErrValue: (Val) i64 -14
+getErrValue ends: i64 -14
+(Val) i64 -14
+StoreInst:   store ptr %call13, ptr %retval, align 8, !dbg !7903
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call13, ptr %retval, align 8, !dbg !7903
+getErrValue: (Val)   %18 = load i32, ptr %compat, align 4, !dbg !7901
+getErrValue: (Val)   %compat = alloca i32, align 4, !DIAssignID !7868
+getErrValue ends:   %compat = alloca i32, align 4, !DIAssignID !7868
+(Val)   %compat = alloca i32, align 4, !DIAssignID !7868
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !7900
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !7900
+getErrValue: (Val) i64 -14
+getErrValue ends: i64 -14
+(Val) i64 -14
+
+-FUNCTION: might_fault
+
+-FUNCTION: kmsan_unpoison_memory
+
+-FUNCTION: compat_ptr
+
+-FUNCTION: strnlen_user
+
+-FUNCTION: copy_from_user
+Return value:   %n.addr = alloca i64, align 8, !DIAssignID !7851
+
+RetVal is AllocaInst
+StoreInst:   store i64 %call1, ptr %n.addr, align 8, !dbg !7864, !DIAssignID !7865
+
+==AnalysisForInt32==
+StoreInst:   store i64 %n, ptr %n.addr, align 8, !DIAssignID !7854
+
+==AnalysisForInt32==
+
+-FUNCTION: check_copy_size
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !7911
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !7906
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !7891
+
+==AnalysisForInt32==
+
+-FUNCTION: _copy_from_user
+
+-FUNCTION: copy_overflow
+
+-FUNCTION: __bad_copy_from
+
+-FUNCTION: __bad_copy_to
+
+-FUNCTION: check_object_size
+
+-FUNCTION: __copy_overflow
+
+-FUNCTION: __check_object_size
+
+-FUNCTION: __do_sys_execveat
+
+-FUNCTION: do_execveat
+
+-FUNCTION: getname_uflags
+
+-FUNCTION: __do_compat_sys_execve
+
+-FUNCTION: compat_do_execve
+
+-FUNCTION: __do_compat_sys_execveat
+
+-FUNCTION: compat_do_execveat
+
+-FUNCTION: __register_sysctl_init
+
+-FUNCTION: proc_dointvec_minmax_coredump
+Return value:   %error = alloca i32, align 4, !DIAssignID !7854
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %error, align 4, !dbg !7867, !DIAssignID !7868
+
+==AnalysisForInt32==
+
+-FUNCTION: proc_dointvec_minmax
+
+-FUNCTION: validate_coredump_safety
+
+-FUNCTION: llvm.dbg.assign
