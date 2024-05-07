@@ -5,6 +5,7 @@ int main() {
   int x;
   scanf("%d", &x);
   if (x == 0 || x == 1)
-    return -EACCES;
+    if (x % 2 == 0)
+      return -EACCES;
   return 0;
 }
