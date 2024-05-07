@@ -389,9 +389,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   /*
    * Search predecessors for If/Switch Statement BB (CondBB)
-   * Returns: BasicBlock*
    */
-  void getCondBB(BasicBlock &BB, std::vector<BasicBlock *> &preds) {
+  void findPreds(BasicBlock &BB, std::vector<BasicBlock *> &preds) {
     /* DEBUG_PRINT("Search preds of: " << *BB << "\n"); */
     for (auto *PredBB : predecessors(&BB)) {
       Instruction *TI = PredBB->getTerminator();
@@ -449,9 +448,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     bool reachedEntry = false;
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
 
-      // Get Condition BB
+      // Find CondBBs (conditional predecessors)
       std::vector<BasicBlock *> preds;
-      getCondBB(*BB, preds);
+      findPreds(*BB, preds);
 
       for (auto *CondBB : preds) {
         DEBUG_PRINT("CondBB: " << *CondBB << "\n");
