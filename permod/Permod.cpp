@@ -404,7 +404,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         continue;
       }
       if (isa<SwitchInst>(TI)) {
-        preds.push_back(PredBB);
+        /* caseBB may have multiple same preds
+         * e.g.
+            switch (x) {
+            case A:
+            case B:
+              return -EACCES;
+            }
+        */
+        if (std::find(preds.begin(), preds.end(), PredBB) == preds.end())
+          preds.push_back(PredBB);
         continue;
       }
       DEBUG_PRINT(
