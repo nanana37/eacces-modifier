@@ -268,7 +268,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (isa<ConstantPointerNull>(CmpOp2)) {
       name = getVarName(*CmpOp);
       val = CmpOp2;
-      type = isBranchTrue(BrI, DestBB) ? NLLFLS : NLLTRU;
+      type = (isBranchTrue(BrI, DestBB) != CmpI.isFalseWhenEqual()) ? NLLTRU
+                                                                    : NLLFLS;
       conds.push_back(new Condition(name, val, type));
       return true;
     }
@@ -280,7 +281,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return false;
       name = getVarName(*CmpOp);
       val = AndI->getOperand(1);
-      type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
+      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
+                                                                    : CMPFLS;
       conds.push_back(new Condition(name, val, type));
       return true;
     }
@@ -293,7 +295,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       name = getVarName(*Callee);
       val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
-      type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
+      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
+                                                                    : CALFLS;
       conds.push_back(new Condition(name, val, type));
       return true;
     }
@@ -305,7 +308,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       name = getVarName(*LoadI);
       val = CmpI.getOperand(1);
 
-      type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
+      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
+                                                                    : CMPFLS;
       conds.push_back(new Condition(name, val, type));
       return true;
     }
@@ -348,10 +352,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                   std::vector<Condition *> &conds) {
     StringRef name;
     Value *val;
+    DEBUG_PRINT("BrI: ");
+    DEBUG_PRINT2(&BrI);
 
     Value *IfCond = BrI.getCondition();
     if (!IfCond)
       return false;
+
+    DEBUG_PRINT("IfCond: ");
+    DEBUG_PRINT2(IfCond);
 
     // And condition: if (flag & 2) {}
     if (isa<CmpInst>(IfCond)) {
