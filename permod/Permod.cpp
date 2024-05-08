@@ -768,8 +768,18 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       /*   DEBUG_PRINT(F); */
 
       // Skip
-      if (F.getName() == LOGGER)
+      if (F.isDeclaration()) {
+        DEBUG_PRINT("--- Skip Declaration\n");
         continue;
+      }
+      if (F.getName().startswith("llvm")) {
+        DEBUG_PRINT("--- Skip llvm\n");
+        continue;
+      }
+      if (F.getName() == LOGGER) {
+        DEBUG_PRINT("--- Skip Logger\n");
+        continue;
+      }
 
       Value *RetVal = getReturnValue(F);
       if (!RetVal)
