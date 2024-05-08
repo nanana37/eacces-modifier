@@ -635,17 +635,31 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return SI.getValueOperand()->getType()->isPointerTy();
   }
 
-  // store %call, ptr %1, align 8
+  // Get error value (for ERR_PTR)
+  // e.g.,
+  // %error = alloca i32, align 4, !DIAssignID !8288
+  // %103 = load i32, ptr %error, align 4, !dbg !8574
+  // %conv156 = sext i32 %103 to i64, !dbg !8574
+  // %call157 = call ptr @ERR_PTR(i64 noundef %conv156) #22,
+  // store ptr %call157, ptr %retval, align 8, !dbg !8576
   Value *getErrValue(StoreInst &SI) {
     DEBUG_PRINT("\ngetErrValue of " << SI << "\n");
 
     CallInst *CI = dyn_cast<CallInst>(SI.getValueOperand());
     if (!CI)
       return nullptr;
+    DEBUG_PRINT("CallInst: ");
+    DEBUG_PRINT2(CI);
+
+    // NOTE: this function only checks ERR_PTR(x)
+    if (CI->arg_size() != 1)
+      return nullptr;
 
     Value *ErrVal = CI->getArgOperand(0);
     if (!ErrVal)
       return nullptr;
+    DEBUG_PRINT("ErrVal: ");
+    DEBUG_PRINT2(ErrVal);
 
     OriginFinder OF;
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
@@ -761,6 +775,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    *****************
    */
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
+    DEBUG_PRINT("\n@@@ PermodPass @@@\n");
+    DEBUG_PRINT("Module: " << M.getName() << "\n");
     bool modified = false;
     for (auto &F : M.functions()) {
       DEBUG_PRINT("\n-FUNCTION: " << F.getName() << "\n");
