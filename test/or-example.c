@@ -1,12 +1,11 @@
 #include <errno.h>
 #include <stdio.h>
 
-int main() {
-  int x;
-  scanf("%d", &x);
+int errfunc(int x) {
+
   if (x == 0 || x == 1)
-    if (x % 2 == 0)
-      return -EACCES;
+    return -EACCES;
+
   switch (x) {
   case 2:
   case 4:
@@ -14,6 +13,19 @@ int main() {
   case 3:
     printf("Hello, World!\n");
     return -EACCES;
+  }
+  return 0;
+}
+
+int main() {
+  int errno;
+  for (int x = 0; x < 4; x++) {
+    errno = errfunc(x);
+    if (errno == 0) {
+      printf("No error\n");
+    } else {
+      printf("Error: %d\n", errno);
+    }
   }
   return 0;
 }
