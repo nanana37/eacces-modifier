@@ -4,5 +4,6 @@ bin/
 a.out
 *.o
 *.so
+.cache/
 
 tags
