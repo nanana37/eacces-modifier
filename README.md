@@ -82,6 +82,8 @@ clang -fpass-plugin=path_to_build/permod/PermodPass.so something.c
 3. Apply to your original file
 - `scripts/update_example.sh <filename>`
 
+4. Emit IR for your original file
+- `scripts/emit_ll_example.sh <filename>`
 
 ## Trouble shooting
 
@@ -106,6 +108,7 @@ See also "/home/hiron/eacces-modifier/bui/CMakeFiles/CMakeOutput.log".
 
 This is because the LLVM is not installed globally.
 You need to give CMake the path to the `share/llvm/cmake`.
+Do this after cleaning the build dir.
 
 e.g.,
 ```bash
@@ -123,3 +126,14 @@ Use clang 17.
 Solution:
 - a. Rewrite script
 - b. Replace symlink to clang
+
+
+### LSP 'clangd' cannot find the header files
+
+Clangd cannot follow third-party header files.
+Set `CMAKE_EXPORT_COMPILE_COMMANDS` to 1 for CMake command.
+
+e.g.,
+```bash
+CMAKE_EXPORT_COMPILE_COMMANDS=1 cmake ..
+```
