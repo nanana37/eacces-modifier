@@ -78,13 +78,9 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   // When facing %flag.addr, find below:
   // store %flag, ptr %flag.addr, align 4
   Value *visitAllocaInst(AllocaInst &AI) {
-    DEBUG_PRINT("Reach to AllocaInst\n");
     if (AI.getName().endswith(".addr")) {
       for (User *U : AI.users()) {
-        DEBUG_PRINT("Alloca user: ");
-        DEBUG_PRINT2(U);
         if (isa<StoreInst>(U)) {
-          DEBUG_PRINT("is Store\n");
           return U;
         }
       }
@@ -122,9 +118,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value *val = &V;
 
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
-      DEBUG_PRINT("getOrigin: ");
-      DEBUG_PRINT2(val);
-
       if (!isa<Instruction>(val)) {
         DEBUG_PRINT("** Not an instruction\n");
         return val;
@@ -137,7 +130,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       val = original;
     }
 
-    DEBUG_PRINT("** Too deep: " << val << "\n");
+    DEBUG_PRINT("** Too deep for getOrigin\n");
     return val;
   }
 
@@ -148,7 +141,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value *PtrOp = GEP.getPointerOperand();
     if (!PtrOp)
       return "";
-    DEBUG_PRINT("PtrOp: " << *PtrOp << "\n");
     return getVarName(*PtrOp);
   }
 
@@ -264,7 +256,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value *CmpOp = CmpI.getOperand(0);
     if (!CmpOp)
       return false;
-    /* DEBUG_PRINT(*CmpI->getParent() << "\n"); */
 
     Value *CmpOp2 = CmpI.getOperand(1);
     if (!CmpOp2)
@@ -277,7 +268,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (isa<ConstantPointerNull>(CmpOp2)) {
       name = getVarName(*CmpOp);
       val = CmpOp2;
-      type = isBranchTrue(BrI, DestBB) ? NLLFLS : NLLTRU;
+      type = (isBranchTrue(BrI, DestBB) != CmpI.isFalseWhenEqual()) ? NLLTRU
+                                                                    : NLLFLS;
       conds.push_back(new Condition(name, val, type));
       return true;
     }
@@ -289,7 +281,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return false;
       name = getVarName(*CmpOp);
       val = AndI->getOperand(1);
-      type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
+      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
+                                                                    : CMPFLS;
       conds.push_back(new Condition(name, val, type));
       return true;
     }
@@ -302,7 +295,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       name = getVarName(*Callee);
       val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
-      type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
+      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
+                                                                    : CALFLS;
       conds.push_back(new Condition(name, val, type));
       return true;
     }
@@ -310,11 +304,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // CmpOp: %1 = load i32, i32* %flag.addr, align 4
     // TODO: Try on some examples
     if (auto *LoadI = dyn_cast<LoadInst>(CmpOp)) {
-      DEBUG_PRINT("LoadI as CmpOp: " << *LoadI << "\n");
       name = getVarName(*LoadI);
       val = CmpI.getOperand(1);
 
-      type = isBranchTrue(BrI, DestBB) ? CMPTRU : CMPFLS;
+      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
+                                                                    : CMPFLS;
       conds.push_back(new Condition(name, val, type));
       return true;
     }
@@ -355,8 +349,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    */
   bool findIfCond(BranchInst &BrI, BasicBlock &DestBB,
                   std::vector<Condition *> &conds) {
-    StringRef name;
-    Value *val;
 
     Value *IfCond = BrI.getCondition();
     if (!IfCond)
@@ -401,7 +393,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Returns: BasicBlock*
    */
   BasicBlock *getCondBB(BasicBlock &BB) {
-    /* DEBUG_PRINT("Search preds of: " << *BB << "\n"); */
     for (auto *PredBB : predecessors(&BB)) {
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
@@ -414,9 +405,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (isa<SwitchInst>(TI)) {
         return PredBB;
       }
-      DEBUG_PRINT(
-          "**************PredBB terminator is not a branch or switch\n");
-      DEBUG_PRINT("**************PredBB: " << *PredBB << "\n");
+      DEBUG_PRINT("* PredBB terminator is not a branch or switch\n");
+      DEBUG_PRINT2(PredBB);
     }
     return nullptr;
   }
@@ -507,9 +497,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     conds.push_back(new Condition("", NULL, HELLOO));
   }
 
-  void insertLoggers(BasicBlock *ErrBB, Function &F,
+  bool insertLoggers(BasicBlock *ErrBB, Function &F,
                      std::vector<Condition *> &conds) {
     DEBUG_PRINT("\n...Inserting log...\n");
+    bool modified = false;
 
     // Prepare builder
     IRBuilder<> builder(ErrBB);
@@ -555,7 +546,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 #endif // DEBUG
 
       args.clear();
+      modified = true;
     }
+
+    return modified;
   }
 
   /*
@@ -635,12 +629,22 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return SI.getValueOperand()->getType()->isPointerTy();
   }
 
-  // store %call, ptr %1, align 8
+  // Get error value (for ERR_PTR)
+  // e.g.,
+  // %error = alloca i32, align 4, !DIAssignID !8288
+  // %103 = load i32, ptr %error, align 4, !dbg !8574
+  // %conv156 = sext i32 %103 to i64, !dbg !8574
+  // %call157 = call ptr @ERR_PTR(i64 noundef %conv156) #22,
+  // store ptr %call157, ptr %retval, align 8, !dbg !8576
   Value *getErrValue(StoreInst &SI) {
     DEBUG_PRINT("\ngetErrValue of " << SI << "\n");
 
     CallInst *CI = dyn_cast<CallInst>(SI.getValueOperand());
     if (!CI)
+      return nullptr;
+
+    // NOTE: this function only checks ERR_PTR(x)
+    if (CI->arg_size() != 1)
       return nullptr;
 
     Value *ErrVal = CI->getArgOperand(0);
@@ -649,8 +653,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     OriginFinder OF;
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
-      DEBUG_PRINT("getErrValue: ");
-      DEBUG_PRINT2(ErrVal);
 
       if (!isa<Instruction>(ErrVal))
         break;
@@ -701,17 +703,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       getDebugInfo(*SI, F, conds);
 
       // Insert loggers
-      insertLoggers(ErrBB, F, conds);
+      modified |= insertLoggers(ErrBB, F, conds);
       if (conds.empty()) {
         DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
       } else {
         DEBUG_PRINT("** Failed to insert all logs\n");
         deleteAllCond(conds);
       }
-
-      // Declare the modification
-      modified = true;
     }
+    DEBUG_PRINT("modified: " << modified << "\n");
     return modified;
   }
 
@@ -742,7 +742,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     getDebugInfo(SI, F, conds);
 
     // Insert loggers
-    insertLoggers(ErrBB, F, conds);
+    modified |= insertLoggers(ErrBB, F, conds);
     if (conds.empty()) {
       DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
     } else {
@@ -750,9 +750,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       deleteAllCond(conds);
     }
 
-    // Declare the modification
-    modified = true;
-    return true;
+    DEBUG_PRINT("modified: " << modified << "\n");
+    return modified;
   }
 
   /*
@@ -761,6 +760,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    *****************
    */
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
+    DEBUG_PRINT("\n@@@ PermodPass @@@\n");
+    DEBUG_PRINT("Module: " << M.getName() << "\n");
     bool modified = false;
     for (auto &F : M.functions()) {
       DEBUG_PRINT("\n-FUNCTION: " << F.getName() << "\n");
@@ -768,8 +769,24 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       /*   DEBUG_PRINT(F); */
 
       // Skip
-      if (F.getName() == LOGGER)
+      if (F.isDeclaration()) {
+        DEBUG_PRINT("--- Skip Declaration\n");
         continue;
+      }
+      if (F.getName().startswith("llvm")) {
+        DEBUG_PRINT("--- Skip llvm\n");
+        continue;
+      }
+      if (F.getName() == LOGGER) {
+        DEBUG_PRINT("--- Skip Logger\n");
+        continue;
+      }
+
+      // TODO
+      if (F.getName() == "profile_transition") {
+        DEBUG_PRINT("--- Skip profile_transition\n");
+        continue;
+      }
 
       Value *RetVal = getReturnValue(F);
       if (!RetVal)
@@ -804,9 +821,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
       }
     }
-    if (modified)
+    if (modified) {
+      DEBUG_PRINT("Modified\n");
       return PreservedAnalyses::none();
-    return PreservedAnalyses::all();
+    } else {
+      DEBUG_PRINT("Not Modified\n");
+      return PreservedAnalyses::all();
+    }
   };
 }; // namespace
 
