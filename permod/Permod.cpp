@@ -78,7 +78,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   // When facing %flag.addr, find below:
   // store %flag, ptr %flag.addr, align 4
   Value *visitAllocaInst(AllocaInst &AI) {
-    DEBUG("Reach to AllocaInst\n");
+    DEBUG_PRINT("Reach to AllocaInst\n");
     if (AI.getName().endswith(".addr")) {
       for (User *U : AI.users()) {
         DEBUG_PRINT("Alloca user: ");
