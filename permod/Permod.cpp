@@ -355,6 +355,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT("BrI: ");
     DEBUG_PRINT2(&BrI);
 
+    // Branch sometimes has only one successor
+    // e.g. br label %if.end
+    if (!BrI.isConditional()) {
+      DEBUG_PRINT("** Not a conditional branch\n");
+      return false;
+    }
+
     Value *IfCond = BrI.getCondition();
     if (!IfCond)
       return false;
@@ -406,10 +413,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     for (auto *PredBB : predecessors(&BB)) {
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
-        // Branch sometimes has only one successor
-        // e.g. br label %if.end
-        if (TI->getNumSuccessors() != 2)
-          continue;
         preds.push_back(PredBB);
         continue;
       }
