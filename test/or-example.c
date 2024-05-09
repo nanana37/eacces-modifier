@@ -3,8 +3,10 @@
 
 int errfunc(int x) {
 
-  if (x == 0 || x == 1)
-    return -EACCES;
+  if (x & 2 || x & 1) {
+    if (x & 4)
+      return -EACCES;
+  }
 
   switch (x) {
   case 2:
@@ -19,7 +21,8 @@ int errfunc(int x) {
 
 int main() {
   int errno;
-  for (int x = 0; x < 4; x++) {
+  for (int x = 0; x < 10; x++) {
+    printf("%d ", x);
     errno = errfunc(x);
     if (errno == 0) {
       printf("No error\n");
