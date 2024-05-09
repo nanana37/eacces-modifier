@@ -400,7 +400,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Search predecessors for If/Switch Statement BB (CondBB)
    */
   void findPreds(BasicBlock &BB, std::vector<BasicBlock *> &preds) {
-    /* DEBUG_PRINT("Search preds of: " << *BB << "\n"); */
+    if (predecessors(&BB).empty())
+      return;
+
     for (auto *PredBB : predecessors(&BB)) {
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
@@ -453,49 +455,37 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   // Search from bottom to top (entry block)
   void findAllConditions(BasicBlock &ErrBB, std::vector<Condition *> &conds) {
-    BasicBlock *BB = &ErrBB;
     bool reachedEntry = false;
-    for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
 
-      // Find CondBBs (conditional predecessors)
-      std::vector<BasicBlock *> preds;
-      findPreds(*BB, preds);
+    // Find CondBBs (conditional predecessors)
+    std::vector<BasicBlock *> preds;
+    findPreds(ErrBB, preds);
 
-      for (auto *CondBB : preds) {
-        DEBUG_PRINT("CondBB: " << *CondBB << "\n");
-        if (!CondBB) {
-          DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
-          break;
-        }
-
-        // Get Condition
-        // TODO: Should this return bool?
-        if (!findConditions(*CondBB, *BB, conds)) {
-          DEBUG_PRINT("* findCond has failed.\n");
-          break;
-        }
-        // Update BB
-        // NOTE: We need CondBB, not only its terminator
-        BB = CondBB;
-        findAllConditions(*BB, conds);
-
-        if (CondBB == &CondBB->getParent()->getEntryBlock()) {
-          DEBUG_PRINT("* Reached to the entry\n");
-          reachedEntry = true;
-          break;
-        }
+    for (auto *CondBB : preds) {
+      if (!CondBB) {
+        DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
+        break;
       }
 
-      if (reachedEntry) {
+      // Get Condition
+      // TODO: Should this return bool?
+      if (!findConditions(*CondBB, ErrBB, conds)) {
+        DEBUG_PRINT("* findCond has failed.\n");
+        break;
+      }
+      findAllConditions(*CondBB, conds);
+
+      if (CondBB == &CondBB->getParent()->getEntryBlock()) {
         DEBUG_PRINT("* Reached to the entry\n");
+        reachedEntry = true;
         break;
       }
+    }
 
-      // The loop reaches to the end?
-      if (i == MAX_TRACE_DEPTH - 1) {
-        DEBUG_PRINT("* Reached to the max depth\n");
-        break;
-      }
+    if (reachedEntry) {
+      DEBUG_PRINT("* Reached to the entry\n");
+    } else {
+      DEBUG_PRINT("* Why not reached to the entry?\n");
     }
   }
 
