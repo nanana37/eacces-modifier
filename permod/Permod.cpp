@@ -507,9 +507,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     conds.push_back(new Condition("", NULL, HELLOO));
   }
 
-  void insertLoggers(BasicBlock *ErrBB, Function &F,
+  bool insertLoggers(BasicBlock *ErrBB, Function &F,
                      std::vector<Condition *> &conds) {
     DEBUG_PRINT("\n...Inserting log...\n");
+    bool modified = false;
 
     // Prepare builder
     IRBuilder<> builder(ErrBB);
@@ -555,7 +556,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 #endif // DEBUG
 
       args.clear();
+      modified = true;
     }
+
+    return modified;
   }
 
   /*
@@ -715,17 +719,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       getDebugInfo(*SI, F, conds);
 
       // Insert loggers
-      insertLoggers(ErrBB, F, conds);
+      modified |= insertLoggers(ErrBB, F, conds);
       if (conds.empty()) {
         DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
       } else {
         DEBUG_PRINT("** Failed to insert all logs\n");
         deleteAllCond(conds);
       }
-
-      // Declare the modification
-      modified = true;
     }
+    DEBUG_PRINT("modified: " << modified << "\n");
     return modified;
   }
 
@@ -756,7 +758,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     getDebugInfo(SI, F, conds);
 
     // Insert loggers
-    insertLoggers(ErrBB, F, conds);
+    modified |= insertLoggers(ErrBB, F, conds);
     if (conds.empty()) {
       DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
     } else {
@@ -764,9 +766,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       deleteAllCond(conds);
     }
 
-    // Declare the modification
-    modified = true;
-    return true;
+    DEBUG_PRINT("modified: " << modified << "\n");
+    return modified;
   }
 
   /*
@@ -794,6 +795,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
       if (F.getName() == LOGGER) {
         DEBUG_PRINT("--- Skip Logger\n");
+        continue;
+      }
+      if (F.getName() == "profile_transition") {
+        DEBUG_PRINT("--- Skip profile_transition\n");
         continue;
       }
 
@@ -830,9 +835,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
       }
     }
-    if (modified)
+    if (modified) {
+      DEBUG_PRINT("Modified\n");
       return PreservedAnalyses::none();
-    return PreservedAnalyses::all();
+    } else {
+      DEBUG_PRINT("Not Modified\n");
+      return PreservedAnalyses::all();
+    }
   };
 }; // namespace
 
