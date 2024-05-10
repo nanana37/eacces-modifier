@@ -341,8 +341,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // Branch sometimes has only one successor
     // e.g. br label %if.end
     if (!BrI.isConditional()) {
-      DEBUG_PRINT("** Not a conditional branch\n");
-      return false;
+      DEBUG_PRINT("Not a conditional branch\n");
+      return true;
     }
 
     Value *IfCond = BrI.getCondition();
@@ -435,39 +435,54 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   // Search from bottom to top (entry block)
-  void findAllConditions(BasicBlock &ErrBB, std::vector<Condition *> &conds) {
-    bool reachedEntry = false;
-
+  void findAllConditions(BasicBlock &ErrBB, std::vector<Condition *> &conds,
+                         int depth = 0) {
+    // TODO: Stop infinite loop (such as while analysis) more smartly
+    if (depth > MAX_TRACE_DEPTH) {
+      DEBUG_PRINT("************** Too deep for findAllConditions\n");
+      return;
+    }
+    DEBUG_PRINT("\n...Finding all conditions...\n");
     // Find CondBBs (conditional predecessors)
     std::vector<BasicBlock *> preds;
     findPreds(ErrBB, preds);
+    if (preds.empty()) {
+      DEBUG_PRINT("** No preds\n");
+      return;
+    }
 
+    bool reachedEntry = true;
     for (auto *CondBB : preds) {
       if (!CondBB) {
         DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
-        break;
+        continue;
       }
 
       // Get Condition
       // TODO: Should this return bool?
       if (!findConditions(*CondBB, ErrBB, conds)) {
-        DEBUG_PRINT("* findCond has failed.\n");
-        break;
+        DEBUG_PRINT("*** findCond has failed.\n");
       }
-      findAllConditions(*CondBB, conds);
+
+      // NOTE: RECURSION
+      findAllConditions(*CondBB, conds, depth++);
 
       if (CondBB == &CondBB->getParent()->getEntryBlock()) {
         DEBUG_PRINT("* Reached to the entry\n");
-        reachedEntry = true;
-        break;
+        reachedEntry &= true;
+      } else {
+        reachedEntry &= false;
       }
     }
 
+#ifdef DEBUG
     if (reachedEntry) {
-      DEBUG_PRINT("* Reached to the entry\n");
+      DEBUG_PRINT("Reached to the entry\n");
     } else {
-      DEBUG_PRINT("* Why not reached to the entry?\n");
+      DEBUG_PRINT("* not reached to the entry (inside the recursion)\n");
+      DEBUG_PRINT2(&ErrBB);
     }
+#endif // DEBUG
   }
 
   /*
