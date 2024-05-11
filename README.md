@@ -2,8 +2,31 @@
 
 A pass to make "Permission denied" (errno: EACCES) detailed.
 
-Used [Adrian Sampson's LLLVM turorial](https://github.com/sampsyo/llvm-pass-skeleton) as template.
-([Blog](https://www.cs.cornell.edu/~asampson/blog/llvm.html))
+## What is this?
+
+We can't identify the reason between Error1 and Error2 in the following code.
+
+```c
+if ( flag & MASK1 ) {
+  return -EACCES;  // Error1
+}
+if ( flag & MASK2 ) {
+  return -EACCES;  // Error2
+}
+```
+
+Because they are both `EACCES`, and says "Permission denied".
+
+```bash
+$ ./a.out
+Permision denied
+```
+
+This tool will make logs about:
+
+- Error1 caused by `flag & MASK1`
+- Error2 caused by `flag & MASK2`
+
 
 ## Build
 
@@ -45,6 +68,9 @@ make -j 8 \
   KCFLAGS="-fno-discard-value-names \
   -fpass-plugin=path_to_build/permod/PermodPass.so"
 ```
+
+The logs will be in `/var/log/kern.log`, because we use `printk`.
+
 
 ### Apply to a specific file
 
@@ -137,3 +163,8 @@ e.g.,
 ```bash
 CMAKE_EXPORT_COMPILE_COMMANDS=1 cmake ..
 ```
+
+## References
+
+Used [Adrian Sampson's LLLVM turorial](https://github.com/sampsyo/llvm-pass-skeleton) as template.
+([Blog](https://www.cs.cornell.edu/~asampson/blog/llvm.html))
