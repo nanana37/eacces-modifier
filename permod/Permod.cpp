@@ -392,6 +392,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     for (auto *PredBB : predecessors(&BB)) {
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
+        // NOTE: Prevent goint to loop latch; the backtrace will be an infinite
+        // loop. TOOD: Go to loop latch, if you can escape from the loop.
+        if (TI->getMetadata("llvm.loop")) {
+          DEBUG_PRINT("*** It's loop latch!!!\n");
+          DEBUG_PRINT2(PredBB);
+          continue;
+        }
         preds.push_back(PredBB);
         continue;
       }
