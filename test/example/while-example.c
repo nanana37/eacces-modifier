@@ -6,6 +6,9 @@ int errfunc(int x) {
   int i = 0;
   while (i != 5) {
     i++;
+    if (x == 2) {
+      return -EACCES;
+    }
   }
   if (x & 1) {
     return -EACCES;
