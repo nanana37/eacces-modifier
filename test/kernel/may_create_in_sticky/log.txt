@@ -1,0 +1,16 @@
+```bash
+May 16 14:54:57 debian kernel: [  985.694066] --- Hello, I'm Permod ---
+May 16 14:54:57 debian kernel: [  985.694066] [Permod] /home/hiron/git/linux/fs/namei.c: 420
+May 16 14:54:57 debian kernel: [  985.694074] [Permod] generic_permission(): -13
+May 16 14:54:57 debian kernel: [  985.694081] [Permod] ret: not -13
+May 16 14:54:57 debian kernel: [  985.694081] [Permod] i_mode: not 61440
+May 16 14:54:57 debian kernel: [  985.694081] [Permod] Unnamed Condition: 2
+May 16 14:54:57 debian kernel: [  985.694081] [Permod] capable_wrt_inode_uidgid(): 0
+May 16 14:54:57 debian kernel: [  985.694094] --- Hello, I'm Permod ---
+May 16 14:54:57 debian kernel: [  985.694098] [Permod] /home/hiron/git/linux/fs/namei.c: 420
+May 16 14:54:57 debian kernel: [  985.694099] [Permod] generic_permission(): -13
+May 16 14:54:57 debian kernel: [  985.694101] [Permod] ret: not -13
+May 16 14:54:57 debian kernel: [  985.694105] [Permod] i_mode: not 61440
+May 16 14:54:57 debian kernel: [  985.694107] [Permod] Unnamed Condition: 2
+May 16 14:54:57 debian kernel: [  985.694107] [Permod] capable_wrt_inode_uidgid(): 0
+```
