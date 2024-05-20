@@ -4,11 +4,13 @@
 #include <unistd.h>
 int main() {
   mkdir("out", 0777);
-  mkdir("out/dir", 1777);
-  // change dir to out/dir
+  mkdir("out/dir", 1002);
+
+  // change owner
+  // uid_t uid = getuid();
+  // chown("out/dir", uid, -1);
+
   // open("out/dir/reg", O_CREAT, 0);
-  // mknod("out/dir/reg", S_IFREG, 0);
-  chdir("out/dir");
 
   return 0;
 }
