@@ -338,6 +338,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   bool findIfCond(BranchInst &BrI, BasicBlock &DestBB,
                   std::vector<Condition *> &conds) {
 
+    // Branch sometimes has only one successor
+    // e.g. br label %if.end
+    if (!BrI.isConditional()) {
+      DEBUG_PRINT("Not a conditional branch\n");
+      return true;
+    }
+
     Value *IfCond = BrI.getCondition();
     if (!IfCond)
       return false;
@@ -378,25 +385,39 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   /*
    * Search predecessors for If/Switch Statement BB (CondBB)
-   * Returns: BasicBlock*
    */
-  BasicBlock *getCondBB(BasicBlock &BB) {
+  void findPreds(BasicBlock &BB, std::vector<BasicBlock *> &preds) {
+    if (predecessors(&BB).empty())
+      return;
     for (auto *PredBB : predecessors(&BB)) {
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
-        // Branch sometimes has only one successor
-        // e.g. br label %if.end
-        if (TI->getNumSuccessors() != 2)
+        // NOTE: Prevent goint to loop latch; the backtrace will be an infinite
+        // loop. TOOD: Go to loop latch, if you can escape from the loop.
+        if (TI->getMetadata("llvm.loop")) {
+          DEBUG_PRINT("*** It's loop latch!!!\n");
+          DEBUG_PRINT2(PredBB);
           continue;
-        return PredBB;
+        }
+        preds.push_back(PredBB);
+        continue;
       }
       if (isa<SwitchInst>(TI)) {
-        return PredBB;
+        /* caseBB may have multiple same preds
+         * e.g.
+            switch (x) {
+            case A:
+            case B:
+              return -EACCES;
+            }
+        */
+        if (std::find(preds.begin(), preds.end(), PredBB) == preds.end())
+          preds.push_back(PredBB);
+        continue;
       }
       DEBUG_PRINT("* PredBB terminator is not a branch or switch\n");
       DEBUG_PRINT2(PredBB);
     }
-    return nullptr;
   }
 
   bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB,
@@ -421,38 +442,54 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   // Search from bottom to top (entry block)
-  void findAllConditions(BasicBlock &ErrBB, std::vector<Condition *> &conds) {
-    BasicBlock *BB = &ErrBB;
-    for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
+  void findAllConditions(BasicBlock &ErrBB, std::vector<Condition *> &conds,
+                         int depth = 0) {
+    // TODO: Stop infinite loop (such as while analysis) more smartly
+    if (depth > MAX_TRACE_DEPTH) {
+      DEBUG_PRINT("************** Too deep for findAllConditions\n");
+      return;
+    }
+    DEBUG_PRINT("\n...Finding all conditions...\n");
+    // Find CondBBs (conditional predecessors)
+    std::vector<BasicBlock *> preds;
+    findPreds(ErrBB, preds);
+    if (preds.empty()) {
+      DEBUG_PRINT("** No preds\n");
+      return;
+    }
 
-      // Get Condition BB
-      BasicBlock *CondBB = getCondBB(*BB);
+    bool reachedEntry = true;
+    for (auto *CondBB : preds) {
       if (!CondBB) {
         DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
-        break;
+        continue;
       }
 
       // Get Condition
       // TODO: Should this return bool?
-      if (!findConditions(*CondBB, *BB, conds)) {
-        DEBUG_PRINT("* findCond has failed.\n");
-        break;
+      if (!findConditions(*CondBB, ErrBB, conds)) {
+        DEBUG_PRINT("*** findCond has failed.\n");
       }
 
-      // Update BB
-      // NOTE: We need CondBB, not only its terminator
-      BB = CondBB;
+      // NOTE: RECURSION
+      findAllConditions(*CondBB, conds, depth++);
 
-      // The loop reaches to the end?
       if (CondBB == &CondBB->getParent()->getEntryBlock()) {
         DEBUG_PRINT("* Reached to the entry\n");
-        break;
-      }
-      if (i == MAX_TRACE_DEPTH - 1) {
-        DEBUG_PRINT("* Reached to the max depth\n");
-        break;
+        reachedEntry &= true;
+      } else {
+        reachedEntry &= false;
       }
     }
+
+#ifdef DEBUG
+    if (reachedEntry) {
+      DEBUG_PRINT("Reached to the entry\n");
+    } else {
+      DEBUG_PRINT("* not reached to the entry (inside the recursion)\n");
+      DEBUG_PRINT2(&ErrBB);
+    }
+#endif // DEBUG
   }
 
   /*
