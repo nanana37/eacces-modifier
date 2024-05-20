@@ -51,3 +51,25 @@ static int may_create_in_sticky(struct mnt_idmap *idmap, struct nameidata *nd,
     return 0;
 }
 ```
+
+## sticky bit
+
+sticky directory
+
+```
+chmod 1777 <dir>
+```
+
+
+## Traceout
+
+Assumption:
+sticky bit will prevent other usr's action in a sticky directory.
+
+```
+make
+
+sh scripts/trace.sh <owner/otheruser>
+```
+
+need to cmp trace-as-owner.list vs trace-as-other.list
