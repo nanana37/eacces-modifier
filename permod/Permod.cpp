@@ -390,6 +390,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (predecessors(&BB).empty())
       return;
     for (auto *PredBB : predecessors(&BB)) {
+      DEBUG_PRINT("found a pred\n");
+      DEBUG_PRINT2(PredBB);
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
         // NOTE: Prevent goint to loop latch; the backtrace will be an infinite
@@ -623,20 +625,25 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return RetVal;
   }
 
-  // Check if the stored value is errno
-  bool isErrValue(StoreInst &SI) {
+  bool isStoreErr(StoreInst &SI) {
     Value *ValOp = SI.getValueOperand();
-    ConstantInt *CI = dyn_cast<ConstantInt>(ValOp);
-    if (!CI)
-      return false;
-
-    if (CI->getSExtValue() != -EACCES)
-      return false;
-    // TODO: Check ALL error codes
-    /* if (CI->getSExtValue() >= 0) */
-    /*   return false; */
-
-    return true;
+    // NOTE: return -EACCES;
+    if (auto *CI = dyn_cast<ConstantInt>(ValOp)) {
+      if (CI->getSExtValue() == -EACCES)
+        return true;
+    }
+    // NOTE: return (flag & 2) ? -EACCES : 0;
+    if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
+      if (auto *CI = dyn_cast<ConstantInt>(SI->getTrueValue())) {
+        if (CI->getSExtValue() == -EACCES)
+          return true;
+      }
+      if (auto *CI = dyn_cast<ConstantInt>(SI->getFalseValue())) {
+        if (CI->getSExtValue() == -EACCES)
+          return true;
+      }
+    }
+    return false;
   }
 
   /* Get error-thrower BB "ErrBB"
@@ -644,7 +651,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Returns: BasicBlock*
    */
   BasicBlock *getErrBB(StoreInst &SI) {
-    if (!isErrValue(SI))
+    if (!isStoreErr(SI))
       return nullptr;
 
     return SI.getParent();
@@ -682,6 +689,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (!isa<Instruction>(ErrVal))
         break;
       if (isa<AllocaInst>(ErrVal))
+        break;
+      if (isa<SelectInst>(ErrVal))
         break;
       Value *newVal = OF.visit(*dyn_cast<Instruction>(ErrVal));
       if (!newVal)
