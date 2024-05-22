@@ -1,8 +1,12 @@
 all:
-	gcc main.c && ./a.out
+	sh main.sh
+
+init:
+	sh init.sh
+	$(info *** Do "sh main.sh" as another user ***)
 
 clean:
-	rm -f a.out
-	sudo rm -rf out/*
+	rm -rf out
+	rm /tmp/err-symlnk
 
 

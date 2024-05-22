@@ -46,3 +46,20 @@ static inline int may_follow_link(struct nameidata *nd,
     return -EACCES; //1083
 }
 ```
+
+# Description
+
+Cannot go through symlink which is:
+- made by other user
+- under sticky & world-wide dir(e.g., /tmp).
+* this happens even if you are root
+
+```bash
+$ make clean
+$ make init #sh init.sh
+$ su <other user>
+$ make #sh main.sh
+Permission denied
+```
+
+[thanks to: Qiita@kusano_k](https://qiita.com/kusano_k/items/8763374d0dc3edc927cf)
