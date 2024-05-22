@@ -52,6 +52,24 @@ static int may_create_in_sticky(struct mnt_idmap *idmap, struct nameidata *nd,
 }
 ```
 
+# Description
+
+Cannot O_CREAT open a FIFO (or a regular file) in a sticky directory when:
+- `sysctl_protected_fifos` or `sysctl_protected_regular` is enabled
+- the file is owned by other user
+* this should happens even for root (but not actually printed in my case)
+* NOTE: Disabling `sysctl_protected_fifos` or `sysctl_protected_regular` will also cause EACCES somewhere else. CHECK IT OUT!
+
+```bash
+$ make clean
+$ make init #sh init.sh
+$ su <other user>
+$ make #sh main.sh
+Permission denied
+```
+
+
+# NOT WORK BELOW
 ## sticky bit
 
 sticky directory

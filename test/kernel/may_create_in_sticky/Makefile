@@ -1,14 +1,12 @@
 all:
-	gcc main.c && ./a.out
-	gcc other.c -o other
-	$(info *** Do "./other" as other user ***)
+	sh main.sh
 
-other:
-	gcc other.c -o other
-
+init:
+	sh init.sh
+	$(info *** Do "sh main.sh" as another user ***)
 
 clean:
-	rm -f a.out other
-	sudo rm -rf out/*
+	rm -rf out
+	rm /tmp/err-fifo /tmp/err-reg
 
 
