@@ -72,6 +72,11 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
       DEBUG_PRINT("It's IndirectCall\n");
       return CI.getCalledOperand();
     }
+    /* if (CI.getCalledFunction()->getName().startswith("llvm")) { */
+    /*   DEBUG_PRINT("It's LLVM intrinsic\n"); */
+    /*   DEBUG_PRINT2(CI.getCalledOperand()); */
+    /*   return CI.getCalledOperand(); */
+    /* } */
     return CI.getCalledFunction();
   }
 
@@ -89,18 +94,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   }
 };
 
-/*
- * Find 'return -EACCES'
-    * The statement turns into:
-    Error-thrower BB:
-        store i32 -13，ptr %1, align 4
-    Terminator BB:
-        %2 = load i32, ptr %1, align 4
-        ret i32 %2
- */
-
-struct PermodPass : public PassInfoMixin<PermodPass> {
-
+struct ConditionAnalysis {
   // ****************************************************************************
   //                               Utility
   // ****************************************************************************
@@ -113,7 +107,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     %0 = load i32, ptr %flag.addr, align 4
   * TODO: may cause infinite loop
   */
-  Value *getOrigin(Value &V) {
+  static Value *getOrigin(Value &V) {
     OriginFinder OF;
     Value *val = &V;
 
@@ -137,7 +131,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   /*
    * Get struct name, if the V is a member of struct
    */
-  StringRef getStructName(Value &V) {
+  static StringRef getStructName(Value &V) {
     if (!isa<GetElementPtrInst>(V))
       return "";
     Value *PtrOp = cast<GetElementPtrInst>(V).getPointerOperand();
@@ -149,7 +143,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   /*
    * Get variable name
    */
-  StringRef getVarName(Value &V) {
+  static StringRef getVarName(Value &V) {
     StringRef Name = getOrigin(V)->getName();
     if (Name.empty())
       Name = "Unnamed Condition";
@@ -220,6 +214,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * ****************************************************************************
    */
 
+  // Prepare Array of Condition
+  std::vector<Condition *> conds;
+
   // Check whether the DestBB is true or false successor
   bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
     if (BrI.getSuccessor(0) == &DestBB)
@@ -235,8 +232,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       %tobool = icmp ne i32 %and, 0
       br i1 %tobool, label %if.then, label %if.end
    */
-  bool findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI, BasicBlock &DestBB,
-                      std::vector<Condition *> &conds) {
+  bool findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI, BasicBlock &DestBB) {
     StringRef name;
     Value *val;
     CondType type;
@@ -312,8 +308,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       %call = call i32 @function()
       br i1 %call, label %if.then, label %if.end
    */
-  bool findIfCond_call(BranchInst &BrI, CallInst &CallI, BasicBlock &DestBB,
-                       std::vector<Condition *> &conds) {
+  bool findIfCond_call(BranchInst &BrI, CallInst &CallI, BasicBlock &DestBB) {
     StringRef name;
     Value *val;
     CondType type;
@@ -335,8 +330,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      - Call condition
       if (!func()) {}   // name:of func, val:0
    */
-  bool findIfCond(BranchInst &BrI, BasicBlock &DestBB,
-                  std::vector<Condition *> &conds) {
+  bool findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
 
     // Branch sometimes has only one successor
     // e.g. br label %if.end
@@ -351,11 +345,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     // And condition: if (flag & 2) {}
     if (isa<CmpInst>(IfCond)) {
-      return findIfCond_cmp(BrI, cast<CmpInst>(*IfCond), DestBB, conds);
+      return findIfCond_cmp(BrI, cast<CmpInst>(*IfCond), DestBB);
     }
     // Call condition: if (!func()) {}
     if (isa<CallInst>(IfCond)) {
-      return findIfCond_call(BrI, cast<CallInst>(*IfCond), DestBB, conds);
+      return findIfCond_call(BrI, cast<CallInst>(*IfCond), DestBB);
     }
     DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
     return false;
@@ -365,7 +359,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Returns: (StringRef, Value*)
      - switch (flag) {}     // name:of flag, val:of flag
    */
-  bool findSwCond(SwitchInst &SwI, std::vector<Condition *> &conds) {
+  bool findSwCond(SwitchInst &SwI) {
     StringRef name;
     Value *val;
     Value *SwCond = SwI.getCondition();
@@ -387,15 +381,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Search predecessors for If/Switch Statement BB (CondBB)
    */
   void findPreds(BasicBlock &BB, std::vector<BasicBlock *> &preds) {
+    DEBUG_PRINT("\n...Finding preds...\n");
     if (predecessors(&BB).empty())
       return;
     for (auto *PredBB : predecessors(&BB)) {
       DEBUG_PRINT("found a pred\n");
-      DEBUG_PRINT2(PredBB);
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
-        // NOTE: Prevent goint to loop latch; the backtrace will be an infinite
-        // loop. TOOD: Go to loop latch, if you can escape from the loop.
+        // NOTE: Prevent goint to loop latch; the backtrace will be an
+        // infinite loop. TOOD: Go to loop latch, if you can escape from the
+        // loop.
         if (TI->getMetadata("llvm.loop")) {
           DEBUG_PRINT("*** It's loop latch!!!\n");
           DEBUG_PRINT2(PredBB);
@@ -420,10 +415,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT("* PredBB terminator is not a branch or switch\n");
       DEBUG_PRINT2(PredBB);
     }
+    DEBUG_PRINT("...End of Finding preds...\n");
   }
 
-  bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB,
-                      std::vector<Condition *> &conds) {
+  bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
     DEBUG_PRINT("Trying to get conditions\n");
 
     // Get Condition
@@ -433,10 +428,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
      */
     if (auto *BrI = dyn_cast<BranchInst>(CondBB.getTerminator())) {
       DEBUG_PRINT("Pred has BranchInst\n");
-      return findIfCond(*BrI, DestBB, conds);
+      return findIfCond(*BrI, DestBB);
     } else if (auto *SwI = dyn_cast<SwitchInst>(CondBB.getTerminator())) {
       DEBUG_PRINT("Pred has SwitchInst\n");
-      return findSwCond(*SwI, conds);
+      return findSwCond(*SwI);
     } else {
       DEBUG_PRINT("* CondBB terminator is not a branch or switch\n");
       return false;
@@ -444,8 +439,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   // Search from bottom to top (entry block)
-  void findAllConditions(BasicBlock &ErrBB, std::vector<Condition *> &conds,
-                         int depth = 0) {
+  void findAllConditions(BasicBlock &ErrBB, int depth = 0) {
     // TODO: Stop infinite loop (such as while analysis) more smartly
     if (depth > MAX_TRACE_DEPTH) {
       DEBUG_PRINT("************** Too deep for findAllConditions\n");
@@ -469,12 +463,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       // Get Condition
       // TODO: Should this return bool?
-      if (!findConditions(*CondBB, ErrBB, conds)) {
+      if (!findConditions(*CondBB, ErrBB)) {
         DEBUG_PRINT("*** findCond has failed.\n");
       }
 
       // NOTE: RECURSION
-      findAllConditions(*CondBB, conds, depth++);
+      findAllConditions(*CondBB, depth++);
 
       if (CondBB == &CondBB->getParent()->getEntryBlock()) {
         DEBUG_PRINT("* Reached to the entry\n");
@@ -485,11 +479,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
 #ifdef DEBUG
+    DEBUG_PRINT("depth" << depth);
     if (reachedEntry) {
       DEBUG_PRINT("Reached to the entry\n");
     } else {
       DEBUG_PRINT("* not reached to the entry (inside the recursion)\n");
-      DEBUG_PRINT2(&ErrBB);
+      /* DEBUG_PRINT2(&ErrBB); */
     }
 #endif // DEBUG
   }
@@ -498,7 +493,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    * Delete all conditions
    * Call this when you continue to next ErrBB
    */
-  void deleteAllCond(std::vector<Condition *> &conds) {
+  void deleteAllCond() {
     while (!conds.empty()) {
       delete conds.back();
       conds.pop_back();
@@ -507,8 +502,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   // Debug info
   // NOTE: need clang flag "-g"
-  void getDebugInfo(StoreInst &SI, Function &F,
-                    std::vector<Condition *> &conds) {
+  void getDebugInfo(StoreInst &SI, Function &F) {
     LLVMContext &Ctx = SI.getContext();
     StringRef filename = F.getParent()->getSourceFileName();
     const DebugLoc &Loc = dyn_cast<Instruction>(&SI)->getDebugLoc();
@@ -524,8 +518,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     conds.push_back(new Condition("", NULL, HELLOO));
   }
 
-  bool insertLoggers(BasicBlock *ErrBB, Function &F,
-                     std::vector<Condition *> &conds) {
+  bool insertLoggers(BasicBlock *ErrBB, Function &F) {
     DEBUG_PRINT("\n...Inserting log...\n");
     bool modified = false;
 
@@ -579,6 +572,20 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return modified;
   }
 
+  bool isEmpty() { return conds.empty(); }
+};
+
+/*
+ * Find 'return -EACCES'
+    * The statement turns into:
+    Error-thrower BB:
+        store i32 -13，ptr %1, align 4
+    Terminator BB:
+        %2 = load i32, ptr %1, align 4
+        ret i32 %2
+ */
+
+struct PermodPass : public PassInfoMixin<PermodPass> {
   /*
    * ****************************************************************************
    *                                Find 'return -EACCES'
@@ -724,25 +731,24 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
       DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
-      // Prepare Array of Condition
-      std::vector<Condition *> conds;
+      struct ConditionAnalysis ConditionAnalysis {};
 
       // Backtrace to find If/Switch Statement BB
-      findAllConditions(*ErrBB, conds);
-      if (conds.empty()) {
+      ConditionAnalysis.findAllConditions(*ErrBB);
+      if (ConditionAnalysis.isEmpty()) {
         DEBUG_PRINT("** conds is empty\n");
         continue;
       }
 
-      getDebugInfo(*SI, F, conds);
+      ConditionAnalysis.getDebugInfo(*SI, F);
 
       // Insert loggers
-      modified |= insertLoggers(ErrBB, F, conds);
-      if (conds.empty()) {
+      modified |= ConditionAnalysis.insertLoggers(ErrBB, F);
+      if (ConditionAnalysis.isEmpty()) {
         DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
       } else {
         DEBUG_PRINT("** Failed to insert all logs\n");
-        deleteAllCond(conds);
+        ConditionAnalysis.deleteAllCond();
       }
     }
     DEBUG_PRINT("modified: " << modified << "\n");
@@ -763,25 +769,24 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
     DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
-    // Prepare Array of Condition
-    std::vector<Condition *> conds;
+    struct ConditionAnalysis ConditionAnalysis {};
 
     // Backtrace to find If/Switch Statement BB
-    findAllConditions(*ErrBB, conds);
-    if (conds.empty()) {
+    ConditionAnalysis.findAllConditions(*ErrBB);
+    if (ConditionAnalysis.isEmpty()) {
       DEBUG_PRINT("** conds is empty\n");
       return false;
     }
 
-    getDebugInfo(SI, F, conds);
+    ConditionAnalysis.getDebugInfo(SI, F);
 
     // Insert loggers
-    modified |= insertLoggers(ErrBB, F, conds);
-    if (conds.empty()) {
+    modified |= ConditionAnalysis.insertLoggers(ErrBB, F);
+    if (ConditionAnalysis.isEmpty()) {
       DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
     } else {
       DEBUG_PRINT("** Failed to insert all logs\n");
-      deleteAllCond(conds);
+      ConditionAnalysis.deleteAllCond();
     }
 
     DEBUG_PRINT("modified: " << modified << "\n");
@@ -820,6 +825,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (F.getName() == "profile_transition") {
         DEBUG_PRINT("--- Skip profile_transition\n");
         continue;
+      }
+      if (F.getName() == "acl_permission_check") {
+        DEBUG_PRINT(F);
       }
 
       Value *RetVal = getReturnValue(F);
