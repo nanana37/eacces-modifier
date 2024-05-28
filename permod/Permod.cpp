@@ -615,16 +615,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
     // NOTE: return (flag & 2) ? -EACCES : 0;
     // FIXME: Checking select inst will cause crash
-    /* if (auto *SI = dyn_cast<SelectInst>(ValOp)) { */
-    /*   if (auto *CI = dyn_cast<ConstantInt>(SI->getTrueValue())) { */
-    /*     if (CI->getSExtValue() == -EACCES) */
-    /*       return true; */
-    /*   } */
-    /*   if (auto *CI = dyn_cast<ConstantInt>(SI->getFalseValue())) { */
-    /*     if (CI->getSExtValue() == -EACCES) */
-    /*       return true; */
-    /*   } */
-    /* } */
+    // if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
+    //   if (auto *CI = dyn_cast<ConstantInt>(SI->getTrueValue())) {
+    //     if (CI->getSExtValue() == -EACCES)
+    //       return true;
+    //   }
+    //   if (auto *CI = dyn_cast<ConstantInt>(SI->getFalseValue())) {
+    //     if (CI->getSExtValue() == -EACCES)
+    //       return true;
+    //   }
+    // }
     return false;
   }
 
