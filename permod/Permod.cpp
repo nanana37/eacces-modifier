@@ -41,7 +41,7 @@ namespace {
 
 // #define DEBUG2
 #ifdef DEBUG2
-#define DEBUG_PRINT2(x)                                                        \
+#define DEBUG_VALUE(x)                                                         \
   do {                                                                         \
     if (!x)                                                                    \
       errs() << "(null)\n";                                                    \
@@ -50,7 +50,11 @@ namespace {
     else                                                                       \
       errs() << "(Val) " << *(x) << "\n";                                      \
   } while (0)
+#define DEBUG_PRINT2(x) DEBUG_PRINT(x)
 #else
+#define DEBUG_VALUE(x)                                                         \
+  do {                                                                         \
+  } while (0)
 #define DEBUG_PRINT2(x)                                                        \
   do {                                                                         \
   } while (0)
@@ -420,14 +424,10 @@ struct ConditionAnalysis {
      * switch (flag) {}     // name:of flag, val:of flag
      */
     if (auto *BrI = dyn_cast<BranchInst>(CondBB.getTerminator())) {
-#ifdef DEBUG2
-      DEBUG_PRINT("Pred has BranchInst\n");
-#endif
+      DEBUG_PRINT2("Pred has BranchInst\n");
       return findIfCond(*BrI, DestBB);
     } else if (auto *SwI = dyn_cast<SwitchInst>(CondBB.getTerminator())) {
-#ifdef DEBUG2
-      DEBUG_PRINT("Pred has SwitchInst\n");
-#endif
+      DEBUG_PRINT2("Pred has SwitchInst\n");
       return findSwCond(*SwI);
     } else {
       DEBUG_PRINT("* CondBB terminator is not a branch or switch\n");
@@ -469,8 +469,8 @@ struct ConditionAnalysis {
         continue;
       }
 
-      DEBUG_PRINT("CondBB: " << CondBB->getName() << "\n");
-      DEBUG_PRINT2(CondBB);
+      DEBUG_PRINT2("CondBB: " << CondBB->getName() << "\n");
+      DEBUG_VALUE(CondBB);
 
       // Get Condition
       // TODO: Should this return bool?
@@ -713,14 +713,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   bool analysisForPtr(StoreInst &SI, Function &F) {
-    DEBUG_PRINT("\n==AnalysisForPtr==\n");
+    DEBUG_PRINT2("\n==AnalysisForPtr==\n");
+    DEBUG_VALUE(SI);
+
     bool modified = false;
 
     Value *ErrVal = getErrValue(SI);
     if (!ErrVal)
       return false;
 
-    DEBUG_PRINT2(ErrVal);
+    DEBUG_VALUE(ErrVal);
 
     for (User *U : ErrVal->users()) {
       StoreInst *SI = dyn_cast<StoreInst>(U);
@@ -758,7 +760,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   bool analysisForInt32(StoreInst &SI, Function &F) {
-    DEBUG_PRINT("\n==AnalysisForInt32==\n");
+    DEBUG_PRINT2("\n==AnalysisForInt32==\n");
+    DEBUG_VALUE(SI);
+
     bool modified = false;
 
     // Get Error-thrower BB "ErrBB"
@@ -805,14 +809,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT("Module: " << M.getName() << "\n");
     bool modified = false;
     for (auto &F : M.functions()) {
-#ifdef DEBUG2
-      DEBUG_PRINT("\n-FUNCTION: " << F.getName() << "\n");
-#endif
+      DEBUG_PRINT2("\n-FUNCTION: " << F.getName() << "\n");
 
       // FIXME: this function cause crash
       if (F.getName() == "profile_transition") {
         DEBUG_PRINT("--- Skip profile_transition\n");
-        DEBUG_PRINT(F);
+        // DEBUG_PRINT(F);
         continue;
       } else {
         // continue;
@@ -856,7 +858,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         StoreInst *SI = dyn_cast<StoreInst>(U);
         if (!SI)
           continue;
-        DEBUG_PRINT("StoreInst: " << *SI << "\n");
 
         // Analyze conditions & insert loggers
         if (isStorePtr(*SI)) {
