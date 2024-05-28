@@ -809,6 +809,15 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       /* if (F.getName() == "lookup_open") */
       /*   DEBUG_PRINT(F); */
 
+      // FIXME: this function cause crash
+      if (F.getName() == "profile_transition") {
+        DEBUG_PRINT("--- Skip profile_transition\n");
+        DEBUG_PRINT(F);
+        continue;
+      } else {
+        // continue;
+      }
+
       // Skip
       if (F.isDeclaration()) {
         DEBUG_PRINT("--- Skip Declaration\n");
@@ -820,12 +829,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
       if (F.getName() == LOGGER) {
         DEBUG_PRINT("--- Skip Logger\n");
-        continue;
-      }
-
-      // FIXME: this function cause crash
-      if (F.getName() == "profile_transition") {
-        DEBUG_PRINT("--- Skip profile_transition\n");
         continue;
       }
 
