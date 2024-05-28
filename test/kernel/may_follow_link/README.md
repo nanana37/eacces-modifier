@@ -53,8 +53,8 @@ static inline int may_follow_link(struct nameidata *nd,
 
 Cannot go through symlink which is:
 
-- made by other user
 - under sticky & world-wide dir(e.g., /tmp).
+- made by the user who does not own the directory
 - *this happens even if you are root
 
 ```bash
