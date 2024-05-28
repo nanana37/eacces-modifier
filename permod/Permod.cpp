@@ -805,9 +805,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT("Module: " << M.getName() << "\n");
     bool modified = false;
     for (auto &F : M.functions()) {
+#ifdef DEBUG2
       DEBUG_PRINT("\n-FUNCTION: " << F.getName() << "\n");
-      /* if (F.getName() == "lookup_open") */
-      /*   DEBUG_PRINT(F); */
+#endif
 
       // FIXME: this function cause crash
       if (F.getName() == "profile_transition") {
@@ -858,9 +858,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           continue;
         DEBUG_PRINT("StoreInst: " << *SI << "\n");
 
+        // Analyze conditions & insert loggers
         if (isStorePtr(*SI)) {
           modified |= analysisForPtr(*SI, F);
         } else {
+          // TODO: Is this really "else"?
           modified |= analysisForInt32(*SI, F);
         }
       }
