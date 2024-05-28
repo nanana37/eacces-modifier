@@ -1,0 +1,4421 @@
+
+@@@ PermodPass @@@
+Module: <path_to_linux>/security/apparmor/domain.c
+
+-FUNCTION: x_table_lookup
+Return value:   %label = alloca ptr, align 8, !DIAssignID !12894
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %label, align 8, !dbg !12972, !DIAssignID !12973
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %label, align 8, !dbg !12972, !DIAssignID !12973
+StoreInst:   store ptr %call12, ptr %label, align 8, !dbg !12966, !DIAssignID !12967
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call12, ptr %label, align 8, !dbg !12966, !DIAssignID !12967
+StoreInst:   store ptr %label9, ptr %label, align 8, !dbg !12957, !DIAssignID !12958
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %label9, ptr %label, align 8, !dbg !12957, !DIAssignID !12958
+StoreInst:   store ptr null, ptr %label, align 8, !dbg !12909, !DIAssignID !12910
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %label, align 8, !dbg !12909, !DIAssignID !12910
+
+-FUNCTION: llvm.dbg.declare
+--- Skip Declaration
+
+-FUNCTION: llvm.lifetime.start.p0
+--- Skip Declaration
+
+-FUNCTION: llvm.lifetime.end.p0
+--- Skip Declaration
+
+-FUNCTION: aa_find_child
+--- Skip Declaration
+
+-FUNCTION: aa_label_parse
+--- Skip Declaration
+
+-FUNCTION: IS_ERR
+
+-FUNCTION: next_name
+
+-FUNCTION: apparmor_bprm_creds_for_exec
+Return value:   %error = alloca i32, align 4, !DIAssignID !12876
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %198, ptr %error, align 4, !dbg !13322, !DIAssignID !13323
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call271, ptr %error, align 4, !dbg !13213, !DIAssignID !13214
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %error, align 4, !dbg !13192, !DIAssignID !13194
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %error, align 4, !dbg !13176, !DIAssignID !13178
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv244, ptr %error, align 4, !dbg !13170, !DIAssignID !13171
+
+==AnalysisForInt32==
+StoreInst:   store i32 -12, ptr %error, align 4, !dbg !12995, !DIAssignID !12997
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %error, align 4, !dbg !12927, !DIAssignID !12928
+
+==AnalysisForInt32==
+
+-FUNCTION: i_uid_into_vfsuid
+Return value:   %coerce.dive3 = getelementptr inbounds %struct.vfsuid_t, ptr %retval, i32 0, i32 0, !dbg !12885
+
+
+-FUNCTION: file_mnt_idmap
+
+-FUNCTION: file_inode
+Return value:   %f_inode = getelementptr inbounds %struct.file, ptr %0, i32 0, i32 11, !dbg !12877
+
+
+-FUNCTION: vfsuid_into_kuid
+Return value:   %coerce.dive2 = getelementptr inbounds %struct.kuid_t, ptr %retval, i32 0, i32 0, !dbg !12877
+
+
+-FUNCTION: task_ctx
+
+-FUNCTION: get_current
+Return value:   %tmp1 = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %5, ptr %tmp1, align 8, !dbg !12885
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %5, ptr %tmp1, align 8, !dbg !12885
+
+-FUNCTION: aa_get_newest_label
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call13, ptr %retval, align 8, !dbg !12920
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call13, ptr %retval, align 8, !dbg !12920
+getErrValue ends:   %l.addr = alloca ptr, align 8, !DIAssignID !12876
+(Val)   %l.addr = alloca ptr, align 8, !DIAssignID !12876
+modified: 0
+StoreInst:   store ptr %8, ptr %retval, align 8, !dbg !12916
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %8, ptr %retval, align 8, !dbg !12916
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !12884
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !12884
+
+-FUNCTION: cred_label
+Return value:   %4 = load ptr, ptr %blob, align 8, !dbg !12893
+
+
+-FUNCTION: aa_get_label
+Return value:   %l.addr = alloca ptr, align 8, !DIAssignID !12873
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %l, ptr %l.addr, align 8, !DIAssignID !12875
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %l, ptr %l.addr, align 8, !DIAssignID !12875
+
+-FUNCTION: aa_get_buffer
+--- Skip Declaration
+
+-FUNCTION: handle_onexec
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call735, ptr %retval, align 8, !dbg !13395
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call735, ptr %retval, align 8, !dbg !13395
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !12878
+(Val)   %error = alloca i32, align 4, !DIAssignID !12878
+modified: 0
+StoreInst:   store ptr %358, ptr %retval, align 8, !dbg !13366
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %358, ptr %retval, align 8, !dbg !13366
+StoreInst:   store ptr %call383, ptr %retval, align 8, !dbg !13213
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call383, ptr %retval, align 8, !dbg !13213
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !12878
+(Val)   %error = alloca i32, align 4, !DIAssignID !12878
+modified: 0
+StoreInst:   store ptr %call56, ptr %retval, align 8, !dbg !13032
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call56, ptr %retval, align 8, !dbg !13032
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !12878
+(Val)   %error = alloca i32, align 4, !DIAssignID !12878
+modified: 0
+
+-FUNCTION: kzalloc
+
+-FUNCTION: profile_transition
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %91, ptr %retval, align 8, !dbg !13187
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %91, ptr %retval, align 8, !dbg !13187
+StoreInst:   store ptr %call205, ptr %retval, align 8, !dbg !13185
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call205, ptr %retval, align 8, !dbg !13185
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !12884
+(Val)   %error = alloca i32, align 4, !DIAssignID !12884
+
+///////////////////////////////////////
+profile_transition has 'return -EACCES'
+Error-thrower BB: 
+if.else144:                                       ; preds = %lor.lhs.false132
+  store i32 -13, ptr %error, align 4, !dbg !13125, !DIAssignID !13126
+  call void @llvm.dbg.assign(metadata i32 -13, metadata !12579, metadata !DIExpression(), metadata !13126, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  br label %if.end145
+
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: lor.lhs.false132
+(Val) 
+lor.lhs.false132:                                 ; preds = %if.else129
+  %62 = load ptr, ptr %profile.addr, align 8, !dbg !13094
+  %mode133 = getelementptr inbounds %struct.aa_profile, ptr %62, i32 0, i32 5, !dbg !13094
+  %63 = load i64, ptr %mode133, align 8, !dbg !13094
+  %cmp134 = icmp eq i64 %63, 1, !dbg !13094
+  br i1 %cmp134, label %if.then136, label %if.else144, !dbg !13095
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: mode133
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.else129
+(Val) 
+if.else129:                                       ; preds = %if.end107
+  %61 = load i32, ptr @aa_g_profile_mode, align 4, !dbg !13094
+  %cmp130 = icmp eq i32 %61, 1, !dbg !13094
+  br i1 %cmp130, label %if.then136, label %lor.lhs.false132, !dbg !13094
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_g_profile_mode
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end107
+(Val) 
+if.end107:                                        ; preds = %if.end37
+  %44 = load ptr, ptr %rules, align 8, !dbg !13048
+  %file108 = getelementptr inbounds %struct.aa_ruleset, ptr %44, i32 0, i32 3, !dbg !13049
+  %45 = load i32, ptr %state, align 4, !dbg !13050
+  %46 = load ptr, ptr %name, align 8, !dbg !13051
+  %47 = load ptr, ptr %cond.addr, align 8, !dbg !13052
+  %call109 = call i32 @aa_str_perms(ptr noundef %file108, i32 noundef %45, ptr noundef %46, ptr noundef %47, ptr noundef %perms) #17, !dbg !13053
+  store i32 %call109, ptr %state, align 4, !dbg !13054, !DIAssignID !13055
+  call void @llvm.dbg.assign(metadata i32 %call109, metadata !12576, metadata !DIExpression(), metadata !13055, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  %allow = getelementptr inbounds %struct.aa_perms, ptr %perms, i32 0, i32 0, !dbg !13056
+  %48 = load i32, ptr %allow, align 4, !dbg !13056
+  %and110 = and i32 %48, 1, !dbg !13057
+  %tobool111 = icmp ne i32 %and110, 0, !dbg !13057
+  br i1 %tobool111, label %if.then112, label %if.else129, !dbg !13058
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: allow
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end37
+(Val) 
+if.end37:                                         ; preds = %do.end10
+  %27 = load ptr, ptr %profile.addr, align 8, !dbg !13001
+  %mode38 = getelementptr inbounds %struct.aa_profile, ptr %27, i32 0, i32 5, !dbg !13001
+  %28 = load i64, ptr %mode38, align 8, !dbg !13001
+  %cmp39 = icmp eq i64 %28, 3, !dbg !13001
+  br i1 %cmp39, label %if.then41, label %if.end107, !dbg !13002
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: mode38
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end10
+(Val) 
+do.end10:                                         ; preds = %do.cond9
+  %9 = load ptr, ptr %bprm.addr, align 8, !dbg !12954
+  %file11 = getelementptr inbounds %struct.linux_binprm, ptr %9, i32 0, i32 8, !dbg !12955
+  %10 = load ptr, ptr %file11, align 8, !dbg !12955
+  %f_path = getelementptr inbounds %struct.file, ptr %10, i32 0, i32 10, !dbg !12956
+  %11 = load ptr, ptr %profile.addr, align 8, !dbg !12957
+  %path_flags = getelementptr inbounds %struct.aa_profile, ptr %11, i32 0, i32 6, !dbg !12958
+  %12 = load i32, ptr %path_flags, align 8, !dbg !12958
+  %13 = load ptr, ptr %buffer.addr, align 8, !dbg !12959
+  %14 = load ptr, ptr %profile.addr, align 8, !dbg !12960
+  %disconnected = getelementptr inbounds %struct.aa_profile, ptr %14, i32 0, i32 7, !dbg !12961
+  %15 = load ptr, ptr %disconnected, align 8, !dbg !12961
+  %call = call i32 @aa_path_name(ptr noundef %f_path, i32 noundef %12, ptr noundef %13, ptr noundef %name, ptr noundef %info, ptr noundef %15) #17, !dbg !12962
+  store i32 %call, ptr %error, align 4, !dbg !12963, !DIAssignID !12964
+  call void @llvm.dbg.assign(metadata i32 %call, metadata !12579, metadata !DIExpression(), metadata !12964, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  %16 = load i32, ptr %error, align 4, !dbg !12965
+  %tobool = icmp ne i32 %16, 0, !dbg !12965
+  br i1 %tobool, label %if.then, label %if.end37, !dbg !12966
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: error
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond9
+(Val) 
+do.cond9:                                         ; preds = %do.body7
+  br label %do.end10, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body7
+(Val) 
+do.body7:                                         ; preds = %do.end6
+  store i32 0, ptr %tmp8, align 4, !dbg !12948
+  %8 = load i32, ptr %tmp8, align 4, !dbg !12952
+  br label %do.cond9, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end6
+(Val) 
+do.end6:                                          ; preds = %do.cond5
+  br label %do.body7, !dbg !12947
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond5
+(Val) 
+do.cond5:                                         ; preds = %do.body3
+  br label %do.end6, !dbg !12946
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body3
+(Val) 
+do.body3:                                         ; preds = %do.end
+  store i32 0, ptr %tmp4, align 4, !dbg !12941
+  %7 = load i32, ptr %tmp4, align 4, !dbg !12945
+  br label %do.cond5, !dbg !12946
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end
+(Val) 
+do.end:                                           ; preds = %do.cond
+  br label %do.body3, !dbg !12940
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond
+(Val) 
+do.cond:                                          ; preds = %do.body
+  br label %do.end, !dbg !12939
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body
+(Val) 
+do.body:                                          ; preds = %entry
+  store i32 0, ptr %tmp2, align 4, !dbg !12934
+  %6 = load i32, ptr %tmp2, align 4, !dbg !12938
+  br label %do.cond, !dbg !12939
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: entry
+(Val) 
+entry:
+  %retval = alloca ptr, align 8
+  %profile.addr = alloca ptr, align 8, !DIAssignID !12868
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12564, metadata !DIExpression(), metadata !12868, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12869
+  %bprm.addr = alloca ptr, align 8, !DIAssignID !12870
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12565, metadata !DIExpression(), metadata !12870, metadata ptr %bprm.addr, metadata !DIExpression()), !dbg !12869
+  %buffer.addr = alloca ptr, align 8, !DIAssignID !12871
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12566, metadata !DIExpression(), metadata !12871, metadata ptr %buffer.addr, metadata !DIExpression()), !dbg !12869
+  %cond.addr = alloca ptr, align 8, !DIAssignID !12872
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12567, metadata !DIExpression(), metadata !12872, metadata ptr %cond.addr, metadata !DIExpression()), !dbg !12869
+  %secure_exec.addr = alloca ptr, align 8, !DIAssignID !12873
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12568, metadata !DIExpression(), metadata !12873, metadata ptr %secure_exec.addr, metadata !DIExpression()), !dbg !12869
+  %rules = alloca ptr, align 8, !DIAssignID !12874
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12569, metadata !DIExpression(), metadata !12874, metadata ptr %rules, metadata !DIExpression()), !dbg !12869
+  %__mptr = alloca ptr, align 8, !DIAssignID !12875
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12570, metadata !DIExpression(), metadata !12875, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12876
+  %tmp = alloca ptr, align 8
+  %new = alloca ptr, align 8, !DIAssignID !12877
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12572, metadata !DIExpression(), metadata !12877, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  %info = alloca ptr, align 8, !DIAssignID !12878
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12573, metadata !DIExpression(), metadata !12878, metadata ptr %info, metadata !DIExpression()), !dbg !12869
+  %name = alloca ptr, align 8, !DIAssignID !12879
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12574, metadata !DIExpression(), metadata !12879, metadata ptr %name, metadata !DIExpression()), !dbg !12869
+  %target = alloca ptr, align 8, !DIAssignID !12880
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12575, metadata !DIExpression(), metadata !12880, metadata ptr %target, metadata !DIExpression()), !dbg !12869
+  %state = alloca i32, align 4, !DIAssignID !12881
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12576, metadata !DIExpression(), metadata !12881, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  %perms = alloca %struct.aa_perms, align 4, !DIAssignID !12882
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12577, metadata !DIExpression(), metadata !12882, metadata ptr %perms, metadata !DIExpression()), !dbg !12869
+  %nonewprivs = alloca i8, align 1, !DIAssignID !12883
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12578, metadata !DIExpression(), metadata !12883, metadata ptr %nonewprivs, metadata !DIExpression()), !dbg !12869
+  %error = alloca i32, align 4, !DIAssignID !12884
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12579, metadata !DIExpression(), metadata !12884, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  %tmp2 = alloca i32, align 4
+  %tmp4 = alloca i32, align 4
+  %tmp8 = alloca i32, align 4
+  %branch = alloca i8, align 1, !DIAssignID !12885
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12580, metadata !DIExpression(), metadata !12885, metadata ptr %branch, metadata !DIExpression()), !dbg !12886
+  %tmp22 = alloca i64, align 8
+  %branch53 = alloca i8, align 1, !DIAssignID !12887
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12590, metadata !DIExpression(), metadata !12887, metadata ptr %branch53, metadata !DIExpression()), !dbg !12888
+  %tmp56 = alloca i64, align 8
+  %cleanup.dest.slot = alloca i32, align 4
+  %branch83 = alloca i8, align 1, !DIAssignID !12889
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12600, metadata !DIExpression(), metadata !12889, metadata ptr %branch83, metadata !DIExpression()), !dbg !12890
+  %tmp86 = alloca i64, align 8
+  %new_profile = alloca ptr, align 8, !DIAssignID !12891
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12606, metadata !DIExpression(), metadata !12891, metadata ptr %new_profile, metadata !DIExpression()), !dbg !12892
+  %branch160 = alloca i8, align 1, !DIAssignID !12893
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12610, metadata !DIExpression(), metadata !12893, metadata ptr %branch160, metadata !DIExpression()), !dbg !12894
+  %tmp163 = alloca i64, align 8
+  %branch180 = alloca i8, align 1, !DIAssignID !12895
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12618, metadata !DIExpression(), metadata !12895, metadata ptr %branch180, metadata !DIExpression()), !dbg !12896
+  %tmp183 = alloca i64, align 8
+  store ptr %profile, ptr %profile.addr, align 8, !DIAssignID !12897
+  call void @llvm.dbg.assign(metadata ptr %profile, metadata !12564, metadata !DIExpression(), metadata !12897, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %bprm, ptr %bprm.addr, align 8, !DIAssignID !12898
+  call void @llvm.dbg.assign(metadata ptr %bprm, metadata !12565, metadata !DIExpression(), metadata !12898, metadata ptr %bprm.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %buffer, ptr %buffer.addr, align 8, !DIAssignID !12899
+  call void @llvm.dbg.assign(metadata ptr %buffer, metadata !12566, metadata !DIExpression(), metadata !12899, metadata ptr %buffer.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %cond, ptr %cond.addr, align 8, !DIAssignID !12900
+  call void @llvm.dbg.assign(metadata ptr %cond, metadata !12567, metadata !DIExpression(), metadata !12900, metadata ptr %cond.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %secure_exec, ptr %secure_exec.addr, align 8, !DIAssignID !12901
+  call void @llvm.dbg.assign(metadata ptr %secure_exec, metadata !12568, metadata !DIExpression(), metadata !12901, metadata ptr %secure_exec.addr, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %rules) #16, !dbg !12902
+  call void @llvm.lifetime.start.p0(i64 8, ptr %__mptr) #16, !dbg !12903
+  %0 = load ptr, ptr %profile.addr, align 8, !dbg !12903
+  %rules1 = getelementptr inbounds %struct.aa_profile, ptr %0, i32 0, i32 9, !dbg !12903
+  %next = getelementptr inbounds %struct.list_head, ptr %rules1, i32 0, i32 0, !dbg !12903
+  %1 = load ptr, ptr %next, align 8, !dbg !12903
+  store ptr %1, ptr %__mptr, align 8, !dbg !12903, !DIAssignID !12904
+  call void @llvm.dbg.assign(metadata ptr %1, metadata !12570, metadata !DIExpression(), metadata !12904, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12876
+  %2 = load ptr, ptr %__mptr, align 8, !dbg !12903
+  %add.ptr = getelementptr i8, ptr %2, i64 0, !dbg !12903
+  store ptr %add.ptr, ptr %tmp, align 8, !dbg !12903
+  call void @llvm.lifetime.end.p0(i64 8, ptr %__mptr) #16, !dbg !12905
+  %3 = load ptr, ptr %tmp, align 8, !dbg !12903
+  store ptr %3, ptr %rules, align 8, !dbg !12906, !DIAssignID !12907
+  call void @llvm.dbg.assign(metadata ptr %3, metadata !12569, metadata !DIExpression(), metadata !12907, metadata ptr %rules, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %new) #16, !dbg !12908
+  store ptr null, ptr %new, align 8, !dbg !12909, !DIAssignID !12910
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12572, metadata !DIExpression(), metadata !12910, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %info) #16, !dbg !12911
+  store ptr null, ptr %info, align 8, !dbg !12912, !DIAssignID !12913
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12573, metadata !DIExpression(), metadata !12913, metadata ptr %info, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %name) #16, !dbg !12911
+  store ptr null, ptr %name, align 8, !dbg !12914, !DIAssignID !12915
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12574, metadata !DIExpression(), metadata !12915, metadata ptr %name, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %target) #16, !dbg !12911
+  store ptr null, ptr %target, align 8, !dbg !12916, !DIAssignID !12917
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12575, metadata !DIExpression(), metadata !12917, metadata ptr %target, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 4, ptr %state) #16, !dbg !12918
+  %4 = load ptr, ptr %rules, align 8, !dbg !12919
+  %file = getelementptr inbounds %struct.aa_ruleset, ptr %4, i32 0, i32 3, !dbg !12920
+  %start = getelementptr inbounds %struct.aa_policydb, ptr %file, i32 0, i32 3, !dbg !12921
+  %arrayidx = getelementptr [33 x i32], ptr %start, i64 0, i64 2, !dbg !12919
+  %5 = load i32, ptr %arrayidx, align 8, !dbg !12919
+  store i32 %5, ptr %state, align 4, !dbg !12922, !DIAssignID !12923
+  call void @llvm.dbg.assign(metadata i32 %5, metadata !12576, metadata !DIExpression(), metadata !12923, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 52, ptr %perms) #16, !dbg !12924
+  call void @llvm.memset.p0.i64(ptr align 4 %perms, i8 0, i64 52, i1 false), !dbg !12925, !DIAssignID !12926
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12577, metadata !DIExpression(), metadata !12926, metadata ptr %perms, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 1, ptr %nonewprivs) #16, !dbg !12927
+  store i8 0, ptr %nonewprivs, align 1, !dbg !12928, !DIAssignID !12929
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12578, metadata !DIExpression(), metadata !12929, metadata ptr %nonewprivs, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 4, ptr %error) #16, !dbg !12930
+  store i32 0, ptr %error, align 4, !dbg !12931, !DIAssignID !12932
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12579, metadata !DIExpression(), metadata !12932, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  br label %do.body, !dbg !12933
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+** No preds
+* Reached to the entry
+Debug info: <path_to_linux>/security/apparmor/domain.c:695
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO <path_to_linux>/security/apparmor/domain.c: i32 695
+CALFLS profile_transition: i32 -13
+CMPFLS error: i32 0
+CMPTRU mode38: i64 3
+CMPFLS allow: i32 1
+CMPTRU aa_g_profile_mode: i32 1
+CMPTRU mode133: i64 1
+~~~ Inserted all logs ~~~
+
+
+///////////////////////////////////////
+profile_transition has 'return -EACCES'
+Error-thrower BB: 
+if.else140:                                       ; preds = %if.then136
+  store i32 -13, ptr %error, align 4, !dbg !13113, !DIAssignID !13115
+  call void @llvm.dbg.assign(metadata i32 -13, metadata !12579, metadata !DIExpression(), metadata !13115, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  %67 = load ptr, ptr %new_profile, align 8, !dbg !13116
+  %label141 = getelementptr inbounds %struct.aa_profile, ptr %67, i32 0, i32 15, !dbg !13117
+  store ptr %label141, ptr %new, align 8, !dbg !13118, !DIAssignID !13119
+  call void @llvm.dbg.assign(metadata ptr %label141, metadata !12572, metadata !DIExpression(), metadata !13119, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  br label %if.end142
+
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.then136
+(Val) 
+if.then136:                                       ; preds = %lor.lhs.false132, %if.else129
+  call void @llvm.lifetime.start.p0(i64 8, ptr %new_profile) #16, !dbg !13096
+  store ptr null, ptr %new_profile, align 8, !dbg !13097, !DIAssignID !13098
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12606, metadata !DIExpression(), metadata !13098, metadata ptr %new_profile, metadata !DIExpression()), !dbg !12892
+  %64 = load ptr, ptr %profile.addr, align 8, !dbg !13099
+  %65 = load ptr, ptr %name, align 8, !dbg !13100
+  %call137 = call ptr @aa_new_learning_profile(ptr noundef %64, i1 noundef zeroext false, ptr noundef %65, i32 noundef 3264) #17, !dbg !13101
+  store ptr %call137, ptr %new_profile, align 8, !dbg !13102, !DIAssignID !13103
+  call void @llvm.dbg.assign(metadata ptr %call137, metadata !12606, metadata !DIExpression(), metadata !13103, metadata ptr %new_profile, metadata !DIExpression()), !dbg !12892
+  %66 = load ptr, ptr %new_profile, align 8, !dbg !13104
+  %tobool138 = icmp ne ptr %66, null, !dbg !13104
+  br i1 %tobool138, label %if.else140, label %if.then139, !dbg !13106
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: new_profile
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: lor.lhs.false132
+(Val) 
+lor.lhs.false132:                                 ; preds = %if.else129
+  %62 = load ptr, ptr %profile.addr, align 8, !dbg !13094
+  %mode133 = getelementptr inbounds %struct.aa_profile, ptr %62, i32 0, i32 5, !dbg !13094
+  %63 = load i64, ptr %mode133, align 8, !dbg !13094
+  %cmp134 = icmp eq i64 %63, 1, !dbg !13094
+  br i1 %cmp134, label %if.then136, label %if.else144, !dbg !13095
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: mode133
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.else129
+(Val) 
+if.else129:                                       ; preds = %if.end107
+  %61 = load i32, ptr @aa_g_profile_mode, align 4, !dbg !13094
+  %cmp130 = icmp eq i32 %61, 1, !dbg !13094
+  br i1 %cmp130, label %if.then136, label %lor.lhs.false132, !dbg !13094
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_g_profile_mode
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end107
+(Val) 
+if.end107:                                        ; preds = %if.end37
+  %44 = load ptr, ptr %rules, align 8, !dbg !13048
+  %file108 = getelementptr inbounds %struct.aa_ruleset, ptr %44, i32 0, i32 3, !dbg !13049
+  %45 = load i32, ptr %state, align 4, !dbg !13050
+  %46 = load ptr, ptr %name, align 8, !dbg !13051
+  %47 = load ptr, ptr %cond.addr, align 8, !dbg !13052
+  %call109 = call i32 @aa_str_perms(ptr noundef %file108, i32 noundef %45, ptr noundef %46, ptr noundef %47, ptr noundef %perms) #17, !dbg !13053
+  store i32 %call109, ptr %state, align 4, !dbg !13054, !DIAssignID !13055
+  call void @llvm.dbg.assign(metadata i32 %call109, metadata !12576, metadata !DIExpression(), metadata !13055, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  %allow = getelementptr inbounds %struct.aa_perms, ptr %perms, i32 0, i32 0, !dbg !13056
+  %48 = load i32, ptr %allow, align 4, !dbg !13056
+  %and110 = and i32 %48, 1, !dbg !13057
+  %tobool111 = icmp ne i32 %and110, 0, !dbg !13057
+  br i1 %tobool111, label %if.then112, label %if.else129, !dbg !13058
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: allow
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end37
+(Val) 
+if.end37:                                         ; preds = %do.end10
+  %27 = load ptr, ptr %profile.addr, align 8, !dbg !13001
+  %mode38 = getelementptr inbounds %struct.aa_profile, ptr %27, i32 0, i32 5, !dbg !13001
+  %28 = load i64, ptr %mode38, align 8, !dbg !13001
+  %cmp39 = icmp eq i64 %28, 3, !dbg !13001
+  br i1 %cmp39, label %if.then41, label %if.end107, !dbg !13002
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: mode38
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end10
+(Val) 
+do.end10:                                         ; preds = %do.cond9
+  %9 = load ptr, ptr %bprm.addr, align 8, !dbg !12954
+  %file11 = getelementptr inbounds %struct.linux_binprm, ptr %9, i32 0, i32 8, !dbg !12955
+  %10 = load ptr, ptr %file11, align 8, !dbg !12955
+  %f_path = getelementptr inbounds %struct.file, ptr %10, i32 0, i32 10, !dbg !12956
+  %11 = load ptr, ptr %profile.addr, align 8, !dbg !12957
+  %path_flags = getelementptr inbounds %struct.aa_profile, ptr %11, i32 0, i32 6, !dbg !12958
+  %12 = load i32, ptr %path_flags, align 8, !dbg !12958
+  %13 = load ptr, ptr %buffer.addr, align 8, !dbg !12959
+  %14 = load ptr, ptr %profile.addr, align 8, !dbg !12960
+  %disconnected = getelementptr inbounds %struct.aa_profile, ptr %14, i32 0, i32 7, !dbg !12961
+  %15 = load ptr, ptr %disconnected, align 8, !dbg !12961
+  %call = call i32 @aa_path_name(ptr noundef %f_path, i32 noundef %12, ptr noundef %13, ptr noundef %name, ptr noundef %info, ptr noundef %15) #17, !dbg !12962
+  store i32 %call, ptr %error, align 4, !dbg !12963, !DIAssignID !12964
+  call void @llvm.dbg.assign(metadata i32 %call, metadata !12579, metadata !DIExpression(), metadata !12964, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  %16 = load i32, ptr %error, align 4, !dbg !12965
+  %tobool = icmp ne i32 %16, 0, !dbg !12965
+  br i1 %tobool, label %if.then, label %if.end37, !dbg !12966
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: error
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond9
+(Val) 
+do.cond9:                                         ; preds = %do.body7
+  br label %do.end10, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body7
+(Val) 
+do.body7:                                         ; preds = %do.end6
+  store i32 0, ptr %tmp8, align 4, !dbg !12948
+  %8 = load i32, ptr %tmp8, align 4, !dbg !12952
+  br label %do.cond9, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end6
+(Val) 
+do.end6:                                          ; preds = %do.cond5
+  br label %do.body7, !dbg !12947
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond5
+(Val) 
+do.cond5:                                         ; preds = %do.body3
+  br label %do.end6, !dbg !12946
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body3
+(Val) 
+do.body3:                                         ; preds = %do.end
+  store i32 0, ptr %tmp4, align 4, !dbg !12941
+  %7 = load i32, ptr %tmp4, align 4, !dbg !12945
+  br label %do.cond5, !dbg !12946
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end
+(Val) 
+do.end:                                           ; preds = %do.cond
+  br label %do.body3, !dbg !12940
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond
+(Val) 
+do.cond:                                          ; preds = %do.body
+  br label %do.end, !dbg !12939
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body
+(Val) 
+do.body:                                          ; preds = %entry
+  store i32 0, ptr %tmp2, align 4, !dbg !12934
+  %6 = load i32, ptr %tmp2, align 4, !dbg !12938
+  br label %do.cond, !dbg !12939
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: entry
+(Val) 
+entry:
+  %retval = alloca ptr, align 8
+  %profile.addr = alloca ptr, align 8, !DIAssignID !12868
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12564, metadata !DIExpression(), metadata !12868, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12869
+  %bprm.addr = alloca ptr, align 8, !DIAssignID !12870
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12565, metadata !DIExpression(), metadata !12870, metadata ptr %bprm.addr, metadata !DIExpression()), !dbg !12869
+  %buffer.addr = alloca ptr, align 8, !DIAssignID !12871
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12566, metadata !DIExpression(), metadata !12871, metadata ptr %buffer.addr, metadata !DIExpression()), !dbg !12869
+  %cond.addr = alloca ptr, align 8, !DIAssignID !12872
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12567, metadata !DIExpression(), metadata !12872, metadata ptr %cond.addr, metadata !DIExpression()), !dbg !12869
+  %secure_exec.addr = alloca ptr, align 8, !DIAssignID !12873
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12568, metadata !DIExpression(), metadata !12873, metadata ptr %secure_exec.addr, metadata !DIExpression()), !dbg !12869
+  %rules = alloca ptr, align 8, !DIAssignID !12874
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12569, metadata !DIExpression(), metadata !12874, metadata ptr %rules, metadata !DIExpression()), !dbg !12869
+  %__mptr = alloca ptr, align 8, !DIAssignID !12875
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12570, metadata !DIExpression(), metadata !12875, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12876
+  %tmp = alloca ptr, align 8
+  %new = alloca ptr, align 8, !DIAssignID !12877
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12572, metadata !DIExpression(), metadata !12877, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  %info = alloca ptr, align 8, !DIAssignID !12878
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12573, metadata !DIExpression(), metadata !12878, metadata ptr %info, metadata !DIExpression()), !dbg !12869
+  %name = alloca ptr, align 8, !DIAssignID !12879
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12574, metadata !DIExpression(), metadata !12879, metadata ptr %name, metadata !DIExpression()), !dbg !12869
+  %target = alloca ptr, align 8, !DIAssignID !12880
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12575, metadata !DIExpression(), metadata !12880, metadata ptr %target, metadata !DIExpression()), !dbg !12869
+  %state = alloca i32, align 4, !DIAssignID !12881
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12576, metadata !DIExpression(), metadata !12881, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  %perms = alloca %struct.aa_perms, align 4, !DIAssignID !12882
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12577, metadata !DIExpression(), metadata !12882, metadata ptr %perms, metadata !DIExpression()), !dbg !12869
+  %nonewprivs = alloca i8, align 1, !DIAssignID !12883
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12578, metadata !DIExpression(), metadata !12883, metadata ptr %nonewprivs, metadata !DIExpression()), !dbg !12869
+  %error = alloca i32, align 4, !DIAssignID !12884
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12579, metadata !DIExpression(), metadata !12884, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  %tmp2 = alloca i32, align 4
+  %tmp4 = alloca i32, align 4
+  %tmp8 = alloca i32, align 4
+  %branch = alloca i8, align 1, !DIAssignID !12885
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12580, metadata !DIExpression(), metadata !12885, metadata ptr %branch, metadata !DIExpression()), !dbg !12886
+  %tmp22 = alloca i64, align 8
+  %branch53 = alloca i8, align 1, !DIAssignID !12887
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12590, metadata !DIExpression(), metadata !12887, metadata ptr %branch53, metadata !DIExpression()), !dbg !12888
+  %tmp56 = alloca i64, align 8
+  %cleanup.dest.slot = alloca i32, align 4
+  %branch83 = alloca i8, align 1, !DIAssignID !12889
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12600, metadata !DIExpression(), metadata !12889, metadata ptr %branch83, metadata !DIExpression()), !dbg !12890
+  %tmp86 = alloca i64, align 8
+  %new_profile = alloca ptr, align 8, !DIAssignID !12891
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12606, metadata !DIExpression(), metadata !12891, metadata ptr %new_profile, metadata !DIExpression()), !dbg !12892
+  %branch160 = alloca i8, align 1, !DIAssignID !12893
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12610, metadata !DIExpression(), metadata !12893, metadata ptr %branch160, metadata !DIExpression()), !dbg !12894
+  %tmp163 = alloca i64, align 8
+  %branch180 = alloca i8, align 1, !DIAssignID !12895
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12618, metadata !DIExpression(), metadata !12895, metadata ptr %branch180, metadata !DIExpression()), !dbg !12896
+  %tmp183 = alloca i64, align 8
+  store ptr %profile, ptr %profile.addr, align 8, !DIAssignID !12897
+  call void @llvm.dbg.assign(metadata ptr %profile, metadata !12564, metadata !DIExpression(), metadata !12897, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %bprm, ptr %bprm.addr, align 8, !DIAssignID !12898
+  call void @llvm.dbg.assign(metadata ptr %bprm, metadata !12565, metadata !DIExpression(), metadata !12898, metadata ptr %bprm.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %buffer, ptr %buffer.addr, align 8, !DIAssignID !12899
+  call void @llvm.dbg.assign(metadata ptr %buffer, metadata !12566, metadata !DIExpression(), metadata !12899, metadata ptr %buffer.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %cond, ptr %cond.addr, align 8, !DIAssignID !12900
+  call void @llvm.dbg.assign(metadata ptr %cond, metadata !12567, metadata !DIExpression(), metadata !12900, metadata ptr %cond.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %secure_exec, ptr %secure_exec.addr, align 8, !DIAssignID !12901
+  call void @llvm.dbg.assign(metadata ptr %secure_exec, metadata !12568, metadata !DIExpression(), metadata !12901, metadata ptr %secure_exec.addr, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %rules) #16, !dbg !12902
+  call void @llvm.lifetime.start.p0(i64 8, ptr %__mptr) #16, !dbg !12903
+  %0 = load ptr, ptr %profile.addr, align 8, !dbg !12903
+  %rules1 = getelementptr inbounds %struct.aa_profile, ptr %0, i32 0, i32 9, !dbg !12903
+  %next = getelementptr inbounds %struct.list_head, ptr %rules1, i32 0, i32 0, !dbg !12903
+  %1 = load ptr, ptr %next, align 8, !dbg !12903
+  store ptr %1, ptr %__mptr, align 8, !dbg !12903, !DIAssignID !12904
+  call void @llvm.dbg.assign(metadata ptr %1, metadata !12570, metadata !DIExpression(), metadata !12904, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12876
+  %2 = load ptr, ptr %__mptr, align 8, !dbg !12903
+  %add.ptr = getelementptr i8, ptr %2, i64 0, !dbg !12903
+  store ptr %add.ptr, ptr %tmp, align 8, !dbg !12903
+  call void @llvm.lifetime.end.p0(i64 8, ptr %__mptr) #16, !dbg !12905
+  %3 = load ptr, ptr %tmp, align 8, !dbg !12903
+  store ptr %3, ptr %rules, align 8, !dbg !12906, !DIAssignID !12907
+  call void @llvm.dbg.assign(metadata ptr %3, metadata !12569, metadata !DIExpression(), metadata !12907, metadata ptr %rules, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %new) #16, !dbg !12908
+  store ptr null, ptr %new, align 8, !dbg !12909, !DIAssignID !12910
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12572, metadata !DIExpression(), metadata !12910, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %info) #16, !dbg !12911
+  store ptr null, ptr %info, align 8, !dbg !12912, !DIAssignID !12913
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12573, metadata !DIExpression(), metadata !12913, metadata ptr %info, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %name) #16, !dbg !12911
+  store ptr null, ptr %name, align 8, !dbg !12914, !DIAssignID !12915
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12574, metadata !DIExpression(), metadata !12915, metadata ptr %name, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %target) #16, !dbg !12911
+  store ptr null, ptr %target, align 8, !dbg !12916, !DIAssignID !12917
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12575, metadata !DIExpression(), metadata !12917, metadata ptr %target, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 4, ptr %state) #16, !dbg !12918
+  %4 = load ptr, ptr %rules, align 8, !dbg !12919
+  %file = getelementptr inbounds %struct.aa_ruleset, ptr %4, i32 0, i32 3, !dbg !12920
+  %start = getelementptr inbounds %struct.aa_policydb, ptr %file, i32 0, i32 3, !dbg !12921
+  %arrayidx = getelementptr [33 x i32], ptr %start, i64 0, i64 2, !dbg !12919
+  %5 = load i32, ptr %arrayidx, align 8, !dbg !12919
+  store i32 %5, ptr %state, align 4, !dbg !12922, !DIAssignID !12923
+  call void @llvm.dbg.assign(metadata i32 %5, metadata !12576, metadata !DIExpression(), metadata !12923, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 52, ptr %perms) #16, !dbg !12924
+  call void @llvm.memset.p0.i64(ptr align 4 %perms, i8 0, i64 52, i1 false), !dbg !12925, !DIAssignID !12926
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12577, metadata !DIExpression(), metadata !12926, metadata ptr %perms, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 1, ptr %nonewprivs) #16, !dbg !12927
+  store i8 0, ptr %nonewprivs, align 1, !dbg !12928, !DIAssignID !12929
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12578, metadata !DIExpression(), metadata !12929, metadata ptr %nonewprivs, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 4, ptr %error) #16, !dbg !12930
+  store i32 0, ptr %error, align 4, !dbg !12931, !DIAssignID !12932
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12579, metadata !DIExpression(), metadata !12932, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  br label %do.body, !dbg !12933
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+** No preds
+* Reached to the entry
+CondBB: if.else129
+(Val) 
+if.else129:                                       ; preds = %if.end107
+  %61 = load i32, ptr @aa_g_profile_mode, align 4, !dbg !13094
+  %cmp130 = icmp eq i32 %61, 1, !dbg !13094
+  br i1 %cmp130, label %if.then136, label %lor.lhs.false132, !dbg !13094
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_g_profile_mode
+
+*** findAllConditions ***
+************** Already visited
+Debug info: <path_to_linux>/security/apparmor/domain.c:689
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO <path_to_linux>/security/apparmor/domain.c: i32 689
+CALFLS profile_transition: i32 -13
+CMPFLS aa_g_profile_mode: i32 1
+CMPFLS error: i32 0
+CMPTRU mode38: i64 3
+CMPFLS allow: i32 1
+CMPTRU aa_g_profile_mode: i32 1
+CMPFLS mode133: i64 1
+NLLFLS new_profile: ptr null
+~~~ Inserted all logs ~~~
+
+
+///////////////////////////////////////
+profile_transition has 'return -EACCES'
+Error-thrower BB: 
+if.then124:                                       ; preds = %if.else
+  store i32 -13, ptr %error, align 4, !dbg !13084, !DIAssignID !13086
+  call void @llvm.dbg.assign(metadata i32 -13, metadata !12579, metadata !DIExpression(), metadata !13086, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  store ptr @.str.48, ptr %info, align 8, !dbg !13087, !DIAssignID !13088
+  call void @llvm.dbg.assign(metadata ptr @.str.48, metadata !12573, metadata !DIExpression(), metadata !13088, metadata ptr %info, metadata !DIExpression()), !dbg !12869
+  %allow125 = getelementptr inbounds %struct.aa_perms, ptr %perms, i32 0, i32 0, !dbg !13089
+  %60 = load i32, ptr %allow125, align 4, !dbg !13090
+  %and126 = and i32 %60, -2, !dbg !13090
+  store i32 %and126, ptr %allow125, align 4, !dbg !13090, !DIAssignID !13091
+  call void @llvm.dbg.assign(metadata i32 %and126, metadata !12577, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !13091, metadata ptr %allow125, metadata !DIExpression()), !dbg !12869
+  br label %if.end127, !dbg !13092
+
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.else
+(Val) 
+if.else:                                          ; preds = %land.lhs.true120, %land.lhs.true115, %if.then112
+  %59 = load ptr, ptr %new, align 8, !dbg !13081
+  %tobool123 = icmp ne ptr %59, null, !dbg !13081
+  br i1 %tobool123, label %if.end127, label %if.then124, !dbg !13083
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: new
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: land.lhs.true120
+(Val) 
+land.lhs.true120:                                 ; preds = %land.lhs.true115
+  %58 = load ptr, ptr %info, align 8, !dbg !13077
+  %tobool121 = icmp ne ptr %58, null, !dbg !13077
+  br i1 %tobool121, label %if.then122, label %if.else, !dbg !13078
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: info
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: land.lhs.true115
+(Val) 
+land.lhs.true115:                                 ; preds = %if.then112
+  %54 = load ptr, ptr %new, align 8, !dbg !13070
+  %proxy = getelementptr inbounds %struct.aa_label, ptr %54, i32 0, i32 3, !dbg !13071
+  %55 = load ptr, ptr %proxy, align 8, !dbg !13071
+  %56 = load ptr, ptr %profile.addr, align 8, !dbg !13072
+  %label116 = getelementptr inbounds %struct.aa_profile, ptr %56, i32 0, i32 15, !dbg !13073
+  %proxy117 = getelementptr inbounds %struct.aa_label, ptr %label116, i32 0, i32 3, !dbg !13074
+  %57 = load ptr, ptr %proxy117, align 8, !dbg !13074
+  %cmp118 = icmp eq ptr %55, %57, !dbg !13075
+  br i1 %cmp118, label %land.lhs.true120, label %if.else, !dbg !13076
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: proxy
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.then112
+(Val) 
+if.then112:                                       ; preds = %if.end107
+  %49 = load ptr, ptr %profile.addr, align 8, !dbg !13059
+  %50 = load ptr, ptr %bprm.addr, align 8, !dbg !13061
+  %51 = load ptr, ptr %name, align 8, !dbg !13062
+  %xindex = getelementptr inbounds %struct.aa_perms, ptr %perms, i32 0, i32 10, !dbg !13063
+  %52 = load i32, ptr %xindex, align 4, !dbg !13063
+  %call113 = call ptr @x_to_label(ptr noundef %49, ptr noundef %50, ptr noundef %51, i32 noundef %52, ptr noundef %target, ptr noundef %info) #17, !dbg !13064
+  store ptr %call113, ptr %new, align 8, !dbg !13065, !DIAssignID !13066
+  call void @llvm.dbg.assign(metadata ptr %call113, metadata !12572, metadata !DIExpression(), metadata !13066, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  %53 = load ptr, ptr %new, align 8, !dbg !13067
+  %tobool114 = icmp ne ptr %53, null, !dbg !13067
+  br i1 %tobool114, label %land.lhs.true115, label %if.else, !dbg !13069
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: new
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end107
+(Val) 
+if.end107:                                        ; preds = %if.end37
+  %44 = load ptr, ptr %rules, align 8, !dbg !13048
+  %file108 = getelementptr inbounds %struct.aa_ruleset, ptr %44, i32 0, i32 3, !dbg !13049
+  %45 = load i32, ptr %state, align 4, !dbg !13050
+  %46 = load ptr, ptr %name, align 8, !dbg !13051
+  %47 = load ptr, ptr %cond.addr, align 8, !dbg !13052
+  %call109 = call i32 @aa_str_perms(ptr noundef %file108, i32 noundef %45, ptr noundef %46, ptr noundef %47, ptr noundef %perms) #17, !dbg !13053
+  store i32 %call109, ptr %state, align 4, !dbg !13054, !DIAssignID !13055
+  call void @llvm.dbg.assign(metadata i32 %call109, metadata !12576, metadata !DIExpression(), metadata !13055, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  %allow = getelementptr inbounds %struct.aa_perms, ptr %perms, i32 0, i32 0, !dbg !13056
+  %48 = load i32, ptr %allow, align 4, !dbg !13056
+  %and110 = and i32 %48, 1, !dbg !13057
+  %tobool111 = icmp ne i32 %and110, 0, !dbg !13057
+  br i1 %tobool111, label %if.then112, label %if.else129, !dbg !13058
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: allow
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end37
+(Val) 
+if.end37:                                         ; preds = %do.end10
+  %27 = load ptr, ptr %profile.addr, align 8, !dbg !13001
+  %mode38 = getelementptr inbounds %struct.aa_profile, ptr %27, i32 0, i32 5, !dbg !13001
+  %28 = load i64, ptr %mode38, align 8, !dbg !13001
+  %cmp39 = icmp eq i64 %28, 3, !dbg !13001
+  br i1 %cmp39, label %if.then41, label %if.end107, !dbg !13002
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: mode38
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end10
+(Val) 
+do.end10:                                         ; preds = %do.cond9
+  %9 = load ptr, ptr %bprm.addr, align 8, !dbg !12954
+  %file11 = getelementptr inbounds %struct.linux_binprm, ptr %9, i32 0, i32 8, !dbg !12955
+  %10 = load ptr, ptr %file11, align 8, !dbg !12955
+  %f_path = getelementptr inbounds %struct.file, ptr %10, i32 0, i32 10, !dbg !12956
+  %11 = load ptr, ptr %profile.addr, align 8, !dbg !12957
+  %path_flags = getelementptr inbounds %struct.aa_profile, ptr %11, i32 0, i32 6, !dbg !12958
+  %12 = load i32, ptr %path_flags, align 8, !dbg !12958
+  %13 = load ptr, ptr %buffer.addr, align 8, !dbg !12959
+  %14 = load ptr, ptr %profile.addr, align 8, !dbg !12960
+  %disconnected = getelementptr inbounds %struct.aa_profile, ptr %14, i32 0, i32 7, !dbg !12961
+  %15 = load ptr, ptr %disconnected, align 8, !dbg !12961
+  %call = call i32 @aa_path_name(ptr noundef %f_path, i32 noundef %12, ptr noundef %13, ptr noundef %name, ptr noundef %info, ptr noundef %15) #17, !dbg !12962
+  store i32 %call, ptr %error, align 4, !dbg !12963, !DIAssignID !12964
+  call void @llvm.dbg.assign(metadata i32 %call, metadata !12579, metadata !DIExpression(), metadata !12964, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  %16 = load i32, ptr %error, align 4, !dbg !12965
+  %tobool = icmp ne i32 %16, 0, !dbg !12965
+  br i1 %tobool, label %if.then, label %if.end37, !dbg !12966
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: error
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond9
+(Val) 
+do.cond9:                                         ; preds = %do.body7
+  br label %do.end10, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body7
+(Val) 
+do.body7:                                         ; preds = %do.end6
+  store i32 0, ptr %tmp8, align 4, !dbg !12948
+  %8 = load i32, ptr %tmp8, align 4, !dbg !12952
+  br label %do.cond9, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end6
+(Val) 
+do.end6:                                          ; preds = %do.cond5
+  br label %do.body7, !dbg !12947
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond5
+(Val) 
+do.cond5:                                         ; preds = %do.body3
+  br label %do.end6, !dbg !12946
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body3
+(Val) 
+do.body3:                                         ; preds = %do.end
+  store i32 0, ptr %tmp4, align 4, !dbg !12941
+  %7 = load i32, ptr %tmp4, align 4, !dbg !12945
+  br label %do.cond5, !dbg !12946
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.end
+(Val) 
+do.end:                                           ; preds = %do.cond
+  br label %do.body3, !dbg !12940
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.cond
+(Val) 
+do.cond:                                          ; preds = %do.body
+  br label %do.end, !dbg !12939
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: do.body
+(Val) 
+do.body:                                          ; preds = %entry
+  store i32 0, ptr %tmp2, align 4, !dbg !12934
+  %6 = load i32, ptr %tmp2, align 4, !dbg !12938
+  br label %do.cond, !dbg !12939
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: entry
+(Val) 
+entry:
+  %retval = alloca ptr, align 8
+  %profile.addr = alloca ptr, align 8, !DIAssignID !12868
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12564, metadata !DIExpression(), metadata !12868, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12869
+  %bprm.addr = alloca ptr, align 8, !DIAssignID !12870
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12565, metadata !DIExpression(), metadata !12870, metadata ptr %bprm.addr, metadata !DIExpression()), !dbg !12869
+  %buffer.addr = alloca ptr, align 8, !DIAssignID !12871
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12566, metadata !DIExpression(), metadata !12871, metadata ptr %buffer.addr, metadata !DIExpression()), !dbg !12869
+  %cond.addr = alloca ptr, align 8, !DIAssignID !12872
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12567, metadata !DIExpression(), metadata !12872, metadata ptr %cond.addr, metadata !DIExpression()), !dbg !12869
+  %secure_exec.addr = alloca ptr, align 8, !DIAssignID !12873
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12568, metadata !DIExpression(), metadata !12873, metadata ptr %secure_exec.addr, metadata !DIExpression()), !dbg !12869
+  %rules = alloca ptr, align 8, !DIAssignID !12874
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12569, metadata !DIExpression(), metadata !12874, metadata ptr %rules, metadata !DIExpression()), !dbg !12869
+  %__mptr = alloca ptr, align 8, !DIAssignID !12875
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12570, metadata !DIExpression(), metadata !12875, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12876
+  %tmp = alloca ptr, align 8
+  %new = alloca ptr, align 8, !DIAssignID !12877
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12572, metadata !DIExpression(), metadata !12877, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  %info = alloca ptr, align 8, !DIAssignID !12878
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12573, metadata !DIExpression(), metadata !12878, metadata ptr %info, metadata !DIExpression()), !dbg !12869
+  %name = alloca ptr, align 8, !DIAssignID !12879
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12574, metadata !DIExpression(), metadata !12879, metadata ptr %name, metadata !DIExpression()), !dbg !12869
+  %target = alloca ptr, align 8, !DIAssignID !12880
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12575, metadata !DIExpression(), metadata !12880, metadata ptr %target, metadata !DIExpression()), !dbg !12869
+  %state = alloca i32, align 4, !DIAssignID !12881
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12576, metadata !DIExpression(), metadata !12881, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  %perms = alloca %struct.aa_perms, align 4, !DIAssignID !12882
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12577, metadata !DIExpression(), metadata !12882, metadata ptr %perms, metadata !DIExpression()), !dbg !12869
+  %nonewprivs = alloca i8, align 1, !DIAssignID !12883
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12578, metadata !DIExpression(), metadata !12883, metadata ptr %nonewprivs, metadata !DIExpression()), !dbg !12869
+  %error = alloca i32, align 4, !DIAssignID !12884
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12579, metadata !DIExpression(), metadata !12884, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  %tmp2 = alloca i32, align 4
+  %tmp4 = alloca i32, align 4
+  %tmp8 = alloca i32, align 4
+  %branch = alloca i8, align 1, !DIAssignID !12885
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12580, metadata !DIExpression(), metadata !12885, metadata ptr %branch, metadata !DIExpression()), !dbg !12886
+  %tmp22 = alloca i64, align 8
+  %branch53 = alloca i8, align 1, !DIAssignID !12887
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12590, metadata !DIExpression(), metadata !12887, metadata ptr %branch53, metadata !DIExpression()), !dbg !12888
+  %tmp56 = alloca i64, align 8
+  %cleanup.dest.slot = alloca i32, align 4
+  %branch83 = alloca i8, align 1, !DIAssignID !12889
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12600, metadata !DIExpression(), metadata !12889, metadata ptr %branch83, metadata !DIExpression()), !dbg !12890
+  %tmp86 = alloca i64, align 8
+  %new_profile = alloca ptr, align 8, !DIAssignID !12891
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12606, metadata !DIExpression(), metadata !12891, metadata ptr %new_profile, metadata !DIExpression()), !dbg !12892
+  %branch160 = alloca i8, align 1, !DIAssignID !12893
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12610, metadata !DIExpression(), metadata !12893, metadata ptr %branch160, metadata !DIExpression()), !dbg !12894
+  %tmp163 = alloca i64, align 8
+  %branch180 = alloca i8, align 1, !DIAssignID !12895
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12618, metadata !DIExpression(), metadata !12895, metadata ptr %branch180, metadata !DIExpression()), !dbg !12896
+  %tmp183 = alloca i64, align 8
+  store ptr %profile, ptr %profile.addr, align 8, !DIAssignID !12897
+  call void @llvm.dbg.assign(metadata ptr %profile, metadata !12564, metadata !DIExpression(), metadata !12897, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %bprm, ptr %bprm.addr, align 8, !DIAssignID !12898
+  call void @llvm.dbg.assign(metadata ptr %bprm, metadata !12565, metadata !DIExpression(), metadata !12898, metadata ptr %bprm.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %buffer, ptr %buffer.addr, align 8, !DIAssignID !12899
+  call void @llvm.dbg.assign(metadata ptr %buffer, metadata !12566, metadata !DIExpression(), metadata !12899, metadata ptr %buffer.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %cond, ptr %cond.addr, align 8, !DIAssignID !12900
+  call void @llvm.dbg.assign(metadata ptr %cond, metadata !12567, metadata !DIExpression(), metadata !12900, metadata ptr %cond.addr, metadata !DIExpression()), !dbg !12869
+  store ptr %secure_exec, ptr %secure_exec.addr, align 8, !DIAssignID !12901
+  call void @llvm.dbg.assign(metadata ptr %secure_exec, metadata !12568, metadata !DIExpression(), metadata !12901, metadata ptr %secure_exec.addr, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %rules) #16, !dbg !12902
+  call void @llvm.lifetime.start.p0(i64 8, ptr %__mptr) #16, !dbg !12903
+  %0 = load ptr, ptr %profile.addr, align 8, !dbg !12903
+  %rules1 = getelementptr inbounds %struct.aa_profile, ptr %0, i32 0, i32 9, !dbg !12903
+  %next = getelementptr inbounds %struct.list_head, ptr %rules1, i32 0, i32 0, !dbg !12903
+  %1 = load ptr, ptr %next, align 8, !dbg !12903
+  store ptr %1, ptr %__mptr, align 8, !dbg !12903, !DIAssignID !12904
+  call void @llvm.dbg.assign(metadata ptr %1, metadata !12570, metadata !DIExpression(), metadata !12904, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12876
+  %2 = load ptr, ptr %__mptr, align 8, !dbg !12903
+  %add.ptr = getelementptr i8, ptr %2, i64 0, !dbg !12903
+  store ptr %add.ptr, ptr %tmp, align 8, !dbg !12903
+  call void @llvm.lifetime.end.p0(i64 8, ptr %__mptr) #16, !dbg !12905
+  %3 = load ptr, ptr %tmp, align 8, !dbg !12903
+  store ptr %3, ptr %rules, align 8, !dbg !12906, !DIAssignID !12907
+  call void @llvm.dbg.assign(metadata ptr %3, metadata !12569, metadata !DIExpression(), metadata !12907, metadata ptr %rules, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %new) #16, !dbg !12908
+  store ptr null, ptr %new, align 8, !dbg !12909, !DIAssignID !12910
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12572, metadata !DIExpression(), metadata !12910, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %info) #16, !dbg !12911
+  store ptr null, ptr %info, align 8, !dbg !12912, !DIAssignID !12913
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12573, metadata !DIExpression(), metadata !12913, metadata ptr %info, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %name) #16, !dbg !12911
+  store ptr null, ptr %name, align 8, !dbg !12914, !DIAssignID !12915
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12574, metadata !DIExpression(), metadata !12915, metadata ptr %name, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 8, ptr %target) #16, !dbg !12911
+  store ptr null, ptr %target, align 8, !dbg !12916, !DIAssignID !12917
+  call void @llvm.dbg.assign(metadata ptr null, metadata !12575, metadata !DIExpression(), metadata !12917, metadata ptr %target, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 4, ptr %state) #16, !dbg !12918
+  %4 = load ptr, ptr %rules, align 8, !dbg !12919
+  %file = getelementptr inbounds %struct.aa_ruleset, ptr %4, i32 0, i32 3, !dbg !12920
+  %start = getelementptr inbounds %struct.aa_policydb, ptr %file, i32 0, i32 3, !dbg !12921
+  %arrayidx = getelementptr [33 x i32], ptr %start, i64 0, i64 2, !dbg !12919
+  %5 = load i32, ptr %arrayidx, align 8, !dbg !12919
+  store i32 %5, ptr %state, align 4, !dbg !12922, !DIAssignID !12923
+  call void @llvm.dbg.assign(metadata i32 %5, metadata !12576, metadata !DIExpression(), metadata !12923, metadata ptr %state, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 52, ptr %perms) #16, !dbg !12924
+  call void @llvm.memset.p0.i64(ptr align 4 %perms, i8 0, i64 52, i1 false), !dbg !12925, !DIAssignID !12926
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12577, metadata !DIExpression(), metadata !12926, metadata ptr %perms, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 1, ptr %nonewprivs) #16, !dbg !12927
+  store i8 0, ptr %nonewprivs, align 1, !dbg !12928, !DIAssignID !12929
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12578, metadata !DIExpression(), metadata !12929, metadata ptr %nonewprivs, metadata !DIExpression()), !dbg !12869
+  call void @llvm.lifetime.start.p0(i64 4, ptr %error) #16, !dbg !12930
+  store i32 0, ptr %error, align 4, !dbg !12931, !DIAssignID !12932
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12579, metadata !DIExpression(), metadata !12932, metadata ptr %error, metadata !DIExpression()), !dbg !12869
+  br label %do.body, !dbg !12933
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+** No preds
+* Reached to the entry
+CondBB: land.lhs.true115
+(Val) 
+land.lhs.true115:                                 ; preds = %if.then112
+  %54 = load ptr, ptr %new, align 8, !dbg !13070
+  %proxy = getelementptr inbounds %struct.aa_label, ptr %54, i32 0, i32 3, !dbg !13071
+  %55 = load ptr, ptr %proxy, align 8, !dbg !13071
+  %56 = load ptr, ptr %profile.addr, align 8, !dbg !13072
+  %label116 = getelementptr inbounds %struct.aa_profile, ptr %56, i32 0, i32 15, !dbg !13073
+  %proxy117 = getelementptr inbounds %struct.aa_label, ptr %label116, i32 0, i32 3, !dbg !13074
+  %57 = load ptr, ptr %proxy117, align 8, !dbg !13074
+  %cmp118 = icmp eq ptr %55, %57, !dbg !13075
+  br i1 %cmp118, label %land.lhs.true120, label %if.else, !dbg !13076
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: proxy
+
+*** findAllConditions ***
+************** Already visited
+CondBB: if.then112
+(Val) 
+if.then112:                                       ; preds = %if.end107
+  %49 = load ptr, ptr %profile.addr, align 8, !dbg !13059
+  %50 = load ptr, ptr %bprm.addr, align 8, !dbg !13061
+  %51 = load ptr, ptr %name, align 8, !dbg !13062
+  %xindex = getelementptr inbounds %struct.aa_perms, ptr %perms, i32 0, i32 10, !dbg !13063
+  %52 = load i32, ptr %xindex, align 4, !dbg !13063
+  %call113 = call ptr @x_to_label(ptr noundef %49, ptr noundef %50, ptr noundef %51, i32 noundef %52, ptr noundef %target, ptr noundef %info) #17, !dbg !13064
+  store ptr %call113, ptr %new, align 8, !dbg !13065, !DIAssignID !13066
+  call void @llvm.dbg.assign(metadata ptr %call113, metadata !12572, metadata !DIExpression(), metadata !13066, metadata ptr %new, metadata !DIExpression()), !dbg !12869
+  %53 = load ptr, ptr %new, align 8, !dbg !13067
+  %tobool114 = icmp ne ptr %53, null, !dbg !13067
+  br i1 %tobool114, label %land.lhs.true115, label %if.else, !dbg !13069
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: new
+
+*** findAllConditions ***
+************** Already visited
+Debug info: <path_to_linux>/security/apparmor/domain.c:674
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO <path_to_linux>/security/apparmor/domain.c: i32 674
+CALFLS profile_transition: i32 -13
+NLLTRU new: ptr null
+CMPTRU proxy:   %57 = load ptr, ptr %proxy117, align 8, !dbg !13074
+CMPFLS error: i32 0
+CMPTRU mode38: i64 3
+CMPTRU allow: i32 1
+NLLFLS new: ptr null
+CMPFLS proxy:   %57 = load ptr, ptr %proxy117, align 8, !dbg !13074
+NLLTRU info: ptr null
+NLLTRU new: ptr null
+~~~ Inserted all logs ~~~
+
+modified: 1
+StoreInst:   store ptr %call106, ptr %retval, align 8, !dbg !13047
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call106, ptr %retval, align 8, !dbg !13047
+getErrValue ends:   %label105 = getelementptr inbounds %struct.aa_profile, ptr %43, i32 0, i32 15, !dbg !13045
+(Val)   %label105 = getelementptr inbounds %struct.aa_profile, ptr %43, i32 0, i32 15, !dbg !13045
+modified: 0
+StoreInst:   store ptr %39, ptr %retval, align 8, !dbg !13030
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %39, ptr %retval, align 8, !dbg !13030
+
+-FUNCTION: aa_get_profile
+Return value:   %p.addr = alloca ptr, align 8, !DIAssignID !12873
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %p, ptr %p.addr, align 8, !DIAssignID !12875
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %p, ptr %p.addr, align 8, !DIAssignID !12875
+
+-FUNCTION: aa_vec_unique
+--- Skip Declaration
+
+-FUNCTION: aa_vec_find_or_create_label
+--- Skip Declaration
+
+-FUNCTION: IS_ERR_OR_NULL
+
+-FUNCTION: aa_put_profile
+
+-FUNCTION: kfree
+--- Skip Declaration
+
+-FUNCTION: llvm.dbg.label
+--- Skip Declaration
+
+-FUNCTION: aa_put_label
+
+-FUNCTION: arch_static_branch
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !12887
+
+==AnalysisForInt32==
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !12885
+
+==AnalysisForInt32==
+
+-FUNCTION: llvm.expect.i64
+--- Skip Declaration
+
+-FUNCTION: ___ratelimit
+--- Skip Declaration
+
+-FUNCTION: __dynamic_pr_debug
+--- Skip Declaration
+
+-FUNCTION: PTR_ERR
+
+-FUNCTION: aa_label_is_unconfined_subset
+--- Skip Declaration
+
+-FUNCTION: may_change_ptraced_domain
+Return value:   %error = alloca i32, align 4, !DIAssignID !12883
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call7, ptr %error, align 4, !dbg !12915, !DIAssignID !12916
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %error, align 4, !dbg !12891, !DIAssignID !12892
+
+==AnalysisForInt32==
+
+-FUNCTION: aa_label_printk
+--- Skip Declaration
+
+-FUNCTION: set_cred_label
+
+-FUNCTION: aa_put_buffer
+--- Skip Declaration
+
+-FUNCTION: aa_audit_file
+--- Skip Declaration
+
+-FUNCTION: aa_change_hat
+Return value:   %error = alloca i32, align 4, !DIAssignID !12882
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call124, ptr %error, align 4, !dbg !13079, !DIAssignID !13080
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %error, align 4, !dbg !13071, !DIAssignID !13072
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call74, ptr %error, align 4, !dbg !13035, !DIAssignID !13036
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %error, align 4, !dbg !13021, !DIAssignID !13022
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call31, ptr %error, align 4, !dbg !12991, !DIAssignID !12992
+
+==AnalysisForInt32==
+StoreInst:   store i32 %conv, ptr %error, align 4, !dbg !12984, !DIAssignID !12985
+
+==AnalysisForInt32==
+StoreInst:   store i32 -1, ptr %error, align 4, !dbg !12958, !DIAssignID !12959
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %error, align 4, !dbg !12920, !DIAssignID !12921
+
+==AnalysisForInt32==
+
+-FUNCTION: llvm.memset.p0.i64
+--- Skip Declaration
+
+-FUNCTION: get_cred
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !12894
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !12894
+getErrValue ends:   %nonconst_cred = alloca ptr, align 8, !DIAssignID !12876
+(Val)   %nonconst_cred = alloca ptr, align 8, !DIAssignID !12876
+modified: 0
+StoreInst:   store ptr %2, ptr %retval, align 8, !dbg !12886
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %2, ptr %retval, align 8, !dbg !12886
+
+-FUNCTION: aa_get_newest_cred_label
+
+-FUNCTION: task_no_new_privs
+
+-FUNCTION: change_hat
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %280, ptr %retval, align 8, !dbg !13293
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %280, ptr %retval, align 8, !dbg !13293
+StoreInst:   store ptr %call236, ptr %retval, align 8, !dbg !13133
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call236, ptr %retval, align 8, !dbg !13133
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !12882
+(Val)   %error = alloca i32, align 4, !DIAssignID !12882
+modified: 0
+
+-FUNCTION: aa_set_current_hat
+--- Skip Declaration
+
+-FUNCTION: aa_restore_previous_label
+--- Skip Declaration
+
+-FUNCTION: put_cred
+
+-FUNCTION: aa_change_profile
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %319, ptr %retval, align 4, !dbg !13438
+
+==AnalysisForInt32==
+StoreInst:   store i32 -22, ptr %retval, align 4, !dbg !13015
+
+==AnalysisForInt32==
+
+-FUNCTION: aa_get_current_label
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call2, ptr %retval, align 8, !dbg !12888
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call2, ptr %retval, align 8, !dbg !12888
+getErrValue ends:   %l = alloca ptr, align 8, !DIAssignID !12874
+(Val)   %l = alloca ptr, align 8, !DIAssignID !12874
+modified: 0
+StoreInst:   store ptr %call1, ptr %retval, align 8, !dbg !12885
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call1, ptr %retval, align 8, !dbg !12885
+getErrValue ends:   %l = alloca ptr, align 8, !DIAssignID !12874
+(Val)   %l = alloca ptr, align 8, !DIAssignID !12874
+modified: 0
+
+-FUNCTION: aa_new_learning_profile
+--- Skip Declaration
+
+-FUNCTION: change_profile_perms_wrapper
+Return value:   %error = alloca i32, align 4, !DIAssignID !12896
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call5, ptr %error, align 4, !dbg !12945, !DIAssignID !12946
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call, ptr %error, align 4, !dbg !12929, !DIAssignID !12930
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %error, align 4, !dbg !12914, !DIAssignID !12915
+
+==AnalysisForInt32==
+
+-FUNCTION: aa_label_merge
+--- Skip Declaration
+
+-FUNCTION: aa_replace_current_label
+--- Skip Declaration
+
+-FUNCTION: aa_set_current_onexec
+--- Skip Declaration
+
+-FUNCTION: make_vfsuid
+--- Skip Declaration
+
+-FUNCTION: i_user_ns
+Return value:   %s_user_ns = getelementptr inbounds %struct.super_block, ptr %1, i32 0, i32 50, !dbg !12878
+
+
+-FUNCTION: mnt_idmap
+Return value:   %tmp4 = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %3, ptr %tmp4, align 8, !dbg !12883
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %3, ptr %tmp4, align 8, !dbg !12883
+
+-FUNCTION: __vfsuid_val
+Return value:   %val = getelementptr inbounds %struct.vfsuid_t, ptr %uid, i32 0, i32 0, !dbg !12876
+
+
+-FUNCTION: aa_get_label_rcu
+Return value:   %c = alloca ptr, align 8, !DIAssignID !12879
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %4, ptr %c, align 8, !dbg !12895, !DIAssignID !12896
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %4, ptr %c, align 8, !dbg !12895, !DIAssignID !12896
+
+-FUNCTION: rcu_read_lock
+
+-FUNCTION: kref_get_unless_zero
+
+-FUNCTION: rcu_read_unlock
+
+-FUNCTION: __rcu_read_lock
+--- Skip Declaration
+
+-FUNCTION: refcount_inc_not_zero
+
+-FUNCTION: __refcount_inc_not_zero
+
+-FUNCTION: __refcount_add_not_zero
+
+-FUNCTION: refcount_read
+
+-FUNCTION: atomic_try_cmpxchg_relaxed
+
+-FUNCTION: refcount_warn_saturate
+--- Skip Declaration
+
+-FUNCTION: atomic_read
+
+-FUNCTION: instrument_atomic_read
+
+-FUNCTION: raw_atomic_read
+
+-FUNCTION: kasan_check_read
+
+-FUNCTION: kcsan_check_access
+
+-FUNCTION: arch_atomic_read
+Return value:   %counter = getelementptr inbounds %struct.atomic_t, ptr %0, i32 0, i32 0, !dbg !12879
+
+
+-FUNCTION: instrument_atomic_read_write
+
+-FUNCTION: raw_atomic_try_cmpxchg_relaxed
+
+-FUNCTION: kasan_check_write
+
+-FUNCTION: arch_atomic_try_cmpxchg
+
+-FUNCTION: llvm.assume
+--- Skip Declaration
+
+-FUNCTION: __rcu_read_unlock
+--- Skip Declaration
+
+-FUNCTION: kref_get
+
+-FUNCTION: refcount_inc
+
+-FUNCTION: __refcount_inc
+
+-FUNCTION: __refcount_add
+
+-FUNCTION: atomic_fetch_add_relaxed
+
+-FUNCTION: raw_atomic_fetch_add_relaxed
+
+-FUNCTION: arch_atomic_fetch_add
+Return value:   %tmp = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %4, ptr %tmp, align 4, !dbg !12885
+
+==AnalysisForInt32==
+
+-FUNCTION: profile_onexec
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call107, ptr %retval, align 4, !dbg !13076
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !12951
+
+==AnalysisForInt32==
+
+-FUNCTION: ERR_PTR
+
+-FUNCTION: aa_path_name
+--- Skip Declaration
+
+-FUNCTION: aa_str_perms
+--- Skip Declaration
+
+-FUNCTION: aa_dfa_null_transition
+
+-FUNCTION: change_profile_perms
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call, ptr %retval, align 4, !dbg !12916
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !12907
+
+==AnalysisForInt32==
+
+-FUNCTION: aa_dfa_next
+--- Skip Declaration
+
+-FUNCTION: label_match
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call6, ptr %retval, align 4, !dbg !12925
+
+==AnalysisForInt32==
+StoreInst:   store i32 %9, ptr %retval, align 4, !dbg !12914
+
+==AnalysisForInt32==
+
+-FUNCTION: llvm.memcpy.p0.p0.i64
+--- Skip Declaration
+
+-FUNCTION: label_compound_match
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !13015
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+label_compound_match has 'return -EACCES'
+Error-thrower BB: 
+fail:                                             ; preds = %if.then32, %if.then10
+  call void @llvm.dbg.label(metadata !12886), !dbg !13012
+  %45 = load ptr, ptr %perms.addr, align 8, !dbg !13013
+  call void @llvm.memcpy.p0.p0.i64(ptr align 4 %45, ptr align 4 @nullperms, i64 52, i1 false), !dbg !13014
+  store i32 -13, ptr %retval, align 4, !dbg !13015
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !13015
+
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: if.then32
+(Val) 
+if.then32:                                        ; preds = %if.end28
+  br label %fail, !dbg !12988
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end28
+(Val) 
+if.end28:                                         ; preds = %for.body22
+  %28 = load ptr, ptr %rules, align 8, !dbg !12972
+  %file = getelementptr inbounds %struct.aa_ruleset, ptr %28, i32 0, i32 3, !dbg !12973
+  %dfa = getelementptr inbounds %struct.aa_policydb, ptr %file, i32 0, i32 0, !dbg !12974
+  %29 = load ptr, ptr %dfa, align 8, !dbg !12974
+  %30 = load i32, ptr %state.addr, align 4, !dbg !12975
+  %call29 = call i32 @aa_dfa_match(ptr noundef %29, i32 noundef %30, ptr noundef @.str.37) #17, !dbg !12976
+  store i32 %call29, ptr %state.addr, align 4, !dbg !12977, !DIAssignID !12978
+  call void @llvm.dbg.assign(metadata i32 %call29, metadata !12875, metadata !DIExpression(), metadata !12978, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %31 = load ptr, ptr %profile.addr, align 8, !dbg !12979
+  %32 = load ptr, ptr %tp, align 8, !dbg !12980
+  %33 = load i32, ptr %state.addr, align 4, !dbg !12981
+  %call30 = call i32 @match_component(ptr noundef %31, ptr noundef %32, i1 noundef zeroext false, i32 noundef %33) #17, !dbg !12982
+  store i32 %call30, ptr %state.addr, align 4, !dbg !12983, !DIAssignID !12984
+  call void @llvm.dbg.assign(metadata i32 %call30, metadata !12875, metadata !DIExpression(), metadata !12984, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %34 = load i32, ptr %state.addr, align 4, !dbg !12985
+  %tobool31 = icmp ne i32 %34, 0, !dbg !12985
+  br i1 %tobool31, label %if.end33, label %if.then32, !dbg !12987
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: match_component
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body22
+(Val) 
+for.body22:                                       ; preds = %for.cond16
+  %23 = load ptr, ptr %profile.addr, align 8, !dbg !12962
+  %ns23 = getelementptr inbounds %struct.aa_profile, ptr %23, i32 0, i32 2, !dbg !12965
+  %24 = load ptr, ptr %ns23, align 8, !dbg !12965
+  %25 = load ptr, ptr %tp, align 8, !dbg !12966
+  %ns24 = getelementptr inbounds %struct.aa_profile, ptr %25, i32 0, i32 2, !dbg !12967
+  %26 = load ptr, ptr %ns24, align 8, !dbg !12967
+  %27 = load i8, ptr %subns.addr, align 1, !dbg !12968, !range !12932, !noundef !99
+  %tobool25 = trunc i8 %27 to i1, !dbg !12968
+  %call26 = call zeroext i1 @aa_ns_visible(ptr noundef %24, ptr noundef %26, i1 noundef zeroext %tobool25) #17, !dbg !12969
+  br i1 %call26, label %if.end28, label %if.then27, !dbg !12970
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond16
+(Val) 
+for.cond16:                                       ; preds = %for.inc34, %next13
+  %20 = load ptr, ptr %label.addr, align 8, !dbg !12959
+  %vec17 = getelementptr inbounds %struct.aa_label, ptr %20, i32 0, i32 8, !dbg !12959
+  %i18 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12959
+  %21 = load i32, ptr %i18, align 4, !dbg !12959
+  %idxprom19 = sext i32 %21 to i64, !dbg !12959
+  %arrayidx20 = getelementptr [0 x ptr], ptr %vec17, i64 0, i64 %idxprom19, !dbg !12959
+  %22 = load ptr, ptr %arrayidx20, align 8, !dbg !12959
+  store ptr %22, ptr %tp, align 8, !dbg !12959, !DIAssignID !12961
+  call void @llvm.dbg.assign(metadata ptr %22, metadata !12882, metadata !DIExpression(), metadata !12961, metadata ptr %tp, metadata !DIExpression()), !dbg !12888
+  %tobool21 = icmp ne ptr %22, null, !dbg !12956
+  br i1 %tobool21, label %for.body22, label %for.end37, !dbg !12956
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx20
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: for.inc34
+(Val) 
+for.inc34:                                        ; preds = %if.end33, %if.then27
+  %i35 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12959
+  %35 = load i32, ptr %i35, align 4, !dbg !12959
+  %inc36 = add i32 %35, 1, !dbg !12959
+  store i32 %inc36, ptr %i35, align 4, !dbg !12959, !DIAssignID !12990
+  call void @llvm.dbg.assign(metadata i32 %inc36, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12990, metadata ptr %i35, metadata !DIExpression()), !dbg !12888
+  br label %for.cond16, !dbg !12959, !llvm.loop !12991
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: if.end33
+(Val) 
+if.end33:                                         ; preds = %if.end28
+  br label %for.inc34, !dbg !12989
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end28
+(Val) 
+if.end28:                                         ; preds = %for.body22
+  %28 = load ptr, ptr %rules, align 8, !dbg !12972
+  %file = getelementptr inbounds %struct.aa_ruleset, ptr %28, i32 0, i32 3, !dbg !12973
+  %dfa = getelementptr inbounds %struct.aa_policydb, ptr %file, i32 0, i32 0, !dbg !12974
+  %29 = load ptr, ptr %dfa, align 8, !dbg !12974
+  %30 = load i32, ptr %state.addr, align 4, !dbg !12975
+  %call29 = call i32 @aa_dfa_match(ptr noundef %29, i32 noundef %30, ptr noundef @.str.37) #17, !dbg !12976
+  store i32 %call29, ptr %state.addr, align 4, !dbg !12977, !DIAssignID !12978
+  call void @llvm.dbg.assign(metadata i32 %call29, metadata !12875, metadata !DIExpression(), metadata !12978, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %31 = load ptr, ptr %profile.addr, align 8, !dbg !12979
+  %32 = load ptr, ptr %tp, align 8, !dbg !12980
+  %33 = load i32, ptr %state.addr, align 4, !dbg !12981
+  %call30 = call i32 @match_component(ptr noundef %31, ptr noundef %32, i1 noundef zeroext false, i32 noundef %33) #17, !dbg !12982
+  store i32 %call30, ptr %state.addr, align 4, !dbg !12983, !DIAssignID !12984
+  call void @llvm.dbg.assign(metadata i32 %call30, metadata !12875, metadata !DIExpression(), metadata !12984, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %34 = load i32, ptr %state.addr, align 4, !dbg !12985
+  %tobool31 = icmp ne i32 %34, 0, !dbg !12985
+  br i1 %tobool31, label %if.end33, label %if.then32, !dbg !12987
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: match_component
+
+*** findAllConditions ***
+************** Already visited
+CondBB: if.then27
+(Val) 
+if.then27:                                        ; preds = %for.body22
+  br label %for.inc34, !dbg !12971
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body22
+(Val) 
+for.body22:                                       ; preds = %for.cond16
+  %23 = load ptr, ptr %profile.addr, align 8, !dbg !12962
+  %ns23 = getelementptr inbounds %struct.aa_profile, ptr %23, i32 0, i32 2, !dbg !12965
+  %24 = load ptr, ptr %ns23, align 8, !dbg !12965
+  %25 = load ptr, ptr %tp, align 8, !dbg !12966
+  %ns24 = getelementptr inbounds %struct.aa_profile, ptr %25, i32 0, i32 2, !dbg !12967
+  %26 = load ptr, ptr %ns24, align 8, !dbg !12967
+  %27 = load i8, ptr %subns.addr, align 1, !dbg !12968, !range !12932, !noundef !99
+  %tobool25 = trunc i8 %27 to i1, !dbg !12968
+  %call26 = call zeroext i1 @aa_ns_visible(ptr noundef %24, ptr noundef %26, i1 noundef zeroext %tobool25) #17, !dbg !12969
+  br i1 %call26, label %if.end28, label %if.then27, !dbg !12970
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+************** Already visited
+CondBB: next13
+(Val) 
+next13:                                           ; preds = %if.end11
+  call void @llvm.dbg.label(metadata !12885), !dbg !12955
+  %i14 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12956
+  %19 = load i32, ptr %i14, align 4, !dbg !12956
+  %inc15 = add i32 %19, 1, !dbg !12956
+  store i32 %inc15, ptr %i14, align 4, !dbg !12956, !DIAssignID !12958
+  call void @llvm.dbg.assign(metadata i32 %inc15, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12958, metadata ptr %i14, metadata !DIExpression()), !dbg !12888
+  br label %for.cond16, !dbg !12956
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end11
+(Val) 
+if.end11:                                         ; preds = %if.end
+  br label %next13, !dbg !12947
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end
+(Val) 
+if.end:                                           ; preds = %for.body
+  %12 = load ptr, ptr %profile.addr, align 8, !dbg !12936
+  %13 = load ptr, ptr %tp, align 8, !dbg !12937
+  %14 = load i8, ptr %stack.addr, align 1, !dbg !12938, !range !12932, !noundef !99
+  %tobool7 = trunc i8 %14 to i1, !dbg !12938
+  %15 = load i32, ptr %state.addr, align 4, !dbg !12939
+  %call8 = call i32 @match_component(ptr noundef %12, ptr noundef %13, i1 noundef zeroext %tobool7, i32 noundef %15) #17, !dbg !12940
+  store i32 %call8, ptr %state.addr, align 4, !dbg !12941, !DIAssignID !12942
+  call void @llvm.dbg.assign(metadata i32 %call8, metadata !12875, metadata !DIExpression(), metadata !12942, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %16 = load i32, ptr %state.addr, align 4, !dbg !12943
+  %tobool9 = icmp ne i32 %16, 0, !dbg !12943
+  br i1 %tobool9, label %if.end11, label %if.then10, !dbg !12945
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: match_component
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body
+(Val) 
+for.body:                                         ; preds = %for.cond
+  %7 = load ptr, ptr %profile.addr, align 8, !dbg !12925
+  %ns = getelementptr inbounds %struct.aa_profile, ptr %7, i32 0, i32 2, !dbg !12928
+  %8 = load ptr, ptr %ns, align 8, !dbg !12928
+  %9 = load ptr, ptr %tp, align 8, !dbg !12929
+  %ns5 = getelementptr inbounds %struct.aa_profile, ptr %9, i32 0, i32 2, !dbg !12930
+  %10 = load ptr, ptr %ns5, align 8, !dbg !12930
+  %11 = load i8, ptr %subns.addr, align 1, !dbg !12931, !range !12932, !noundef !99
+  %tobool6 = trunc i8 %11 to i1, !dbg !12931
+  %call = call zeroext i1 @aa_ns_visible(ptr noundef %8, ptr noundef %10, i1 noundef zeroext %tobool6) #17, !dbg !12933
+  br i1 %call, label %if.end, label %if.then, !dbg !12934
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond
+(Val) 
+for.cond:                                         ; preds = %for.inc, %entry
+  %4 = load ptr, ptr %label.addr, align 8, !dbg !12922
+  %vec = getelementptr inbounds %struct.aa_label, ptr %4, i32 0, i32 8, !dbg !12922
+  %i4 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12922
+  %5 = load i32, ptr %i4, align 4, !dbg !12922
+  %idxprom = sext i32 %5 to i64, !dbg !12922
+  %arrayidx = getelementptr [0 x ptr], ptr %vec, i64 0, i64 %idxprom, !dbg !12922
+  %6 = load ptr, ptr %arrayidx, align 8, !dbg !12922
+  store ptr %6, ptr %tp, align 8, !dbg !12922, !DIAssignID !12924
+  call void @llvm.dbg.assign(metadata ptr %6, metadata !12882, metadata !DIExpression(), metadata !12924, metadata ptr %tp, metadata !DIExpression()), !dbg !12888
+  %tobool = icmp ne ptr %6, null, !dbg !12919
+  br i1 %tobool, label %for.body, label %for.end, !dbg !12919
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: for.inc
+(Val) 
+for.inc:                                          ; preds = %if.then
+  %i12 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12922
+  %17 = load i32, ptr %i12, align 4, !dbg !12922
+  %inc = add i32 %17, 1, !dbg !12922
+  store i32 %inc, ptr %i12, align 4, !dbg !12922, !DIAssignID !12948
+  call void @llvm.dbg.assign(metadata i32 %inc, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12948, metadata ptr %i12, metadata !DIExpression()), !dbg !12888
+  br label %for.cond, !dbg !12922, !llvm.loop !12949
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.then
+(Val) 
+if.then:                                          ; preds = %for.body
+  br label %for.inc, !dbg !12935
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body
+(Val) 
+for.body:                                         ; preds = %for.cond
+  %7 = load ptr, ptr %profile.addr, align 8, !dbg !12925
+  %ns = getelementptr inbounds %struct.aa_profile, ptr %7, i32 0, i32 2, !dbg !12928
+  %8 = load ptr, ptr %ns, align 8, !dbg !12928
+  %9 = load ptr, ptr %tp, align 8, !dbg !12929
+  %ns5 = getelementptr inbounds %struct.aa_profile, ptr %9, i32 0, i32 2, !dbg !12930
+  %10 = load ptr, ptr %ns5, align 8, !dbg !12930
+  %11 = load i8, ptr %subns.addr, align 1, !dbg !12931, !range !12932, !noundef !99
+  %tobool6 = trunc i8 %11 to i1, !dbg !12931
+  %call = call zeroext i1 @aa_ns_visible(ptr noundef %8, ptr noundef %10, i1 noundef zeroext %tobool6) #17, !dbg !12933
+  br i1 %call, label %if.end, label %if.then, !dbg !12934
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+************** Already visited
+CondBB: entry
+(Val) 
+entry:
+  %retval = alloca i32, align 4
+  %profile.addr = alloca ptr, align 8, !DIAssignID !12887
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12872, metadata !DIExpression(), metadata !12887, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12888
+  %label.addr = alloca ptr, align 8, !DIAssignID !12889
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12873, metadata !DIExpression(), metadata !12889, metadata ptr %label.addr, metadata !DIExpression()), !dbg !12888
+  %stack.addr = alloca i8, align 1, !DIAssignID !12890
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12874, metadata !DIExpression(), metadata !12890, metadata ptr %stack.addr, metadata !DIExpression()), !dbg !12888
+  %state.addr = alloca i32, align 4, !DIAssignID !12891
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12875, metadata !DIExpression(), metadata !12891, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %subns.addr = alloca i8, align 1, !DIAssignID !12892
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12876, metadata !DIExpression(), metadata !12892, metadata ptr %subns.addr, metadata !DIExpression()), !dbg !12888
+  %request.addr = alloca i32, align 4, !DIAssignID !12893
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12877, metadata !DIExpression(), metadata !12893, metadata ptr %request.addr, metadata !DIExpression()), !dbg !12888
+  %perms.addr = alloca ptr, align 8, !DIAssignID !12894
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12878, metadata !DIExpression(), metadata !12894, metadata ptr %perms.addr, metadata !DIExpression()), !dbg !12888
+  %rules = alloca ptr, align 8, !DIAssignID !12895
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12879, metadata !DIExpression(), metadata !12895, metadata ptr %rules, metadata !DIExpression()), !dbg !12888
+  %__mptr = alloca ptr, align 8, !DIAssignID !12896
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12880, metadata !DIExpression(), metadata !12896, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12897
+  %tmp = alloca ptr, align 8
+  %tp = alloca ptr, align 8, !DIAssignID !12898
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12882, metadata !DIExpression(), metadata !12898, metadata ptr %tp, metadata !DIExpression()), !dbg !12888
+  %i = alloca %struct.label_it, align 4, !DIAssignID !12899
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12883, metadata !DIExpression(), metadata !12899, metadata ptr %i, metadata !DIExpression()), !dbg !12888
+  %cond = alloca %struct.path_cond, align 4, !DIAssignID !12900
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12884, metadata !DIExpression(), metadata !12900, metadata ptr %cond, metadata !DIExpression()), !dbg !12888
+  %cleanup.dest.slot = alloca i32, align 4
+  store ptr %profile, ptr %profile.addr, align 8, !DIAssignID !12901
+  call void @llvm.dbg.assign(metadata ptr %profile, metadata !12872, metadata !DIExpression(), metadata !12901, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12888
+  store ptr %label, ptr %label.addr, align 8, !DIAssignID !12902
+  call void @llvm.dbg.assign(metadata ptr %label, metadata !12873, metadata !DIExpression(), metadata !12902, metadata ptr %label.addr, metadata !DIExpression()), !dbg !12888
+  %frombool = zext i1 %stack to i8
+  store i8 %frombool, ptr %stack.addr, align 1, !DIAssignID !12903
+  call void @llvm.dbg.assign(metadata i8 %frombool, metadata !12874, metadata !DIExpression(), metadata !12903, metadata ptr %stack.addr, metadata !DIExpression()), !dbg !12888
+  store i32 %state, ptr %state.addr, align 4, !DIAssignID !12904
+  call void @llvm.dbg.assign(metadata i32 %state, metadata !12875, metadata !DIExpression(), metadata !12904, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %frombool1 = zext i1 %subns to i8
+  store i8 %frombool1, ptr %subns.addr, align 1, !DIAssignID !12905
+  call void @llvm.dbg.assign(metadata i8 %frombool1, metadata !12876, metadata !DIExpression(), metadata !12905, metadata ptr %subns.addr, metadata !DIExpression()), !dbg !12888
+  store i32 %request, ptr %request.addr, align 4, !DIAssignID !12906
+  call void @llvm.dbg.assign(metadata i32 %request, metadata !12877, metadata !DIExpression(), metadata !12906, metadata ptr %request.addr, metadata !DIExpression()), !dbg !12888
+  store ptr %perms, ptr %perms.addr, align 8, !DIAssignID !12907
+  call void @llvm.dbg.assign(metadata ptr %perms, metadata !12878, metadata !DIExpression(), metadata !12907, metadata ptr %perms.addr, metadata !DIExpression()), !dbg !12888
+  call void @llvm.lifetime.start.p0(i64 8, ptr %rules) #16, !dbg !12908
+  call void @llvm.lifetime.start.p0(i64 8, ptr %__mptr) #16, !dbg !12909
+  %0 = load ptr, ptr %profile.addr, align 8, !dbg !12909
+  %rules2 = getelementptr inbounds %struct.aa_profile, ptr %0, i32 0, i32 9, !dbg !12909
+  %next = getelementptr inbounds %struct.list_head, ptr %rules2, i32 0, i32 0, !dbg !12909
+  %1 = load ptr, ptr %next, align 8, !dbg !12909
+  store ptr %1, ptr %__mptr, align 8, !dbg !12909, !DIAssignID !12910
+  call void @llvm.dbg.assign(metadata ptr %1, metadata !12880, metadata !DIExpression(), metadata !12910, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12897
+  %2 = load ptr, ptr %__mptr, align 8, !dbg !12909
+  %add.ptr = getelementptr i8, ptr %2, i64 0, !dbg !12909
+  store ptr %add.ptr, ptr %tmp, align 8, !dbg !12909
+  call void @llvm.lifetime.end.p0(i64 8, ptr %__mptr) #16, !dbg !12911
+  %3 = load ptr, ptr %tmp, align 8, !dbg !12909
+  store ptr %3, ptr %rules, align 8, !dbg !12912, !DIAssignID !12913
+  call void @llvm.dbg.assign(metadata ptr %3, metadata !12879, metadata !DIExpression(), metadata !12913, metadata ptr %rules, metadata !DIExpression()), !dbg !12888
+  call void @llvm.lifetime.start.p0(i64 8, ptr %tp) #16, !dbg !12914
+  call void @llvm.lifetime.start.p0(i64 8, ptr %i) #16, !dbg !12915
+  call void @llvm.lifetime.start.p0(i64 8, ptr %cond) #16, !dbg !12916
+  call void @llvm.memset.p0.i64(ptr align 4 %cond, i8 0, i64 8, i1 false), !dbg !12917, !DIAssignID !12918
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12884, metadata !DIExpression(), metadata !12918, metadata ptr %cond, metadata !DIExpression()), !dbg !12888
+  %i3 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12919
+  store i32 0, ptr %i3, align 4, !dbg !12919, !DIAssignID !12921
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12921, metadata ptr %i3, metadata !DIExpression()), !dbg !12888
+  br label %for.cond, !dbg !12919
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+** No preds
+* Reached to the entry
+CondBB: if.then10
+(Val) 
+if.then10:                                        ; preds = %if.end
+  br label %fail, !dbg !12946
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end
+(Val) 
+if.end:                                           ; preds = %for.body
+  %12 = load ptr, ptr %profile.addr, align 8, !dbg !12936
+  %13 = load ptr, ptr %tp, align 8, !dbg !12937
+  %14 = load i8, ptr %stack.addr, align 1, !dbg !12938, !range !12932, !noundef !99
+  %tobool7 = trunc i8 %14 to i1, !dbg !12938
+  %15 = load i32, ptr %state.addr, align 4, !dbg !12939
+  %call8 = call i32 @match_component(ptr noundef %12, ptr noundef %13, i1 noundef zeroext %tobool7, i32 noundef %15) #17, !dbg !12940
+  store i32 %call8, ptr %state.addr, align 4, !dbg !12941, !DIAssignID !12942
+  call void @llvm.dbg.assign(metadata i32 %call8, metadata !12875, metadata !DIExpression(), metadata !12942, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %16 = load i32, ptr %state.addr, align 4, !dbg !12943
+  %tobool9 = icmp ne i32 %16, 0, !dbg !12943
+  br i1 %tobool9, label %if.end11, label %if.then10, !dbg !12945
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: match_component
+
+*** findAllConditions ***
+************** Already visited
+Debug info: <path_to_linux>/security/apparmor/domain.c:160
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO <path_to_linux>/security/apparmor/domain.c: i32 160
+CALFLS label_compound_match: i32 -13
+CMPFLS match_component: i32 0
+CALFLS aa_ns_visible: i32 0
+NLLFLS arrayidx: ptr null
+CALTRU aa_ns_visible: i32 0
+CMPTRU match_component: i32 0
+CALFLS aa_ns_visible: i32 0
+CMPTRU match_component: i32 0
+NLLFLS arrayidx20: ptr null
+CALTRU aa_ns_visible: i32 0
+CMPFLS match_component: i32 0
+~~~ Inserted all logs ~~~
+
+modified: 1
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !13011
+
+==AnalysisForInt32==
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !13010
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+label_compound_match has 'return -EACCES'
+Error-thrower BB: 
+if.then40:                                        ; preds = %for.end37
+  store i32 -13, ptr %retval, align 4, !dbg !13010
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !13010
+
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.end37
+(Val) 
+for.end37:                                        ; preds = %for.cond16
+  %36 = load ptr, ptr %perms.addr, align 8, !dbg !12993
+  %37 = load ptr, ptr %rules, align 8, !dbg !12994
+  %file38 = getelementptr inbounds %struct.aa_ruleset, ptr %37, i32 0, i32 3, !dbg !12995
+  %38 = load i32, ptr %state.addr, align 4, !dbg !12996
+  %call39 = call ptr @aa_lookup_fperms(ptr noundef %file38, i32 noundef %38, ptr noundef %cond) #17, !dbg !12997
+  call void @llvm.memcpy.p0.p0.i64(ptr align 4 %36, ptr align 4 %call39, i64 52, i1 false), !dbg !12998
+  %39 = load ptr, ptr %profile.addr, align 8, !dbg !12999
+  %40 = load ptr, ptr %perms.addr, align 8, !dbg !13000
+  call void @aa_apply_modes_to_perms(ptr noundef %39, ptr noundef %40) #17, !dbg !13001
+  %41 = load ptr, ptr %perms.addr, align 8, !dbg !13002
+  %allow = getelementptr inbounds %struct.aa_perms, ptr %41, i32 0, i32 0, !dbg !13004
+  %42 = load i32, ptr %allow, align 4, !dbg !13004
+  %43 = load i32, ptr %request.addr, align 4, !dbg !13005
+  %and = and i32 %42, %43, !dbg !13006
+  %44 = load i32, ptr %request.addr, align 4, !dbg !13007
+  %cmp = icmp ne i32 %and, %44, !dbg !13008
+  br i1 %cmp, label %if.then40, label %if.end41, !dbg !13009
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: allow
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond16
+(Val) 
+for.cond16:                                       ; preds = %for.inc34, %next13
+  %20 = load ptr, ptr %label.addr, align 8, !dbg !12959
+  %vec17 = getelementptr inbounds %struct.aa_label, ptr %20, i32 0, i32 8, !dbg !12959
+  %i18 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12959
+  %21 = load i32, ptr %i18, align 4, !dbg !12959
+  %idxprom19 = sext i32 %21 to i64, !dbg !12959
+  %arrayidx20 = getelementptr [0 x ptr], ptr %vec17, i64 0, i64 %idxprom19, !dbg !12959
+  %22 = load ptr, ptr %arrayidx20, align 8, !dbg !12959
+  store ptr %22, ptr %tp, align 8, !dbg !12959, !DIAssignID !12961
+  call void @llvm.dbg.assign(metadata ptr %22, metadata !12882, metadata !DIExpression(), metadata !12961, metadata ptr %tp, metadata !DIExpression()), !dbg !12888
+  %tobool21 = icmp ne ptr %22, null, !dbg !12956
+  br i1 %tobool21, label %for.body22, label %for.end37, !dbg !12956
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx20
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: for.inc34
+(Val) 
+for.inc34:                                        ; preds = %if.end33, %if.then27
+  %i35 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12959
+  %35 = load i32, ptr %i35, align 4, !dbg !12959
+  %inc36 = add i32 %35, 1, !dbg !12959
+  store i32 %inc36, ptr %i35, align 4, !dbg !12959, !DIAssignID !12990
+  call void @llvm.dbg.assign(metadata i32 %inc36, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12990, metadata ptr %i35, metadata !DIExpression()), !dbg !12888
+  br label %for.cond16, !dbg !12959, !llvm.loop !12991
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: if.end33
+(Val) 
+if.end33:                                         ; preds = %if.end28
+  br label %for.inc34, !dbg !12989
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end28
+(Val) 
+if.end28:                                         ; preds = %for.body22
+  %28 = load ptr, ptr %rules, align 8, !dbg !12972
+  %file = getelementptr inbounds %struct.aa_ruleset, ptr %28, i32 0, i32 3, !dbg !12973
+  %dfa = getelementptr inbounds %struct.aa_policydb, ptr %file, i32 0, i32 0, !dbg !12974
+  %29 = load ptr, ptr %dfa, align 8, !dbg !12974
+  %30 = load i32, ptr %state.addr, align 4, !dbg !12975
+  %call29 = call i32 @aa_dfa_match(ptr noundef %29, i32 noundef %30, ptr noundef @.str.37) #17, !dbg !12976
+  store i32 %call29, ptr %state.addr, align 4, !dbg !12977, !DIAssignID !12978
+  call void @llvm.dbg.assign(metadata i32 %call29, metadata !12875, metadata !DIExpression(), metadata !12978, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %31 = load ptr, ptr %profile.addr, align 8, !dbg !12979
+  %32 = load ptr, ptr %tp, align 8, !dbg !12980
+  %33 = load i32, ptr %state.addr, align 4, !dbg !12981
+  %call30 = call i32 @match_component(ptr noundef %31, ptr noundef %32, i1 noundef zeroext false, i32 noundef %33) #17, !dbg !12982
+  store i32 %call30, ptr %state.addr, align 4, !dbg !12983, !DIAssignID !12984
+  call void @llvm.dbg.assign(metadata i32 %call30, metadata !12875, metadata !DIExpression(), metadata !12984, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %34 = load i32, ptr %state.addr, align 4, !dbg !12985
+  %tobool31 = icmp ne i32 %34, 0, !dbg !12985
+  br i1 %tobool31, label %if.end33, label %if.then32, !dbg !12987
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: match_component
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body22
+(Val) 
+for.body22:                                       ; preds = %for.cond16
+  %23 = load ptr, ptr %profile.addr, align 8, !dbg !12962
+  %ns23 = getelementptr inbounds %struct.aa_profile, ptr %23, i32 0, i32 2, !dbg !12965
+  %24 = load ptr, ptr %ns23, align 8, !dbg !12965
+  %25 = load ptr, ptr %tp, align 8, !dbg !12966
+  %ns24 = getelementptr inbounds %struct.aa_profile, ptr %25, i32 0, i32 2, !dbg !12967
+  %26 = load ptr, ptr %ns24, align 8, !dbg !12967
+  %27 = load i8, ptr %subns.addr, align 1, !dbg !12968, !range !12932, !noundef !99
+  %tobool25 = trunc i8 %27 to i1, !dbg !12968
+  %call26 = call zeroext i1 @aa_ns_visible(ptr noundef %24, ptr noundef %26, i1 noundef zeroext %tobool25) #17, !dbg !12969
+  br i1 %call26, label %if.end28, label %if.then27, !dbg !12970
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond16
+(Val) 
+for.cond16:                                       ; preds = %for.inc34, %next13
+  %20 = load ptr, ptr %label.addr, align 8, !dbg !12959
+  %vec17 = getelementptr inbounds %struct.aa_label, ptr %20, i32 0, i32 8, !dbg !12959
+  %i18 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12959
+  %21 = load i32, ptr %i18, align 4, !dbg !12959
+  %idxprom19 = sext i32 %21 to i64, !dbg !12959
+  %arrayidx20 = getelementptr [0 x ptr], ptr %vec17, i64 0, i64 %idxprom19, !dbg !12959
+  %22 = load ptr, ptr %arrayidx20, align 8, !dbg !12959
+  store ptr %22, ptr %tp, align 8, !dbg !12959, !DIAssignID !12961
+  call void @llvm.dbg.assign(metadata ptr %22, metadata !12882, metadata !DIExpression(), metadata !12961, metadata ptr %tp, metadata !DIExpression()), !dbg !12888
+  %tobool21 = icmp ne ptr %22, null, !dbg !12956
+  br i1 %tobool21, label %for.body22, label %for.end37, !dbg !12956
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx20
+
+*** findAllConditions ***
+************** Already visited
+CondBB: if.then27
+(Val) 
+if.then27:                                        ; preds = %for.body22
+  br label %for.inc34, !dbg !12971
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body22
+(Val) 
+for.body22:                                       ; preds = %for.cond16
+  %23 = load ptr, ptr %profile.addr, align 8, !dbg !12962
+  %ns23 = getelementptr inbounds %struct.aa_profile, ptr %23, i32 0, i32 2, !dbg !12965
+  %24 = load ptr, ptr %ns23, align 8, !dbg !12965
+  %25 = load ptr, ptr %tp, align 8, !dbg !12966
+  %ns24 = getelementptr inbounds %struct.aa_profile, ptr %25, i32 0, i32 2, !dbg !12967
+  %26 = load ptr, ptr %ns24, align 8, !dbg !12967
+  %27 = load i8, ptr %subns.addr, align 1, !dbg !12968, !range !12932, !noundef !99
+  %tobool25 = trunc i8 %27 to i1, !dbg !12968
+  %call26 = call zeroext i1 @aa_ns_visible(ptr noundef %24, ptr noundef %26, i1 noundef zeroext %tobool25) #17, !dbg !12969
+  br i1 %call26, label %if.end28, label %if.then27, !dbg !12970
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+************** Already visited
+CondBB: next13
+(Val) 
+next13:                                           ; preds = %if.end11
+  call void @llvm.dbg.label(metadata !12885), !dbg !12955
+  %i14 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12956
+  %19 = load i32, ptr %i14, align 4, !dbg !12956
+  %inc15 = add i32 %19, 1, !dbg !12956
+  store i32 %inc15, ptr %i14, align 4, !dbg !12956, !DIAssignID !12958
+  call void @llvm.dbg.assign(metadata i32 %inc15, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12958, metadata ptr %i14, metadata !DIExpression()), !dbg !12888
+  br label %for.cond16, !dbg !12956
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end11
+(Val) 
+if.end11:                                         ; preds = %if.end
+  br label %next13, !dbg !12947
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end
+(Val) 
+if.end:                                           ; preds = %for.body
+  %12 = load ptr, ptr %profile.addr, align 8, !dbg !12936
+  %13 = load ptr, ptr %tp, align 8, !dbg !12937
+  %14 = load i8, ptr %stack.addr, align 1, !dbg !12938, !range !12932, !noundef !99
+  %tobool7 = trunc i8 %14 to i1, !dbg !12938
+  %15 = load i32, ptr %state.addr, align 4, !dbg !12939
+  %call8 = call i32 @match_component(ptr noundef %12, ptr noundef %13, i1 noundef zeroext %tobool7, i32 noundef %15) #17, !dbg !12940
+  store i32 %call8, ptr %state.addr, align 4, !dbg !12941, !DIAssignID !12942
+  call void @llvm.dbg.assign(metadata i32 %call8, metadata !12875, metadata !DIExpression(), metadata !12942, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %16 = load i32, ptr %state.addr, align 4, !dbg !12943
+  %tobool9 = icmp ne i32 %16, 0, !dbg !12943
+  br i1 %tobool9, label %if.end11, label %if.then10, !dbg !12945
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: match_component
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body
+(Val) 
+for.body:                                         ; preds = %for.cond
+  %7 = load ptr, ptr %profile.addr, align 8, !dbg !12925
+  %ns = getelementptr inbounds %struct.aa_profile, ptr %7, i32 0, i32 2, !dbg !12928
+  %8 = load ptr, ptr %ns, align 8, !dbg !12928
+  %9 = load ptr, ptr %tp, align 8, !dbg !12929
+  %ns5 = getelementptr inbounds %struct.aa_profile, ptr %9, i32 0, i32 2, !dbg !12930
+  %10 = load ptr, ptr %ns5, align 8, !dbg !12930
+  %11 = load i8, ptr %subns.addr, align 1, !dbg !12931, !range !12932, !noundef !99
+  %tobool6 = trunc i8 %11 to i1, !dbg !12931
+  %call = call zeroext i1 @aa_ns_visible(ptr noundef %8, ptr noundef %10, i1 noundef zeroext %tobool6) #17, !dbg !12933
+  br i1 %call, label %if.end, label %if.then, !dbg !12934
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond
+(Val) 
+for.cond:                                         ; preds = %for.inc, %entry
+  %4 = load ptr, ptr %label.addr, align 8, !dbg !12922
+  %vec = getelementptr inbounds %struct.aa_label, ptr %4, i32 0, i32 8, !dbg !12922
+  %i4 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12922
+  %5 = load i32, ptr %i4, align 4, !dbg !12922
+  %idxprom = sext i32 %5 to i64, !dbg !12922
+  %arrayidx = getelementptr [0 x ptr], ptr %vec, i64 0, i64 %idxprom, !dbg !12922
+  %6 = load ptr, ptr %arrayidx, align 8, !dbg !12922
+  store ptr %6, ptr %tp, align 8, !dbg !12922, !DIAssignID !12924
+  call void @llvm.dbg.assign(metadata ptr %6, metadata !12882, metadata !DIExpression(), metadata !12924, metadata ptr %tp, metadata !DIExpression()), !dbg !12888
+  %tobool = icmp ne ptr %6, null, !dbg !12919
+  br i1 %tobool, label %for.body, label %for.end, !dbg !12919
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: for.inc
+(Val) 
+for.inc:                                          ; preds = %if.then
+  %i12 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12922
+  %17 = load i32, ptr %i12, align 4, !dbg !12922
+  %inc = add i32 %17, 1, !dbg !12922
+  store i32 %inc, ptr %i12, align 4, !dbg !12922, !DIAssignID !12948
+  call void @llvm.dbg.assign(metadata i32 %inc, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12948, metadata ptr %i12, metadata !DIExpression()), !dbg !12888
+  br label %for.cond, !dbg !12922, !llvm.loop !12949
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.then
+(Val) 
+if.then:                                          ; preds = %for.body
+  br label %for.inc, !dbg !12935
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body
+(Val) 
+for.body:                                         ; preds = %for.cond
+  %7 = load ptr, ptr %profile.addr, align 8, !dbg !12925
+  %ns = getelementptr inbounds %struct.aa_profile, ptr %7, i32 0, i32 2, !dbg !12928
+  %8 = load ptr, ptr %ns, align 8, !dbg !12928
+  %9 = load ptr, ptr %tp, align 8, !dbg !12929
+  %ns5 = getelementptr inbounds %struct.aa_profile, ptr %9, i32 0, i32 2, !dbg !12930
+  %10 = load ptr, ptr %ns5, align 8, !dbg !12930
+  %11 = load i8, ptr %subns.addr, align 1, !dbg !12931, !range !12932, !noundef !99
+  %tobool6 = trunc i8 %11 to i1, !dbg !12931
+  %call = call zeroext i1 @aa_ns_visible(ptr noundef %8, ptr noundef %10, i1 noundef zeroext %tobool6) #17, !dbg !12933
+  br i1 %call, label %if.end, label %if.then, !dbg !12934
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+************** Already visited
+CondBB: entry
+(Val) 
+entry:
+  %retval = alloca i32, align 4
+  %profile.addr = alloca ptr, align 8, !DIAssignID !12887
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12872, metadata !DIExpression(), metadata !12887, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12888
+  %label.addr = alloca ptr, align 8, !DIAssignID !12889
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12873, metadata !DIExpression(), metadata !12889, metadata ptr %label.addr, metadata !DIExpression()), !dbg !12888
+  %stack.addr = alloca i8, align 1, !DIAssignID !12890
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12874, metadata !DIExpression(), metadata !12890, metadata ptr %stack.addr, metadata !DIExpression()), !dbg !12888
+  %state.addr = alloca i32, align 4, !DIAssignID !12891
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12875, metadata !DIExpression(), metadata !12891, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %subns.addr = alloca i8, align 1, !DIAssignID !12892
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12876, metadata !DIExpression(), metadata !12892, metadata ptr %subns.addr, metadata !DIExpression()), !dbg !12888
+  %request.addr = alloca i32, align 4, !DIAssignID !12893
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12877, metadata !DIExpression(), metadata !12893, metadata ptr %request.addr, metadata !DIExpression()), !dbg !12888
+  %perms.addr = alloca ptr, align 8, !DIAssignID !12894
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12878, metadata !DIExpression(), metadata !12894, metadata ptr %perms.addr, metadata !DIExpression()), !dbg !12888
+  %rules = alloca ptr, align 8, !DIAssignID !12895
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12879, metadata !DIExpression(), metadata !12895, metadata ptr %rules, metadata !DIExpression()), !dbg !12888
+  %__mptr = alloca ptr, align 8, !DIAssignID !12896
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12880, metadata !DIExpression(), metadata !12896, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12897
+  %tmp = alloca ptr, align 8
+  %tp = alloca ptr, align 8, !DIAssignID !12898
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12882, metadata !DIExpression(), metadata !12898, metadata ptr %tp, metadata !DIExpression()), !dbg !12888
+  %i = alloca %struct.label_it, align 4, !DIAssignID !12899
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12883, metadata !DIExpression(), metadata !12899, metadata ptr %i, metadata !DIExpression()), !dbg !12888
+  %cond = alloca %struct.path_cond, align 4, !DIAssignID !12900
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12884, metadata !DIExpression(), metadata !12900, metadata ptr %cond, metadata !DIExpression()), !dbg !12888
+  %cleanup.dest.slot = alloca i32, align 4
+  store ptr %profile, ptr %profile.addr, align 8, !DIAssignID !12901
+  call void @llvm.dbg.assign(metadata ptr %profile, metadata !12872, metadata !DIExpression(), metadata !12901, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12888
+  store ptr %label, ptr %label.addr, align 8, !DIAssignID !12902
+  call void @llvm.dbg.assign(metadata ptr %label, metadata !12873, metadata !DIExpression(), metadata !12902, metadata ptr %label.addr, metadata !DIExpression()), !dbg !12888
+  %frombool = zext i1 %stack to i8
+  store i8 %frombool, ptr %stack.addr, align 1, !DIAssignID !12903
+  call void @llvm.dbg.assign(metadata i8 %frombool, metadata !12874, metadata !DIExpression(), metadata !12903, metadata ptr %stack.addr, metadata !DIExpression()), !dbg !12888
+  store i32 %state, ptr %state.addr, align 4, !DIAssignID !12904
+  call void @llvm.dbg.assign(metadata i32 %state, metadata !12875, metadata !DIExpression(), metadata !12904, metadata ptr %state.addr, metadata !DIExpression()), !dbg !12888
+  %frombool1 = zext i1 %subns to i8
+  store i8 %frombool1, ptr %subns.addr, align 1, !DIAssignID !12905
+  call void @llvm.dbg.assign(metadata i8 %frombool1, metadata !12876, metadata !DIExpression(), metadata !12905, metadata ptr %subns.addr, metadata !DIExpression()), !dbg !12888
+  store i32 %request, ptr %request.addr, align 4, !DIAssignID !12906
+  call void @llvm.dbg.assign(metadata i32 %request, metadata !12877, metadata !DIExpression(), metadata !12906, metadata ptr %request.addr, metadata !DIExpression()), !dbg !12888
+  store ptr %perms, ptr %perms.addr, align 8, !DIAssignID !12907
+  call void @llvm.dbg.assign(metadata ptr %perms, metadata !12878, metadata !DIExpression(), metadata !12907, metadata ptr %perms.addr, metadata !DIExpression()), !dbg !12888
+  call void @llvm.lifetime.start.p0(i64 8, ptr %rules) #16, !dbg !12908
+  call void @llvm.lifetime.start.p0(i64 8, ptr %__mptr) #16, !dbg !12909
+  %0 = load ptr, ptr %profile.addr, align 8, !dbg !12909
+  %rules2 = getelementptr inbounds %struct.aa_profile, ptr %0, i32 0, i32 9, !dbg !12909
+  %next = getelementptr inbounds %struct.list_head, ptr %rules2, i32 0, i32 0, !dbg !12909
+  %1 = load ptr, ptr %next, align 8, !dbg !12909
+  store ptr %1, ptr %__mptr, align 8, !dbg !12909, !DIAssignID !12910
+  call void @llvm.dbg.assign(metadata ptr %1, metadata !12880, metadata !DIExpression(), metadata !12910, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12897
+  %2 = load ptr, ptr %__mptr, align 8, !dbg !12909
+  %add.ptr = getelementptr i8, ptr %2, i64 0, !dbg !12909
+  store ptr %add.ptr, ptr %tmp, align 8, !dbg !12909
+  call void @llvm.lifetime.end.p0(i64 8, ptr %__mptr) #16, !dbg !12911
+  %3 = load ptr, ptr %tmp, align 8, !dbg !12909
+  store ptr %3, ptr %rules, align 8, !dbg !12912, !DIAssignID !12913
+  call void @llvm.dbg.assign(metadata ptr %3, metadata !12879, metadata !DIExpression(), metadata !12913, metadata ptr %rules, metadata !DIExpression()), !dbg !12888
+  call void @llvm.lifetime.start.p0(i64 8, ptr %tp) #16, !dbg !12914
+  call void @llvm.lifetime.start.p0(i64 8, ptr %i) #16, !dbg !12915
+  call void @llvm.lifetime.start.p0(i64 8, ptr %cond) #16, !dbg !12916
+  call void @llvm.memset.p0.i64(ptr align 4 %cond, i8 0, i64 8, i1 false), !dbg !12917, !DIAssignID !12918
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12884, metadata !DIExpression(), metadata !12918, metadata ptr %cond, metadata !DIExpression()), !dbg !12888
+  %i3 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12919
+  store i32 0, ptr %i3, align 4, !dbg !12919, !DIAssignID !12921
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12921, metadata ptr %i3, metadata !DIExpression()), !dbg !12888
+  br label %for.cond, !dbg !12919
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+** No preds
+* Reached to the entry
+Debug info: <path_to_linux>/security/apparmor/domain.c:154
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO <path_to_linux>/security/apparmor/domain.c: i32 154
+CALFLS label_compound_match: i32 -13
+CALFLS aa_ns_visible: i32 0
+NLLFLS arrayidx: ptr null
+CALTRU aa_ns_visible: i32 0
+CMPTRU match_component: i32 0
+CALFLS aa_ns_visible: i32 0
+NLLFLS arrayidx20: ptr null
+CALTRU aa_ns_visible: i32 0
+CMPTRU match_component: i32 0
+NLLTRU arrayidx20: ptr null
+CMPTRU allow:   %43 = load i32, ptr %request.addr, align 4, !dbg !13005
+~~~ Inserted all logs ~~~
+
+modified: 1
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !12954
+
+==AnalysisForInt32==
+
+-FUNCTION: label_components_match
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !13026
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+label_components_match has 'return -EACCES'
+Error-thrower BB: 
+fail:                                             ; preds = %if.then34, %if.then11
+  call void @llvm.dbg.label(metadata !12888), !dbg !13023
+  %45 = load ptr, ptr %perms.addr, align 8, !dbg !13024
+  call void @llvm.memcpy.p0.p0.i64(ptr align 4 %45, ptr align 4 @nullperms, i64 52, i1 false), !dbg !13025
+  store i32 -13, ptr %retval, align 4, !dbg !13026
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !13026
+
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: if.then34
+(Val) 
+if.then34:                                        ; preds = %if.end30
+  br label %fail, !dbg !12998
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end30
+(Val) 
+if.end30:                                         ; preds = %for.body24
+  %31 = load ptr, ptr %profile.addr, align 8, !dbg !12988
+  %32 = load ptr, ptr %tp, align 8, !dbg !12989
+  %33 = load i8, ptr %stack.addr, align 1, !dbg !12990, !range !12940, !noundef !99
+  %tobool31 = trunc i8 %33 to i1, !dbg !12990
+  %34 = load i32, ptr %start.addr, align 4, !dbg !12991
+  %call32 = call i32 @match_component(ptr noundef %31, ptr noundef %32, i1 noundef zeroext %tobool31, i32 noundef %34) #17, !dbg !12992
+  store i32 %call32, ptr %state, align 4, !dbg !12993, !DIAssignID !12994
+  call void @llvm.dbg.assign(metadata i32 %call32, metadata !12886, metadata !DIExpression(), metadata !12994, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %35 = load i32, ptr %state, align 4, !dbg !12995
+  %tobool33 = icmp ne i32 %35, 0, !dbg !12995
+  br i1 %tobool33, label %if.end35, label %if.then34, !dbg !12997
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: state
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body24
+(Val) 
+for.body24:                                       ; preds = %for.cond18
+  %26 = load ptr, ptr %profile.addr, align 8, !dbg !12978
+  %ns25 = getelementptr inbounds %struct.aa_profile, ptr %26, i32 0, i32 2, !dbg !12981
+  %27 = load ptr, ptr %ns25, align 8, !dbg !12981
+  %28 = load ptr, ptr %tp, align 8, !dbg !12982
+  %ns26 = getelementptr inbounds %struct.aa_profile, ptr %28, i32 0, i32 2, !dbg !12983
+  %29 = load ptr, ptr %ns26, align 8, !dbg !12983
+  %30 = load i8, ptr %subns.addr, align 1, !dbg !12984, !range !12940, !noundef !99
+  %tobool27 = trunc i8 %30 to i1, !dbg !12984
+  %call28 = call zeroext i1 @aa_ns_visible(ptr noundef %27, ptr noundef %29, i1 noundef zeroext %tobool27) #17, !dbg !12985
+  br i1 %call28, label %if.end30, label %if.then29, !dbg !12986
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond18
+(Val) 
+for.cond18:                                       ; preds = %for.inc38, %next14
+  %23 = load ptr, ptr %label.addr, align 8, !dbg !12975
+  %vec19 = getelementptr inbounds %struct.aa_label, ptr %23, i32 0, i32 8, !dbg !12975
+  %i20 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12975
+  %24 = load i32, ptr %i20, align 4, !dbg !12975
+  %idxprom21 = sext i32 %24 to i64, !dbg !12975
+  %arrayidx22 = getelementptr [0 x ptr], ptr %vec19, i64 0, i64 %idxprom21, !dbg !12975
+  %25 = load ptr, ptr %arrayidx22, align 8, !dbg !12975
+  store ptr %25, ptr %tp, align 8, !dbg !12975, !DIAssignID !12977
+  call void @llvm.dbg.assign(metadata ptr %25, metadata !12882, metadata !DIExpression(), metadata !12977, metadata ptr %tp, metadata !DIExpression()), !dbg !12890
+  %tobool23 = icmp ne ptr %25, null, !dbg !12972
+  br i1 %tobool23, label %for.body24, label %for.end41, !dbg !12972
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx22
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: for.inc38
+(Val) 
+for.inc38:                                        ; preds = %if.end35, %if.then29
+  %i39 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12975
+  %40 = load i32, ptr %i39, align 4, !dbg !12975
+  %inc40 = add i32 %40, 1, !dbg !12975
+  store i32 %inc40, ptr %i39, align 4, !dbg !12975, !DIAssignID !13010
+  call void @llvm.dbg.assign(metadata i32 %inc40, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !13010, metadata ptr %i39, metadata !DIExpression()), !dbg !12890
+  br label %for.cond18, !dbg !12975, !llvm.loop !13011
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: if.end35
+(Val) 
+if.end35:                                         ; preds = %if.end30
+  %36 = load ptr, ptr %rules, align 8, !dbg !12999
+  %file36 = getelementptr inbounds %struct.aa_ruleset, ptr %36, i32 0, i32 3, !dbg !13000
+  %37 = load i32, ptr %state, align 4, !dbg !13001
+  %call37 = call ptr @aa_lookup_fperms(ptr noundef %file36, i32 noundef %37, ptr noundef %cond) #17, !dbg !13002
+  call void @llvm.memcpy.p0.p0.i64(ptr align 4 %tmp3, ptr align 4 %call37, i64 52, i1 false), !dbg !13003, !DIAssignID !13004
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12884, metadata !DIExpression(), metadata !13004, metadata ptr %tmp3, metadata !DIExpression()), !dbg !12890
+  %38 = load ptr, ptr %profile.addr, align 8, !dbg !13005
+  call void @aa_apply_modes_to_perms(ptr noundef %38, ptr noundef %tmp3) #17, !dbg !13006
+  %39 = load ptr, ptr %perms.addr, align 8, !dbg !13007
+  call void @aa_perms_accum(ptr noundef %39, ptr noundef %tmp3) #17, !dbg !13008
+  br label %for.inc38, !dbg !13009
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end30
+(Val) 
+if.end30:                                         ; preds = %for.body24
+  %31 = load ptr, ptr %profile.addr, align 8, !dbg !12988
+  %32 = load ptr, ptr %tp, align 8, !dbg !12989
+  %33 = load i8, ptr %stack.addr, align 1, !dbg !12990, !range !12940, !noundef !99
+  %tobool31 = trunc i8 %33 to i1, !dbg !12990
+  %34 = load i32, ptr %start.addr, align 4, !dbg !12991
+  %call32 = call i32 @match_component(ptr noundef %31, ptr noundef %32, i1 noundef zeroext %tobool31, i32 noundef %34) #17, !dbg !12992
+  store i32 %call32, ptr %state, align 4, !dbg !12993, !DIAssignID !12994
+  call void @llvm.dbg.assign(metadata i32 %call32, metadata !12886, metadata !DIExpression(), metadata !12994, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %35 = load i32, ptr %state, align 4, !dbg !12995
+  %tobool33 = icmp ne i32 %35, 0, !dbg !12995
+  br i1 %tobool33, label %if.end35, label %if.then34, !dbg !12997
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: state
+
+*** findAllConditions ***
+************** Already visited
+CondBB: if.then29
+(Val) 
+if.then29:                                        ; preds = %for.body24
+  br label %for.inc38, !dbg !12987
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body24
+(Val) 
+for.body24:                                       ; preds = %for.cond18
+  %26 = load ptr, ptr %profile.addr, align 8, !dbg !12978
+  %ns25 = getelementptr inbounds %struct.aa_profile, ptr %26, i32 0, i32 2, !dbg !12981
+  %27 = load ptr, ptr %ns25, align 8, !dbg !12981
+  %28 = load ptr, ptr %tp, align 8, !dbg !12982
+  %ns26 = getelementptr inbounds %struct.aa_profile, ptr %28, i32 0, i32 2, !dbg !12983
+  %29 = load ptr, ptr %ns26, align 8, !dbg !12983
+  %30 = load i8, ptr %subns.addr, align 1, !dbg !12984, !range !12940, !noundef !99
+  %tobool27 = trunc i8 %30 to i1, !dbg !12984
+  %call28 = call zeroext i1 @aa_ns_visible(ptr noundef %27, ptr noundef %29, i1 noundef zeroext %tobool27) #17, !dbg !12985
+  br i1 %call28, label %if.end30, label %if.then29, !dbg !12986
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+************** Already visited
+CondBB: next14
+(Val) 
+next14:                                           ; preds = %if.end12
+  call void @llvm.dbg.label(metadata !12887), !dbg !12961
+  %18 = load ptr, ptr %rules, align 8, !dbg !12962
+  %file = getelementptr inbounds %struct.aa_ruleset, ptr %18, i32 0, i32 3, !dbg !12963
+  %19 = load i32, ptr %state, align 4, !dbg !12964
+  %call15 = call ptr @aa_lookup_fperms(ptr noundef %file, i32 noundef %19, ptr noundef %cond) #17, !dbg !12965
+  call void @llvm.memcpy.p0.p0.i64(ptr align 4 %tmp3, ptr align 4 %call15, i64 52, i1 false), !dbg !12966, !DIAssignID !12967
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12884, metadata !DIExpression(), metadata !12967, metadata ptr %tmp3, metadata !DIExpression()), !dbg !12890
+  %20 = load ptr, ptr %profile.addr, align 8, !dbg !12968
+  call void @aa_apply_modes_to_perms(ptr noundef %20, ptr noundef %tmp3) #17, !dbg !12969
+  %21 = load ptr, ptr %perms.addr, align 8, !dbg !12970
+  call void @aa_perms_accum(ptr noundef %21, ptr noundef %tmp3) #17, !dbg !12971
+  %i16 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12972
+  %22 = load i32, ptr %i16, align 4, !dbg !12972
+  %inc17 = add i32 %22, 1, !dbg !12972
+  store i32 %inc17, ptr %i16, align 4, !dbg !12972, !DIAssignID !12974
+  call void @llvm.dbg.assign(metadata i32 %inc17, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12974, metadata ptr %i16, metadata !DIExpression()), !dbg !12890
+  br label %for.cond18, !dbg !12972
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end12
+(Val) 
+if.end12:                                         ; preds = %if.end
+  br label %next14, !dbg !12955
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end
+(Val) 
+if.end:                                           ; preds = %for.body
+  %12 = load ptr, ptr %profile.addr, align 8, !dbg !12944
+  %13 = load ptr, ptr %tp, align 8, !dbg !12945
+  %14 = load i8, ptr %stack.addr, align 1, !dbg !12946, !range !12940, !noundef !99
+  %tobool8 = trunc i8 %14 to i1, !dbg !12946
+  %15 = load i32, ptr %start.addr, align 4, !dbg !12947
+  %call9 = call i32 @match_component(ptr noundef %12, ptr noundef %13, i1 noundef zeroext %tobool8, i32 noundef %15) #17, !dbg !12948
+  store i32 %call9, ptr %state, align 4, !dbg !12949, !DIAssignID !12950
+  call void @llvm.dbg.assign(metadata i32 %call9, metadata !12886, metadata !DIExpression(), metadata !12950, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %16 = load i32, ptr %state, align 4, !dbg !12951
+  %tobool10 = icmp ne i32 %16, 0, !dbg !12951
+  br i1 %tobool10, label %if.end12, label %if.then11, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: state
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body
+(Val) 
+for.body:                                         ; preds = %for.cond
+  %7 = load ptr, ptr %profile.addr, align 8, !dbg !12933
+  %ns = getelementptr inbounds %struct.aa_profile, ptr %7, i32 0, i32 2, !dbg !12936
+  %8 = load ptr, ptr %ns, align 8, !dbg !12936
+  %9 = load ptr, ptr %tp, align 8, !dbg !12937
+  %ns6 = getelementptr inbounds %struct.aa_profile, ptr %9, i32 0, i32 2, !dbg !12938
+  %10 = load ptr, ptr %ns6, align 8, !dbg !12938
+  %11 = load i8, ptr %subns.addr, align 1, !dbg !12939, !range !12940, !noundef !99
+  %tobool7 = trunc i8 %11 to i1, !dbg !12939
+  %call = call zeroext i1 @aa_ns_visible(ptr noundef %8, ptr noundef %10, i1 noundef zeroext %tobool7) #17, !dbg !12941
+  br i1 %call, label %if.end, label %if.then, !dbg !12942
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond
+(Val) 
+for.cond:                                         ; preds = %for.inc, %entry
+  %4 = load ptr, ptr %label.addr, align 8, !dbg !12930
+  %vec = getelementptr inbounds %struct.aa_label, ptr %4, i32 0, i32 8, !dbg !12930
+  %i5 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12930
+  %5 = load i32, ptr %i5, align 4, !dbg !12930
+  %idxprom = sext i32 %5 to i64, !dbg !12930
+  %arrayidx = getelementptr [0 x ptr], ptr %vec, i64 0, i64 %idxprom, !dbg !12930
+  %6 = load ptr, ptr %arrayidx, align 8, !dbg !12930
+  store ptr %6, ptr %tp, align 8, !dbg !12930, !DIAssignID !12932
+  call void @llvm.dbg.assign(metadata ptr %6, metadata !12882, metadata !DIExpression(), metadata !12932, metadata ptr %tp, metadata !DIExpression()), !dbg !12890
+  %tobool = icmp ne ptr %6, null, !dbg !12927
+  br i1 %tobool, label %for.body, label %for.end, !dbg !12927
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: for.inc
+(Val) 
+for.inc:                                          ; preds = %if.then
+  %i13 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12930
+  %17 = load i32, ptr %i13, align 4, !dbg !12930
+  %inc = add i32 %17, 1, !dbg !12930
+  store i32 %inc, ptr %i13, align 4, !dbg !12930, !DIAssignID !12956
+  call void @llvm.dbg.assign(metadata i32 %inc, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12956, metadata ptr %i13, metadata !DIExpression()), !dbg !12890
+  br label %for.cond, !dbg !12930, !llvm.loop !12957
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.then
+(Val) 
+if.then:                                          ; preds = %for.body
+  br label %for.inc, !dbg !12943
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body
+(Val) 
+for.body:                                         ; preds = %for.cond
+  %7 = load ptr, ptr %profile.addr, align 8, !dbg !12933
+  %ns = getelementptr inbounds %struct.aa_profile, ptr %7, i32 0, i32 2, !dbg !12936
+  %8 = load ptr, ptr %ns, align 8, !dbg !12936
+  %9 = load ptr, ptr %tp, align 8, !dbg !12937
+  %ns6 = getelementptr inbounds %struct.aa_profile, ptr %9, i32 0, i32 2, !dbg !12938
+  %10 = load ptr, ptr %ns6, align 8, !dbg !12938
+  %11 = load i8, ptr %subns.addr, align 1, !dbg !12939, !range !12940, !noundef !99
+  %tobool7 = trunc i8 %11 to i1, !dbg !12939
+  %call = call zeroext i1 @aa_ns_visible(ptr noundef %8, ptr noundef %10, i1 noundef zeroext %tobool7) #17, !dbg !12941
+  br i1 %call, label %if.end, label %if.then, !dbg !12942
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+************** Already visited
+CondBB: entry
+(Val) 
+entry:
+  %retval = alloca i32, align 4
+  %profile.addr = alloca ptr, align 8, !DIAssignID !12889
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12872, metadata !DIExpression(), metadata !12889, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12890
+  %label.addr = alloca ptr, align 8, !DIAssignID !12891
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12873, metadata !DIExpression(), metadata !12891, metadata ptr %label.addr, metadata !DIExpression()), !dbg !12890
+  %stack.addr = alloca i8, align 1, !DIAssignID !12892
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12874, metadata !DIExpression(), metadata !12892, metadata ptr %stack.addr, metadata !DIExpression()), !dbg !12890
+  %start.addr = alloca i32, align 4, !DIAssignID !12893
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12875, metadata !DIExpression(), metadata !12893, metadata ptr %start.addr, metadata !DIExpression()), !dbg !12890
+  %subns.addr = alloca i8, align 1, !DIAssignID !12894
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12876, metadata !DIExpression(), metadata !12894, metadata ptr %subns.addr, metadata !DIExpression()), !dbg !12890
+  %request.addr = alloca i32, align 4, !DIAssignID !12895
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12877, metadata !DIExpression(), metadata !12895, metadata ptr %request.addr, metadata !DIExpression()), !dbg !12890
+  %perms.addr = alloca ptr, align 8, !DIAssignID !12896
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12878, metadata !DIExpression(), metadata !12896, metadata ptr %perms.addr, metadata !DIExpression()), !dbg !12890
+  %rules = alloca ptr, align 8, !DIAssignID !12897
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12879, metadata !DIExpression(), metadata !12897, metadata ptr %rules, metadata !DIExpression()), !dbg !12890
+  %__mptr = alloca ptr, align 8, !DIAssignID !12898
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12880, metadata !DIExpression(), metadata !12898, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12899
+  %tmp = alloca ptr, align 8
+  %tp = alloca ptr, align 8, !DIAssignID !12900
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12882, metadata !DIExpression(), metadata !12900, metadata ptr %tp, metadata !DIExpression()), !dbg !12890
+  %i = alloca %struct.label_it, align 4, !DIAssignID !12901
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12883, metadata !DIExpression(), metadata !12901, metadata ptr %i, metadata !DIExpression()), !dbg !12890
+  %tmp3 = alloca %struct.aa_perms, align 4, !DIAssignID !12902
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12884, metadata !DIExpression(), metadata !12902, metadata ptr %tmp3, metadata !DIExpression()), !dbg !12890
+  %cond = alloca %struct.path_cond, align 4, !DIAssignID !12903
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12885, metadata !DIExpression(), metadata !12903, metadata ptr %cond, metadata !DIExpression()), !dbg !12890
+  %state = alloca i32, align 4, !DIAssignID !12904
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12886, metadata !DIExpression(), metadata !12904, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %cleanup.dest.slot = alloca i32, align 4
+  store ptr %profile, ptr %profile.addr, align 8, !DIAssignID !12905
+  call void @llvm.dbg.assign(metadata ptr %profile, metadata !12872, metadata !DIExpression(), metadata !12905, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12890
+  store ptr %label, ptr %label.addr, align 8, !DIAssignID !12906
+  call void @llvm.dbg.assign(metadata ptr %label, metadata !12873, metadata !DIExpression(), metadata !12906, metadata ptr %label.addr, metadata !DIExpression()), !dbg !12890
+  %frombool = zext i1 %stack to i8
+  store i8 %frombool, ptr %stack.addr, align 1, !DIAssignID !12907
+  call void @llvm.dbg.assign(metadata i8 %frombool, metadata !12874, metadata !DIExpression(), metadata !12907, metadata ptr %stack.addr, metadata !DIExpression()), !dbg !12890
+  store i32 %start, ptr %start.addr, align 4, !DIAssignID !12908
+  call void @llvm.dbg.assign(metadata i32 %start, metadata !12875, metadata !DIExpression(), metadata !12908, metadata ptr %start.addr, metadata !DIExpression()), !dbg !12890
+  %frombool1 = zext i1 %subns to i8
+  store i8 %frombool1, ptr %subns.addr, align 1, !DIAssignID !12909
+  call void @llvm.dbg.assign(metadata i8 %frombool1, metadata !12876, metadata !DIExpression(), metadata !12909, metadata ptr %subns.addr, metadata !DIExpression()), !dbg !12890
+  store i32 %request, ptr %request.addr, align 4, !DIAssignID !12910
+  call void @llvm.dbg.assign(metadata i32 %request, metadata !12877, metadata !DIExpression(), metadata !12910, metadata ptr %request.addr, metadata !DIExpression()), !dbg !12890
+  store ptr %perms, ptr %perms.addr, align 8, !DIAssignID !12911
+  call void @llvm.dbg.assign(metadata ptr %perms, metadata !12878, metadata !DIExpression(), metadata !12911, metadata ptr %perms.addr, metadata !DIExpression()), !dbg !12890
+  call void @llvm.lifetime.start.p0(i64 8, ptr %rules) #16, !dbg !12912
+  call void @llvm.lifetime.start.p0(i64 8, ptr %__mptr) #16, !dbg !12913
+  %0 = load ptr, ptr %profile.addr, align 8, !dbg !12913
+  %rules2 = getelementptr inbounds %struct.aa_profile, ptr %0, i32 0, i32 9, !dbg !12913
+  %next = getelementptr inbounds %struct.list_head, ptr %rules2, i32 0, i32 0, !dbg !12913
+  %1 = load ptr, ptr %next, align 8, !dbg !12913
+  store ptr %1, ptr %__mptr, align 8, !dbg !12913, !DIAssignID !12914
+  call void @llvm.dbg.assign(metadata ptr %1, metadata !12880, metadata !DIExpression(), metadata !12914, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12899
+  %2 = load ptr, ptr %__mptr, align 8, !dbg !12913
+  %add.ptr = getelementptr i8, ptr %2, i64 0, !dbg !12913
+  store ptr %add.ptr, ptr %tmp, align 8, !dbg !12913
+  call void @llvm.lifetime.end.p0(i64 8, ptr %__mptr) #16, !dbg !12915
+  %3 = load ptr, ptr %tmp, align 8, !dbg !12913
+  store ptr %3, ptr %rules, align 8, !dbg !12916, !DIAssignID !12917
+  call void @llvm.dbg.assign(metadata ptr %3, metadata !12879, metadata !DIExpression(), metadata !12917, metadata ptr %rules, metadata !DIExpression()), !dbg !12890
+  call void @llvm.lifetime.start.p0(i64 8, ptr %tp) #16, !dbg !12918
+  call void @llvm.lifetime.start.p0(i64 8, ptr %i) #16, !dbg !12919
+  call void @llvm.lifetime.start.p0(i64 52, ptr %tmp3) #16, !dbg !12920
+  call void @llvm.lifetime.start.p0(i64 8, ptr %cond) #16, !dbg !12921
+  call void @llvm.memset.p0.i64(ptr align 4 %cond, i8 0, i64 8, i1 false), !dbg !12922, !DIAssignID !12923
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12885, metadata !DIExpression(), metadata !12923, metadata ptr %cond, metadata !DIExpression()), !dbg !12890
+  call void @llvm.lifetime.start.p0(i64 4, ptr %state) #16, !dbg !12924
+  store i32 0, ptr %state, align 4, !dbg !12925, !DIAssignID !12926
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12886, metadata !DIExpression(), metadata !12926, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %i4 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12927
+  store i32 0, ptr %i4, align 4, !dbg !12927, !DIAssignID !12929
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12929, metadata ptr %i4, metadata !DIExpression()), !dbg !12890
+  br label %for.cond, !dbg !12927
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+** No preds
+* Reached to the entry
+CondBB: if.then11
+(Val) 
+if.then11:                                        ; preds = %if.end
+  br label %fail, !dbg !12954
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end
+(Val) 
+if.end:                                           ; preds = %for.body
+  %12 = load ptr, ptr %profile.addr, align 8, !dbg !12944
+  %13 = load ptr, ptr %tp, align 8, !dbg !12945
+  %14 = load i8, ptr %stack.addr, align 1, !dbg !12946, !range !12940, !noundef !99
+  %tobool8 = trunc i8 %14 to i1, !dbg !12946
+  %15 = load i32, ptr %start.addr, align 4, !dbg !12947
+  %call9 = call i32 @match_component(ptr noundef %12, ptr noundef %13, i1 noundef zeroext %tobool8, i32 noundef %15) #17, !dbg !12948
+  store i32 %call9, ptr %state, align 4, !dbg !12949, !DIAssignID !12950
+  call void @llvm.dbg.assign(metadata i32 %call9, metadata !12886, metadata !DIExpression(), metadata !12950, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %16 = load i32, ptr %state, align 4, !dbg !12951
+  %tobool10 = icmp ne i32 %16, 0, !dbg !12951
+  br i1 %tobool10, label %if.end12, label %if.then11, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: state
+
+*** findAllConditions ***
+************** Already visited
+Debug info: <path_to_linux>/security/apparmor/domain.c:227
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO <path_to_linux>/security/apparmor/domain.c: i32 227
+CALFLS label_components_match: i32 -13
+CMPFLS state: i32 0
+CALFLS aa_ns_visible: i32 0
+NLLFLS arrayidx: ptr null
+CALTRU aa_ns_visible: i32 0
+CMPTRU state: i32 0
+CALFLS aa_ns_visible: i32 0
+CMPTRU state: i32 0
+NLLFLS arrayidx22: ptr null
+CALTRU aa_ns_visible: i32 0
+CMPFLS state: i32 0
+~~~ Inserted all logs ~~~
+
+modified: 1
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !13022
+
+==AnalysisForInt32==
+StoreInst:   store i32 -13, ptr %retval, align 4, !dbg !13021
+
+==AnalysisForInt32==
+
+///////////////////////////////////////
+label_components_match has 'return -EACCES'
+Error-thrower BB: 
+if.then42:                                        ; preds = %for.end41
+  store i32 -13, ptr %retval, align 4, !dbg !13021
+  store i32 1, ptr %cleanup.dest.slot, align 4
+  br label %cleanup, !dbg !13021
+
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.end41
+(Val) 
+for.end41:                                        ; preds = %for.cond18
+  %41 = load ptr, ptr %perms.addr, align 8, !dbg !13013
+  %allow = getelementptr inbounds %struct.aa_perms, ptr %41, i32 0, i32 0, !dbg !13015
+  %42 = load i32, ptr %allow, align 4, !dbg !13015
+  %43 = load i32, ptr %request.addr, align 4, !dbg !13016
+  %and = and i32 %42, %43, !dbg !13017
+  %44 = load i32, ptr %request.addr, align 4, !dbg !13018
+  %cmp = icmp ne i32 %and, %44, !dbg !13019
+  br i1 %cmp, label %if.then42, label %if.end43, !dbg !13020
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: allow
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond18
+(Val) 
+for.cond18:                                       ; preds = %for.inc38, %next14
+  %23 = load ptr, ptr %label.addr, align 8, !dbg !12975
+  %vec19 = getelementptr inbounds %struct.aa_label, ptr %23, i32 0, i32 8, !dbg !12975
+  %i20 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12975
+  %24 = load i32, ptr %i20, align 4, !dbg !12975
+  %idxprom21 = sext i32 %24 to i64, !dbg !12975
+  %arrayidx22 = getelementptr [0 x ptr], ptr %vec19, i64 0, i64 %idxprom21, !dbg !12975
+  %25 = load ptr, ptr %arrayidx22, align 8, !dbg !12975
+  store ptr %25, ptr %tp, align 8, !dbg !12975, !DIAssignID !12977
+  call void @llvm.dbg.assign(metadata ptr %25, metadata !12882, metadata !DIExpression(), metadata !12977, metadata ptr %tp, metadata !DIExpression()), !dbg !12890
+  %tobool23 = icmp ne ptr %25, null, !dbg !12972
+  br i1 %tobool23, label %for.body24, label %for.end41, !dbg !12972
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx22
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: for.inc38
+(Val) 
+for.inc38:                                        ; preds = %if.end35, %if.then29
+  %i39 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12975
+  %40 = load i32, ptr %i39, align 4, !dbg !12975
+  %inc40 = add i32 %40, 1, !dbg !12975
+  store i32 %inc40, ptr %i39, align 4, !dbg !12975, !DIAssignID !13010
+  call void @llvm.dbg.assign(metadata i32 %inc40, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !13010, metadata ptr %i39, metadata !DIExpression()), !dbg !12890
+  br label %for.cond18, !dbg !12975, !llvm.loop !13011
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: if.end35
+(Val) 
+if.end35:                                         ; preds = %if.end30
+  %36 = load ptr, ptr %rules, align 8, !dbg !12999
+  %file36 = getelementptr inbounds %struct.aa_ruleset, ptr %36, i32 0, i32 3, !dbg !13000
+  %37 = load i32, ptr %state, align 4, !dbg !13001
+  %call37 = call ptr @aa_lookup_fperms(ptr noundef %file36, i32 noundef %37, ptr noundef %cond) #17, !dbg !13002
+  call void @llvm.memcpy.p0.p0.i64(ptr align 4 %tmp3, ptr align 4 %call37, i64 52, i1 false), !dbg !13003, !DIAssignID !13004
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12884, metadata !DIExpression(), metadata !13004, metadata ptr %tmp3, metadata !DIExpression()), !dbg !12890
+  %38 = load ptr, ptr %profile.addr, align 8, !dbg !13005
+  call void @aa_apply_modes_to_perms(ptr noundef %38, ptr noundef %tmp3) #17, !dbg !13006
+  %39 = load ptr, ptr %perms.addr, align 8, !dbg !13007
+  call void @aa_perms_accum(ptr noundef %39, ptr noundef %tmp3) #17, !dbg !13008
+  br label %for.inc38, !dbg !13009
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end30
+(Val) 
+if.end30:                                         ; preds = %for.body24
+  %31 = load ptr, ptr %profile.addr, align 8, !dbg !12988
+  %32 = load ptr, ptr %tp, align 8, !dbg !12989
+  %33 = load i8, ptr %stack.addr, align 1, !dbg !12990, !range !12940, !noundef !99
+  %tobool31 = trunc i8 %33 to i1, !dbg !12990
+  %34 = load i32, ptr %start.addr, align 4, !dbg !12991
+  %call32 = call i32 @match_component(ptr noundef %31, ptr noundef %32, i1 noundef zeroext %tobool31, i32 noundef %34) #17, !dbg !12992
+  store i32 %call32, ptr %state, align 4, !dbg !12993, !DIAssignID !12994
+  call void @llvm.dbg.assign(metadata i32 %call32, metadata !12886, metadata !DIExpression(), metadata !12994, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %35 = load i32, ptr %state, align 4, !dbg !12995
+  %tobool33 = icmp ne i32 %35, 0, !dbg !12995
+  br i1 %tobool33, label %if.end35, label %if.then34, !dbg !12997
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: state
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body24
+(Val) 
+for.body24:                                       ; preds = %for.cond18
+  %26 = load ptr, ptr %profile.addr, align 8, !dbg !12978
+  %ns25 = getelementptr inbounds %struct.aa_profile, ptr %26, i32 0, i32 2, !dbg !12981
+  %27 = load ptr, ptr %ns25, align 8, !dbg !12981
+  %28 = load ptr, ptr %tp, align 8, !dbg !12982
+  %ns26 = getelementptr inbounds %struct.aa_profile, ptr %28, i32 0, i32 2, !dbg !12983
+  %29 = load ptr, ptr %ns26, align 8, !dbg !12983
+  %30 = load i8, ptr %subns.addr, align 1, !dbg !12984, !range !12940, !noundef !99
+  %tobool27 = trunc i8 %30 to i1, !dbg !12984
+  %call28 = call zeroext i1 @aa_ns_visible(ptr noundef %27, ptr noundef %29, i1 noundef zeroext %tobool27) #17, !dbg !12985
+  br i1 %call28, label %if.end30, label %if.then29, !dbg !12986
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond18
+(Val) 
+for.cond18:                                       ; preds = %for.inc38, %next14
+  %23 = load ptr, ptr %label.addr, align 8, !dbg !12975
+  %vec19 = getelementptr inbounds %struct.aa_label, ptr %23, i32 0, i32 8, !dbg !12975
+  %i20 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12975
+  %24 = load i32, ptr %i20, align 4, !dbg !12975
+  %idxprom21 = sext i32 %24 to i64, !dbg !12975
+  %arrayidx22 = getelementptr [0 x ptr], ptr %vec19, i64 0, i64 %idxprom21, !dbg !12975
+  %25 = load ptr, ptr %arrayidx22, align 8, !dbg !12975
+  store ptr %25, ptr %tp, align 8, !dbg !12975, !DIAssignID !12977
+  call void @llvm.dbg.assign(metadata ptr %25, metadata !12882, metadata !DIExpression(), metadata !12977, metadata ptr %tp, metadata !DIExpression()), !dbg !12890
+  %tobool23 = icmp ne ptr %25, null, !dbg !12972
+  br i1 %tobool23, label %for.body24, label %for.end41, !dbg !12972
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx22
+
+*** findAllConditions ***
+************** Already visited
+CondBB: if.then29
+(Val) 
+if.then29:                                        ; preds = %for.body24
+  br label %for.inc38, !dbg !12987
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body24
+(Val) 
+for.body24:                                       ; preds = %for.cond18
+  %26 = load ptr, ptr %profile.addr, align 8, !dbg !12978
+  %ns25 = getelementptr inbounds %struct.aa_profile, ptr %26, i32 0, i32 2, !dbg !12981
+  %27 = load ptr, ptr %ns25, align 8, !dbg !12981
+  %28 = load ptr, ptr %tp, align 8, !dbg !12982
+  %ns26 = getelementptr inbounds %struct.aa_profile, ptr %28, i32 0, i32 2, !dbg !12983
+  %29 = load ptr, ptr %ns26, align 8, !dbg !12983
+  %30 = load i8, ptr %subns.addr, align 1, !dbg !12984, !range !12940, !noundef !99
+  %tobool27 = trunc i8 %30 to i1, !dbg !12984
+  %call28 = call zeroext i1 @aa_ns_visible(ptr noundef %27, ptr noundef %29, i1 noundef zeroext %tobool27) #17, !dbg !12985
+  br i1 %call28, label %if.end30, label %if.then29, !dbg !12986
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+************** Already visited
+CondBB: next14
+(Val) 
+next14:                                           ; preds = %if.end12
+  call void @llvm.dbg.label(metadata !12887), !dbg !12961
+  %18 = load ptr, ptr %rules, align 8, !dbg !12962
+  %file = getelementptr inbounds %struct.aa_ruleset, ptr %18, i32 0, i32 3, !dbg !12963
+  %19 = load i32, ptr %state, align 4, !dbg !12964
+  %call15 = call ptr @aa_lookup_fperms(ptr noundef %file, i32 noundef %19, ptr noundef %cond) #17, !dbg !12965
+  call void @llvm.memcpy.p0.p0.i64(ptr align 4 %tmp3, ptr align 4 %call15, i64 52, i1 false), !dbg !12966, !DIAssignID !12967
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12884, metadata !DIExpression(), metadata !12967, metadata ptr %tmp3, metadata !DIExpression()), !dbg !12890
+  %20 = load ptr, ptr %profile.addr, align 8, !dbg !12968
+  call void @aa_apply_modes_to_perms(ptr noundef %20, ptr noundef %tmp3) #17, !dbg !12969
+  %21 = load ptr, ptr %perms.addr, align 8, !dbg !12970
+  call void @aa_perms_accum(ptr noundef %21, ptr noundef %tmp3) #17, !dbg !12971
+  %i16 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12972
+  %22 = load i32, ptr %i16, align 4, !dbg !12972
+  %inc17 = add i32 %22, 1, !dbg !12972
+  store i32 %inc17, ptr %i16, align 4, !dbg !12972, !DIAssignID !12974
+  call void @llvm.dbg.assign(metadata i32 %inc17, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12974, metadata ptr %i16, metadata !DIExpression()), !dbg !12890
+  br label %for.cond18, !dbg !12972
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end12
+(Val) 
+if.end12:                                         ; preds = %if.end
+  br label %next14, !dbg !12955
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.end
+(Val) 
+if.end:                                           ; preds = %for.body
+  %12 = load ptr, ptr %profile.addr, align 8, !dbg !12944
+  %13 = load ptr, ptr %tp, align 8, !dbg !12945
+  %14 = load i8, ptr %stack.addr, align 1, !dbg !12946, !range !12940, !noundef !99
+  %tobool8 = trunc i8 %14 to i1, !dbg !12946
+  %15 = load i32, ptr %start.addr, align 4, !dbg !12947
+  %call9 = call i32 @match_component(ptr noundef %12, ptr noundef %13, i1 noundef zeroext %tobool8, i32 noundef %15) #17, !dbg !12948
+  store i32 %call9, ptr %state, align 4, !dbg !12949, !DIAssignID !12950
+  call void @llvm.dbg.assign(metadata i32 %call9, metadata !12886, metadata !DIExpression(), metadata !12950, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %16 = load i32, ptr %state, align 4, !dbg !12951
+  %tobool10 = icmp ne i32 %16, 0, !dbg !12951
+  br i1 %tobool10, label %if.end12, label %if.then11, !dbg !12953
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: state
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body
+(Val) 
+for.body:                                         ; preds = %for.cond
+  %7 = load ptr, ptr %profile.addr, align 8, !dbg !12933
+  %ns = getelementptr inbounds %struct.aa_profile, ptr %7, i32 0, i32 2, !dbg !12936
+  %8 = load ptr, ptr %ns, align 8, !dbg !12936
+  %9 = load ptr, ptr %tp, align 8, !dbg !12937
+  %ns6 = getelementptr inbounds %struct.aa_profile, ptr %9, i32 0, i32 2, !dbg !12938
+  %10 = load ptr, ptr %ns6, align 8, !dbg !12938
+  %11 = load i8, ptr %subns.addr, align 1, !dbg !12939, !range !12940, !noundef !99
+  %tobool7 = trunc i8 %11 to i1, !dbg !12939
+  %call = call zeroext i1 @aa_ns_visible(ptr noundef %8, ptr noundef %10, i1 noundef zeroext %tobool7) #17, !dbg !12941
+  br i1 %call, label %if.end, label %if.then, !dbg !12942
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.cond
+(Val) 
+for.cond:                                         ; preds = %for.inc, %entry
+  %4 = load ptr, ptr %label.addr, align 8, !dbg !12930
+  %vec = getelementptr inbounds %struct.aa_label, ptr %4, i32 0, i32 8, !dbg !12930
+  %i5 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12930
+  %5 = load i32, ptr %i5, align 4, !dbg !12930
+  %idxprom = sext i32 %5 to i64, !dbg !12930
+  %arrayidx = getelementptr [0 x ptr], ptr %vec, i64 0, i64 %idxprom, !dbg !12930
+  %6 = load ptr, ptr %arrayidx, align 8, !dbg !12930
+  store ptr %6, ptr %tp, align 8, !dbg !12930, !DIAssignID !12932
+  call void @llvm.dbg.assign(metadata ptr %6, metadata !12882, metadata !DIExpression(), metadata !12932, metadata ptr %tp, metadata !DIExpression()), !dbg !12890
+  %tobool = icmp ne ptr %6, null, !dbg !12927
+  br i1 %tobool, label %for.body, label %for.end, !dbg !12927
+
+Trying to get conditions
+Pred has BranchInst
+** No original
+Name: arrayidx
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+found a pred
+...End of Finding preds...
+CondBB: for.inc
+(Val) 
+for.inc:                                          ; preds = %if.then
+  %i13 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12930
+  %17 = load i32, ptr %i13, align 4, !dbg !12930
+  %inc = add i32 %17, 1, !dbg !12930
+  store i32 %inc, ptr %i13, align 4, !dbg !12930, !DIAssignID !12956
+  call void @llvm.dbg.assign(metadata i32 %inc, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12956, metadata ptr %i13, metadata !DIExpression()), !dbg !12890
+  br label %for.cond, !dbg !12930, !llvm.loop !12957
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: if.then
+(Val) 
+if.then:                                          ; preds = %for.body
+  br label %for.inc, !dbg !12943
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+found a pred
+...End of Finding preds...
+CondBB: for.body
+(Val) 
+for.body:                                         ; preds = %for.cond
+  %7 = load ptr, ptr %profile.addr, align 8, !dbg !12933
+  %ns = getelementptr inbounds %struct.aa_profile, ptr %7, i32 0, i32 2, !dbg !12936
+  %8 = load ptr, ptr %ns, align 8, !dbg !12936
+  %9 = load ptr, ptr %tp, align 8, !dbg !12937
+  %ns6 = getelementptr inbounds %struct.aa_profile, ptr %9, i32 0, i32 2, !dbg !12938
+  %10 = load ptr, ptr %ns6, align 8, !dbg !12938
+  %11 = load i8, ptr %subns.addr, align 1, !dbg !12939, !range !12940, !noundef !99
+  %tobool7 = trunc i8 %11 to i1, !dbg !12939
+  %call = call zeroext i1 @aa_ns_visible(ptr noundef %8, ptr noundef %10, i1 noundef zeroext %tobool7) #17, !dbg !12941
+  br i1 %call, label %if.end, label %if.then, !dbg !12942
+
+Trying to get conditions
+Pred has BranchInst
+** Not an instruction
+Name: aa_ns_visible
+
+*** findAllConditions ***
+************** Already visited
+CondBB: entry
+(Val) 
+entry:
+  %retval = alloca i32, align 4
+  %profile.addr = alloca ptr, align 8, !DIAssignID !12889
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12872, metadata !DIExpression(), metadata !12889, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12890
+  %label.addr = alloca ptr, align 8, !DIAssignID !12891
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12873, metadata !DIExpression(), metadata !12891, metadata ptr %label.addr, metadata !DIExpression()), !dbg !12890
+  %stack.addr = alloca i8, align 1, !DIAssignID !12892
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12874, metadata !DIExpression(), metadata !12892, metadata ptr %stack.addr, metadata !DIExpression()), !dbg !12890
+  %start.addr = alloca i32, align 4, !DIAssignID !12893
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12875, metadata !DIExpression(), metadata !12893, metadata ptr %start.addr, metadata !DIExpression()), !dbg !12890
+  %subns.addr = alloca i8, align 1, !DIAssignID !12894
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12876, metadata !DIExpression(), metadata !12894, metadata ptr %subns.addr, metadata !DIExpression()), !dbg !12890
+  %request.addr = alloca i32, align 4, !DIAssignID !12895
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12877, metadata !DIExpression(), metadata !12895, metadata ptr %request.addr, metadata !DIExpression()), !dbg !12890
+  %perms.addr = alloca ptr, align 8, !DIAssignID !12896
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12878, metadata !DIExpression(), metadata !12896, metadata ptr %perms.addr, metadata !DIExpression()), !dbg !12890
+  %rules = alloca ptr, align 8, !DIAssignID !12897
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12879, metadata !DIExpression(), metadata !12897, metadata ptr %rules, metadata !DIExpression()), !dbg !12890
+  %__mptr = alloca ptr, align 8, !DIAssignID !12898
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12880, metadata !DIExpression(), metadata !12898, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12899
+  %tmp = alloca ptr, align 8
+  %tp = alloca ptr, align 8, !DIAssignID !12900
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12882, metadata !DIExpression(), metadata !12900, metadata ptr %tp, metadata !DIExpression()), !dbg !12890
+  %i = alloca %struct.label_it, align 4, !DIAssignID !12901
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12883, metadata !DIExpression(), metadata !12901, metadata ptr %i, metadata !DIExpression()), !dbg !12890
+  %tmp3 = alloca %struct.aa_perms, align 4, !DIAssignID !12902
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12884, metadata !DIExpression(), metadata !12902, metadata ptr %tmp3, metadata !DIExpression()), !dbg !12890
+  %cond = alloca %struct.path_cond, align 4, !DIAssignID !12903
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12885, metadata !DIExpression(), metadata !12903, metadata ptr %cond, metadata !DIExpression()), !dbg !12890
+  %state = alloca i32, align 4, !DIAssignID !12904
+  call void @llvm.dbg.assign(metadata i1 undef, metadata !12886, metadata !DIExpression(), metadata !12904, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %cleanup.dest.slot = alloca i32, align 4
+  store ptr %profile, ptr %profile.addr, align 8, !DIAssignID !12905
+  call void @llvm.dbg.assign(metadata ptr %profile, metadata !12872, metadata !DIExpression(), metadata !12905, metadata ptr %profile.addr, metadata !DIExpression()), !dbg !12890
+  store ptr %label, ptr %label.addr, align 8, !DIAssignID !12906
+  call void @llvm.dbg.assign(metadata ptr %label, metadata !12873, metadata !DIExpression(), metadata !12906, metadata ptr %label.addr, metadata !DIExpression()), !dbg !12890
+  %frombool = zext i1 %stack to i8
+  store i8 %frombool, ptr %stack.addr, align 1, !DIAssignID !12907
+  call void @llvm.dbg.assign(metadata i8 %frombool, metadata !12874, metadata !DIExpression(), metadata !12907, metadata ptr %stack.addr, metadata !DIExpression()), !dbg !12890
+  store i32 %start, ptr %start.addr, align 4, !DIAssignID !12908
+  call void @llvm.dbg.assign(metadata i32 %start, metadata !12875, metadata !DIExpression(), metadata !12908, metadata ptr %start.addr, metadata !DIExpression()), !dbg !12890
+  %frombool1 = zext i1 %subns to i8
+  store i8 %frombool1, ptr %subns.addr, align 1, !DIAssignID !12909
+  call void @llvm.dbg.assign(metadata i8 %frombool1, metadata !12876, metadata !DIExpression(), metadata !12909, metadata ptr %subns.addr, metadata !DIExpression()), !dbg !12890
+  store i32 %request, ptr %request.addr, align 4, !DIAssignID !12910
+  call void @llvm.dbg.assign(metadata i32 %request, metadata !12877, metadata !DIExpression(), metadata !12910, metadata ptr %request.addr, metadata !DIExpression()), !dbg !12890
+  store ptr %perms, ptr %perms.addr, align 8, !DIAssignID !12911
+  call void @llvm.dbg.assign(metadata ptr %perms, metadata !12878, metadata !DIExpression(), metadata !12911, metadata ptr %perms.addr, metadata !DIExpression()), !dbg !12890
+  call void @llvm.lifetime.start.p0(i64 8, ptr %rules) #16, !dbg !12912
+  call void @llvm.lifetime.start.p0(i64 8, ptr %__mptr) #16, !dbg !12913
+  %0 = load ptr, ptr %profile.addr, align 8, !dbg !12913
+  %rules2 = getelementptr inbounds %struct.aa_profile, ptr %0, i32 0, i32 9, !dbg !12913
+  %next = getelementptr inbounds %struct.list_head, ptr %rules2, i32 0, i32 0, !dbg !12913
+  %1 = load ptr, ptr %next, align 8, !dbg !12913
+  store ptr %1, ptr %__mptr, align 8, !dbg !12913, !DIAssignID !12914
+  call void @llvm.dbg.assign(metadata ptr %1, metadata !12880, metadata !DIExpression(), metadata !12914, metadata ptr %__mptr, metadata !DIExpression()), !dbg !12899
+  %2 = load ptr, ptr %__mptr, align 8, !dbg !12913
+  %add.ptr = getelementptr i8, ptr %2, i64 0, !dbg !12913
+  store ptr %add.ptr, ptr %tmp, align 8, !dbg !12913
+  call void @llvm.lifetime.end.p0(i64 8, ptr %__mptr) #16, !dbg !12915
+  %3 = load ptr, ptr %tmp, align 8, !dbg !12913
+  store ptr %3, ptr %rules, align 8, !dbg !12916, !DIAssignID !12917
+  call void @llvm.dbg.assign(metadata ptr %3, metadata !12879, metadata !DIExpression(), metadata !12917, metadata ptr %rules, metadata !DIExpression()), !dbg !12890
+  call void @llvm.lifetime.start.p0(i64 8, ptr %tp) #16, !dbg !12918
+  call void @llvm.lifetime.start.p0(i64 8, ptr %i) #16, !dbg !12919
+  call void @llvm.lifetime.start.p0(i64 52, ptr %tmp3) #16, !dbg !12920
+  call void @llvm.lifetime.start.p0(i64 8, ptr %cond) #16, !dbg !12921
+  call void @llvm.memset.p0.i64(ptr align 4 %cond, i8 0, i64 8, i1 false), !dbg !12922, !DIAssignID !12923
+  call void @llvm.dbg.assign(metadata i8 0, metadata !12885, metadata !DIExpression(), metadata !12923, metadata ptr %cond, metadata !DIExpression()), !dbg !12890
+  call void @llvm.lifetime.start.p0(i64 4, ptr %state) #16, !dbg !12924
+  store i32 0, ptr %state, align 4, !dbg !12925, !DIAssignID !12926
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12886, metadata !DIExpression(), metadata !12926, metadata ptr %state, metadata !DIExpression()), !dbg !12890
+  %i4 = getelementptr inbounds %struct.label_it, ptr %i, i32 0, i32 0, !dbg !12927
+  store i32 0, ptr %i4, align 4, !dbg !12927, !DIAssignID !12929
+  call void @llvm.dbg.assign(metadata i32 0, metadata !12883, metadata !DIExpression(DW_OP_LLVM_fragment, 0, 32), metadata !12929, metadata ptr %i4, metadata !DIExpression()), !dbg !12890
+  br label %for.cond, !dbg !12927
+
+Trying to get conditions
+Pred has BranchInst
+Not a conditional branch
+
+*** findAllConditions ***
+
+...Finding preds...
+** No preds
+* Reached to the entry
+Debug info: <path_to_linux>/security/apparmor/domain.c:221
+
+...Inserting log...
+Inserted log for HELLOO
+DBINFO <path_to_linux>/security/apparmor/domain.c: i32 221
+CALFLS label_components_match: i32 -13
+CALFLS aa_ns_visible: i32 0
+NLLFLS arrayidx: ptr null
+CALTRU aa_ns_visible: i32 0
+CMPTRU state: i32 0
+CALFLS aa_ns_visible: i32 0
+NLLFLS arrayidx22: ptr null
+CALTRU aa_ns_visible: i32 0
+CMPTRU state: i32 0
+NLLTRU arrayidx22: ptr null
+CMPTRU allow:   %43 = load i32, ptr %request.addr, align 4, !dbg !13016
+~~~ Inserted all logs ~~~
+
+modified: 1
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !12960
+
+==AnalysisForInt32==
+
+-FUNCTION: aa_ns_visible
+--- Skip Declaration
+
+-FUNCTION: match_component
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %call24, ptr %retval, align 4, !dbg !12965
+
+==AnalysisForInt32==
+StoreInst:   store i32 %call6, ptr %retval, align 4, !dbg !12927
+
+==AnalysisForInt32==
+
+-FUNCTION: aa_dfa_match
+--- Skip Declaration
+
+-FUNCTION: aa_lookup_fperms
+--- Skip Declaration
+
+-FUNCTION: aa_apply_modes_to_perms
+--- Skip Declaration
+
+-FUNCTION: aa_ns_name
+--- Skip Declaration
+
+-FUNCTION: aa_dfa_match_len
+--- Skip Declaration
+
+-FUNCTION: aa_perms_accum
+
+-FUNCTION: kmalloc
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call8, ptr %retval, align 8, !dbg !12913
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call8, ptr %retval, align 8, !dbg !12913
+StoreInst:   store ptr %call6, ptr %retval, align 8, !dbg !12908
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call6, ptr %retval, align 8, !dbg !12908
+StoreInst:   store ptr %call, ptr %retval, align 8, !dbg !12897
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %retval, align 8, !dbg !12897
+
+-FUNCTION: llvm.is.constant.i64
+--- Skip Declaration
+
+-FUNCTION: kmalloc_large
+--- Skip Declaration
+
+-FUNCTION: __kmalloc_index
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 -1, ptr %retval, align 4, !dbg !13017
+
+==AnalysisForInt32==
+StoreInst:   store i32 21, ptr %retval, align 4, !dbg !12998
+
+==AnalysisForInt32==
+StoreInst:   store i32 20, ptr %retval, align 4, !dbg !12993
+
+==AnalysisForInt32==
+StoreInst:   store i32 19, ptr %retval, align 4, !dbg !12988
+
+==AnalysisForInt32==
+StoreInst:   store i32 18, ptr %retval, align 4, !dbg !12983
+
+==AnalysisForInt32==
+StoreInst:   store i32 17, ptr %retval, align 4, !dbg !12978
+
+==AnalysisForInt32==
+StoreInst:   store i32 16, ptr %retval, align 4, !dbg !12973
+
+==AnalysisForInt32==
+StoreInst:   store i32 15, ptr %retval, align 4, !dbg !12968
+
+==AnalysisForInt32==
+StoreInst:   store i32 14, ptr %retval, align 4, !dbg !12963
+
+==AnalysisForInt32==
+StoreInst:   store i32 13, ptr %retval, align 4, !dbg !12958
+
+==AnalysisForInt32==
+StoreInst:   store i32 12, ptr %retval, align 4, !dbg !12953
+
+==AnalysisForInt32==
+StoreInst:   store i32 11, ptr %retval, align 4, !dbg !12948
+
+==AnalysisForInt32==
+StoreInst:   store i32 10, ptr %retval, align 4, !dbg !12943
+
+==AnalysisForInt32==
+StoreInst:   store i32 9, ptr %retval, align 4, !dbg !12938
+
+==AnalysisForInt32==
+StoreInst:   store i32 8, ptr %retval, align 4, !dbg !12933
+
+==AnalysisForInt32==
+StoreInst:   store i32 7, ptr %retval, align 4, !dbg !12928
+
+==AnalysisForInt32==
+StoreInst:   store i32 6, ptr %retval, align 4, !dbg !12923
+
+==AnalysisForInt32==
+StoreInst:   store i32 5, ptr %retval, align 4, !dbg !12918
+
+==AnalysisForInt32==
+StoreInst:   store i32 4, ptr %retval, align 4, !dbg !12913
+
+==AnalysisForInt32==
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !12908
+
+==AnalysisForInt32==
+StoreInst:   store i32 2, ptr %retval, align 4, !dbg !12903
+
+==AnalysisForInt32==
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !12895
+
+==AnalysisForInt32==
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !12887
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !12882
+
+==AnalysisForInt32==
+
+-FUNCTION: kmalloc_trace
+--- Skip Declaration
+
+-FUNCTION: kmalloc_type
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 3, ptr %retval, align 4, !dbg !12890
+
+==AnalysisForInt32==
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !12889
+
+==AnalysisForInt32==
+StoreInst:   store i32 2, ptr %retval, align 4, !dbg !12884
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !12879
+
+==AnalysisForInt32==
+
+-FUNCTION: __kmalloc
+--- Skip Declaration
+
+-FUNCTION: __compiletime_assert_260
+--- Skip Declaration
+
+-FUNCTION: find_attach
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %label106, ptr %retval, align 8, !dbg !13162
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %label106, ptr %retval, align 8, !dbg !13162
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !13153
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !13153
+
+-FUNCTION: x_to_label
+Return value:   %new = alloca ptr, align 8, !DIAssignID !12898
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %new, align 8, !dbg !13038, !DIAssignID !13039
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %new, align 8, !dbg !13038, !DIAssignID !13039
+StoreInst:   store ptr %call34, ptr %new, align 8, !dbg !13032, !DIAssignID !13033
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call34, ptr %new, align 8, !dbg !13032, !DIAssignID !13033
+StoreInst:   store ptr %call26, ptr %new, align 8, !dbg !13015, !DIAssignID !13016
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call26, ptr %new, align 8, !dbg !13015, !DIAssignID !13016
+getErrValue ends:   %label25 = getelementptr inbounds %struct.aa_profile, ptr %38, i32 0, i32 15, !dbg !13012
+(Val)   %label25 = getelementptr inbounds %struct.aa_profile, ptr %38, i32 0, i32 15, !dbg !13012
+modified: 0
+StoreInst:   store ptr %call19, ptr %new, align 8, !dbg !13005, !DIAssignID !13006
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call19, ptr %new, align 8, !dbg !13005, !DIAssignID !13006
+getErrValue ends:   %label = getelementptr inbounds %struct.aa_profile, ptr %34, i32 0, i32 15, !dbg !13003
+(Val)   %label = getelementptr inbounds %struct.aa_profile, ptr %34, i32 0, i32 15, !dbg !13003
+modified: 0
+StoreInst:   store ptr %call12, ptr %new, align 8, !dbg !12985, !DIAssignID !12986
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call12, ptr %new, align 8, !dbg !12985, !DIAssignID !12986
+StoreInst:   store ptr %call9, ptr %new, align 8, !dbg !12974, !DIAssignID !12975
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call9, ptr %new, align 8, !dbg !12974, !DIAssignID !12975
+StoreInst:   store ptr %call, ptr %new, align 8, !dbg !12956, !DIAssignID !12957
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %new, align 8, !dbg !12956, !DIAssignID !12957
+StoreInst:   store ptr null, ptr %new, align 8, !dbg !12917, !DIAssignID !12918
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %new, align 8, !dbg !12917, !DIAssignID !12918
+
+-FUNCTION: aa_dfa_leftmatch
+--- Skip Declaration
+
+-FUNCTION: aa_get_profile_not0
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !12886
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !12886
+StoreInst:   store ptr %2, ptr %retval, align 8, !dbg !12885
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %2, ptr %retval, align 8, !dbg !12885
+
+-FUNCTION: aa_xattrs_match
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %49, ptr %retval, align 4, !dbg !13038
+
+==AnalysisForInt32==
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !12931
+
+==AnalysisForInt32==
+
+-FUNCTION: strcmp
+--- Skip Declaration
+
+-FUNCTION: aa_get_newest_profile
+Return value:   %arrayidx = getelementptr [0 x ptr], ptr %vec, i64 0, i64 %idxprom, !dbg !12876
+
+
+-FUNCTION: might_resched
+
+-FUNCTION: aa_dfa_outofband_transition
+--- Skip Declaration
+
+-FUNCTION: vfs_getxattr_alloc
+--- Skip Declaration
+
+-FUNCTION: __SCT__might_resched
+--- Skip Declaration
+
+-FUNCTION: kref_put
+Return value:   %retval = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 0, ptr %retval, align 4, !dbg !12892
+
+==AnalysisForInt32==
+StoreInst:   store i32 1, ptr %retval, align 4, !dbg !12891
+
+==AnalysisForInt32==
+
+-FUNCTION: aa_label_kref
+--- Skip Declaration
+
+-FUNCTION: refcount_dec_and_test
+
+-FUNCTION: __refcount_dec_and_test
+
+-FUNCTION: __refcount_sub_and_test
+Return value:   %retval = alloca i1, align 1
+
+RetVal is AllocaInst
+StoreInst:   store i1 false, ptr %retval, align 1, !dbg !12921
+
+==AnalysisForInt32==
+StoreInst:   store i1 true, ptr %retval, align 1, !dbg !12915
+
+==AnalysisForInt32==
+
+-FUNCTION: atomic_fetch_sub_release
+
+-FUNCTION: raw_atomic_fetch_sub_release
+
+-FUNCTION: arch_atomic_fetch_sub
+Return value:   %tmp = alloca i32, align 4
+
+RetVal is AllocaInst
+RetVal is i32
+StoreInst:   store i32 %4, ptr %tmp, align 4, !dbg !12885
+
+==AnalysisForInt32==
+
+-FUNCTION: ptrace_parent
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr null, ptr %retval, align 8, !dbg !12894
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr null, ptr %retval, align 8, !dbg !12894
+StoreInst:   store ptr %6, ptr %retval, align 8, !dbg !12893
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %6, ptr %retval, align 8, !dbg !12893
+
+-FUNCTION: aa_get_task_label
+--- Skip Declaration
+
+-FUNCTION: aa_may_ptrace
+--- Skip Declaration
+
+-FUNCTION: validate_creds
+
+-FUNCTION: get_new_cred
+Return value:   %cred.addr = alloca ptr, align 8, !DIAssignID !12873
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %cred, ptr %cred.addr, align 8, !DIAssignID !12875
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %cred, ptr %cred.addr, align 8, !DIAssignID !12875
+
+-FUNCTION: atomic_inc
+
+-FUNCTION: raw_atomic_inc
+
+-FUNCTION: arch_atomic_inc
+
+-FUNCTION: aa_cred_raw_label
+Return value:   %label = alloca ptr, align 8, !DIAssignID !12877
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %call, ptr %label, align 8, !dbg !12882, !DIAssignID !12883
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call, ptr %label, align 8, !dbg !12882, !DIAssignID !12883
+getErrValue ends:   %cred.addr = alloca ptr, align 8, !DIAssignID !12875
+(Val)   %cred.addr = alloca ptr, align 8, !DIAssignID !12875
+modified: 0
+
+-FUNCTION: llvm.is.constant.i32
+--- Skip Declaration
+
+-FUNCTION: const_test_bit
+
+-FUNCTION: _test_bit
+
+-FUNCTION: arch_test_bit
+
+-FUNCTION: constant_test_bit
+
+-FUNCTION: variable_test_bit
+
+-FUNCTION: aa_get_profile_rcu
+Return value:   %c = alloca ptr, align 8, !DIAssignID !12879
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %4, ptr %c, align 8, !dbg !12895, !DIAssignID !12896
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %4, ptr %c, align 8, !dbg !12895, !DIAssignID !12896
+
+-FUNCTION: list_empty
+
+-FUNCTION: build_change_hat
+Return value:   %retval = alloca ptr, align 8
+
+RetVal is AllocaInst
+RetVal is ptr
+StoreInst:   store ptr %label39, ptr %retval, align 8, !dbg !12990
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %label39, ptr %retval, align 8, !dbg !12990
+StoreInst:   store ptr %call37, ptr %retval, align 8, !dbg !12987
+
+==AnalysisForPtr==
+
+getErrValue of   store ptr %call37, ptr %retval, align 8, !dbg !12987
+getErrValue ends:   %error = alloca i32, align 4, !DIAssignID !12887
+(Val)   %error = alloca i32, align 4, !DIAssignID !12887
+modified: 0
+
+-FUNCTION: atomic_dec_and_test
+
+-FUNCTION: __put_cred
+--- Skip Declaration
+
+-FUNCTION: raw_atomic_dec_and_test
+
+-FUNCTION: arch_atomic_dec_and_test
+
+-FUNCTION: aa_current_raw_label
+
+-FUNCTION: llvm.dbg.assign
+--- Skip Declaration
+
+-FUNCTION: _printk
+--- Skip Declaration
+Modified
+PLEASE submit a bug report to https://github.com/llvm/llvm-project/issues/ and include the crash backtrace, preprocessed source, and associated run script.
+Stack dump:
+0.	Program arguments: clang -Wp,-MMD,security/apparmor/.domain.o.d -nostdinc -I<path_to_linux>/arch/x86/include -I./arch/x86/include/generated -I<path_to_linux>/include -I./include -I<path_to_linux>/arch/x86/include/uapi -I./arch/x86/include/generated/uapi -I<path_to_linux>/include/uapi -I./include/generated/uapi -include <path_to_linux>/include/linux/compiler-version.h -include <path_to_linux>/include/linux/kconfig.h -include <path_to_linux>/include/linux/compiler_types.h -D__KERNEL__ --target=x86_64-linux-gnu -fintegrated-as -Werror=unknown-warning-option -Werror=ignored-optimization-argument -Werror=option-ignored -Werror=unused-command-line-argument -fmacro-prefix-map=<path_to_linux>/= -std=gnu11 -fshort-wchar -funsigned-char -fno-common -fno-PIE -fno-strict-aliasing -Wall -Wundef -Werror=implicit-function-declaration -Werror=implicit-int -Werror=return-type -Werror=strict-prototypes -Wno-format-security -Wno-trigraphs -mno-sse -mno-mmx -mno-sse2 -mno-3dnow -mno-avx -fcf-protection=branch -fno-jump-tables -m64 -falign-loops=1 -mno-80387 -mno-fp-ret-in-387 -mstack-alignment=8 -mskip-rax-setup -mtune=generic -mno-red-zone -mcmodel=kernel -Wno-sign-compare -fno-asynchronous-unwind-tables -mretpoline-external-thunk -mindirect-branch-cs-prefix -mfunction-return=thunk-extern -fpatchable-function-entry=16,16 -fno-delete-null-pointer-checks -Wno-frame-address -Wno-address-of-packed-member -O2 -Wframe-larger-than=2048 -fstack-protector-strong -Wno-gnu -Wno-unused-but-set-variable -Wno-unused-const-variable -fno-stack-clash-protection -pg -mfentry -DCC_USING_NOP_MCOUNT -DCC_USING_FENTRY -falign-functions=16 -Wvla -Wno-pointer-sign -Wcast-function-type -fstrict-flex-arrays=3 -Wimplicit-fallthrough -fno-strict-overflow -fno-stack-check -Werror=date-time -Werror=incompatible-pointer-types -Wno-initializer-overrides -Wno-sign-compare -Wno-pointer-to-enum-cast -Wno-tautological-constant-out-of-range-compare -Wno-unaligned-access -Wno-cast-function-type-strict -g -fno-discard-value-names -fpass-plugin=<path_to_eacces-modifier>/build/permod/PermodPass.so -I <path_to_linux>/security/apparmor -I ./security/apparmor -DKBUILD_MODFILE=\"security/apparmor/apparmor\" -DKBUILD_BASENAME=\"domain\" -DKBUILD_MODNAME=\"apparmor\" -D__KBUILD_MODNAME=kmod_apparmor -c -o security/apparmor/domain.o <path_to_linux>/security/apparmor/domain.c
+1.	<eof> parser at end of file
+2.	Code generation
+3.	Running pass 'Function Pass Manager' on module '<path_to_linux>/security/apparmor/domain.c'.
+4.	Running pass 'Register Coalescer' on function '@profile_transition'
+Stack dump without symbol names (ensure you have llvm-symbolizer in your PATH or set the environment var `LLVM_SYMBOLIZER_PATH` to point to it):
+0  libLLVM-17.so.1    0x00007f10c8cd4436 llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) + 54
+1  libLLVM-17.so.1    0x00007f10c8cd25d0 llvm::sys::RunSignalHandlers() + 80
+2  libLLVM-17.so.1    0x00007f10c8cd3b04 llvm::sys::CleanupOnSignal(unsigned long) + 244
+3  libLLVM-17.so.1    0x00007f10c8c243a0
+4  libpthread.so.0    0x00007f10d3598140
+5  libLLVM-17.so.1    0x00007f10c91f2e04
+6  libLLVM-17.so.1    0x00007f10c91f04ff
+7  libLLVM-17.so.1    0x00007f10c91eeead
+8  libLLVM-17.so.1    0x00007f10c91eceb8
+9  libLLVM-17.so.1    0x00007f10c907dd4b llvm::MachineFunctionPass::runOnFunction(llvm::Function&) + 635
+10 libLLVM-17.so.1    0x00007f10c8e134af llvm::FPPassManager::runOnFunction(llvm::Function&) + 687
+11 libLLVM-17.so.1    0x00007f10c8e19153 llvm::FPPassManager::runOnModule(llvm::Module&) + 51
+12 libLLVM-17.so.1    0x00007f10c8e13ba8 llvm::legacy::PassManagerImpl::run(llvm::Module&) + 1000
+13 libclang-cpp.so.17 0x00007f10d11e709e clang::EmitBackendOutput(clang::DiagnosticsEngine&, clang::HeaderSearchOptions const&, clang::CodeGenOptions const&, clang::TargetOptions const&, clang::LangOptions const&, llvm::StringRef, llvm::Module*, clang::BackendAction, llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem>, std::unique_ptr<llvm::raw_pwrite_stream, std::default_delete<llvm::raw_pwrite_stream>>) + 7342
+14 libclang-cpp.so.17 0x00007f10d156fa9e
+15 libclang-cpp.so.17 0x00007f10d0237406 clang::ParseAST(clang::Sema&, bool, bool) + 614
+16 libclang-cpp.so.17 0x00007f10d1f5a9d5 clang::FrontendAction::Execute() + 85
+17 libclang-cpp.so.17 0x00007f10d1ed6744 clang::CompilerInstance::ExecuteAction(clang::FrontendAction&) + 708
+18 libclang-cpp.so.17 0x00007f10d1fd47a4 clang::ExecuteCompilerInvocation(clang::CompilerInstance*) + 660
+19 clang              0x000055dd101527d3 cc1_main(llvm::ArrayRef<char const*>, char const*, void*) + 2435
+20 clang              0x000055dd10150365
+21 libclang-cpp.so.17 0x00007f10d1b99229
+22 libLLVM-17.so.1    0x00007f10c8c2413c llvm::CrashRecoveryContext::RunSafely(llvm::function_ref<void ()>) + 140
+23 libclang-cpp.so.17 0x00007f10d1b98a7e clang::driver::CC1Command::Execute(llvm::ArrayRef<std::optional<llvm::StringRef>>, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char>>*, bool*) const + 366
+24 libclang-cpp.so.17 0x00007f10d1b61a7d clang::driver::Compilation::ExecuteCommand(clang::driver::Command const&, clang::driver::Command const*&, bool) const + 877
+25 libclang-cpp.so.17 0x00007f10d1b61cde clang::driver::Compilation::ExecuteJobs(clang::driver::JobList const&, llvm::SmallVectorImpl<std::pair<int, clang::driver::Command const*>>&, bool) const + 142
+26 libclang-cpp.so.17 0x00007f10d1b7d84d clang::driver::Driver::ExecuteCompilation(clang::driver::Compilation&, llvm::SmallVectorImpl<std::pair<int, clang::driver::Command const*>>&) + 349
+27 clang              0x000055dd1014fccd clang_main(int, char**, llvm::ToolContext const&) + 11229
+28 clang              0x000055dd1015c452 main + 50
+29 libc.so.6          0x00007f10c7c82d0a __libc_start_main + 234
+30 clang              0x000055dd1014cd9a _start + 42
+clang: error: clang frontend command failed with exit code 139 (use -v to see invocation)
+Debian clang version 17.0.6 (++20231208085823+6009708b4367-1~exp1~20231208085918.75)
+Target: x86_64-unknown-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+clang: note: diagnostic msg: 
+********************
+
+PLEASE ATTACH THE FOLLOWING FILES TO THE BUG REPORT:
+Preprocessed source(s) and associated run script(s) are located at:
+clang: note: diagnostic msg: /tmp/domain-391332.c
+clang: note: diagnostic msg: /tmp/domain-391332.sh
+clang: note: diagnostic msg: 
+
+********************
+make[4]: *** [<path_to_linux>/scripts/Makefile.build:243: security/apparmor/domain.o] Error 1
+make[3]: *** [<path_to_linux>/scripts/Makefile.build:480: security/apparmor] Error 2
+make[2]: *** [<path_to_linux>/scripts/Makefile.build:480: security] Error 2
+make[1]: *** [<path_to_linux>/Makefile:2032: .] Error 2
+make: *** [<path_to_linux>/Makefile:234: __sub-make] Error 2
