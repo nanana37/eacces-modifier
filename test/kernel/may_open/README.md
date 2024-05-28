@@ -1,6 +1,8 @@
 # may_open
 
-```c
+## Source Code
+
+```c fs/namei.c
 static int may_open(struct mnt_idmap *idmap, const struct path *path,
       int acc_mode, int flag)
 {

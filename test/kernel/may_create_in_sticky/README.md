@@ -1,8 +1,12 @@
-```c
+# may_create_in_sticky
+
+## Source Code
+
+```c fs/namei.c
 /**
  * may_create_in_sticky - Check whether an O_CREAT open in a sticky directory
- *			  should be allowed, or not, on files that already
- *			  exist.
+ *     should be allowed, or not, on files that already
+ *     exist.
  * @idmap: idmap of the mount the inode was found from
  * @nd: nameidata pathwalk data
  * @inode: the inode of the file to open
@@ -52,13 +56,16 @@ static int may_create_in_sticky(struct mnt_idmap *idmap, struct nameidata *nd,
 }
 ```
 
-# Description
+## Description
 
 Cannot O_CREAT open a FIFO (or a regular file) in a sticky directory when:
+
 - `sysctl_protected_fifos` or `sysctl_protected_regular` is enabled
 - the file is owned by other user
-* this should happens even for root (but not actually printed in my case)
-* NOTE: Disabling `sysctl_protected_fifos` or `sysctl_protected_regular` will also cause EACCES somewhere else. CHECK IT OUT!
+- *this should happens even for root (but not actually printed in my case)
+
+NOTE: Disabling `sysctl_protected_fifos` or `sysctl_protected_regular` will also
+      cause EACCES somewhere else. CHECK IT OUT!
 
 ```bash
 $ make clean
@@ -68,23 +75,22 @@ $ make #sh main.sh
 Permission denied
 ```
 
+## NOT WORK BELOW
 
-# NOT WORK BELOW
 ## sticky bit
 
 sticky directory
 
-```
+```bash
 chmod 1777 <dir>
 ```
-
 
 ## Traceout
 
 Assumption:
 sticky bit will prevent other usr's action in a sticky directory.
 
-```
+```bash
 make
 
 sh scripts/trace.sh <owner/otheruser>

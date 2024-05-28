@@ -1,6 +1,8 @@
 # may_follow_link
 
-```c
+## Source Code
+
+```c fs/namei.c
 /**
  * may_follow_link - Check symlink following for unsafe situations
  * @nd: nameidata pathwalk data
@@ -47,12 +49,13 @@ static inline int may_follow_link(struct nameidata *nd,
 }
 ```
 
-# Description
+## Description
 
 Cannot go through symlink which is:
+
 - made by other user
 - under sticky & world-wide dir(e.g., /tmp).
-* this happens even if you are root
+- *this happens even if you are root
 
 ```bash
 $ make clean
