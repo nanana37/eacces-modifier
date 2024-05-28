@@ -397,9 +397,7 @@ struct ConditionAnalysis {
           continue;
         }
         preds.push_back(PredBB);
-        continue;
-      }
-      if (isa<SwitchInst>(TI)) {
+      } else if (isa<SwitchInst>(TI)) {
         /* caseBB may have multiple same preds
          * e.g.
             switch (x) {
@@ -410,10 +408,7 @@ struct ConditionAnalysis {
         */
         if (std::find(preds.begin(), preds.end(), PredBB) == preds.end())
           preds.push_back(PredBB);
-        continue;
       }
-      DEBUG_PRINT("* PredBB terminator is not a branch or switch\n");
-      DEBUG_PRINT2(PredBB);
     }
     DEBUG_PRINT("...End of Finding preds...\n");
   }
@@ -477,16 +472,6 @@ struct ConditionAnalysis {
         reachedEntry &= false;
       }
     }
-
-#ifdef DEBUG
-    DEBUG_PRINT("depth" << depth);
-    if (reachedEntry) {
-      DEBUG_PRINT("Reached to the entry\n");
-    } else {
-      DEBUG_PRINT("* not reached to the entry (inside the recursion)\n");
-      /* DEBUG_PRINT2(&ErrBB); */
-    }
-#endif // DEBUG
   }
 
   /*
@@ -822,13 +807,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         continue;
       }
 
-      // TODO
+      // FIXME: this function cause crash
       if (F.getName() == "profile_transition") {
         DEBUG_PRINT("--- Skip profile_transition\n");
         continue;
-      }
-      if (F.getName() == "acl_permission_check") {
-        DEBUG_PRINT(F);
       }
 
       Value *RetVal = getReturnValue(F);
