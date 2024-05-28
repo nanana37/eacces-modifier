@@ -39,7 +39,8 @@ using namespace llvm;
 
 namespace {
 
-#ifdef DEBUG
+// #define DEBUG2
+#ifdef DEBUG2
 #define DEBUG_PRINT2(x)                                                        \
   do {                                                                         \
     if (!x)                                                                    \
@@ -53,7 +54,7 @@ namespace {
 #define DEBUG_PRINT2(x)                                                        \
   do {                                                                         \
   } while (0)
-#endif // DEBUG
+#endif // DEBUG2
 
 struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   Value *visitFunction(Function &F) { return nullptr; }
@@ -411,7 +412,7 @@ struct ConditionAnalysis {
   }
 
   bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
-    DEBUG_PRINT("Trying to get conditions\n");
+    DEBUG_PRINT("\n** findConditions **\n");
 
     // Get Condition
     /*
@@ -419,10 +420,14 @@ struct ConditionAnalysis {
      * switch (flag) {}     // name:of flag, val:of flag
      */
     if (auto *BrI = dyn_cast<BranchInst>(CondBB.getTerminator())) {
+#ifdef DEBUG2
       DEBUG_PRINT("Pred has BranchInst\n");
+#endif
       return findIfCond(*BrI, DestBB);
     } else if (auto *SwI = dyn_cast<SwitchInst>(CondBB.getTerminator())) {
+#ifdef DEBUG2
       DEBUG_PRINT("Pred has SwitchInst\n");
+#endif
       return findSwCond(*SwI);
     } else {
       DEBUG_PRINT("* CondBB terminator is not a branch or switch\n");
