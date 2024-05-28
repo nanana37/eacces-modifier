@@ -1,0 +1,34 @@
+May 28 12:51:29 debian kernel: [  107.040916] --- Hello, I'm Permod ---
+May 28 12:51:29 debian kernel: [  107.040920] [Permod] <path_to_linux>/fs/namei.c: 1255
+May 28 12:51:29 debian kernel: [  107.040924] [Permod] may_create_in_sticky(): -13
+May 28 12:51:29 debian kernel: [  107.040927] [Permod] llvm.expect.i64(): not 0
+May 28 12:51:29 debian kernel: [  107.040929] [Permod] i_mode52: not 61440
+May 28 12:51:29 debian kernel: [  107.040932] [Permod] sysctl_protected_fifos: 2
+May 28 12:51:29 debian kernel: [  107.040935] [Permod] sysctl_protected_regular: 0
+May 28 12:51:29 debian kernel: [  107.040937] [Permod] sysctl_protected_fifos: 0
+May 28 12:51:29 debian kernel: [  107.040940] [Permod] sysctl_protected_fifos: not 0
+May 28 12:51:29 debian kernel: [  107.040942] [Permod] i_mode: 61440
+May 28 12:51:29 debian kernel: [  107.040945] [Permod] sysctl_protected_regular: not 0
+May 28 12:51:29 debian kernel: [  107.040947] [Permod] i_mode6: 61440
+May 28 12:51:29 debian kernel: [  107.040950] [Permod] llvm.expect.i64(): 0
+May 28 12:51:29 debian kernel: [  107.040952] [Permod] vfsuid_eq(): 0
+May 28 12:51:29 debian kernel: [  107.040954] [Permod] vfsuid_eq_kuid(): 0
+May 28 12:51:29 debian kernel: [  107.040957] [Permod] llvm.expect.i64(): 0
+May 28 12:51:29 debian kernel: [  107.040959] [Permod] dir_mode: 16
+May 28 12:51:29 debian kernel: [  107.040961] [Permod] sysctl_protected_fifos: not 2
+May 28 12:51:29 debian kernel: [  107.040964] [Permod] i_mode52: 61440
+May 28 12:51:29 debian kernel: [  107.040966] [Permod] sysctl_protected_regular: not 2
+May 28 12:51:29 debian kernel: [  107.040968] [Permod] i_mode61: not 61440
+May 28 12:51:29 debian kernel: [  107.040980] --- Hello, I'm Permod ---
+May 28 12:51:29 debian kernel: [  107.040982] [Permod] <path_to_linux>/fs/namei.c: 441
+May 28 12:51:29 debian kernel: [  107.040985] [Permod] generic_permission(): -13
+May 28 12:51:29 debian kernel: [  107.040987] [Permod] i_mode24: not 73
+May 28 12:51:29 debian kernel: [  107.040990] [Permod] Unnamed Condition: not 1
+May 28 12:51:29 debian kernel: [  107.040992] [Permod] Unnamed Condition: 4
+May 28 12:51:29 debian kernel: [  107.040995] [Permod] ret: not -13
+May 28 12:51:29 debian kernel: [  107.040997] [Permod] i_mode: 61440
+May 28 12:51:29 debian kernel: [  107.041000] [Permod] Unnamed Condition: not 4
+May 28 12:51:29 debian kernel: [  107.041002] [Permod] capable_wrt_inode_uidgid(): 0
+May 28 12:51:29 debian kernel: [  107.041004] [Permod] Unnamed Condition: 1
+May 28 12:51:29 debian kernel: [  107.041007] [Permod] i_mode24: 73
+May 28 12:51:29 debian kernel: [  107.041009] [Permod] capable_wrt_inode_uidgid(): 0

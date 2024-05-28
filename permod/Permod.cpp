@@ -12,6 +12,7 @@
 
 #include <errno.h>
 #include <llvm/IR/Instructions.h>
+#include <unordered_set>
 
 #define DEBUG
 #ifdef DEBUG
@@ -217,6 +218,8 @@ struct ConditionAnalysis {
   // Prepare Array of Condition
   std::vector<Condition *> conds;
 
+  std::unordered_set<BasicBlock *> visitedBBs;
+
   // Check whether the DestBB is true or false successor
   bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
     if (BrI.getSuccessor(0) == &DestBB)
@@ -382,20 +385,14 @@ struct ConditionAnalysis {
    */
   void findPreds(BasicBlock &BB, std::vector<BasicBlock *> &preds) {
     DEBUG_PRINT("\n...Finding preds...\n");
+
     if (predecessors(&BB).empty())
       return;
+
     for (auto *PredBB : predecessors(&BB)) {
       DEBUG_PRINT("found a pred\n");
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
-        // NOTE: Prevent goint to loop latch; the backtrace will be an
-        // infinite loop. TOOD: Go to loop latch, if you can escape from the
-        // loop.
-        if (TI->getMetadata("llvm.loop")) {
-          DEBUG_PRINT("*** It's loop latch!!!\n");
-          DEBUG_PRINT2(PredBB);
-          continue;
-        }
         preds.push_back(PredBB);
       } else if (isa<SwitchInst>(TI)) {
         /* caseBB may have multiple same preds
@@ -435,12 +432,23 @@ struct ConditionAnalysis {
 
   // Search from bottom to top (entry block)
   void findAllConditions(BasicBlock &ErrBB, int depth = 0) {
-    // TODO: Stop infinite loop (such as while analysis) more smartly
+    DEBUG_PRINT("\n*** findAllConditions ***\n");
+
+    // Prevent infinite loop
     if (depth > MAX_TRACE_DEPTH) {
       DEBUG_PRINT("************** Too deep for findAllConditions\n");
       return;
     }
-    DEBUG_PRINT("\n...Finding all conditions...\n");
+
+    // Record visited BBs to prevent infinite loop
+    // Visited BB is the basic block whose preds are already checked
+    // = All the conditions to the block are already found
+    if (visitedBBs.find(&ErrBB) != visitedBBs.end()) {
+      DEBUG_PRINT("************** Already visited\n");
+      return;
+    }
+    visitedBBs.insert(&ErrBB);
+
     // Find CondBBs (conditional predecessors)
     std::vector<BasicBlock *> preds;
     findPreds(ErrBB, preds);
@@ -455,6 +463,9 @@ struct ConditionAnalysis {
         DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
         continue;
       }
+
+      DEBUG_PRINT("CondBB: " << CondBB->getName() << "\n");
+      DEBUG_PRINT2(CondBB);
 
       // Get Condition
       // TODO: Should this return bool?
