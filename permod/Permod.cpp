@@ -119,18 +119,15 @@ struct ConditionAnalysis {
 
     for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
       if (!isa<Instruction>(val)) {
-        DEBUG_PRINT("** Not an instruction\n");
         return val;
       }
       Value *original = OF.visit(cast<Instruction>(val));
       if (!original) {
-        DEBUG_PRINT("** No original\n");
         return val;
       }
       val = original;
     }
 
-    DEBUG_PRINT("** Too deep for getOrigin\n");
     return val;
   }
 
@@ -153,7 +150,7 @@ struct ConditionAnalysis {
     StringRef Name = getOrigin(V)->getName();
     if (Name.empty())
       Name = "Unnamed Condition";
-    DEBUG_PRINT("Name: " << Name << "\n");
+    DEBUG_PRINT2("Name: " << Name << "\n");
     return Name;
   }
 
@@ -343,7 +340,7 @@ struct ConditionAnalysis {
     // Branch sometimes has only one successor
     // e.g. br label %if.end
     if (!BrI.isConditional()) {
-      DEBUG_PRINT("Not a conditional branch\n");
+      DEBUG_PRINT2("Not a conditional branch\n");
       return true;
     }
 
@@ -389,13 +386,13 @@ struct ConditionAnalysis {
    * Search predecessors for If/Switch Statement BB (CondBB)
    */
   void findPreds(BasicBlock &BB, std::vector<BasicBlock *> &preds) {
-    DEBUG_PRINT("\n...Finding preds...\n");
+    DEBUG_PRINT2("\n...Finding preds...\n");
 
     if (predecessors(&BB).empty())
       return;
 
     for (auto *PredBB : predecessors(&BB)) {
-      DEBUG_PRINT("found a pred\n");
+      DEBUG_PRINT2("found a pred\n");
       Instruction *TI = PredBB->getTerminator();
       if (isa<BranchInst>(TI)) {
         preds.push_back(PredBB);
@@ -412,11 +409,11 @@ struct ConditionAnalysis {
           preds.push_back(PredBB);
       }
     }
-    DEBUG_PRINT("...End of Finding preds...\n");
+    DEBUG_PRINT2("...End of Finding preds...\n");
   }
 
   bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
-    DEBUG_PRINT("\n** findConditions **\n");
+    DEBUG_PRINT2("\n** findConditions **\n");
 
     // Get Condition
     /*
@@ -430,14 +427,14 @@ struct ConditionAnalysis {
       DEBUG_PRINT2("Pred has SwitchInst\n");
       return findSwCond(*SwI);
     } else {
-      DEBUG_PRINT("* CondBB terminator is not a branch or switch\n");
+      DEBUG_PRINT2("* CondBB terminator is not a branch or switch\n");
       return false;
     }
   }
 
   // Search from bottom to top (entry block)
   void findAllConditions(BasicBlock &ErrBB, int depth = 0) {
-    DEBUG_PRINT("\n*** findAllConditions ***\n");
+    DEBUG_PRINT2("\n*** findAllConditions ***\n");
 
     // Prevent infinite loop
     if (depth > MAX_TRACE_DEPTH) {
@@ -449,7 +446,7 @@ struct ConditionAnalysis {
     // Visited BB is the basic block whose preds are already checked
     // = All the conditions to the block are already found
     if (visitedBBs.find(&ErrBB) != visitedBBs.end()) {
-      DEBUG_PRINT("************** Already visited\n");
+      DEBUG_PRINT2("************** Already visited\n");
       return;
     }
     visitedBBs.insert(&ErrBB);
@@ -458,7 +455,6 @@ struct ConditionAnalysis {
     std::vector<BasicBlock *> preds;
     findPreds(ErrBB, preds);
     if (preds.empty()) {
-      DEBUG_PRINT("** No preds\n");
       return;
     }
 
@@ -678,7 +674,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   // %call157 = call ptr @ERR_PTR(i64 noundef %conv156) #22,
   // store ptr %call157, ptr %retval, align 8, !dbg !8576
   Value *getErrValue(StoreInst &SI) {
-    DEBUG_PRINT("\ngetErrValue of " << SI << "\n");
+    DEBUG_PRINT2("\ngetErrValue of " << SI << "\n");
 
     CallInst *CI = dyn_cast<CallInst>(SI.getValueOperand());
     if (!CI)
@@ -707,7 +703,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       ErrVal = newVal;
     }
 
-    DEBUG_PRINT("getErrValue ends: " << *ErrVal << "\n");
+    DEBUG_PRINT2("getErrValue ends: " << *ErrVal << "\n");
 
     return ErrVal;
   }
@@ -755,7 +751,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         ConditionAnalysis.deleteAllCond();
       }
     }
-    DEBUG_PRINT("modified: " << modified << "\n");
     return modified;
   }
 
@@ -795,7 +790,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       ConditionAnalysis.deleteAllCond();
     }
 
-    DEBUG_PRINT("modified: " << modified << "\n");
     return modified;
   }
 
@@ -822,37 +816,21 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       // Skip
       if (F.isDeclaration()) {
-        DEBUG_PRINT("--- Skip Declaration\n");
+        DEBUG_PRINT2("--- Skip Declaration\n");
         continue;
       }
       if (F.getName().startswith("llvm")) {
-        DEBUG_PRINT("--- Skip llvm\n");
+        DEBUG_PRINT2("--- Skip llvm\n");
         continue;
       }
       if (F.getName() == LOGGER) {
-        DEBUG_PRINT("--- Skip Logger\n");
+        DEBUG_PRINT2("--- Skip Logger\n");
         continue;
       }
 
       Value *RetVal = getReturnValue(F);
       if (!RetVal)
         continue;
-      DEBUG_PRINT("Return value: " << *RetVal << "\n\n");
-
-      // Analysis for ERR_PTR
-      // Search again, if RetVal is alloca ptr
-      if (auto *AllocaI = dyn_cast<AllocaInst>(RetVal)) {
-        DEBUG_PRINT("RetVal is AllocaInst\n");
-        // alloca i32, align 4
-        if (AllocaI->getAllocatedType() == Type::getInt32Ty(F.getContext())) {
-          DEBUG_PRINT("RetVal is " << *AllocaI->getAllocatedType() << "\n");
-        }
-        // alloca ptr, align 8
-        if (AllocaI->getAllocatedType() == Type::getInt8PtrTy(F.getContext())) {
-          DEBUG_PRINT("RetVal is " << *AllocaI->getAllocatedType() << "\n");
-          /* RetVal = findReturnValue(*AllocaI->getParent()); */
-        }
-      }
 
       for (User *U : RetVal->users()) {
         StoreInst *SI = dyn_cast<StoreInst>(U);
@@ -872,7 +850,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT("Modified\n");
       return PreservedAnalyses::none();
     } else {
-      DEBUG_PRINT("Not Modified\n");
+      DEBUG_PRINT2("Not Modified\n");
       return PreservedAnalyses::all();
     }
   };
