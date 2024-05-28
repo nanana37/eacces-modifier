@@ -591,8 +591,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   // NOTE: Expect as Function has only one ret inst
   Value *getReturnValue(Function &F) {
     for (auto &BB : F) {
-      Value *RetVal = findReturnValue(BB);
-      if (RetVal)
+      if (Value *RetVal = findReturnValue(BB))
         return RetVal;
     }
     return nullptr;
@@ -600,33 +599,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   // NOTE: maybe to find alloca is better?
   Value *findReturnValue(BasicBlock &BB) {
-    Instruction *TI = BB.getTerminator();
-    if (!TI)
-      return nullptr;
-
-    // Search for return inst
-    ReturnInst *RI = dyn_cast<ReturnInst>(TI);
-    if (!RI)
-      return nullptr;
-
-    // What is ret value?
-    Value *RetVal = RI->getReturnValue();
-    if (!RetVal)
-      return nullptr;
-    LoadInst *LI = dyn_cast<LoadInst>(RetVal);
-    if (!LI) {
-      return nullptr;
+    if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
+      if (auto *LI = dyn_cast_or_null<LoadInst>(RI->getReturnValue()))
+        return LI->getPointerOperand();
     }
-    RetVal = LI->getPointerOperand();
-
-    // RetVal should be Alloca or GEP
-    /* DEBUG_PRINT("Type of RetVal is "); */
-    /* if (isa<AllocaInst>(RetVal)) { */
-    /*   DEBUG_PRINT("AllocaInst\n"); */
-    /* } else { */
-    /*   DEBUG_PRINT("not AllocaInst" << *RetVal << "\n"); */
-    /* } */
-    return RetVal;
+    return nullptr;
   }
 
   bool isStoreErr(StoreInst &SI) {
