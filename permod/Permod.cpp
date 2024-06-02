@@ -542,27 +542,23 @@ struct ConditionAnalysis {
       Condition *cond = conds.back();
       conds.pop_back();
 
-      if (cond->Type == HELLOO) {
-        args.push_back(format[cond->Type]);
-        builder.CreateCall(logFunc, args);
-        DEBUG_PRINT("Inserted log for HELLOO\n");
-        args.clear();
-        delete cond;
-        continue;
+      args.push_back(format[cond->Type]);
+      DEBUG_PRINT(condTypeStr[cond->Type]);
+
+      switch (cond->Type) {
+      case HELLOO:
+        DEBUG_PRINT("\n");
+        break;
+      default:
+        DEBUG_PRINT(" " << cond->Name << ": " << *cond->Val << "\n");
+        args.push_back(builder.CreateGlobalStringPtr(cond->Name));
+        args.push_back(cond->Val);
+        break;
       }
 
-      // Insert log
-      args.push_back(format[cond->Type]);
-      args.push_back(builder.CreateGlobalStringPtr(cond->Name));
-      args.push_back(cond->Val);
       builder.CreateCall(logFunc, args);
-
-#ifdef DEBUG
-      DEBUG_PRINT(condTypeStr[cond->Type] << " " << cond->Name << ": "
-                                          << *cond->Val << "\n");
-#endif // DEBUG
-
       args.clear();
+      delete cond;
       modified = true;
     }
 
