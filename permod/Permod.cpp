@@ -171,13 +171,15 @@ struct ConditionAnalysis {
     SWITCH,
     DBINFO,
     HELLOO,
+    _OPEN_,
+    _CLSE_,
     NUM_OF_CONDTYPE
   };
 
 #ifdef DEBUG
-  const char *condTypeStr[NUM_OF_CONDTYPE] = {"CMPTRU", "CMPFLS", "NLLTRU",
-                                              "NLLFLS", "CALTRU", "CALFLS",
-                                              "SWITCH", "DBINFO", "HELLOO"};
+  const char *condTypeStr[NUM_OF_CONDTYPE] = {
+      "CMPTRU", "CMPFLS", "NLLTRU", "NLLFLS", "CALTRU", "CALFLS",
+      "SWITCH", "DBINFO", "HELLOO", "_OPEN_", "_CLSE_"};
 #endif // DEBUG
 
   class Condition {
@@ -204,6 +206,8 @@ struct ConditionAnalysis {
     formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
     formatStr[DBINFO] = "[Permod] %s: %d\n";
     formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
+    formatStr[_OPEN_] = "[Permod] {\n";
+    formatStr[_CLSE_] = "[Permod] }\n";
 
     for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
       Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
@@ -460,6 +464,7 @@ struct ConditionAnalysis {
 
     bool reachedEntry = true;
     for (auto *CondBB : preds) {
+      conds.push_back(new Condition("", NULL, _CLSE_));
       if (!CondBB) {
         DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
         continue;
@@ -483,6 +488,7 @@ struct ConditionAnalysis {
       } else {
         reachedEntry &= false;
       }
+      conds.push_back(new Condition("", NULL, _OPEN_));
     }
   }
 
@@ -547,6 +553,8 @@ struct ConditionAnalysis {
 
       switch (cond->Type) {
       case HELLOO:
+      case _OPEN_:
+      case _CLSE_:
         DEBUG_PRINT("\n");
         break;
       default:
