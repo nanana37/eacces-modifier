@@ -4,24 +4,9 @@
 int errfunc(int x) {
   printf("x = %d\n", x);
 
-  if (x < 1) {
-    // 0
+  if (x & 1)
     return -EACCES;
-  }
-  if (x > 4) {
-    // 4, 5
-    return -EACCES;
-  }
-  if (x >= 4) {
-    // 3
-    return -EACCES;
-  }
-  if (x == 2) {
-    // 2
-    return -EACCES;
-  }
   return -EACCES;
-  return 0;
 }
 
 int main() {

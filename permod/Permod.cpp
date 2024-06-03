@@ -70,7 +70,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   Value *visitZExtInst(ZExtInst &ZI) { return ZI.getOperand(0); }
   Value *visitSExtInst(SExtInst &SI) { return SI.getOperand(0); }
   // TODO: Is binary operator always and?
-  Value *visitBinaryOperator(BinaryOperator &AI) { return AI.getOperand(0); }
+  Value *visitBinaryOperator(BinaryOperator &BI) { return BI.getOperand(0); }
 
   // NOTE: getCalledFunction() returns null for indirect call
   Value *visitCallInst(CallInst &CI) {
@@ -164,10 +164,16 @@ struct ConditionAnalysis {
   enum CondType {
     CMPTRU = 0,
     CMPFLS,
+    CMP_GT,
+    CMP_GE,
+    CMP_LT,
+    CMP_LE,
     NLLTRU,
     NLLFLS,
     CALTRU,
     CALFLS,
+    ANDTRU,
+    ANDFLS,
     SWITCH,
     DBINFO,
     HELLOO,
@@ -178,7 +184,8 @@ struct ConditionAnalysis {
 
 #ifdef DEBUG
   const char *condTypeStr[NUM_OF_CONDTYPE] = {
-      "CMPTRU", "CMPFLS", "NLLTRU", "NLLFLS", "CALTRU", "CALFLS",
+      "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE",
+      "NLLTRU", "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS",
       "SWITCH", "DBINFO", "HELLOO", "_OPEN_", "_CLSE_"};
 #endif // DEBUG
 
@@ -190,6 +197,52 @@ struct ConditionAnalysis {
 
     Condition(StringRef name, Value *val, CondType type)
         : Name(name), Val(val), Type(type) {}
+
+  private:
+    void setType(CmpInst &CmpI, bool isBranchTrue) {
+      switch (CmpI.getPredicate()) {
+      case CmpInst::Predicate::ICMP_EQ:
+        Type = isBranchTrue ? CMPTRU : CMPFLS;
+        break;
+      case CmpInst::Predicate::ICMP_NE:
+        Type = isBranchTrue ? CMPFLS : CMPTRU;
+        break;
+      case CmpInst::Predicate::ICMP_UGT:
+      case CmpInst::Predicate::ICMP_SGT:
+        Type = isBranchTrue ? CMP_GT : CMP_LE;
+        break;
+      case CmpInst::Predicate::ICMP_UGE:
+      case CmpInst::Predicate::ICMP_SGE:
+        Type = isBranchTrue ? CMP_GE : CMP_LT;
+        break;
+      case CmpInst::Predicate::ICMP_ULT:
+      case CmpInst::Predicate::ICMP_SLT:
+        Type = isBranchTrue ? CMP_LT : CMP_GE;
+        DEBUG_PRINT(isBranchTrue);
+        break;
+      case CmpInst::Predicate::ICMP_ULE:
+      case CmpInst::Predicate::ICMP_SLE:
+        Type = isBranchTrue ? CMP_LE : CMP_GT;
+        break;
+      default:
+        DEBUG_PRINT("******* Sorry, Unexpected CmpInst::Predicate\n");
+        DEBUG_PRINT(CmpI);
+        Type = DBINFO;
+        break;
+      }
+    }
+
+  public:
+    Condition(StringRef name, Value *val, CmpInst &CmpI, bool isBranchTrue)
+        : Name(name), Val(val) {
+      setType(CmpI, isBranchTrue);
+    }
+
+    Condition(StringRef name, Value *val, CondType type, CmpInst &CmpI,
+              bool isBranchTrue)
+        : Name(name), Val(val), Type(type) {
+      setType(CmpI, isBranchTrue);
+    }
   };
 
   /*
@@ -197,13 +250,19 @@ struct ConditionAnalysis {
    */
   void prepareFormat(Value *format[], IRBuilder<> &builder, LLVMContext &Ctx) {
     StringRef formatStr[NUM_OF_CONDTYPE];
-    formatStr[CMPTRU] = "[Permod] %s: %d\n";
-    formatStr[CMPFLS] = "[Permod] %s: not %d\n";
-    formatStr[NLLTRU] = "[Permod] %s: null\n";
-    formatStr[NLLFLS] = "[Permod] %s: not null\n";
-    formatStr[CALTRU] = "[Permod] %s(): not %d\n";
-    formatStr[CALFLS] = "[Permod] %s(): %d\n";
-    formatStr[SWITCH] = "[Permod] %s: %d (switch)\n";
+    formatStr[CMPTRU] = "[Permod] %s == %d\n";
+    formatStr[CMPFLS] = "[Permod] %s != %d\n";
+    formatStr[CMP_GT] = "[Permod] %s > %d\n";
+    formatStr[CMP_GE] = "[Permod] %s >= %d\n";
+    formatStr[CMP_LT] = "[Permod] %s < %d\n";
+    formatStr[CMP_LE] = "[Permod] %s <= %d\n";
+    formatStr[NLLTRU] = "[Permod] %s == null\n";
+    formatStr[NLLFLS] = "[Permod] %s != null\n";
+    formatStr[CALTRU] = "[Permod] %s() didn't return %d\n";
+    formatStr[CALFLS] = "[Permod] %s() returned %d\n";
+    formatStr[ANDTRU] = "[Permod] %s & %d > 0\n";
+    formatStr[ANDFLS] = "[Permod] %s & %d == 0\n";
+    formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
     formatStr[DBINFO] = "[Permod] %s: %d\n";
     formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
     formatStr[_OPEN_] = "[Permod] {\n";
@@ -245,6 +304,7 @@ struct ConditionAnalysis {
     StringRef name;
     Value *val;
     CondType type;
+    DEBUG_PRINT2("CMP: " << *CmpI.getParent() << "\n");
 
     Value *CmpOp = CmpI.getOperand(0);
     if (!CmpOp)
@@ -268,16 +328,18 @@ struct ConditionAnalysis {
     }
 
     // CmpOp: %and = and i32 %flag, 2
-    if (auto *AndI = dyn_cast<BinaryOperator>(CmpOp)) {
-      CmpOp = AndI->getOperand(0);
-      if (!CmpOp)
-        return false;
-      name = getVarName(*CmpOp);
-      val = AndI->getOperand(1);
-      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
-                                                                    : CMPFLS;
-      conds.push_back(new Condition(name, val, type));
-      return true;
+    if (auto *BinI = dyn_cast<BinaryOperator>(CmpOp)) {
+      switch (BinI->getOpcode()) {
+      case Instruction::BinaryOps::And:
+        name = getVarName(*BinI);
+        val = BinI->getOperand(1);
+        type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
+                                                                      : ANDFLS;
+        conds.push_back(new Condition(name, val, type));
+        return true;
+      default:
+        DEBUG_PRINT("** Unexpected as BinI: " << *BinI << "\n");
+      }
     }
 
     // CmpOp: %call = call i32 @function()
@@ -290,7 +352,8 @@ struct ConditionAnalysis {
       val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                     : CALFLS;
-      conds.push_back(new Condition(name, val, type));
+      conds.push_back(
+          new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
       return true;
     }
 
@@ -302,7 +365,9 @@ struct ConditionAnalysis {
 
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
                                                                     : CMPFLS;
-      conds.push_back(new Condition(name, val, type));
+      conds.push_back(
+          new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
+
       return true;
     }
 
