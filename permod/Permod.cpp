@@ -25,7 +25,6 @@ namespace permod {
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
-  // FIXME: Duplicated
   ErrBBFinder EBF;
 
   bool analysisForPtr(StoreInst &SI, Function &F) {
@@ -116,8 +115,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         DEBUG_PRINT2("--- Skip Logger\n");
         continue;
       }
-
-      ErrBBFinder EBF;
 
       Value *RetVal = EBF.getReturnValue(F);
       if (!RetVal)
