@@ -6,6 +6,7 @@
 
 #include <unordered_set>
 
+#include "ErrBBfinder.h"
 #include "OriginFinder.h"
 #include "debug.h"
 
@@ -490,8 +491,11 @@ struct ConditionAnalysis {
   // NOTE: need clang flag "-g"
   void getDebugInfo(StoreInst &SI, Function &F) {
     // The analyzing function
-    conds.push_back(new Condition(
-        F.getName(), dyn_cast<StoreInst>(&SI)->getValueOperand(), CALFLS));
+    ErrBBFinder EBF;
+    if (auto val = EBF.getErrNo(*SI.getValueOperand())) {
+      conds.push_back(new Condition(F.getName(), val, CALFLS));
+      DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
+    }
 
     LLVMContext &Ctx = SI.getContext();
     StringRef filename = F.getParent()->getSourceFileName();

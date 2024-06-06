@@ -5,7 +5,6 @@
 #include "llvm/Pass.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
-#include "ConditionAnalysis.h"
 #include "OriginFinder.h"
 #include "debug.h"
 
@@ -46,6 +45,18 @@ struct ErrBBFinder {
     return false;
   }
 
+  Value *getErrNo(Value &V) {
+    if (isErrno(V))
+      return &V;
+    if (auto *SI = dyn_cast<SelectInst>(&V)) {
+      if (isErrno(*SI->getTrueValue()))
+        return getErrNo(*SI->getTrueValue());
+      if (isErrno(*SI->getFalseValue()))
+        return getErrNo(*SI->getFalseValue());
+    }
+    return nullptr;
+  }
+
   bool isStoreErr(StoreInst &SI) {
     Value *ValOp = SI.getValueOperand();
     // NOTE: return -ERRNO;
@@ -53,10 +64,10 @@ struct ErrBBFinder {
       return true;
     // NOTE: return (flag & 2) ? -ERRNO : 0;
     // FIXME: Checking select inst will cause crash
-    // if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
-    //   if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
-    //     return true;
-    // }
+    if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
+      if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
+        return true;
+    }
     return false;
   }
 
