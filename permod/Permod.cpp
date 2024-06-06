@@ -471,7 +471,7 @@ struct ConditionAnalysis {
             switch (x) {
             case A:
             case B:
-              return -EACCES;
+              return -ERRNO;
             }
         */
         if (std::find(preds.begin(), preds.end(), PredBB) == preds.end())
@@ -642,7 +642,7 @@ struct ConditionAnalysis {
 };
 
 /*
- * Find 'return -EACCES'
+ * Find 'return -ERRNO'
     * The statement turns into:
     Error-thrower BB:
         store i32 -13，ptr %1, align 4
@@ -654,7 +654,7 @@ struct ConditionAnalysis {
 struct PermodPass : public PassInfoMixin<PermodPass> {
   /*
    * ****************************************************************************
-   *                                Find 'return -EACCES'
+   *                                Find 'return -ERRNO'
    * ****************************************************************************
    */
   // NOTE: Expect as Function has only one ret inst
@@ -685,10 +685,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   bool isStoreErr(StoreInst &SI) {
     Value *ValOp = SI.getValueOperand();
-    // NOTE: return -EACCES;
+    // NOTE: return -ERRNO;
     if (isErrno(*ValOp))
       return true;
-    // NOTE: return (flag & 2) ? -EACCES : 0;
+    // NOTE: return (flag & 2) ? -ERRNO : 0;
     // FIXME: Checking select inst will cause crash
     if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
       if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
@@ -774,7 +774,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (!ErrBB)
         continue;
       DEBUG_PRINT("\n///////////////////////////////////////\n");
-      DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
+      DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
       DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
       struct ConditionAnalysis ConditionAnalysis {};
@@ -813,7 +813,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return false;
 
     DEBUG_PRINT("\n///////////////////////////////////////\n");
-    DEBUG_PRINT(F.getName() << " has 'return -EACCES'\n");
+    DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
     DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
     struct ConditionAnalysis ConditionAnalysis {};
