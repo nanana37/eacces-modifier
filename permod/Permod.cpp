@@ -756,7 +756,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   bool analysisForPtr(StoreInst &SI, Function &F) {
     DEBUG_PRINT2("\n==AnalysisForPtr==\n");
-    DEBUG_VALUE(SI);
+    DEBUG_VALUE(&SI);
 
     bool modified = false;
 
@@ -802,7 +802,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   bool analysisForInt32(StoreInst &SI, Function &F) {
     DEBUG_PRINT2("\n==AnalysisForInt32==\n");
-    DEBUG_VALUE(SI);
+    DEBUG_VALUE(&SI);
 
     bool modified = false;
 
