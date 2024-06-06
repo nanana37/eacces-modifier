@@ -27,8 +27,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   ErrBBFinder EBF;
 
-  bool analysisForPtr(StoreInst &SI, Function &F) {
-    DEBUG_PRINT2("\n==AnalysisForPtr==\n");
+  bool analyzeStorePtr(StoreInst &SI, Function &F) {
+    DEBUG_PRINT2("\n==AnalysisForStorePtr==\n");
     DEBUG_VALUE(&SI);
 
     bool modified = false;
@@ -58,8 +58,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return modified;
   }
 
-  bool analysisForInt32(StoreInst &SI, Function &F) {
-    DEBUG_PRINT2("\n==AnalysisForInt32==\n");
+  bool analyzeStoreInt32(StoreInst &SI, Function &F) {
+    DEBUG_PRINT2("\n==AnalysisForStoreInt32==\n");
     DEBUG_VALUE(&SI);
 
     bool modified = false;
@@ -127,10 +127,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // Analyze conditions & insert loggers
         if (EBF.isStorePtr(*SI)) {
-          modified |= analysisForPtr(*SI, F);
+          modified |= analyzeStorePtr(*SI, F);
         } else {
           // TODO: Is this really "else"?
-          modified |= analysisForInt32(*SI, F);
+          modified |= analyzeStoreInt32(*SI, F);
         }
       }
     }
