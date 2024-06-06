@@ -25,7 +25,6 @@
 
 using namespace llvm;
 
-namespace {
 
 struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   Value *visitFunction(Function &F) { return nullptr; }
@@ -66,6 +65,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
     return nullptr;
   }
 };
+namespace permod {
 
 struct ConditionAnalysis {
   // ****************************************************************************
@@ -869,7 +869,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   };
 }; // namespace
 
-} // namespace
+} // namespace permod
 
 extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo
 llvmGetPassPluginInfo() {
@@ -879,7 +879,7 @@ llvmGetPassPluginInfo() {
           .RegisterPassBuilderCallbacks = [](PassBuilder &PB) {
             PB.registerPipelineStartEPCallback(
                 [](ModulePassManager &MPM, OptimizationLevel Level) {
-                  MPM.addPass(PermodPass());
+                  MPM.addPass(permod::PermodPass());
                 });
           }};
 }
