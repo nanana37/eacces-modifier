@@ -12,3 +12,32 @@
 }
 Error: -13
 
+
+
+
+2 --- Hello, I'm Permod ---
+or-example.c: 14
+errfunc() returned -13
+{
+  {
+    x & 1 == 0
+  }
+  {
+    {
+      {
+        x & 2 > 0
+      }
+      {
+        {
+          x & 2 == 0
+        }
+      x & 1 > 0
+      }
+    x & 4 == 0
+    }
+  }
+  x == 2 (switch)
+}
+
+Error: -13
+
