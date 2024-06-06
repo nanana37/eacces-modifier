@@ -52,23 +52,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       struct ConditionAnalysis ConditionAnalysis {};
 
-      // Backtrace to find If/Switch Statement BB
-      ConditionAnalysis.findAllConditions(*ErrBB);
-      if (ConditionAnalysis.isEmpty()) {
-        DEBUG_PRINT("** conds is empty\n");
-        continue;
-      }
-
-      ConditionAnalysis.getDebugInfo(*SI, F);
-
-      // Insert loggers
-      modified |= ConditionAnalysis.insertLoggers(ErrBB, F);
-      if (ConditionAnalysis.isEmpty()) {
-        DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
-      } else {
-        DEBUG_PRINT("** Failed to insert all logs\n");
-        ConditionAnalysis.deleteAllCond();
-      }
+      ConditionAnalysis.main(*ErrBB, F, *SI);
     }
     return modified;
   }
@@ -91,23 +75,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     struct ConditionAnalysis ConditionAnalysis {};
 
-    // Backtrace to find If/Switch Statement BB
-    ConditionAnalysis.findAllConditions(*ErrBB);
-    if (ConditionAnalysis.isEmpty()) {
-      DEBUG_PRINT("** conds is empty\n");
-      return false;
-    }
-
-    ConditionAnalysis.getDebugInfo(SI, F);
-
-    // Insert loggers
-    modified |= ConditionAnalysis.insertLoggers(ErrBB, F);
-    if (ConditionAnalysis.isEmpty()) {
-      DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
-    } else {
-      DEBUG_PRINT("** Failed to insert all logs\n");
-      ConditionAnalysis.deleteAllCond();
-    }
+    ConditionAnalysis.main(*ErrBB, F, SI);
 
     return modified;
   }

@@ -489,17 +489,17 @@ struct ConditionAnalysis {
 
   // Debug info
   // NOTE: need clang flag "-g"
-  void getDebugInfo(StoreInst &SI, Function &F) {
+  void getDebugInfo(Instruction &I, Function &F) {
     // The analyzing function
     ErrBBFinder EBF;
-    if (auto val = EBF.getErrNo(*SI.getValueOperand())) {
+    if (auto val = EBF.getErrNo(I)) {
       conds.push_back(new Condition(F.getName(), val, CALFLS));
       DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
     }
 
-    LLVMContext &Ctx = SI.getContext();
+    LLVMContext &Ctx = I.getContext();
     StringRef filename = F.getParent()->getSourceFileName();
-    const DebugLoc &Loc = dyn_cast<Instruction>(&SI)->getDebugLoc();
+    const DebugLoc &Loc = I.getDebugLoc();
     unsigned line = Loc->getLine();
     DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
     Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
@@ -509,14 +509,14 @@ struct ConditionAnalysis {
     conds.push_back(new Condition("", NULL, HELLOO));
   }
 
-  bool insertLoggers(BasicBlock *ErrBB, Function &F) {
+  bool insertLoggers(BasicBlock &ErrBB, Function &F) {
     DEBUG_PRINT("\n...Inserting log...\n");
     bool modified = false;
 
     // Prepare builder
-    IRBuilder<> builder(ErrBB);
-    builder.SetInsertPoint(ErrBB, ErrBB->getFirstInsertionPt());
-    LLVMContext &Ctx = ErrBB->getContext();
+    IRBuilder<> builder(&ErrBB);
+    builder.SetInsertPoint(&ErrBB, ErrBB.getFirstInsertionPt());
+    LLVMContext &Ctx = ErrBB.getContext();
 
     // Prepare function
     std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
@@ -562,6 +562,30 @@ struct ConditionAnalysis {
   }
 
   bool isEmpty() { return conds.empty(); }
+
+  bool main(BasicBlock &ErrBB, Function &F, Instruction &I) {
+    bool modified = false;
+
+    // Backtrace to find If/Switch Statement BB
+    findAllConditions(ErrBB);
+    if (isEmpty()) {
+      DEBUG_PRINT("** conds is empty\n");
+      return false;
+    }
+
+    getDebugInfo(I, F);
+
+    // Insert loggers
+    modified = insertLoggers(ErrBB, F);
+    if (isEmpty()) {
+      DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
+    } else {
+      DEBUG_PRINT("** Failed to insert all logs\n");
+      deleteAllCond();
+    }
+
+    return modified;
+  }
 };
 } // namespace permod
 #endif // CONDITION_ANALYSIS_H
