@@ -25,6 +25,93 @@ namespace permod {
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
+  ErrBBFinder EBF;
+
+  bool analysisForPtr(StoreInst &SI, Function &F) {
+    DEBUG_PRINT2("\n==AnalysisForPtr==\n");
+    DEBUG_VALUE(&SI);
+
+    bool modified = false;
+
+    Value *ErrVal = EBF.getErrValue(SI);
+    if (!ErrVal)
+      return false;
+
+    DEBUG_VALUE(ErrVal);
+
+    for (User *U : ErrVal->users()) {
+      StoreInst *SI = dyn_cast<StoreInst>(U);
+      if (!SI)
+        continue;
+      BasicBlock *ErrBB = EBF.getErrBB(*SI);
+      if (!ErrBB)
+        continue;
+      DEBUG_PRINT("\n///////////////////////////////////////\n");
+      DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
+      DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
+
+      struct ConditionAnalysis ConditionAnalysis {};
+
+      // Backtrace to find If/Switch Statement BB
+      ConditionAnalysis.findAllConditions(*ErrBB);
+      if (ConditionAnalysis.isEmpty()) {
+        DEBUG_PRINT("** conds is empty\n");
+        continue;
+      }
+
+      ConditionAnalysis.getDebugInfo(*SI, F);
+
+      // Insert loggers
+      modified |= ConditionAnalysis.insertLoggers(ErrBB, F);
+      if (ConditionAnalysis.isEmpty()) {
+        DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
+      } else {
+        DEBUG_PRINT("** Failed to insert all logs\n");
+        ConditionAnalysis.deleteAllCond();
+      }
+    }
+    return modified;
+  }
+
+  bool analysisForInt32(StoreInst &SI, Function &F) {
+    DEBUG_PRINT2("\n==AnalysisForInt32==\n");
+    DEBUG_VALUE(&SI);
+
+    bool modified = false;
+
+    // Get Error-thrower BB "ErrBB"
+    /* store -13, ptr %1, align 4 */
+    BasicBlock *ErrBB = EBF.getErrBB(SI);
+    if (!ErrBB)
+      return false;
+
+    DEBUG_PRINT("\n///////////////////////////////////////\n");
+    DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
+    DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
+
+    struct ConditionAnalysis ConditionAnalysis {};
+
+    // Backtrace to find If/Switch Statement BB
+    ConditionAnalysis.findAllConditions(*ErrBB);
+    if (ConditionAnalysis.isEmpty()) {
+      DEBUG_PRINT("** conds is empty\n");
+      return false;
+    }
+
+    ConditionAnalysis.getDebugInfo(SI, F);
+
+    // Insert loggers
+    modified |= ConditionAnalysis.insertLoggers(ErrBB, F);
+    if (ConditionAnalysis.isEmpty()) {
+      DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
+    } else {
+      DEBUG_PRINT("** Failed to insert all logs\n");
+      ConditionAnalysis.deleteAllCond();
+    }
+
+    return modified;
+  }
+
   /*
    *****************
    * main function *
@@ -73,10 +160,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
         // Analyze conditions & insert loggers
         if (EBF.isStorePtr(*SI)) {
-          modified |= EBF.analysisForPtr(*SI, F);
+          modified |= analysisForPtr(*SI, F);
         } else {
           // TODO: Is this really "else"?
-          modified |= EBF.analysisForInt32(*SI, F);
+          modified |= analysisForInt32(*SI, F);
         }
       }
     }
