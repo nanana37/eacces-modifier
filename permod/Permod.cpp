@@ -3,16 +3,11 @@
 #include "llvm/Pass.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/PassPlugin.h"
-#include "llvm/Support/raw_ostream.h"
-#include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
 #include "llvm/IR/DebugLoc.h"
 
-#include <errno.h>
-
 #include "ConditionAnalysis.h"
 #include "ErrBBfinder.h"
-#include "OriginFinder.h"
 #include "debug.h"
 
 using namespace llvm;
