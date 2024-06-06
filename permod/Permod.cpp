@@ -675,25 +675,25 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return nullptr;
   }
 
-  bool isStoreErr(StoreInst &SI) {
-    Value *ValOp = SI.getValueOperand();
-    // NOTE: return -EACCES;
-    if (auto *CI = dyn_cast<ConstantInt>(ValOp)) {
+  bool isErrno(Value &V) {
+    if (auto *CI = dyn_cast<ConstantInt>(&V)) {
       if (CI->getSExtValue() == -EACCES)
         return true;
     }
+    return false;
+  }
+
+  bool isStoreErr(StoreInst &SI) {
+    Value *ValOp = SI.getValueOperand();
+    // NOTE: return -EACCES;
+    if (isErrno(*ValOp))
+      return true;
     // NOTE: return (flag & 2) ? -EACCES : 0;
     // FIXME: Checking select inst will cause crash
-    // if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
-    //   if (auto *CI = dyn_cast<ConstantInt>(SI->getTrueValue())) {
-    //     if (CI->getSExtValue() == -EACCES)
-    //       return true;
-    //   }
-    //   if (auto *CI = dyn_cast<ConstantInt>(SI->getFalseValue())) {
-    //     if (CI->getSExtValue() == -EACCES)
-    //       return true;
-    //   }
-    // }
+    if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
+      if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
+        return true;
+    }
     return false;
   }
 
