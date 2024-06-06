@@ -31,7 +31,12 @@ struct ErrBBFinder {
   // NOTE: maybe to find alloca is better?
   Value *findReturnValue(BasicBlock &BB) {
     if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
-      if (auto *LI = dyn_cast_or_null<LoadInst>(RI->getReturnValue()))
+      Value *RetVal = RI->getReturnValue();
+
+      if (isa_and_nonnull<ConstantInt>(RetVal))
+        return RetVal;
+
+      if (auto *LI = dyn_cast_or_null<LoadInst>(RetVal))
         return LI->getPointerOperand();
     }
     return nullptr;

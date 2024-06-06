@@ -120,6 +120,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (!RetVal)
         continue;
 
+      // TODO: Check `ret i32 -13`
+      if (isa<ConstantInt>(RetVal)) {
+        DEBUG_PRINT("****************** ConstantInt " << *RetVal << "\n");
+      }
+
       for (User *U : RetVal->users()) {
         StoreInst *SI = dyn_cast<StoreInst>(U);
         if (!SI)
