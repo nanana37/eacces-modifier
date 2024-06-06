@@ -489,15 +489,16 @@ struct ConditionAnalysis {
   // Debug info
   // NOTE: need clang flag "-g"
   void getDebugInfo(StoreInst &SI, Function &F) {
+    // The analyzing function
+    conds.push_back(new Condition(
+        F.getName(), dyn_cast<StoreInst>(&SI)->getValueOperand(), CALFLS));
+
     LLVMContext &Ctx = SI.getContext();
     StringRef filename = F.getParent()->getSourceFileName();
     const DebugLoc &Loc = dyn_cast<Instruction>(&SI)->getDebugLoc();
     unsigned line = Loc->getLine();
     DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
     Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
-    // The analyzing function
-    conds.push_back(new Condition(
-        F.getName(), dyn_cast<StoreInst>(&SI)->getValueOperand(), CALFLS));
     // File name and line number
     conds.push_back(new Condition(filename, lineVal, DBINFO));
     // Hello
