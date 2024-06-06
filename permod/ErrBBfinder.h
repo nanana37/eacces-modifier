@@ -67,7 +67,6 @@ struct ErrBBFinder {
     if (isErrno(*ValOp))
       return true;
     // NOTE: return (flag & 2) ? -ERRNO : 0;
-    // FIXME: Checking select inst will cause crash
     if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
       if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
         return true;

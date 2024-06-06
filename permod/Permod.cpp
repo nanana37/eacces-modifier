@@ -25,6 +25,7 @@ namespace permod {
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
+  // FIXME: Duplicated
   ErrBBFinder EBF;
 
   bool analysisForPtr(StoreInst &SI, Function &F) {
@@ -50,6 +51,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
       DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
+      // TODO: This should be class; only main() should be public
       struct ConditionAnalysis ConditionAnalysis {};
 
       ConditionAnalysis.main(*ErrBB, F, *SI);
