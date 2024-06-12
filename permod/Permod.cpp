@@ -24,6 +24,7 @@ namespace permod {
         ret i32 %2
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
+  int cnt = 0;
 
   ErrBBFinder EBF;
 
@@ -49,6 +50,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT("\n///////////////////////////////////////\n");
       DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
       DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
+      cnt++;
 
       // TODO: This should be class; only main() should be public
       struct ConditionAnalysis ConditionAnalysis {};
@@ -73,6 +75,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT("\n///////////////////////////////////////\n");
     DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
     DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
+    cnt++;
 
     struct ConditionAnalysis ConditionAnalysis {};
 
@@ -139,6 +142,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
       }
     }
+
+    DEBUG_PRINT("Total: " << cnt << "\n");
+
     if (modified) {
       DEBUG_PRINT("Modified\n");
       return PreservedAnalyses::none();

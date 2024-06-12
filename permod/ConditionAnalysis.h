@@ -494,14 +494,14 @@ struct ConditionAnalysis {
     ErrBBFinder EBF;
     if (auto val = EBF.getErrNo(I)) {
       conds.push_back(new Condition(F.getName(), val, CALFLS));
-      DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
+      DEBUG_PRINT("ERRNO found: " << F.getName() << " " << *val << " | ");
     }
 
     LLVMContext &Ctx = I.getContext();
     StringRef filename = F.getParent()->getSourceFileName();
     const DebugLoc &Loc = I.getDebugLoc();
     unsigned line = Loc->getLine();
-    DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
+    DEBUG_PRINT(filename << ":" << line << "\n");
     Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
     // File name and line number
     conds.push_back(new Condition(filename, lineVal, DBINFO));
@@ -567,10 +567,10 @@ struct ConditionAnalysis {
     bool modified = false;
 
     // Backtrace to find If/Switch Statement BB
-    findAllConditions(ErrBB);
+    // findAllConditions(ErrBB);
     if (isEmpty()) {
       DEBUG_PRINT("** conds is empty\n");
-      return false;
+      // return false;
     }
 
     getDebugInfo(I, F);
