@@ -117,6 +117,18 @@ struct ConditionAnalysis {
     Condition(StringRef name, Value *val, CondType type)
         : Name(name), Val(val), Type(type) {}
 
+    // CmpInst
+    Condition(StringRef name, Value *val, CmpInst &CmpI, bool isBranchTrue)
+        : Name(name), Val(val) {
+      setType(CmpI, isBranchTrue);
+    }
+
+    Condition(StringRef name, Value *val, CondType type, CmpInst &CmpI,
+              bool isBranchTrue)
+        : Name(name), Val(val), Type(type) {
+      setType(CmpI, isBranchTrue);
+    }
+
   private:
     void setType(CmpInst &CmpI, bool isBranchTrue) {
       switch (CmpI.getPredicate()) {
@@ -149,18 +161,6 @@ struct ConditionAnalysis {
         Type = DBINFO;
         break;
       }
-    }
-
-  public:
-    Condition(StringRef name, Value *val, CmpInst &CmpI, bool isBranchTrue)
-        : Name(name), Val(val) {
-      setType(CmpI, isBranchTrue);
-    }
-
-    Condition(StringRef name, Value *val, CondType type, CmpInst &CmpI,
-              bool isBranchTrue)
-        : Name(name), Val(val), Type(type) {
-      setType(CmpI, isBranchTrue);
     }
   };
 
