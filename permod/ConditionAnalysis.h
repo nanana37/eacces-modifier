@@ -123,12 +123,6 @@ struct ConditionAnalysis {
       setType(CmpI, isBranchTrue);
     }
 
-    Condition(StringRef name, Value *val, CondType type, CmpInst &CmpI,
-              bool isBranchTrue)
-        : Name(name), Val(val), Type(type) {
-      setType(CmpI, isBranchTrue);
-    }
-
   private:
     void setType(CmpInst &CmpI, bool isBranchTrue) {
       switch (CmpI.getPredicate()) {
