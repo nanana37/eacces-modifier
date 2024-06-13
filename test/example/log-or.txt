@@ -1,43 +1,125 @@
-{
-  {
-    x: 2
-  }
-  {
-    {
-      x: not 2
-    }
-    x: 1
-  }
-  x: 4
-}
-Error: -13
-
-
-
-
+0 No error
+1 No error
 2 --- Hello, I'm Permod ---
-or-example.c: 14
-errfunc() returned -13
-{
-  {
-    x & 1 == 0
-  }
-  {
-    {
-      {
-        x & 2 > 0
-      }
-      {
-        {
-          x & 2 == 0
-        }
-      x & 1 > 0
-      }
-    x & 4 == 0
-    }
-  }
-  x == 2 (switch)
-}
-
+[Permod] or-example.c: 14
+[Permod] errfunc() returned -13 (errno)
+[Permod] {
+[Permod] {
+[Permod] x:1 & 1 == 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] {
+[Permod] x:2 & 2 != 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] x:2 & 2 == 0
+[Permod] }
+[Permod] x:1 & 1 != 0
+[Permod] }
+[Permod] x:2 & 4 == 0
+[Permod] }
+[Permod] }
+[Permod] switch (x:2)
+[Permod] }
 Error: -13
-
+3 --- Hello, I'm Permod ---
+[Permod] or-example.c: 17
+[Permod] errfunc() returned -13 (errno)
+[Permod] {
+[Permod] {
+[Permod] x:1 & 1 == 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] {
+[Permod] x:3 & 2 != 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] x:3 & 2 == 0
+[Permod] }
+[Permod] x:1 & 1 != 0
+[Permod] }
+[Permod] x:3 & 4 == 0
+[Permod] }
+[Permod] }
+[Permod] switch (x:3)
+[Permod] }
+Hello, World!
+Error: -13
+4 --- Hello, I'm Permod ---
+[Permod] or-example.c: 14
+[Permod] errfunc() returned -13 (errno)
+[Permod] {
+[Permod] {
+[Permod] x:4 & 1 == 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] {
+[Permod] x:4 & 2 != 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] x:4 & 2 == 0
+[Permod] }
+[Permod] x:4 & 1 != 0
+[Permod] }
+[Permod] x:3 & 4 == 0
+[Permod] }
+[Permod] }
+[Permod] switch (x:4)
+[Permod] }
+Error: -13
+5 --- Hello, I'm Permod ---
+[Permod] or-example.c: 8
+[Permod] errfunc() returned -13 (errno)
+[Permod] {
+[Permod] {
+[Permod] x:5 & 2 != 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] x:5 & 2 == 0
+[Permod] }
+[Permod] x:5 & 1 != 0
+[Permod] }
+[Permod] x:5 & 4 != 0
+[Permod] }
+Error: -13
+6 --- Hello, I'm Permod ---
+[Permod] or-example.c: 8
+[Permod] errfunc() returned -13 (errno)
+[Permod] {
+[Permod] {
+[Permod] x:6 & 2 != 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] x:6 & 2 == 0
+[Permod] }
+[Permod] x:5 & 1 != 0
+[Permod] }
+[Permod] x:6 & 4 != 0
+[Permod] }
+Error: -13
+7 --- Hello, I'm Permod ---
+[Permod] or-example.c: 8
+[Permod] errfunc() returned -13 (errno)
+[Permod] {
+[Permod] {
+[Permod] x:7 & 2 != 0
+[Permod] }
+[Permod] {
+[Permod] {
+[Permod] x:7 & 2 == 0
+[Permod] }
+[Permod] x:5 & 1 != 0
+[Permod] }
+[Permod] x:7 & 4 != 0
+[Permod] }
+Error: -13
+8 No error
+9 No error
