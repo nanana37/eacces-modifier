@@ -111,15 +111,15 @@ struct ConditionAnalysis {
   class Condition {
   public:
     StringRef Name;
-    Value *Val;
+    Value *Con; // value of constant
     CondType Type;
 
-    Condition(StringRef name, Value *val, CondType type)
-        : Name(name), Val(val), Type(type) {}
+    Condition(StringRef name, Value *con, CondType type)
+        : Name(name), Con(con), Type(type) {}
 
     // CmpInst
-    Condition(StringRef name, Value *val, CmpInst &CmpI, bool isBranchTrue)
-        : Name(name), Val(val) {
+    Condition(StringRef name, Value *con, CmpInst &CmpI, bool isBranchTrue)
+        : Name(name), Con(con) {
       setType(CmpI, isBranchTrue);
     }
 
@@ -540,9 +540,9 @@ struct ConditionAnalysis {
         DEBUG_PRINT("\n");
         break;
       default:
-        DEBUG_PRINT(" " << cond->Name << ": " << *cond->Val << "\n");
+        DEBUG_PRINT(" " << cond->Name << ": " << *cond->Con << "\n");
         args.push_back(builder.CreateGlobalStringPtr(cond->Name));
-        args.push_back(cond->Val);
+        args.push_back(cond->Con);
         break;
       }
 
