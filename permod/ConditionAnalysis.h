@@ -486,7 +486,7 @@ struct ConditionAnalysis {
   void getDebugInfo(Instruction &I, Function &F) {
     // The analyzing function
     ErrBBFinder EBF;
-    if (auto val = EBF.getErrNo(I)) {
+    if (auto val = EBF.getErrno(I)) {
       conds.push_back(new Condition(F.getName(), val, CALFLS));
       DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
     }

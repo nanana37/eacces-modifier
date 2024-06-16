@@ -50,18 +50,18 @@ struct ErrBBFinder {
     return false;
   }
 
-  Value *getErrNo(Value &V) {
+  Value *getErrno(Value &V) {
     if (isErrno(V))
       return &V;
 
     if (auto *StoreI = dyn_cast<StoreInst>(&V))
-      return getErrNo(*StoreI->getValueOperand());
+      return getErrno(*StoreI->getValueOperand());
 
     if (auto *SI = dyn_cast<SelectInst>(&V)) {
       if (isErrno(*SI->getTrueValue()))
-        return getErrNo(*SI->getTrueValue());
+        return getErrno(*SI->getTrueValue());
       if (isErrno(*SI->getFalseValue()))
-        return getErrNo(*SI->getFalseValue());
+        return getErrno(*SI->getFalseValue());
     }
     return nullptr;
   }
