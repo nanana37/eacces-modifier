@@ -1,0 +1,438 @@
+
+Please check for false positives in the output before submitting a patch.
+When using "patch" mode, carefully review the patch before submitting it.
+
+/usr/bin/spatch -D patch --very-quiet --cocci-file /home/hiron/scripts/coccinelle/sel_to_br.cocci --dir . -I ./arch/x86/include -I ./arch/x86/include/generated -I ./include -I ./arch/x86/include/uapi -I ./arch/x86/include/generated/uapi -I ./include/uapi -I ./include/generated/uapi --include ./include/linux/compiler-version.h --include ./include/linux/kconfig.h --jobs 8 --chunksize 1
+596 files match
+diff -u -p a/fs/ocfs2/acl.c b/fs/ocfs2/acl.c
+--- a/fs/ocfs2/acl.c
++++ b/fs/ocfs2/acl.c
+@@ -233,8 +233,12 @@ static int ocfs2_set_acl(handle_t *handl
+ 		break;
+ 	case ACL_TYPE_DEFAULT:
+ 		name_index = OCFS2_XATTR_INDEX_POSIX_ACL_DEFAULT;
+-		if (!S_ISDIR(inode->i_mode))
+-			return acl ? -EACCES : 0;
++		if (!S_ISDIR(inode->i_mode)) {
++			if (acl)
++				return -EACCES;
++			else
++				return 0;
++		}
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff -u -p a/fs/posix_acl.c b/fs/posix_acl.c
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -943,8 +943,12 @@ set_posix_acl(struct mnt_idmap *idmap, s
+ 	if (!inode->i_op->set_acl)
+ 		return -EOPNOTSUPP;
+ 
+-	if (type == ACL_TYPE_DEFAULT && !S_ISDIR(inode->i_mode))
+-		return acl ? -EACCES : 0;
++	if (type == ACL_TYPE_DEFAULT && !S_ISDIR(inode->i_mode)) {
++		if (acl)
++			return -EACCES;
++		else
++			return 0;
++	}
+ 	if (!inode_owner_or_capable(idmap, inode))
+ 		return -EPERM;
+ 
+diff -u -p a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+--- a/fs/ntfs3/xattr.c
++++ b/fs/ntfs3/xattr.c
+@@ -605,8 +605,12 @@ static noinline int ntfs_set_acl_ex(stru
+ 		break;
+ 
+ 	case ACL_TYPE_DEFAULT:
+-		if (!S_ISDIR(inode->i_mode))
+-			return acl ? -EACCES : 0;
++		if (!S_ISDIR(inode->i_mode)) {
++			if (acl)
++				return -EACCES;
++			else
++				return 0;
++		}
+ 		name = XATTR_NAME_POSIX_ACL_DEFAULT;
+ 		name_len = sizeof(XATTR_NAME_POSIX_ACL_DEFAULT) - 1;
+ 		break;
+diff -u -p a/mm/mprotect.c b/mm/mprotect.c
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -544,18 +544,24 @@ long change_protection(struct mmu_gather
+ static int prot_none_pte_entry(pte_t *pte, unsigned long addr,
+ 			       unsigned long next, struct mm_walk *walk)
+ {
+-	return pfn_modify_allowed(pte_pfn(ptep_get(pte)),
+-				  *(pgprot_t *)(walk->private)) ?
+-		0 : -EACCES;
++	{
++		if (pfn_modify_allowed(pte_pfn(ptep_get(pte)), *(pgprot_t *)(walk->private)))
++			return 0;
++		else
++			return -EACCES;
++	}
+ }
+ 
+ static int prot_none_hugetlb_entry(pte_t *pte, unsigned long hmask,
+ 				   unsigned long addr, unsigned long next,
+ 				   struct mm_walk *walk)
+ {
+-	return pfn_modify_allowed(pte_pfn(ptep_get(pte)),
+-				  *(pgprot_t *)(walk->private)) ?
+-		0 : -EACCES;
++	{
++		if (pfn_modify_allowed(pte_pfn(ptep_get(pte)), *(pgprot_t *)(walk->private)))
++			return 0;
++		else
++			return -EACCES;
++	}
+ }
+ 
+ static int prot_none_test(unsigned long addr, unsigned long next,
+diff -u -p a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -2518,7 +2518,12 @@ static void xs_tls_handshake_done(void *
+ 	struct sock_xprt *lower_transport =
+ 				container_of(lower_xprt, struct sock_xprt, xprt);
+ 
+-	lower_transport->xprt_err = status ? -EACCES : 0;
++	{
++		if (status)
++			lower_transport->xprt_err = -EACCES;
++		else
++			lower_transport->xprt_err = 0;
++	}
+ 	complete(&lower_transport->handshake_done);
+ 	xprt_put(lower_xprt);
+ }
+diff -u -p a/drivers/mtd/mtdchar.c b/drivers/mtd/mtdchar.c
+--- a/drivers/mtd/mtdchar.c
++++ b/drivers/mtd/mtdchar.c
+@@ -1394,7 +1394,12 @@ static int mtdchar_mmap(struct file *fil
+ 	}
+ 	return -ENODEV;
+ #else
+-	return vma->vm_flags & VM_SHARED ? 0 : -EACCES;
++	{
++		if (vma->vm_flags & VM_SHARED)
++			return 0;
++		else
++			return -EACCES;
++	}
+ #endif
+ }
+ 
+diff -u -p a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -670,8 +670,12 @@ int ovl_set_acl(struct mnt_idmap *idmap,
+ 		return -EOPNOTSUPP;
+ 	if (!realinode->i_op->set_acl)
+ 		return -EOPNOTSUPP;
+-	if (type == ACL_TYPE_DEFAULT && !S_ISDIR(inode->i_mode))
+-		return acl ? -EACCES : 0;
++	if (type == ACL_TYPE_DEFAULT && !S_ISDIR(inode->i_mode)) {
++		if (acl)
++			return -EACCES;
++		else
++			return 0;
++	}
+ 	if (!inode_owner_or_capable(&nop_mnt_idmap, inode))
+ 		return -EPERM;
+ 
+diff -u -p a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+--- a/drivers/media/usb/uvc/uvc_ctrl.c
++++ b/drivers/media/usb/uvc/uvc_ctrl.c
+@@ -1182,9 +1182,12 @@ int uvc_ctrl_is_accessible(struct uvc_vi
+ 	 * multiple times in the same ioctl. We want the last value.
+ 	 */
+ 	for (i = ctrls->count - 1; i >= 0; i--) {
+-		if (ctrls->controls[i].id == mapping->master_id)
+-			return ctrls->controls[i].value ==
+-					mapping->master_manual ? 0 : -EACCES;
++		if (ctrls->controls[i].id == mapping->master_id) {
++			if (ctrls->controls[i].value == mapping->master_manual)
++				return 0;
++					else
++						return -EACCES;
++		}
+ 	}
+ 
+ 	__uvc_find_control(ctrl->entity, mapping->master_id, &master_map,
+diff -u -p a/drivers/s390/cio/vfio_ccw_fsm.c b/drivers/s390/cio/vfio_ccw_fsm.c
+--- a/drivers/s390/cio/vfio_ccw_fsm.c
++++ b/drivers/s390/cio/vfio_ccw_fsm.c
+@@ -64,8 +64,12 @@ static int fsm_io_helper(struct vfio_ccw
+ 
+ 		if (cio_update_schib(sch))
+ 			ret = -ENODEV;
+-		else
+-			ret = sch->lpm ? -EACCES : -ENODEV;
++		else {
++			if (sch->lpm)
++				ret = -EACCES;
++			else
++				ret = -ENODEV;
++		}
+ 		break;
+ 	}
+ 	default:
+diff -u -p a/fs/ext2/acl.c b/fs/ext2/acl.c
+--- a/fs/ext2/acl.c
++++ b/fs/ext2/acl.c
+@@ -194,8 +194,12 @@ __ext2_set_acl(struct inode *inode, stru
+ 
+ 		case ACL_TYPE_DEFAULT:
+ 			name_index = EXT2_XATTR_INDEX_POSIX_ACL_DEFAULT;
+-			if (!S_ISDIR(inode->i_mode))
+-				return acl ? -EACCES : 0;
++			if (!S_ISDIR(inode->i_mode)) {
++				if (acl)
++					return -EACCES;
++				else
++					return 0;
++			}
+ 			break;
+ 
+ 		default:
+diff -u -p a/fs/jffs2/acl.c b/fs/jffs2/acl.c
+--- a/fs/jffs2/acl.c
++++ b/fs/jffs2/acl.c
+@@ -259,8 +259,12 @@ int jffs2_set_acl(struct mnt_idmap *idma
+ 		break;
+ 	case ACL_TYPE_DEFAULT:
+ 		xprefix = JFFS2_XPREFIX_ACL_DEFAULT;
+-		if (!S_ISDIR(inode->i_mode))
+-			return acl ? -EACCES : 0;
++		if (!S_ISDIR(inode->i_mode)) {
++			if (acl)
++				return -EACCES;
++			else
++				return 0;
++		}
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff -u -p a/fs/reiserfs/xattr_acl.c b/fs/reiserfs/xattr_acl.c
+--- a/fs/reiserfs/xattr_acl.c
++++ b/fs/reiserfs/xattr_acl.c
+@@ -261,8 +261,12 @@ __reiserfs_set_acl(struct reiserfs_trans
+ 		break;
+ 	case ACL_TYPE_DEFAULT:
+ 		name = XATTR_NAME_POSIX_ACL_DEFAULT;
+-		if (!S_ISDIR(inode->i_mode))
+-			return acl ? -EACCES : 0;
++		if (!S_ISDIR(inode->i_mode)) {
++			if (acl)
++				return -EACCES;
++			else
++				return 0;
++		}
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff -u -p a/fs/xfs/xfs_acl.c b/fs/xfs/xfs_acl.c
+--- a/fs/xfs/xfs_acl.c
++++ b/fs/xfs/xfs_acl.c
+@@ -186,8 +186,12 @@ __xfs_set_acl(struct inode *inode, struc
+ 		args.name = SGI_ACL_FILE;
+ 		break;
+ 	case ACL_TYPE_DEFAULT:
+-		if (!S_ISDIR(inode->i_mode))
+-			return acl ? -EACCES : 0;
++		if (!S_ISDIR(inode->i_mode)) {
++			if (acl)
++				return -EACCES;
++			else
++				return 0;
++		}
+ 		args.name = SGI_ACL_DEFAULT;
+ 		break;
+ 	default:
+diff -u -p a/fs/coda/pioctl.c b/fs/coda/pioctl.c
+--- a/fs/coda/pioctl.c
++++ b/fs/coda/pioctl.c
+@@ -44,7 +44,12 @@ const struct file_operations coda_ioctl_
+ static int coda_ioctl_permission(struct mnt_idmap *idmap,
+ 				 struct inode *inode, int mask)
+ {
+-	return (mask & MAY_EXEC) ? -EACCES : 0;
++	{
++		if ((mask & MAY_EXEC))
++			return -EACCES;
++		else
++			return 0;
++	}
+ }
+ 
+ static long coda_pioctl(struct file *filp, unsigned int cmd,
+diff -u -p a/fs/ext4/acl.c b/fs/ext4/acl.c
+--- a/fs/ext4/acl.c
++++ b/fs/ext4/acl.c
+@@ -201,8 +201,12 @@ __ext4_set_acl(handle_t *handle, struct
+ 
+ 	case ACL_TYPE_DEFAULT:
+ 		name_index = EXT4_XATTR_INDEX_POSIX_ACL_DEFAULT;
+-		if (!S_ISDIR(inode->i_mode))
+-			return acl ? -EACCES : 0;
++		if (!S_ISDIR(inode->i_mode)) {
++			if (acl)
++				return -EACCES;
++			else
++				return 0;
++		}
+ 		break;
+ 
+ 	default:
+diff -u -p a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -250,8 +250,12 @@ static int __f2fs_set_acl(struct mnt_idm
+ 
+ 	case ACL_TYPE_DEFAULT:
+ 		name_index = F2FS_XATTR_INDEX_POSIX_ACL_DEFAULT;
+-		if (!S_ISDIR(inode->i_mode))
+-			return acl ? -EACCES : 0;
++		if (!S_ISDIR(inode->i_mode)) {
++			if (acl)
++				return -EACCES;
++			else
++				return 0;
++		}
+ 		break;
+ 
+ 	default:
+diff -u -p a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+--- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -812,8 +812,12 @@ static int proc_sys_permission(struct mn
+ 		return PTR_ERR(head);
+ 
+ 	table = PROC_I(inode)->sysctl_entry;
+-	if (!table) /* global root - r-xr-xr-x */
+-		error = mask & MAY_WRITE ? -EACCES : 0;
++	if (!table) /* global root - r-xr-xr-x */ {
++		if (mask & MAY_WRITE)
++			error = -EACCES;
++		else
++			error = 0;
++	}
+ 	else /* Use the permissions on the sysctl table entry */
+ 		error = sysctl_perm(head, table, mask & ~MAY_NOT_BLOCK);
+ 
+diff -u -p a/fs/namei.c b/fs/namei.c
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -346,7 +346,12 @@ static int acl_permission_check(struct m
+ 	if (likely(vfsuid_eq_kuid(vfsuid, current_fsuid()))) {
+ 		mask &= 7;
+ 		mode >>= 6;
+-		return (mask & ~mode) ? -EACCES : 0;
++		{
++			if ((mask & ~mode))
++				return -EACCES;
++			else
++				return 0;
++		}
+ 	}
+ 
+ 	/* Do we have ACL's? */
+@@ -371,7 +376,12 @@ static int acl_permission_check(struct m
+ 	}
+ 
+ 	/* Bits in 'mode' clear that we require? */
+-	return (mask & ~mode) ? -EACCES : 0;
++	{
++		if ((mask & ~mode))
++			return -EACCES;
++		else
++			return 0;
++	}
+ }
+ 
+ /**
+diff -u -p a/drivers/gpu/drm/i915/gem/i915_gem_mman.c b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+--- a/drivers/gpu/drm/i915/gem/i915_gem_mman.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_mman.c
+@@ -1057,8 +1057,12 @@ int i915_gem_mmap(struct file *filp, str
+ 	}
+ 	drm_vma_offset_unlock_lookup(dev->vma_offset_manager);
+ 	rcu_read_unlock();
+-	if (!obj)
+-		return node ? -EACCES : -EINVAL;
++	if (!obj) {
++		if (node)
++			return -EACCES;
++		else
++			return -EINVAL;
++	}
+ 
+ 	return i915_gem_object_mmap(obj, mmo, vma);
+ }
+diff -u -p a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -6842,8 +6842,12 @@ static int check_helper_mem_access(struc
+ 			int offset = access_size - 1;
+ 
+ 			/* Allow zero-byte read from PTR_TO_CTX */
+-			if (access_size == 0)
+-				return zero_size_allowed ? 0 : -EACCES;
++			if (access_size == 0) {
++				if (zero_size_allowed)
++					return 0;
++				else
++					return -EACCES;
++			}
+ 
+ 			return check_mem_access(env, env->insn_idx, regno, offset, BPF_B,
+ 						atype, -1, false);
+diff -u -p a/drivers/watchdog/imx_sc_wdt.c b/drivers/watchdog/imx_sc_wdt.c
+--- a/drivers/watchdog/imx_sc_wdt.c
++++ b/drivers/watchdog/imx_sc_wdt.c
+@@ -67,7 +67,12 @@ static int imx_sc_wdt_start(struct watch
+ 	arm_smccc_smc(IMX_SIP_TIMER, IMX_SIP_TIMER_SET_WDOG_ACT,
+ 		      SC_TIMER_WDOG_ACTION_PARTITION,
+ 		      0, 0, 0, 0, 0, &res);
+-	return res.a0 ? -EACCES : 0;
++	{
++		if (res.a0)
++			return -EACCES;
++		else
++			return 0;
++	}
+ }
+ 
+ static int imx_sc_wdt_stop(struct watchdog_device *wdog)
+@@ -77,7 +82,12 @@ static int imx_sc_wdt_stop(struct watchd
+ 	arm_smccc_smc(IMX_SIP_TIMER, IMX_SIP_TIMER_STOP_WDOG,
+ 		      0, 0, 0, 0, 0, 0, &res);
+ 
+-	return res.a0 ? -EACCES : 0;
++	{
++		if (res.a0)
++			return -EACCES;
++		else
++			return 0;
++	}
+ }
+ 
+ static int imx_sc_wdt_set_timeout(struct watchdog_device *wdog,
+@@ -89,7 +99,12 @@ static int imx_sc_wdt_set_timeout(struct
+ 	arm_smccc_smc(IMX_SIP_TIMER, IMX_SIP_TIMER_SET_TIMEOUT_WDOG,
+ 		      timeout * 1000, 0, 0, 0, 0, 0, &res);
+ 
+-	return res.a0 ? -EACCES : 0;
++	{
++		if (res.a0)
++			return -EACCES;
++		else
++			return 0;
++	}
+ }
+ 
+ static int imx_sc_wdt_set_pretimeout(struct watchdog_device *wdog,
