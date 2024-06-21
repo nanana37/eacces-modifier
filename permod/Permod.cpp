@@ -1,4 +1,4 @@
-// #define TEST
+#include "macro.h"
 
 #include "llvm/Pass.h"
 #include "llvm/Passes/PassBuilder.h"
