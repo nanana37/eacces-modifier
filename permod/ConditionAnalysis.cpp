@@ -115,7 +115,7 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
 bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
                                        BasicBlock &DestBB) {
   StringRef name;
-  Value *val;
+  Value *con;
   CondType type;
   DEBUG_PRINT2("CMP: " << *CmpI.getParent() << "\n");
 
@@ -133,10 +133,10 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
    */
   if (isa<ConstantPointerNull>(CmpOp2)) {
     name = getVarName(*CmpOp);
-    val = CmpOp2;
+    con = CmpOp2;
     type = (isBranchTrue(BrI, DestBB) != CmpI.isFalseWhenEqual()) ? NLLTRU
                                                                   : NLLFLS;
-    conds.push_back(new Condition(name, val, type));
+    conds.push_back(new Condition(name, con, type));
     return true;
   }
 
@@ -145,10 +145,10 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
     switch (BinI->getOpcode()) {
     case Instruction::BinaryOps::And:
       name = getVarName(*BinI);
-      val = BinI->getOperand(1);
+      con = BinI->getOperand(1);
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
                                                                     : ANDFLS;
-      conds.push_back(new Condition(name, val, type));
+      conds.push_back(new Condition(name, con, type));
       return true;
     default:
       DEBUG_PRINT("** Unexpected as BinI: " << *BinI << "\n");
@@ -162,10 +162,10 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
       return false;
 
     name = getVarName(*Callee);
-    val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
+    con = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
-    conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
+    conds.push_back(new Condition(name, con, CmpI, isBranchTrue(BrI, DestBB)));
     return true;
   }
 
@@ -173,11 +173,11 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
   // TODO: Try on some examples
   if (auto *LoadI = dyn_cast<LoadInst>(CmpOp)) {
     name = getVarName(*LoadI);
-    val = CmpI.getOperand(1);
+    con = CmpI.getOperand(1);
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
                                                                   : CMPFLS;
-    conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
+    conds.push_back(new Condition(name, con, CmpI, isBranchTrue(BrI, DestBB)));
 
     return true;
   }
@@ -196,7 +196,7 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
 bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
                                         BasicBlock &DestBB) {
   StringRef name;
-  Value *val;
+  Value *con;
   CondType type;
 
   Function *Callee = CallI.getCalledFunction();
@@ -204,9 +204,9 @@ bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
     return false;
 
   name = getVarName(*Callee);
-  val = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
+  con = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
   type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-  conds.push_back(new Condition(name, val, type));
+  conds.push_back(new Condition(name, con, type));
   return true;
 }
 
@@ -247,11 +247,11 @@ bool ConditionAnalysis::findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
  */
 bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
   StringRef name;
-  Value *val;
+  Value *con;
   Value *SwCond = SwI.getCondition();
 
   // Get value
-  val = SwCond;
+  con = SwCond;
 
   // Get name
   SwCond = getOrigin(*SwCond);
@@ -259,7 +259,7 @@ bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
     return false;
   name = getVarName(*SwCond);
 
-  conds.push_back(new Condition(name, val, SWITCH));
+  conds.push_back(new Condition(name, con, SWITCH));
   return true;
 }
 
