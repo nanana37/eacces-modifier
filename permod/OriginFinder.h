@@ -1,3 +1,9 @@
+//===- permod/OriginFinder.h - Definition of the OriginFinder -----*-C++-*-===//
+//
+// Visit each instruction and find the origin, which is the value passed to the
+// instruction.
+//
+
 #pragma once
 
 #include "debug.h"
