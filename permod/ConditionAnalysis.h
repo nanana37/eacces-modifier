@@ -6,7 +6,7 @@
 #include <unordered_set>
 
 #include "Condition.h"
-#include "ErrBBfinder.h"
+#include "ErrBBFinder.h"
 #include "OriginFinder.h"
 #include "debug.h"
 
@@ -440,7 +440,7 @@ struct ConditionAnalysis {
       conds.pop_back();
 
       args.push_back(format[cond->Type]);
-      DEBUG_PRINT(condTypeStr[cond->Type]);
+      // DEBUG_PRINT(condTypeStr[cond->Type]);
 
       switch (cond->Type) {
       case HELLOO:
