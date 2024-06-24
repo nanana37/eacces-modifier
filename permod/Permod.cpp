@@ -1,5 +1,3 @@
-// #define TEST
-
 #include "llvm/Pass.h"
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/PassPlugin.h"
@@ -7,7 +5,7 @@
 #include "llvm/IR/DebugLoc.h"
 
 #include "ConditionAnalysis.h"
-#include "ErrBBfinder.h"
+#include "ErrBBFinder.h"
 #include "debug.h"
 
 using namespace llvm;

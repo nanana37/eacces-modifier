@@ -1,5 +1,10 @@
-#ifndef ORIGIN_FINDER_H
-#define ORIGIN_FINDER_H
+//===- permod/OriginFinder.h - Definition of the OriginFinder -----*-C++-*-===//
+//
+// Visit each instruction and find the origin, which is the value passed to the
+// instruction.
+//
+
+#pragma once
 
 #include "debug.h"
 #include "llvm/IR/InstVisitor.h"
@@ -50,5 +55,3 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
 };
 
 } // namespace permod
-
-#endif // ORIGIN_FINDER_H
