@@ -10,6 +10,9 @@
 #include <unordered_set>
 
 #include "Condition.h"
+#ifdef DEBUG
+extern const char *condTypeStr[];
+#endif // DEBUG
 
 using namespace llvm;
 

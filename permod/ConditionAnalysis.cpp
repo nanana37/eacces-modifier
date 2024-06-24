@@ -419,7 +419,7 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     conds.pop_back();
 
     args.push_back(format[cond->Type]);
-    // DEBUG_PRINT(condTypeStr[cond->Type]);
+    DEBUG_PRINT(condTypeStr[cond->Type]);
 
     switch (cond->Type) {
     case HELLOO:
