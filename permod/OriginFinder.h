@@ -1,5 +1,4 @@
-#ifndef ORIGIN_FINDER_H
-#define ORIGIN_FINDER_H
+#pragma once
 
 #include "debug.h"
 #include "llvm/IR/InstVisitor.h"
@@ -50,5 +49,3 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
 };
 
 } // namespace permod
-
-#endif // ORIGIN_FINDER_H

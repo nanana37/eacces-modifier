@@ -1,5 +1,4 @@
-#ifndef CONDITION_ANALYSIS_H
-#define CONDITION_ANALYSIS_H
+#pragma once
 
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/IR/IRBuilder.h"
@@ -582,4 +581,3 @@ struct ConditionAnalysis {
   }
 };
 } // namespace permod
-#endif // CONDITION_ANALYSIS_H

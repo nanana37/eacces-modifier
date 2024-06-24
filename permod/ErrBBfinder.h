@@ -1,5 +1,4 @@
-#ifndef ERR_BB_FINDER_H
-#define ERR_BB_FINDER_H
+#pragma once
 
 #include "llvm/IR/Instructions.h"
 #include "llvm/Pass.h"
@@ -138,5 +137,3 @@ struct ErrBBFinder {
 };
 
 } // namespace permod
-
-#endif // ERR_BB_FINDER_H

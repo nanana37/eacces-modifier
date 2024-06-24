@@ -1,5 +1,4 @@
-#ifndef DEBUG_H
-#define DEBUG_H
+#pragma once
 
 #include "llvm/IR/IRBuilder.h"
 
@@ -37,5 +36,3 @@ using namespace llvm;
   do {                                                                         \
   } while (0)
 #endif // DEBUG2
-
-#endif // DEBUG_H
