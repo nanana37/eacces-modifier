@@ -44,7 +44,7 @@ private:
 
 public:
   StringRef getName() { return Name; }
-  Value *getCond() { return Con; }
+  Value *getConst() { return Con; }
   CondType getType() { return Type; }
 
   Condition(StringRef name, Value *con, CondType type)
