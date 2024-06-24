@@ -88,6 +88,7 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
   formatStr[ANDFLS] = "[Permod] %s:%d & %d == 0\n";
   formatStr[SWITCH] = "[Permod] switch (%s:%d)\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
+  formatStr[ERRNOM] = "[Permod] %s() returned %d (errno)\n";
   formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
   formatStr[_OPEN_] = "[Permod] {\n";
   formatStr[_CLSE_] = "[Permod] }\n";
@@ -376,7 +377,7 @@ void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   // The analyzing function
   ErrBBFinder EBF;
   if (auto val = EBF.getErrno(I)) {
-    conds.push_back(new Condition(F.getName(), val, CALFLS));
+    conds.push_back(new Condition(F.getName(), val, ERRNOM));
     DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
   }
 
