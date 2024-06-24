@@ -1,10 +1,11 @@
-#pragma once
-
+//===- permod/ErrBBFinder.h - Definition of the ErrBBFinder -----*-C++-*-===//
 /*
  * ****************************************************************************
  *                                Find 'return -ERRNO'
  * ****************************************************************************
  */
+
+#pragma once
 
 #include "llvm/IR/Instructions.h"
 #include "llvm/Pass.h"

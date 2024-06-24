@@ -1,14 +1,16 @@
-#pragma once
-/*
- * ****************************************************************************
- *                                Condition
- * ****************************************************************************
- */
+//===-- Condition.cpp - Implement the Condition class ---------------------===//
 
 #include "Condition.h"
 #include "debug.h"
 
 using namespace permod;
+
+#ifdef DEBUG
+const char *condTypeStr[NUM_OF_CONDTYPE] = {
+    "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE",
+    "NLLTRU", "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS",
+    "SWITCH", "DBINFO", "HELLOO", "_OPEN_", "_CLSE_"};
+#endif // DEBUG
 
 void Condition::setType(CmpInst &CmpI, bool isBranchTrue) {
   switch (CmpI.getPredicate()) {

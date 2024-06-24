@@ -1,10 +1,4 @@
-#pragma once
-
-/*
- * ****************************************************************************
- *                                Find 'return -ERRNO'
- * ****************************************************************************
- */
+//===-- ErrBBFinder.cpp - Implement the ErrBBFinder struct ----------------===//
 
 #include "llvm/IR/Instructions.h"
 #include "llvm/Pass.h"

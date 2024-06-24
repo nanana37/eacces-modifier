@@ -1,10 +1,6 @@
-#pragma once
+//===- permod/Condition.h - Definition of the Condition class -----*-C++-*-===//
 
-/*
- * ****************************************************************************
- *                                Condition
- * ****************************************************************************
- */
+#pragma once
 
 #include "llvm/IR/IRBuilder.h"
 
@@ -35,13 +31,6 @@ enum CondType {
   _CLSE_,
   NUM_OF_CONDTYPE
 };
-
-#ifdef DEBUG
-const char *condTypeStr[NUM_OF_CONDTYPE] = {
-    "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE",
-    "NLLTRU", "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS",
-    "SWITCH", "DBINFO", "HELLOO", "_OPEN_", "_CLSE_"};
-#endif // DEBUG
 
 class Condition {
 public:
