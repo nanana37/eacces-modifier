@@ -2,6 +2,10 @@
 
 #include "llvm/IR/IRBuilder.h"
 
+#define DEBUG
+// #define DEBUG2
+// #define TEST
+
 #ifdef DEBUG
 #define MAX_TRACE_DEPTH 20
 #define DEBUG_PRINT(x)                                                         \
@@ -36,3 +40,9 @@ using namespace llvm;
   do {                                                                         \
   } while (0)
 #endif // DEBUG2
+
+#ifdef TEST
+#define LOGGER "printf"
+#else
+#define LOGGER "_printk"
+#endif // TEST

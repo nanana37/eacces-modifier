@@ -10,12 +10,6 @@
 #include "OriginFinder.h"
 #include "debug.h"
 
-#ifdef TEST
-#define LOGGER "printf"
-#else
-#define LOGGER "_printk"
-#endif
-
 using namespace llvm;
 
 namespace permod {
