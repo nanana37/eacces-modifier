@@ -80,6 +80,7 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
   formatStr[CMP_GE] = "[Permod] %s:%d >= %d\n";
   formatStr[CMP_LT] = "[Permod] %s:%d < %d\n";
   formatStr[CMP_LE] = "[Permod] %s:%d <= %d\n";
+  formatStr[CMP_XX] = "[Permod] %s:%d vs %d\n";
   formatStr[NLLTRU] = "[Permod] %s:%d == null\n";
   formatStr[NLLFLS] = "[Permod] %s:%d != null\n";
   formatStr[CALTRU] = "[Permod] %s():%d != %d\n";
@@ -431,17 +432,13 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
     switch (cond->getType()) {
-    case HELLOO:
-    case _OPEN_:
-    case _CLSE_:
-      DEBUG_PRINT("\n");
-      break;
     case CMPTRU:
     case CMPFLS:
     case CMP_GT:
     case CMP_GE:
     case CMP_LT:
     case CMP_LE:
+    case CMP_XX:
     case CALTRU:
     case CALFLS:
     case ANDTRU:
@@ -456,11 +453,18 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     case NLLFLS:
     case SWITCH:
     case DBINFO:
-    default:
+    case ERRNOM:
       DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getVar() << "\n");
       args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
       args.push_back(cond->getVar());
       break;
+    case HELLOO:
+    case _OPEN_:
+    case _CLSE_:
+      DEBUG_PRINT("\n");
+      break;
+    default:
+      DEBUG_PRINT("what is this?\n");
     }
 
     builder.CreateCall(logFunc, args);

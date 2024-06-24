@@ -18,6 +18,7 @@ enum CondType {
   CMP_GE,
   CMP_LT,
   CMP_LE,
+  CMP_XX,
   NLLTRU,
   NLLFLS,
   CALTRU,

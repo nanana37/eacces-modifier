@@ -7,9 +7,9 @@ using namespace permod;
 
 #ifdef DEBUG
 const char *condTypeStr[NUM_OF_CONDTYPE] = {
-    "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE",
-    "NLLTRU", "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS",
-    "SWITCH", "DBINFO", "ERRNOM", "HELLOO", "_OPEN_", "_CLSE_"};
+    "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE", "CMP_XX",
+    "NLLTRU", "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS", "SWITCH",
+    "DBINFO", "ERRNOM", "HELLOO", "_OPEN_", "_CLSE_"};
 #endif // DEBUG
 
 void Condition::setType(CmpInst &CmpI, bool isBranchTrue) {
@@ -40,7 +40,7 @@ void Condition::setType(CmpInst &CmpI, bool isBranchTrue) {
   default:
     DEBUG_PRINT("******* Sorry, Unexpected CmpInst::Predicate\n");
     DEBUG_PRINT(CmpI);
-    Type = DBINFO;
+    Type = CMP_XX;
     break;
   }
 }
