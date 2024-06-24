@@ -74,19 +74,19 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
 void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
                                       LLVMContext &Ctx) {
   StringRef formatStr[NUM_OF_CONDTYPE];
-  formatStr[CMPTRU] = "[Permod] %s == %d\n";
-  formatStr[CMPFLS] = "[Permod] %s != %d\n";
-  formatStr[CMP_GT] = "[Permod] %s > %d\n";
-  formatStr[CMP_GE] = "[Permod] %s >= %d\n";
-  formatStr[CMP_LT] = "[Permod] %s < %d\n";
-  formatStr[CMP_LE] = "[Permod] %s <= %d\n";
-  formatStr[NLLTRU] = "[Permod] %s == null\n";
-  formatStr[NLLFLS] = "[Permod] %s != null\n";
-  formatStr[CALTRU] = "[Permod] %s() didn't return %d\n";
-  formatStr[CALFLS] = "[Permod] %s() returned %d\n";
-  formatStr[ANDTRU] = "[Permod] %s & %d > 0\n";
-  formatStr[ANDFLS] = "[Permod] %s & %d == 0\n";
-  formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
+  formatStr[CMPTRU] = "[Permod] %s:%d == %d\n";
+  formatStr[CMPFLS] = "[Permod] %s:%d != %d\n";
+  formatStr[CMP_GT] = "[Permod] %s:%d > %d\n";
+  formatStr[CMP_GE] = "[Permod] %s:%d >= %d\n";
+  formatStr[CMP_LT] = "[Permod] %s:%d < %d\n";
+  formatStr[CMP_LE] = "[Permod] %s:%d <= %d\n";
+  formatStr[NLLTRU] = "[Permod] %s:%d == null\n";
+  formatStr[NLLFLS] = "[Permod] %s:%d != null\n";
+  formatStr[CALTRU] = "[Permod] %s():%d != %d\n";
+  formatStr[CALFLS] = "[Permod] %s():%d == %d\n";
+  formatStr[ANDTRU] = "[Permod] %s:%d & %d > 0\n";
+  formatStr[ANDFLS] = "[Permod] %s:%d & %d == 0\n";
+  formatStr[SWITCH] = "[Permod] switch (%s:%d)\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
   formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
   formatStr[_OPEN_] = "[Permod] {\n";
