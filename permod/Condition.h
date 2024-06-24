@@ -39,21 +39,27 @@ enum CondType {
 class Condition {
 private:
   StringRef Name; // name of `variable`
+  Value *Var;     // value of `variable` (sometimes pointer to `variable`)
   Value *Con;     // value of `constant`
   CondType Type;
   void setType(CmpInst &CmpI, bool isBranchTrue);
 
 public:
   StringRef getName() { return Name; }
+  Value *getVar() { return Var; }
   Value *getConst() { return Con; }
   CondType getType() { return Type; }
 
-  Condition(StringRef name, Value *con, CondType type)
-      : Name(name), Con(con), Type(type) {}
+  Condition(StringRef name, Value *var, CondType type)
+      : Name(name), Var(var), Type(type) {}
+
+  Condition(StringRef name, Value *var, Value *con, CondType type)
+      : Name(name), Var(var), Con(con), Type(type) {}
 
   // CmpInst
-  Condition(StringRef name, Value *con, CmpInst &CmpI, bool isBranchTrue)
-      : Name(name), Con(con) {
+  Condition(StringRef name, Value *var, Value *con, CmpInst &CmpI,
+            bool isBranchTrue)
+      : Name(name), Var(var), Con(con) {
     setType(CmpI, isBranchTrue);
   }
 };

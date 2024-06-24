@@ -116,6 +116,7 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
 bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
                                        BasicBlock &DestBB) {
   StringRef name;
+  Value *var;
   Value *con;
   CondType type;
   DEBUG_PRINT2("CMP: " << *CmpI.getParent() << "\n");
@@ -134,10 +135,10 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
    */
   if (isa<ConstantPointerNull>(CmpOp2)) {
     name = getVarName(*CmpOp);
-    con = CmpOp2;
+    var = CmpOp2;
     type = (isBranchTrue(BrI, DestBB) != CmpI.isFalseWhenEqual()) ? NLLTRU
                                                                   : NLLFLS;
-    conds.push_back(new Condition(name, con, type));
+    conds.push_back(new Condition(name, var, type));
     return true;
   }
 
@@ -146,10 +147,11 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
     switch (BinI->getOpcode()) {
     case Instruction::BinaryOps::And:
       name = getVarName(*BinI);
-      con = BinI->getOperand(1);
+      var = CmpOp;
+      con = CmpOp2;
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
                                                                     : ANDFLS;
-      conds.push_back(new Condition(name, con, type));
+      conds.push_back(new Condition(name, var, con, type));
       return true;
     default:
       DEBUG_PRINT("** Unexpected as BinI: " << *BinI << "\n");
@@ -163,10 +165,12 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
       return false;
 
     name = getVarName(*Callee);
+    var = CmpOp;
     con = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
-    conds.push_back(new Condition(name, con, CmpI, isBranchTrue(BrI, DestBB)));
+    conds.push_back(
+        new Condition(name, var, con, CmpI, isBranchTrue(BrI, DestBB)));
     return true;
   }
 
@@ -174,11 +178,13 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
   // TODO: Try on some examples
   if (auto *LoadI = dyn_cast<LoadInst>(CmpOp)) {
     name = getVarName(*LoadI);
-    con = CmpI.getOperand(1);
+    var = CmpOp;
+    con = CmpOp2;
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
                                                                   : CMPFLS;
-    conds.push_back(new Condition(name, con, CmpI, isBranchTrue(BrI, DestBB)));
+    conds.push_back(
+        new Condition(name, var, con, CmpI, isBranchTrue(BrI, DestBB)));
 
     return true;
   }
@@ -197,6 +203,7 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
 bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
                                         BasicBlock &DestBB) {
   StringRef name;
+  Value *var;
   Value *con;
   CondType type;
 
@@ -205,9 +212,10 @@ bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
     return false;
 
   name = getVarName(*Callee);
+  var = &CallI;
   con = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
   type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-  conds.push_back(new Condition(name, con, type));
+  conds.push_back(new Condition(name, var, con, type));
   return true;
 }
 
@@ -428,10 +436,30 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     case _CLSE_:
       DEBUG_PRINT("\n");
       break;
-    default:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+    case CMPTRU:
+    case CMPFLS:
+    case CMP_GT:
+    case CMP_GE:
+    case CMP_LT:
+    case CMP_LE:
+    case CALTRU:
+    case CALFLS:
+    case ANDTRU:
+    case ANDFLS:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getVar()
+                      << *cond->getConst() << "\n");
       args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getVar());
       args.push_back(cond->getConst());
+      break;
+    case NLLTRU:
+    case NLLFLS:
+    case SWITCH:
+    case DBINFO:
+    default:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getVar() << "\n");
+      args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getVar());
       break;
     }
 
