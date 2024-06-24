@@ -418,19 +418,19 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     Condition *cond = conds.back();
     conds.pop_back();
 
-    args.push_back(format[cond->Type]);
-    DEBUG_PRINT(condTypeStr[cond->Type]);
+    args.push_back(format[cond->getType()]);
+    DEBUG_PRINT(condTypeStr[cond->getType()]);
 
-    switch (cond->Type) {
+    switch (cond->getType()) {
     case HELLOO:
     case _OPEN_:
     case _CLSE_:
       DEBUG_PRINT("\n");
       break;
     default:
-      DEBUG_PRINT(" " << cond->Name << ": " << *cond->Con << "\n");
-      args.push_back(builder.CreateGlobalStringPtr(cond->Name));
-      args.push_back(cond->Con);
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getCond() << "\n");
+      args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getCond());
       break;
     }
 

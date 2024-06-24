@@ -33,10 +33,16 @@ enum CondType {
 };
 
 class Condition {
-public:
+private:
   StringRef Name;
   Value *Con; // value of constant
   CondType Type;
+  void setType(CmpInst &CmpI, bool isBranchTrue);
+
+public:
+  StringRef getName() { return Name; }
+  Value *getCond() { return Con; }
+  CondType getType() { return Type; }
 
   Condition(StringRef name, Value *con, CondType type)
       : Name(name), Con(con), Type(type) {}
@@ -46,8 +52,5 @@ public:
       : Name(name), Con(con) {
     setType(CmpI, isBranchTrue);
   }
-
-private:
-  void setType(CmpInst &CmpI, bool isBranchTrue);
 };
 } // namespace permod
