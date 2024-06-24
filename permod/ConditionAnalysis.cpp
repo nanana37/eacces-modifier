@@ -428,9 +428,9 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
       DEBUG_PRINT("\n");
       break;
     default:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getCond() << "\n");
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
       args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
-      args.push_back(cond->getCond());
+      args.push_back(cond->getConst());
       break;
     }
 
