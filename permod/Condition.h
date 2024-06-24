@@ -32,10 +32,13 @@ enum CondType {
   NUM_OF_CONDTYPE
 };
 
+// Condition class
+// if (`variable` == `constant`)
+// switch (`variable`) { case `constant`: }
 class Condition {
 private:
-  StringRef Name;
-  Value *Con; // value of constant
+  StringRef Name; // name of `variable`
+  Value *Con;     // value of `constant`
   CondType Type;
   void setType(CmpInst &CmpI, bool isBranchTrue);
 
