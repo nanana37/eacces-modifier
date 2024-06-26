@@ -148,8 +148,8 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
     switch (BinI->getOpcode()) {
     case Instruction::BinaryOps::And:
       name = getVarName(*BinI);
-      var = CmpOp;
-      con = CmpOp2;
+      var = BinI->getOperand(0);
+      con = BinI->getOperand(1);
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
                                                                     : ANDFLS;
       conds.push_back(new Condition(name, var, con, type));
