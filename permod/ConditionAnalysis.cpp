@@ -85,7 +85,7 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
   formatStr[NLLFLS] = "[Permod] %s:%d != null\n";
   formatStr[CALTRU] = "[Permod] %s():%d != %d\n";
   formatStr[CALFLS] = "[Permod] %s():%d == %d\n";
-  formatStr[ANDTRU] = "[Permod] %s:%d & %d > 0\n";
+  formatStr[ANDTRU] = "[Permod] %s:%d & %d != 0\n";
   formatStr[ANDFLS] = "[Permod] %s:%d & %d == 0\n";
   formatStr[SWITCH] = "[Permod] switch (%s:%d)\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
