@@ -9,3 +9,23 @@ May 28 12:50:44 debian kernel: [   61.831596] [Permod] vfsuid_valid(): not 0
 May 28 12:50:44 debian kernel: [   61.831599] [Permod] vfsuid_eq(): 0
 May 28 12:50:44 debian kernel: [   61.831601] [Permod] flags: not 64
 
+# New version
+--- Hello, I'm Permod ---
+/home/hiron/git/linux/fs/namei.c: 1135
+may_follow_link() returned -13
+{{
+vfsuid_valid() returned 0
+}{{{{{{{{
+sysctl_protected_symlinks != 0
+}}}}
+vfsuid_eq_kuid() returned 0
+}
+dir_mode & 514 == 0
+}
+vfsuid_valid() didn't return 0
+}
+vfsuid_eq() returned 0
+}
+flags & 64 == 0
+}
+
