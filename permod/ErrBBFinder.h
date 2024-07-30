@@ -20,7 +20,6 @@ struct ErrBBFinder {
   Value *findReturnValue(BasicBlock &BB);
   bool isErrno(Value &V);
   Value *getErrno(Value &V);
-  bool isStoreErr(StoreInst &SI);
   BasicBlock *getErrBB(StoreInst &SI);
   bool isStorePtr(StoreInst &SI);
   Value *getErrValue(StoreInst &SI);

@@ -58,28 +58,21 @@ Value *ErrBBFinder::getErrno(Value &V) {
   return nullptr;
 }
 
-bool ErrBBFinder::isStoreErr(StoreInst &SI) {
-  Value *ValOp = SI.getValueOperand();
-  // NOTE: return -ERRNO;
-  if (isErrno(*ValOp))
-    return true;
-  // NOTE: return (flag & 2) ? -ERRNO : 0;
-  if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
-    if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
-      return true;
-  }
-  return false;
-}
-
 /* Get error-thrower BB "ErrBB"
-   store i32 -13，ptr %1, align 4
+  store i32 -13，ptr %1, align 4
  * Returns: BasicBlock*
  */
 BasicBlock *ErrBBFinder::getErrBB(StoreInst &SI) {
-  if (!isStoreErr(SI))
-    return nullptr;
-
-  return SI.getParent();
+  Value *ValOp = SI.getValueOperand();
+  // NOTE: return -ERRNO;
+  if (isErrno(*ValOp))
+   return SI.getParent();
+  // NOTE: return (flag & 2) ? -ERRNO : 0;
+  if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
+   if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
+    return SI.getParent();
+  }
+  return nullptr;
 }
 
 bool ErrBBFinder::isStorePtr(StoreInst &SI) {
