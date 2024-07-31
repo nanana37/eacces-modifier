@@ -13,25 +13,15 @@ using namespace permod;
 
 // NOTE: Expect as Function has only one ret inst
 Value *ErrBBFinder::getReturnValue(Function &F) {
+  Value *RetVal = nullptr;
   for (auto &BB : F) {
-    if (Value *RetVal = findReturnValue(BB))
-      return RetVal;
+    if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
+      RetVal = RI->getReturnValue();
+      if (auto *LI = dyn_cast_or_null<LoadInst>(RetVal))
+        RetVal = LI->getPointerOperand();
+    }
   }
-  return nullptr;
-}
-
-// NOTE: maybe to find alloca is better?
-Value *ErrBBFinder::findReturnValue(BasicBlock &BB) {
-  if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
-    Value *RetVal = RI->getReturnValue();
-
-    if (isa_and_nonnull<ConstantInt>(RetVal))
-      return RetVal;
-
-    if (auto *LI = dyn_cast_or_null<LoadInst>(RetVal))
-      return LI->getPointerOperand();
-  }
-  return nullptr;
+  return RetVal;
 }
 
 bool ErrBBFinder::isErrno(Value &V) {
@@ -66,11 +56,11 @@ BasicBlock *ErrBBFinder::getErrBB(StoreInst &SI) {
   Value *ValOp = SI.getValueOperand();
   // NOTE: return -ERRNO;
   if (isErrno(*ValOp))
-   return SI.getParent();
+    return SI.getParent();
   // NOTE: return (flag & 2) ? -ERRNO : 0;
   if (auto *SI = dyn_cast<SelectInst>(ValOp)) {
-   if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
-    return SI.getParent();
+    if (isErrno(*SI->getTrueValue()) || isErrno(*SI->getFalseValue()))
+      return SI.getParent();
   }
   return nullptr;
 }

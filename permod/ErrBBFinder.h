@@ -17,7 +17,6 @@ namespace permod {
 
 struct ErrBBFinder {
   Value *getReturnValue(Function &F);
-  Value *findReturnValue(BasicBlock &BB);
   bool isErrno(Value &V);
   Value *getErrno(Value &V);
   BasicBlock *getErrBB(StoreInst &SI);
