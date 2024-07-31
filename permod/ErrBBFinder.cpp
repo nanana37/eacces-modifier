@@ -13,14 +13,24 @@ using namespace permod;
 
 // NOTE: Expect as Function has only one ret inst
 Value *ErrBBFinder::getReturnValue(Function &F) {
+#ifdef DEBUG
+  int cnt = 0;
+#endif
   Value *RetVal = nullptr;
   for (auto &BB : F) {
     if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
+#ifdef DEBUG
+      cnt++;
+#endif
       RetVal = RI->getReturnValue();
       if (auto *LI = dyn_cast_or_null<LoadInst>(RetVal))
         RetVal = LI->getPointerOperand();
     }
   }
+#ifdef DEBUG
+  if (cnt != 1)
+    DEBUG_PRINT("getReturnValue: cnt = " << cnt << "\n");
+#endif
   return RetVal;
 }
 
