@@ -97,3 +97,138 @@ sh scripts/trace.sh <owner/otheruser>
 ```
 
 need to cmp trace-as-owner.list vs trace-as-other.list
+
+## OUTPUT
+
+```sh
+[  832.414203] --- Hello, I'm Permod ---
+[  832.414203] [Permod] /home/hiron/git/linux/fs/namei.c: 1265
+[  832.414213] [Permod] may_create_in_sticky() returned -13
+[  832.414217] [Permod] {
+[  832.414217] [Permod] llvm.expect.i64 != 0
+[  832.414222] [Permod] }
+[  832.414224] [Permod] {
+[  832.414224] [Permod] i_mode52 & 61440 == 0
+[  832.414229] [Permod] }
+[  832.414231] [Permod] {
+[  832.414231] [Permod] {
+[  832.414233] [Permod] {
+[  832.414235] [Permod] sysctl_protected_fifos < 2
+[  832.414237] [Permod] }
+[  832.414240] [Permod] {
+[  832.414240] [Permod] {
+[  832.414242] [Permod] {
+[  832.414244] [Permod] {
+[  832.414246] [Permod] {
+[  832.414246] [Permod] {
+[  832.414248] [Permod] {
+[  832.414250] [Permod] {
+[  832.414252] [Permod] {
+[  832.414255] [Permod] {
+[  832.414255] [Permod] {
+[  832.414257] [Permod] sysctl_protected_regular != 0
+[  832.414260] [Permod] }
+[  832.414260] [Permod] {
+[  832.414262] [Permod] {
+[  832.414264] [Permod] {
+[  832.414266] [Permod] sysctl_protected_fifos != 0
+[  832.414268] [Permod] }
+[  832.414270] [Permod] {
+[  832.414272] [Permod] {
+[  832.414272] [Permod] sysctl_protected_fifos == 0
+[  832.414277] [Permod] }
+[  832.414278] [Permod] i_mode & 61440 != 0
+[  832.414280] [Permod] }
+[  832.414282] [Permod] sysctl_protected_regular == 0
+[  832.414285] [Permod] }
+[  832.414285] [Permod] i_mode6 & 61440 != 0
+[  832.414289] [Permod] }
+[  832.414291] [Permod] llvm.expect.i64 == 0
+[  832.414293] [Permod] }
+[  832.414293] [Permod] vfsuid_eq() returned 0
+[  832.414297] [Permod] }
+[  832.414299] [Permod] }
+[  832.414299] [Permod] }
+[  832.414301] [Permod] }
+[  832.414303] [Permod] vfsuid_eq_kuid() returned 0
+[  832.414307] [Permod] }
+[  832.414308] [Permod] llvm.expect.i64 == 0
+[  832.414309] [Permod] }
+[  832.414311] [Permod] dir_mode & 16 != 0
+[  832.414314] [Permod] }
+[  832.414315] [Permod] sysctl_protected_fifos >= 2
+[  832.414317] [Permod] }
+[  832.414319] [Permod] i_mode52 & 61440 != 0
+[  832.414322] [Permod] }
+[  832.414323] [Permod] sysctl_protected_regular >= 2
+[  832.414325] [Permod] }
+[  832.414327] [Permod] i_mode61 & 61440 == 0
+[  832.414329] [Permod] }
+[  832.415033] --- Hello, I'm Permod ---
+[  832.415038] [Permod] /home/hiron/git/linux/fs/exec.c: 932
+[  832.415041] [Permod] do_open_execat() returned -13
+[  832.415147] [Permod] do_open_execat() returned -13
+[  832.416799] --- Hello, I'm Permod ---
+[  832.416804] [Permod] /home/hiron/git/linux/fs/namei.c: 1265
+[  832.416809] [Permod] may_create_in_sticky() returned -13
+[  832.416813] [Permod] {
+[  832.416815] [Permod] llvm.expect.i64 != 0
+[  832.416819] [Permod] }
+[  832.416821] [Permod] {
+[  832.416822] [Permod] i_mode52 & 61440 == 0
+[  832.416825] [Permod] }
+[  832.416827] [Permod] {
+[  832.416828] [Permod] {
+[  832.416830] [Permod] {
+[  832.416832] [Permod] sysctl_protected_fifos < 2
+[  832.416834] [Permod] }
+[  832.416836] [Permod] {
+[  832.416838] [Permod] {
+[  832.416839] [Permod] {
+[  832.416841] [Permod] {
+[  832.416843] [Permod] {
+[  832.416844] [Permod] {
+[  832.416846] [Permod] {
+[  832.416848] [Permod] {
+[  832.416849] [Permod] {
+[  832.416851] [Permod] {
+[  832.416853] [Permod] {
+[  832.416854] [Permod] sysctl_protected_regular != 0
+[  832.416857] [Permod] }
+[  832.416858] [Permod] {
+[  832.416860] [Permod] {
+[  832.416862] [Permod] {
+[  832.416863] [Permod] sysctl_protected_fifos != 0
+[  832.416866] [Permod] }
+[  832.416867] [Permod] {
+[  832.416869] [Permod] {
+[  832.416871] [Permod] sysctl_protected_fifos == 0
+[  832.416873] [Permod] }
+[  832.416875] [Permod] i_mode & 61440 != 0
+[  832.416877] [Permod] }
+[  832.416879] [Permod] sysctl_protected_regular == 0
+[  832.416881] [Permod] }
+[  832.416883] [Permod] i_mode6 & 61440 != 0
+[  832.416885] [Permod] }
+[  832.416887] [Permod] llvm.expect.i64 == 0
+[  832.416889] [Permod] }
+[  832.416891] [Permod] vfsuid_eq() returned 0
+[  832.416894] [Permod] }
+[  832.416895] [Permod] }
+[  832.416897] [Permod] }
+[  832.416899] [Permod] }
+[  832.416900] [Permod] vfsuid_eq_kuid() returned 0
+[  832.416903] [Permod] }
+[  832.416904] [Permod] llvm.expect.i64 == 0
+[  832.416907] [Permod] }
+[  832.416908] [Permod] dir_mode & 16 != 0
+[  832.416911] [Permod] }
+[  832.416913] [Permod] sysctl_protected_fifos >= 2
+[  832.416915] [Permod] }
+[  832.416917] [Permod] i_mode52 & 61440 != 0
+[  832.416919] [Permod] }
+[  832.416921] [Permod] sysctl_protected_regular >= 2
+[  832.416923] [Permod] }
+[  832.416925] [Permod] i_mode61 & 61440 == 0
+[  832.416927] [Permod] }
+```
