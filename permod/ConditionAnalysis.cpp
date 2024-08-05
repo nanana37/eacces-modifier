@@ -64,6 +64,8 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
   StringRef Name = getOrigin(V)->getName();
   if (Name.empty())
     Name = "Unnamed Condition";
+  if (Name.startswith("llvm."))
+    DEBUG_PRINT("!!!Sorry, llvm internal variable!!!\n");
   DEBUG_PRINT2("Name: " << Name << "\n");
   return Name;
 }
@@ -74,20 +76,22 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
 void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
                                       LLVMContext &Ctx) {
   StringRef formatStr[NUM_OF_CONDTYPE];
-  formatStr[CMPTRU] = "[Permod] %s == %d\n";
-  formatStr[CMPFLS] = "[Permod] %s != %d\n";
-  formatStr[CMP_GT] = "[Permod] %s > %d\n";
-  formatStr[CMP_GE] = "[Permod] %s >= %d\n";
-  formatStr[CMP_LT] = "[Permod] %s < %d\n";
-  formatStr[CMP_LE] = "[Permod] %s <= %d\n";
-  formatStr[NLLTRU] = "[Permod] %s == null\n";
-  formatStr[NLLFLS] = "[Permod] %s != null\n";
-  formatStr[CALTRU] = "[Permod] %s() != %d\n";
-  formatStr[CALFLS] = "[Permod] %s() == %d\n";
-  formatStr[ANDTRU] = "[Permod] %s & %d != 0\n";
-  formatStr[ANDFLS] = "[Permod] %s & %d == 0\n";
-  formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
+  formatStr[CMPTRU] = "[Permod] %s:%d == %d\n";
+  formatStr[CMPFLS] = "[Permod] %s:%d != %d\n";
+  formatStr[CMP_GT] = "[Permod] %s:%d > %d\n";
+  formatStr[CMP_GE] = "[Permod] %s:%d >= %d\n";
+  formatStr[CMP_LT] = "[Permod] %s:%d < %d\n";
+  formatStr[CMP_LE] = "[Permod] %s:%d <= %d\n";
+  formatStr[CMP_XX] = "[Permod] %s:%d vs %d\n";
+  formatStr[NLLTRU] = "[Permod] %s:%d == null\n";
+  formatStr[NLLFLS] = "[Permod] %s:%d != null\n";
+  formatStr[CALTRU] = "[Permod] %s():%d != %d\n";
+  formatStr[CALFLS] = "[Permod] %s():%d == %d\n";
+  formatStr[ANDTRU] = "[Permod] %s:%d & %d != 0\n";
+  formatStr[ANDFLS] = "[Permod] %s:%d & %d == 0\n";
+  formatStr[SWITCH] = "[Permod] switch (%s:%d)\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
+  formatStr[ERRNOM] = "[Permod] %s() returned %d (errno)\n";
   formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
   formatStr[_OPEN_] = "[Permod] {\n";
   formatStr[_CLSE_] = "[Permod] }\n";
@@ -115,7 +119,8 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
 bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
                                        BasicBlock &DestBB) {
   StringRef name;
-  Value *val;
+  Value *var;
+  Value *con;
   CondType type;
   DEBUG_PRINT2("CMP: " << *CmpI.getParent() << "\n");
 
@@ -133,10 +138,10 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
    */
   if (isa<ConstantPointerNull>(CmpOp2)) {
     name = getVarName(*CmpOp);
-    val = CmpOp2;
+    var = CmpOp2;
     type = (isBranchTrue(BrI, DestBB) != CmpI.isFalseWhenEqual()) ? NLLTRU
                                                                   : NLLFLS;
-    conds.push_back(new Condition(name, val, type));
+    conds.push_back(new Condition(name, var, type));
     return true;
   }
 
@@ -145,10 +150,11 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
     switch (BinI->getOpcode()) {
     case Instruction::BinaryOps::And:
       name = getVarName(*BinI);
-      val = BinI->getOperand(1);
+      var = BinI->getOperand(0);
+      con = BinI->getOperand(1);
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
                                                                     : ANDFLS;
-      conds.push_back(new Condition(name, val, type));
+      conds.push_back(new Condition(name, var, con, type));
       return true;
     default:
       DEBUG_PRINT("** Unexpected as BinI: " << *BinI << "\n");
@@ -198,11 +204,13 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
   // TODO: Try on some examples
   if (auto *LoadI = dyn_cast<LoadInst>(CmpOp)) {
     name = getVarName(*LoadI);
-    val = CmpI.getOperand(1);
+    var = CmpOp;
+    con = CmpOp2;
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
                                                                   : CMPFLS;
-    conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
+    conds.push_back(
+        new Condition(name, var, con, CmpI, isBranchTrue(BrI, DestBB)));
 
     return true;
   }
@@ -221,7 +229,8 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
 bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
                                         BasicBlock &DestBB) {
   StringRef name;
-  Value *val;
+  Value *var;
+  Value *con;
   CondType type;
 
   Function *Callee = CallI.getCalledFunction();
@@ -229,9 +238,10 @@ bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
     return false;
 
   name = getVarName(*Callee);
-  val = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
+  var = &CallI;
+  con = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
   type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-  conds.push_back(new Condition(name, val, type));
+  conds.push_back(new Condition(name, var, con, type));
   return true;
 }
 
@@ -272,11 +282,11 @@ bool ConditionAnalysis::findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
  */
 bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
   StringRef name;
-  Value *val;
+  Value *con;
   Value *SwCond = SwI.getCondition();
 
   // Get value
-  val = SwCond;
+  con = SwCond;
 
   // Get name
   SwCond = getOrigin(*SwCond);
@@ -284,7 +294,7 @@ bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
     return false;
   name = getVarName(*SwCond);
 
-  conds.push_back(new Condition(name, val, SWITCH));
+  conds.push_back(new Condition(name, con, SWITCH));
   return true;
 }
 
@@ -311,6 +321,7 @@ bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
 // Search from bottom to top (entry block)
 void ConditionAnalysis::findAllConditions(BasicBlock &ErrBB, int depth) {
   DEBUG_PRINT2("\n*** findAllConditions ***\n");
+  DEBUG_PRINT2(ErrBB);
 
   // Prevent infinite loop
   if (depth > MAX_TRACE_DEPTH) {
@@ -345,7 +356,7 @@ void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   // The analyzing function
   ErrBBFinder EBF;
   if (auto val = EBF.getErrno(I)) {
-    conds.push_back(new Condition(F.getName(), val, CALFLS));
+    conds.push_back(new Condition(F.getName(), val, ERRNOM));
     DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
   }
 
@@ -391,16 +402,39 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
     switch (cond->getType()) {
+    case CMPTRU:
+    case CMPFLS:
+    case CMP_GT:
+    case CMP_GE:
+    case CMP_LT:
+    case CMP_LE:
+    case CMP_XX:
+    case CALTRU:
+    case CALFLS:
+    case ANDTRU:
+    case ANDFLS:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getVar()
+                      << *cond->getConst() << "\n");
+      args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getVar());
+      args.push_back(cond->getConst());
+      break;
+    case NLLTRU:
+    case NLLFLS:
+    case SWITCH:
+    case DBINFO:
+    case ERRNOM:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getVar() << "\n");
+      args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getVar());
+      break;
     case HELLOO:
     case _OPEN_:
     case _CLSE_:
       DEBUG_PRINT("\n");
       break;
     default:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
-      args.push_back(cond->getConst());
-      break;
+      DEBUG_PRINT("what is this?\n");
     }
 
     builder.CreateCall(logFunc, args);
