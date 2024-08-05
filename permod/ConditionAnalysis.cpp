@@ -64,6 +64,8 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
   StringRef Name = getOrigin(V)->getName();
   if (Name.empty())
     Name = "Unnamed Condition";
+  if (Name.startswith("llvm."))
+    DEBUG_PRINT("!!!Sorry, llvm internal variable!!!\n");
   DEBUG_PRINT2("Name: " << Name << "\n");
   return Name;
 }
@@ -166,10 +168,34 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
       return false;
 
     name = getVarName(*Callee);
-    var = CmpOp;
-    con = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
-    type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
-                                                                  : CALFLS;
+
+    // likely(), unlikely() are converted to llvm.expect
+    if (name.startswith("llvm.expect")) {
+      DEBUG_PRINT2("llvm.expect");
+      Value *Arg0 = CallI->getArgOperand(0);
+      Value *Arg1 = CallI->getArgOperand(1);
+
+      /*
+       *if (likely(error > 0))
+        %25 = load i32, ptr %error, align 4, !dbg !8496
+        %cmp = icmp sgt i32 %25, 0, !dbg !8496
+        %lnot24 = xor i1 %cmp, true, !dbg !8496
+        %lnot26 = xor i1 %lnot24, true, !dbg !8496
+        %lnot.ext27 = zext i1 %lnot26 to i32, !dbg !8496
+        %conv28 = sext i32 %lnot.ext27 to i64, !dbg !8496
+        %expval29 = call i64 @llvm.expect.i64(i64 %conv28, i64 1), !dbg !8496
+       */
+
+      var = Arg0;
+      con = Arg1;
+      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
+                                                                    : CMPFLS;
+    } else {
+      var = CmpOp;
+      con = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
+      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
+                                                                    : CALFLS;
+    }
     conds.push_back(
         new Condition(name, var, con, CmpI, isBranchTrue(BrI, DestBB)));
     return true;
@@ -296,6 +322,7 @@ bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
 // Search from bottom to top (entry block)
 void ConditionAnalysis::findAllConditions(BasicBlock &ErrBB, int depth) {
   DEBUG_PRINT2("\n*** findAllConditions ***\n");
+  DEBUG_PRINT2(ErrBB);
 
   // Prevent infinite loop
   if (depth > MAX_TRACE_DEPTH) {
