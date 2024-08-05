@@ -166,6 +166,33 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
       return false;
 
     name = getVarName(*Callee);
+
+    if (name.startswith("llvm.expect")) {
+      DEBUG_PRINT("llvm.expect\n");
+      return true;
+      // likely()/unlikely() are llvm intrinsic functions
+      Value *Arg0 = CallI->getArgOperand(0);
+      Value *Arg1 = CallI->getArgOperand(1);
+      if (!Arg0 || !Arg1)
+        return false;
+      Arg0 = getOrigin(*Arg0);
+
+      if (isa<CmpInst>(Arg0)) {
+        findIfCond_cmp(BrI, cast<CmpInst>(*Arg0), DestBB);
+      } else if (isa<CallInst>(Arg0)) {
+        findIfCond_call(BrI, cast<CallInst>(*Arg0), DestBB);
+      } else if (isa<TruncInst>(Arg0)) {
+        Arg0 = cast<TruncInst>(Arg0)->getOperand(0);
+        if (isa<CallInst>(Arg0)) {
+          findIfCond_call(BrI, cast<CallInst>(*Arg0), DestBB);
+        }
+      } else {
+        DEBUG_PRINT("** Unexpected as Arg0: " << *Arg0 << "\n");
+        return false;
+      }
+      return true;
+    }
+
     var = CmpOp;
     con = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
@@ -296,6 +323,7 @@ bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
 // Search from bottom to top (entry block)
 void ConditionAnalysis::findAllConditions(BasicBlock &ErrBB, int depth) {
   DEBUG_PRINT2("\n*** findAllConditions ***\n");
+  DEBUG_PRINT2(ErrBB);
 
   // Prevent infinite loop
   if (depth > MAX_TRACE_DEPTH) {
