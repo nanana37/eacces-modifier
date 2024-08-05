@@ -162,6 +162,31 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
       return false;
 
     name = getVarName(*Callee);
+
+    if (name.startswith("llvm.expect")) {
+      // likely() & unlikely() are llvm internal functions
+      DEBUG_PRINT2("Yo, it's llvm internal\n");
+      Value *Arg0 = CallI->getArgOperand(0);
+      Value *Arg1 = CallI->getArgOperand(1);
+      Arg0 = getOrigin(*Arg0);
+      DEBUG_PRINT2("Arg0: " << *Arg0 << "\n");
+      if (isa<CmpInst>(Arg0))
+        // if (likely(cond > 0))
+        findIfCond_cmp(BrI, cast<CmpInst>(*Arg0), DestBB);
+      else if (isa<CallInst>(Arg0))
+        // if (likely(func()))
+        findIfCond_call(BrI, cast<CallInst>(*Arg0), DestBB);
+      else if (isa<TruncInst>(Arg0)) {
+        // if (likely(!flag))
+        TruncInst *TruncI = cast<TruncInst>(Arg0);
+        name = getVarName(*TruncI->getOperand(0));
+        DEBUG_PRINT2("Trunc: " << name << "\n");
+      } else {
+        DEBUG_PRINT("** Unexpected as Arg0: " << *Arg0 << "\n");
+        name = getVarName(*Arg0);
+      }
+    }
+
     val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
