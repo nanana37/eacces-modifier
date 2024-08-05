@@ -51,7 +51,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       // TODO: This should be class; only main() should be public
       struct ConditionAnalysis ConditionAnalysis {};
 
-      modified |= ConditionAnalysis.main(*ErrBB, F, *SI);
+      ConditionAnalysis.main(*ErrBB, F, *SI);
     }
     return modified;
   }
@@ -74,7 +74,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     struct ConditionAnalysis ConditionAnalysis {};
 
-    modified |= ConditionAnalysis.main(*ErrBB, F, SI);
+    ConditionAnalysis.main(*ErrBB, F, SI);
 
     return modified;
   }
