@@ -66,38 +66,3 @@ Permission denied
 ```
 
 [thanks to: Qiita@kusano_k](https://qiita.com/kusano_k/items/8763374d0dc3edc927cf)
-
-## OUTPUT
-
-```sh
-[  676.729323] --- Hello, I'm Permod ---
-[  676.729327] [Permod] /home/hiron/git/linux/fs/namei.c: 1135
-[  676.729331] [Permod] may_follow_link() returned -13
-[  676.729334] [Permod] {
-[  676.729335] [Permod] {
-[  676.729337] [Permod] vfsuid_valid() returned 0
-[  676.729340] [Permod] }
-[  676.729341] [Permod] {
-[  676.729343] [Permod] {
-[  676.729345] [Permod] {
-[  676.729346] [Permod] {
-[  676.729348] [Permod] {
-[  676.729349] [Permod] {
-[  676.729351] [Permod] {
-[  676.729353] [Permod] {
-[  676.729355] [Permod] sysctl_protected_symlinks != 0
-[  676.729357] [Permod] }
-[  676.729359] [Permod] }
-[  676.729360] [Permod] }
-[  676.729362] [Permod] }
-[  676.729364] [Permod] vfsuid_eq_kuid() returned 0
-[  676.729366] [Permod] }
-[  676.729368] [Permod] dir_mode & 514 == 0
-[  676.729370] [Permod] }
-[  676.729372] [Permod] vfsuid_valid() didn't return 0
-[  676.729375] [Permod] }
-[  676.729376] [Permod] vfsuid_eq() returned 0
-[  676.729379] [Permod] }
-[  676.729380] [Permod] flags & 64 == 0
-[  676.729383] [Permod] }
-```
