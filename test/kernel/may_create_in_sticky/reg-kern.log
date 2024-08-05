@@ -157,3 +157,165 @@ Aug  5 17:40:05 debian kernel: [ 8602.223467] [Permod] capable_wrt_inode_uidgid(
 Aug  5 17:40:05 debian kernel: [ 8602.223469] [Permod] }
 Aug  5 17:40:05 debian kernel: [ 8602.223470] [Permod] }
 
+
+[  577.195763] [Permod] /home/hiron/git/linux/fs/namei.c: 1265
+[  577.195767] [Permod] may_create_in_sticky() == -13
+[  577.195769] [Permod] {
+[  577.195771] [Permod] llvm.expect.i64 != 0
+[  577.195774] [Permod] dir_mode & 2 != 0
+[  577.195776] [Permod] }
+[  577.195778] [Permod] {
+[  577.195780] [Permod] i_mode52 & 61440 == 0
+[  577.195782] [Permod] }
+[  577.195784] [Permod] {
+[  577.195786] [Permod] {
+[  577.195787] [Permod] {
+[  577.195789] [Permod] sysctl_protected_fifos < 2
+[  577.195791] [Permod] }
+[  577.195793] [Permod] {
+[  577.195795] [Permod] {
+[  577.195796] [Permod] {
+[  577.195798] [Permod] {
+[  577.195799] [Permod] {
+[  577.195801] [Permod] {
+[  577.195803] [Permod] {
+[  577.195804] [Permod] {
+[  577.195806] [Permod] {
+[  577.195807] [Permod] {
+[  577.195809] [Permod] {
+[  577.195811] [Permod] sysctl_protected_regular != 0
+[  577.195813] [Permod] }
+[  577.195815] [Permod] {
+[  577.195816] [Permod] {
+[  577.195818] [Permod] {
+[  577.195819] [Permod] sysctl_protected_fifos != 0
+[  577.195822] [Permod] }
+[  577.195823] [Permod] {
+[  577.195825] [Permod] {
+[  577.195827] [Permod] sysctl_protected_fifos == 0
+[  577.195829] [Permod] }
+[  577.195830] [Permod] i_mode & 61440 != 0
+[  577.195833] [Permod] }
+[  577.195835] [Permod] sysctl_protected_regular == 0
+[  577.195837] [Permod] }
+[  577.195839] [Permod] i_mode6 & 61440 != 0
+[  577.195841] [Permod] }
+[  577.195843] [Permod] llvm.expect.i64 == 0
+[  577.195845] [Permod] dir_mode & 512 == 0
+[  577.195848] [Permod] }
+[  577.195849] [Permod] vfsuid_eq() == 0
+[  577.195851] [Permod] }
+[  577.195853] [Permod] }
+[  577.195855] [Permod] }
+[  577.195856] [Permod] }
+[  577.195858] [Permod] vfsuid_eq_kuid() == 0
+[  577.195860] [Permod] }
+[  577.195862] [Permod] llvm.expect.i64 == 0
+[  577.195864] [Permod] dir_mode & 2 == 0
+[  577.195867] [Permod] }
+[  577.195868] [Permod] dir_mode & 16 != 0
+[  577.195871] [Permod] }
+[  577.195872] [Permod] sysctl_protected_fifos >= 2
+[  577.195875] [Permod] }
+[  577.195876] [Permod] i_mode52 & 61440 != 0
+[  577.195879] [Permod] }
+[  577.195880] [Permod] sysctl_protected_regular >= 2
+[  577.195883] [Permod] }
+[  577.195884] [Permod] i_mode61 & 61440 == 0
+[  577.195887] [Permod] }
+[  577.195899] --- Hello, I'm Permod ---
+[  577.195901] [Permod] /home/hiron/git/linux/fs/namei.c: 381
+[  577.195904] [Permod] acl_permission_check() == -13
+[  577.195907] [Permod] {
+[  577.195909] [Permod] {
+[  577.195910] [Permod] and21 & 37264 == 0
+[  577.195913] [Permod] }
+[  577.195914] [Permod] {
+[  577.195916] [Permod] {
+[  577.195918] [Permod] vfsgid_in_group_p == 0
+[  577.195920] [Permod] }
+[  577.195922] [Permod] {
+[  577.195923] [Permod] {
+[  577.195925] [Permod] {
+[  577.195927] [Permod] {
+[  577.195928] [Permod] s_flags & 65536 == 0
+[  577.195930] [Permod] }
+[  577.195932] [Permod] {
+[  577.195934] [Permod] mode & 56 == 0
+[  577.195937] [Permod] }
+[  577.195938] [Permod] {
+[  577.195940] [Permod] {
+[  577.195942] [Permod] {
+[  577.195943] [Permod] {
+[  577.195945] [Permod] error != -11
+[  577.195948] [Permod] }
+[  577.195949] [Permod] }
+[  577.195951] [Permod] {
+[  577.195953] [Permod] {
+[  577.195954] [Permod] {
+[  577.195956] [Permod] {
+[  577.195957] [Permod] {
+[  577.195959] [Permod] {
+[  577.195961] [Permod] {
+[  577.195962] [Permod] {
+[  577.195964] [Permod] }
+[  577.195965] [Permod] }
+[  577.195967] [Permod] }
+[  577.195968] [Permod] vfsuid_eq_kuid == 0
+[  577.195971] [Permod] }
+[  577.195972] [Permod] s_flags & 65536 != 0
+[  577.195975] [Permod] }
+[  577.195976] [Permod] mode & 56 != 0
+[  577.195979] [Permod] }
+[  577.195980] [Permod] error == -11
+[  577.195983] [Permod] }
+[  577.195984] [Permod] }
+[  577.195986] [Permod] cleanup.dest.slot == 0 (switch)
+[  577.195988] [Permod] }
+[  577.195990] [Permod] }
+[  577.195992] [Permod] and21 & 37264 != 0
+[  577.195994] [Permod] }
+[  577.195996] [Permod] vfsgid_in_group_p != 0
+[  577.195998] [Permod] }
+[  577.196000] [Permod] }
+[  577.196001] [Permod] }
+[  577.196003] [Permod] and21 & -33189 != 0
+[  577.196005] [Permod] }
+[  577.196007] --- Hello, I'm Permod ---
+[  577.196009] [Permod] /home/hiron/git/linux/fs/namei.c: 451
+[  577.196012] [Permod] generic_permission() == -13
+[  577.196014] [Permod] {
+[  577.196016] [Permod] i_mode24 & 73 == 0
+[  577.196018] [Permod] }
+[  577.196020] [Permod] {
+[  577.196021] [Permod] {
+[  577.196023] [Permod] {
+[  577.196025] [Permod] and14 & 1 == 0
+[  577.196027] [Permod] }
+[  577.196029] [Permod] {
+[  577.196030] [Permod] {
+[  577.196032] [Permod] {
+[  577.196033] [Permod] Unnamed Condition != 4
+[  577.196036] [Permod] }
+[  577.196037] [Permod] {
+[  577.196039] [Permod] {
+[  577.196041] [Permod] {
+[  577.196042] [Permod] {
+[  577.196044] [Permod] {
+[  577.196045] [Permod] ret == -13
+[  577.196048] [Permod] }
+[  577.196049] [Permod] i_mode & 61440 != 0
+[  577.196052] [Permod] }
+[  577.196054] [Permod] Unnamed Condition == 4
+[  577.196056] [Permod] }
+[  577.196057] [Permod] capable_wrt_inode_uidgid() == 0
+[  577.196060] [Permod] }
+[  577.196061] [Permod] }
+[  577.196063] [Permod] and14 & 1 != 0
+[  577.196065] [Permod] }
+[  577.196067] [Permod] i_mode24 & 73 != 0
+[  577.196069] [Permod] }
+[  577.196071] [Permod] capable_wrt_inode_uidgid() == 0
+[  577.196073] [Permod] }
+[  577.196075] [Permod] }
+
