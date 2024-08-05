@@ -15,7 +15,7 @@ if ( flag & MASK2 ) {
 }
 ```
 
-Because they are both `EACCES`, and says "Permission denied".
+Because they are both `EACCES`, and say "Permission denied".
 
 ```bash
 $ ./a.out

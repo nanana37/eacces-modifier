@@ -1,11 +1,31 @@
-May 28 12:50:44 debian kernel: [   61.831575] --- Hello, I'm Permod ---
-May 28 12:50:44 debian kernel: [   61.831579] [Permod] <path_to_linux>/fs/namei.c: 1125
-May 28 12:50:44 debian kernel: [   61.831583] [Permod] may_follow_link(): -13
-May 28 12:50:44 debian kernel: [   61.831587] [Permod] vfsuid_valid(): 0
-May 28 12:50:44 debian kernel: [   61.831589] [Permod] sysctl_protected_symlinks: 0
-May 28 12:50:44 debian kernel: [   61.831591] [Permod] vfsuid_eq_kuid(): 0
-May 28 12:50:44 debian kernel: [   61.831594] [Permod] dir_mode: not 514
-May 28 12:50:44 debian kernel: [   61.831596] [Permod] vfsuid_valid(): not 0
-May 28 12:50:44 debian kernel: [   61.831599] [Permod] vfsuid_eq(): 0
-May 28 12:50:44 debian kernel: [   61.831601] [Permod] flags: not 64
+[ 1947.085967] --- Hello, I'm Permod ---
+[ 1947.085969] [Permod] /home/hiron/git/linux/fs/namei.c: 1135
+[ 1947.085972] [Permod] may_follow_link() == -13
+[ 1947.085978] [Permod] {
+[ 1947.085978] [Permod] {
+[ 1947.085978] [Permod] vfsuid_valid() == 0
+[ 1947.085985] [Permod] }
+[ 1947.085985] [Permod] {
+[ 1947.085988] [Permod] {
+[ 1947.085990] [Permod] {
+[ 1947.085990] [Permod] {
+[ 1947.085991] [Permod] {
+[ 1947.085992] [Permod] {
+[ 1947.085994] [Permod] {
+[ 1947.085999] [Permod] {
+[ 1947.085999] [Permod] sysctl_protected_symlinks != 0
+[ 1947.086002] [Permod] }
+[ 1947.086002] [Permod] }
+[ 1947.086005] [Permod] }
+[ 1947.086007] [Permod] }
+[ 1947.086008] [Permod] vfsuid_eq_kuid() == 0
+[ 1947.086008] [Permod] }
+[ 1947.086008] [Permod] dir_mode & 514 == 0 (514 is correct)
+[ 1947.086013] [Permod] }
+[ 1947.086014] [Permod] vfsuid_valid() != 0
+[ 1947.086014] [Permod] }
+[ 1947.086019] [Permod] vfsuid_eq() == 0
+[ 1947.086020] [Permod] }
+[ 1947.086020] [Permod] flags & 64 == 0
+[ 1947.086025] [Permod] }
 

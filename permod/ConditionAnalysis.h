@@ -57,7 +57,6 @@ struct ConditionAnalysis {
   bool findIfCond_call(BranchInst &BrI, CallInst &CallI, BasicBlock &DestBB);
   bool findIfCond(BranchInst &BrI, BasicBlock &DestBB);
   bool findSwCond(SwitchInst &SwI);
-  void findPreds(BasicBlock &BB, std::vector<BasicBlock *> &preds);
   bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB);
   void findAllConditions(BasicBlock &ErrBB, int depth = 0);
 

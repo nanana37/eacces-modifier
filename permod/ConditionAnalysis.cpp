@@ -273,37 +273,6 @@ bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
   return true;
 }
 
-/*
- * Search predecessors for If/Switch Statement BB (CondBB)
- */
-void ConditionAnalysis::findPreds(BasicBlock &BB,
-                                  std::vector<BasicBlock *> &preds) {
-  DEBUG_PRINT2("\n...Finding preds...\n");
-
-  if (predecessors(&BB).empty())
-    return;
-
-  for (auto *PredBB : predecessors(&BB)) {
-    DEBUG_PRINT2("found a pred\n");
-    Instruction *TI = PredBB->getTerminator();
-    if (isa<BranchInst>(TI)) {
-      preds.push_back(PredBB);
-    } else if (isa<SwitchInst>(TI)) {
-      /* caseBB may have multiple same preds
-       * e.g.
-          switch (x) {
-          case A:
-          case B:
-            return -ERRNO;
-          }
-      */
-      if (std::find(preds.begin(), preds.end(), PredBB) == preds.end())
-        preds.push_back(PredBB);
-    }
-  }
-  DEBUG_PRINT2("...End of Finding preds...\n");
-}
-
 bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
   DEBUG_PRINT2("\n** findConditions **\n");
 
@@ -343,41 +312,16 @@ void ConditionAnalysis::findAllConditions(BasicBlock &ErrBB, int depth) {
   }
   visitedBBs.insert(&ErrBB);
 
-  // Find CondBBs (conditional predecessors)
-  std::vector<BasicBlock *> preds;
-  findPreds(ErrBB, preds);
-  if (preds.empty()) {
-    return;
-  }
-
-  bool reachedEntry = true;
-  for (auto *CondBB : preds) {
+  for (auto *PredBB : predecessors(&ErrBB)) {
     conds.push_back(new Condition("", NULL, _CLSE_));
-    if (!CondBB) {
-      DEBUG_PRINT("*OMGOMGOMGOMG No CondBB in preds\n");
-      continue;
-    }
-
-    DEBUG_PRINT2("CondBB: " << CondBB->getName() << "\n");
-    DEBUG_VALUE(CondBB);
-
-    // Get Condition
-    // TODO: Should this return bool?
-    if (!findConditions(*CondBB, ErrBB)) {
+    if (!findConditions(*PredBB, ErrBB)) {
       DEBUG_PRINT("*** findCond has failed.\n");
     }
-
-    // NOTE: RECURSION
-    findAllConditions(*CondBB, depth++);
-
-    if (CondBB == &CondBB->getParent()->getEntryBlock()) {
-      DEBUG_PRINT("* Reached to the entry\n");
-      reachedEntry &= true;
-    } else {
-      reachedEntry &= false;
-    }
+    findAllConditions(*PredBB, depth);
     conds.push_back(new Condition("", NULL, _OPEN_));
   }
+
+  return;
 }
 
 // Debug info

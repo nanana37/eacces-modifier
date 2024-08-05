@@ -1,0 +1,113 @@
+[ 8116.260536] --- Hello, I'm Permod ---
+[ 8116.260538] [Permod] /home/hiron/git/linux/fs/namei.c: 3255
+[ 8116.260541] [Permod] may_open() == -13
+[ 8116.260542] [Permod] {
+[ 8116.260544] [Permod] {
+[ 8116.260545] [Permod] {
+[ 8116.260545] [Permod] {
+[ 8116.260546] [Permod] inode != null
+[ 8116.260548] [Permod] }
+[ 8116.260549] [Permod] i_mode == 16384 (switch)
+[ 8116.260551] [Permod] }
+[ 8116.260552] [Permod] acc_mode & 2 == 0
+[ 8116.260553] [Permod] }
+[ 8116.260554] [Permod] acc_mode & 1 != 0
+[ 8116.260557] [Permod] }
+[ 8116.261181] --- Hello, I'm Permod ---
+[ 8116.261184] [Permod] /home/hiron/git/linux/fs/namei.c: 3260
+[ 8116.261186] [Permod] may_open() == -13
+[ 8116.261188] [Permod] {
+[ 8116.261189] [Permod] {
+[ 8116.261190] [Permod] i_mode == 24576 (switch)
+[ 8116.261191] [Permod] }
+[ 8116.261192] [Permod] {
+[ 8116.261193] [Permod] {
+[ 8116.261194] [Permod] inode != null
+[ 8116.261195] [Permod] }
+[ 8116.261196] [Permod] i_mode == 24576 (switch)
+[ 8116.261198] [Permod] }
+[ 8116.261199] [Permod] may_open_dev() == 0
+[ 8116.261200] [Permod] }
+[ 8116.261786] --- Hello, I'm Permod ---
+[ 8116.261786] [Permod] /home/hiron/git/linux/fs/namei.c: 3260
+[ 8116.261786] [Permod] may_open() == -13
+[ 8116.261786] [Permod] {
+[ 8116.261786] [Permod] {
+[ 8116.261786] [Permod] i_mode == 8192 (switch)
+[ 8116.261794] [Permod] }
+[ 8116.261794] [Permod] {
+[ 8116.261794] [Permod] {
+[ 8116.261794] [Permod] inode != null
+[ 8116.261797] [Permod] }
+[ 8116.261797] [Permod] i_mode == 8192 (switch)
+[ 8116.261797] [Permod] }
+[ 8116.261800] [Permod] may_open_dev() == 0
+[ 8116.261800] [Permod] }
+[ 8116.261849] --- Hello, I'm Permod ---
+[ 8116.261849] [Permod] /home/hiron/git/linux/fs/namei.c: 3265
+[ 8116.261849] [Permod] may_open() == -13
+[ 8116.261849] [Permod] {
+[ 8116.261862] [Permod] {
+[ 8116.261863] [Permod] {
+[ 8116.261863] [Permod] {
+[ 8116.261863] [Permod] i_mode == 4096 (switch)
+[ 8116.261863] [Permod] }
+[ 8116.261866] [Permod] {
+[ 8116.261866] [Permod] i_mode == 4096 (switch)
+[ 8116.261866] [Permod] }
+[ 8116.261866] [Permod] may_open_dev() != 0
+[ 8116.261870] [Permod] }
+[ 8116.261870] [Permod] }
+[ 8116.261870] [Permod] {
+[ 8116.261872] [Permod] i_mode == 4096 (switch)
+[ 8116.261872] [Permod] }
+[ 8116.261872] [Permod] {
+[ 8116.261872] [Permod] {
+[ 8116.261872] [Permod] inode != null
+[ 8116.261875] [Permod] }
+[ 8116.261876] [Permod] i_mode == 4096 (switch)
+[ 8116.261876] [Permod] }
+[ 8116.261876] [Permod] acc_mode & 1 != 0
+[ 8116.261879] [Permod] }
+[ 8116.261931] --- Hello, I'm Permod ---
+[ 8116.261936] [Permod] /home/hiron/git/linux/fs/namei.c: 3265
+[ 8116.261938] [Permod] may_open() == -13
+[ 8116.261939] [Permod] {
+[ 8116.261941] [Permod] {
+[ 8116.261941] [Permod] {
+[ 8116.261942] [Permod] {
+[ 8116.261942] [Permod] i_mode == 49152 (switch)
+[ 8116.261942] [Permod] }
+[ 8116.261942] [Permod] {
+[ 8116.261942] [Permod] i_mode == 49152 (switch)
+[ 8116.261942] [Permod] }
+[ 8116.261949] [Permod] may_open_dev() != 0
+[ 8116.261949] [Permod] }
+[ 8116.261949] [Permod] }
+[ 8116.261949] [Permod] {
+[ 8116.261949] [Permod] i_mode == 49152 (switch)
+[ 8116.261950] [Permod] }
+[ 8116.261950] [Permod] {
+[ 8116.261950] [Permod] {
+[ 8116.261955] [Permod] inode != null
+[ 8116.261955] [Permod] }
+[ 8116.261955] [Permod] i_mode == 49152 (switch)
+[ 8116.261955] [Permod] }
+[ 8116.261955] [Permod] acc_mode & 1 != 0
+[ 8116.261957] [Permod] }
+[ 8116.262456] --- Hello, I'm Permod ---
+[ 8116.262459] [Permod] /home/hiron/git/linux/fs/namei.c: 3270
+[ 8116.262461] [Permod] may_open() == -13
+[ 8116.262462] [Permod] {
+[ 8116.262462] [Permod] {
+[ 8116.262462] [Permod] {
+[ 8116.262464] [Permod] {
+[ 8116.262465] [Permod] inode != null
+[ 8116.262465] [Permod] }
+[ 8116.262465] [Permod] i_mode == 32768 (switch)
+[ 8116.262467] [Permod] }
+[ 8116.262469] [Permod] acc_mode & 1 != 0
+[ 8116.262471] [Permod] }
+[ 8116.262471] [Permod] path_noexec() != 0
+[ 8116.262472] [Permod] }
+
