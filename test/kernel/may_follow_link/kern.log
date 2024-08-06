@@ -1,31 +1,31 @@
-[ 1947.085967] --- Hello, I'm Permod ---
-[ 1947.085969] [Permod] /home/hiron/git/linux/fs/namei.c: 1135
-[ 1947.085972] [Permod] may_follow_link() == -13
-[ 1947.085978] [Permod] {
-[ 1947.085978] [Permod] {
-[ 1947.085978] [Permod] vfsuid_valid() == 0
-[ 1947.085985] [Permod] }
-[ 1947.085985] [Permod] {
-[ 1947.085988] [Permod] {
-[ 1947.085990] [Permod] {
-[ 1947.085990] [Permod] {
-[ 1947.085991] [Permod] {
-[ 1947.085992] [Permod] {
-[ 1947.085994] [Permod] {
-[ 1947.085999] [Permod] {
-[ 1947.085999] [Permod] sysctl_protected_symlinks != 0
-[ 1947.086002] [Permod] }
-[ 1947.086002] [Permod] }
-[ 1947.086005] [Permod] }
-[ 1947.086007] [Permod] }
-[ 1947.086008] [Permod] vfsuid_eq_kuid() == 0
-[ 1947.086008] [Permod] }
-[ 1947.086008] [Permod] dir_mode & 514 == 0 (514 is correct)
-[ 1947.086013] [Permod] }
-[ 1947.086014] [Permod] vfsuid_valid() != 0
-[ 1947.086014] [Permod] }
-[ 1947.086019] [Permod] vfsuid_eq() == 0
-[ 1947.086020] [Permod] }
-[ 1947.086020] [Permod] flags & 64 == 0
-[ 1947.086025] [Permod] }
+[  169.004850] --- Hello, I'm Permod ---
+[  169.004852] [Permod] /home/hiron/git/linux/fs/namei.c: 1135
+[  169.004854] [Permod] may_follow_link() == -13
+[  169.004856] [Permod] {
+[  169.004857] [Permod] {
+[  169.004858] [Permod] vfsuid_valid() == 0
+[  169.004860] [Permod] }
+[  169.004861] [Permod] {
+[  169.004862] [Permod] {
+[  169.004862] [Permod] {
+[  169.004863] [Permod] {
+[  169.004864] [Permod] {
+[  169.004865] [Permod] {
+[  169.004866] [Permod] {
+[  169.004867] [Permod] {
+[  169.004868] [Permod] sysctl_protected_symlinks != 0
+[  169.004870] [Permod] }
+[  169.004871] [Permod] }
+[  169.004872] [Permod] }
+[  169.004873] [Permod] }
+[  169.004874] [Permod] vfsuid_eq_kuid() == 0
+[  169.004875] [Permod] }
+[  169.004876] [Permod] dir_mode &!= 514
+[  169.004878] [Permod] }
+[  169.004879] [Permod] vfsuid_valid() != 0
+[  169.004880] [Permod] }
+[  169.004881] [Permod] vfsuid_eq() == 0
+[  169.004882] [Permod] }
+[  169.004883] [Permod] flags &!= 64
+[  169.004885] [Permod] }
 

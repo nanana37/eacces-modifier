@@ -1,159 +1,159 @@
-Aug  5 17:37:28 debian kernel: [ 8445.544614] --- Hello, I'm Permod ---
-Aug  5 17:37:28 debian kernel: [ 8445.544618] [Permod] /home/hiron/git/linux/fs/namei.c: 1265
-Aug  5 17:37:28 debian kernel: [ 8445.544622] [Permod] may_create_in_sticky() == -13
-Aug  5 17:37:28 debian kernel: [ 8445.544625] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544627] [Permod] llvm.expect.i64 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544630] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544631] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544633] [Permod] i_mode52 & 61440 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544636] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544638] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544639] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544641] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544643] [Permod] sysctl_protected_fifos < 2
-Aug  5 17:37:28 debian kernel: [ 8445.544645] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544647] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544649] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544650] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544652] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544654] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544655] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544657] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544658] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544660] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544662] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544663] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544665] [Permod] sysctl_protected_regular != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544668] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544669] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544671] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544672] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544674] [Permod] sysctl_protected_fifos != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544676] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544678] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544680] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544681] [Permod] sysctl_protected_fifos == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544684] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544685] [Permod] i_mode & 61440 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544688] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544690] [Permod] sysctl_protected_regular == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544692] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544694] [Permod] i_mode6 & 61440 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544696] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544698] [Permod] llvm.expect.i64 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544700] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544702] [Permod] vfsuid_eq() == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544704] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544706] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544708] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544709] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544711] [Permod] vfsuid_eq_kuid() == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544713] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544715] [Permod] llvm.expect.i64 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544717] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544719] [Permod] dir_mode & 16 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544722] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544723] [Permod] sysctl_protected_fifos >= 2
-Aug  5 17:37:28 debian kernel: [ 8445.544726] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544727] [Permod] i_mode52 & 61440 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544730] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544731] [Permod] sysctl_protected_regular >= 2
-Aug  5 17:37:28 debian kernel: [ 8445.544734] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544736] [Permod] i_mode61 & 61440 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544738] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544750] --- Hello, I'm Permod ---
-Aug  5 17:37:28 debian kernel: [ 8445.544752] [Permod] /home/hiron/git/linux/fs/namei.c: 381
-Aug  5 17:37:28 debian kernel: [ 8445.544755] [Permod] acl_permission_check() == -13
-Aug  5 17:37:28 debian kernel: [ 8445.544758] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544760] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544761] [Permod] and21 & 5008 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544764] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544765] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544767] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544769] [Permod] vfsgid_in_group_p == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544771] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544773] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544774] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544776] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544778] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544779] [Permod] s_flags & 65536 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544782] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544783] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544785] [Permod] mode & 56 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544788] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544790] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544791] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544793] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544795] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544796] [Permod] error != -11
-Aug  5 17:37:28 debian kernel: [ 8445.544799] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544801] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544802] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544804] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544806] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544807] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544809] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544811] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544812] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544814] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544815] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544817] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544819] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544820] [Permod] llvm.expect.i64 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544823] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544824] [Permod] s_flags & 65536 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544827] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544828] [Permod] mode & 56 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544831] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544832] [Permod] error == -11
-Aug  5 17:37:28 debian kernel: [ 8445.544835] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544836] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544838] [Permod] cleanup.dest.slot == 0 (switch)
-Aug  5 17:37:28 debian kernel: [ 8445.544840] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544842] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544844] [Permod] and21 & 5008 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544846] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544848] [Permod] vfsgid_in_group_p != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544850] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544852] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544853] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544855] [Permod] and21 & -4517 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544858] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544859] --- Hello, I'm Permod ---
-Aug  5 17:37:28 debian kernel: [ 8445.544861] [Permod] /home/hiron/git/linux/fs/namei.c: 451
-Aug  5 17:37:28 debian kernel: [ 8445.544864] [Permod] generic_permission() == -13
-Aug  5 17:37:28 debian kernel: [ 8445.544866] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544868] [Permod] i_mode24 & 73 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544871] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544872] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544874] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544875] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544877] [Permod] and14 & 1 == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544880] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544881] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544883] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544884] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544886] [Permod] Unnamed Condition != 4
-Aug  5 17:37:28 debian kernel: [ 8445.544889] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544890] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544892] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544893] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544895] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544897] [Permod] {
-Aug  5 17:37:28 debian kernel: [ 8445.544898] [Permod] ret == -13
-Aug  5 17:37:28 debian kernel: [ 8445.544901] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544903] [Permod] i_mode & 61440 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544905] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544907] [Permod] Unnamed Condition == 4
-Aug  5 17:37:28 debian kernel: [ 8445.544909] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544911] [Permod] capable_wrt_inode_uidgid() == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544913] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544915] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544917] [Permod] and14 & 1 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544919] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544921] [Permod] i_mode24 & 73 != 0
-Aug  5 17:37:28 debian kernel: [ 8445.544923] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544925] [Permod] capable_wrt_inode_uidgid() == 0
-Aug  5 17:37:28 debian kernel: [ 8445.544927] [Permod] }
-Aug  5 17:37:28 debian kernel: [ 8445.544929] [Permod] }
+[   81.330461] --- Hello, I'm Permod ---
+[   81.330466] [Permod] /home/hiron/git/linux/fs/namei.c: 1265
+[   81.330469] [Permod] may_create_in_sticky() == -13
+[   81.330472] [Permod] {
+[   81.330474] [Permod] llvm.expect.i64 != 0
+[   81.330477] [Permod] }
+[   81.330479] [Permod] {
+[   81.330480] [Permod] i_mode52 &!= 61440
+[   81.330483] [Permod] }
+[   81.330485] [Permod] {
+[   81.330486] [Permod] {
+[   81.330488] [Permod] {
+[   81.330504] [Permod] sysctl_protected_fifos < 2
+[   81.330506] [Permod] }
+[   81.330506] [Permod] {
+[   81.330506] [Permod] {
+[   81.330506] [Permod] {
+[   81.330506] [Permod] {
+[   81.330515] [Permod] {
+[   81.330515] [Permod] {
+[   81.330515] [Permod] {
+[   81.330515] [Permod] {
+[   81.330515] [Permod] {
+[   81.330515] [Permod] {
+[   81.330523] [Permod] {
+[   81.330526] [Permod] sysctl_protected_regular != 0
+[   81.330526] [Permod] }
+[   81.330526] [Permod] {
+[   81.330526] [Permod] {
+[   81.330533] [Permod] {
+[   81.330534] [Permod] sysctl_protected_fifos != 0
+[   81.330537] [Permod] }
+[   81.330537] [Permod] {
+[   81.330537] [Permod] {
+[   81.330537] [Permod] sysctl_protected_fifos == 0
+[   81.330537] [Permod] }
+[   81.330537] [Permod] i_mode &== 61440
+[   81.330549] [Permod] }
+[   81.330551] [Permod] sysctl_protected_regular == 0
+[   81.330551] [Permod] }
+[   81.330551] [Permod] i_mode6 &== 61440
+[   81.330551] [Permod] }
+[   81.330551] [Permod] llvm.expect.i64 == 0
+[   81.330560] [Permod] }
+[   81.330560] [Permod] vfsuid_eq() == 0
+[   81.330560] [Permod] }
+[   81.330560] [Permod] }
+[   81.330563] [Permod] }
+[   81.330563] [Permod] }
+[   81.330563] [Permod] vfsuid_eq_kuid() == 0
+[   81.330563] [Permod] }
+[   81.330563] [Permod] llvm.expect.i64 == 0
+[   81.330566] [Permod] }
+[   81.330567] [Permod] dir_mode &== 16
+[   81.330570] [Permod] }
+[   81.330572] [Permod] sysctl_protected_fifos >= 2
+[   81.330574] [Permod] }
+[   81.330576] [Permod] i_mode52 &== 61440
+[   81.330578] [Permod] }
+[   81.330580] [Permod] sysctl_protected_regular >= 2
+[   81.330596] [Permod] }
+[   81.330597] [Permod] i_mode61 &!= 61440
+[   81.330597] [Permod] }
+[   81.330608] --- Hello, I'm Permod ---
+[   81.330608] [Permod] /home/hiron/git/linux/fs/namei.c: 381
+[   81.330613] [Permod] acl_permission_check() == -13
+[   81.330614] [Permod] {
+[   81.330614] [Permod] {
+[   81.330614] [Permod] and21 &!= 5008
+[   81.330626] [Permod] }
+[   81.330626] [Permod] {
+[   81.330626] [Permod] {
+[   81.330626] [Permod] vfsgid_in_group_p == 0
+[   81.330626] [Permod] }
+[   81.330626] [Permod] {
+[   81.330626] [Permod] {
+[   81.330626] [Permod] {
+[   81.330627] [Permod] {
+[   81.330636] [Permod] s_flags &!= 65536
+[   81.330638] [Permod] }
+[   81.330638] [Permod] {
+[   81.330638] [Permod] mode &!= 56
+[   81.330647] [Permod] }
+[   81.330647] [Permod] {
+[   81.330649] [Permod] {
+[   81.330649] [Permod] {
+[   81.330649] [Permod] {
+[   81.330649] [Permod] error != -11
+[   81.330651] [Permod] }
+[   81.330653] [Permod] }
+[   81.330654] [Permod] {
+[   81.330656] [Permod] {
+[   81.330657] [Permod] {
+[   81.330659] [Permod] {
+[   81.330661] [Permod] {
+[   81.330662] [Permod] {
+[   81.330664] [Permod] {
+[   81.330666] [Permod] {
+[   81.330667] [Permod] }
+[   81.330669] [Permod] }
+[   81.330671] [Permod] }
+[   81.330672] [Permod] llvm.expect.i64 == 0
+[   81.330675] [Permod] }
+[   81.330676] [Permod] s_flags &== 65536
+[   81.330679] [Permod] }
+[   81.330680] [Permod] mode &== 56
+[   81.330683] [Permod] }
+[   81.330684] [Permod] error == -11
+[   81.330687] [Permod] }
+[   81.330688] [Permod] }
+[   81.330690] [Permod] cleanup.dest.slot == 0 (switch)
+[   81.330693] [Permod] }
+[   81.330694] [Permod] }
+[   81.330696] [Permod] and21 &== 5008
+[   81.330699] [Permod] }
+[   81.330700] [Permod] vfsgid_in_group_p != 0
+[   81.330703] [Permod] }
+[   81.330704] [Permod] }
+[   81.330706] [Permod] }
+[   81.330708] [Permod] and21 &== -4517
+[   81.330710] [Permod] }
+[   81.330712] --- Hello, I'm Permod ---
+[   81.330714] [Permod] /home/hiron/git/linux/fs/namei.c: 451
+[   81.330717] [Permod] generic_permission() == -13
+[   81.330720] [Permod] {
+[   81.330722] [Permod] i_mode24 &!= 73
+[   81.330724] [Permod] }
+[   81.330726] [Permod] {
+[   81.330728] [Permod] {
+[   81.330729] [Permod] {
+[   81.330747] [Permod] and14 &!= 1
+[   81.330750] [Permod] }
+[   81.330750] [Permod] {
+[   81.330750] [Permod] {
+[   81.330750] [Permod] {
+[   81.330750] [Permod] Unnamed Condition != 4
+[   81.330760] [Permod] }
+[   81.330760] [Permod] {
+[   81.330763] [Permod] {
+[   81.330763] [Permod] {
+[   81.330763] [Permod] {
+[   81.330763] [Permod] {
+[   81.330763] [Permod] ret == -13
+[   81.330763] [Permod] }
+[   81.330763] [Permod] i_mode &== 61440
+[   81.330764] [Permod] }
+[   81.330766] [Permod] Unnamed Condition == 4
+[   81.330783] [Permod] }
+[   81.330783] [Permod] capable_wrt_inode_uidgid() == 0
+[   81.330783] [Permod] }
+[   81.330790] [Permod] }
+[   81.330790] [Permod] and14 &== 1
+[   81.330790] [Permod] }
+[   81.330790] [Permod] i_mode24 &== 73
+[   81.330790] [Permod] }
+[   81.330797] [Permod] capable_wrt_inode_uidgid() == 0
+[   81.330800] [Permod] }
+[   81.330800] [Permod] }
 
