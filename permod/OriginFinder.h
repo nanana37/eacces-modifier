@@ -40,18 +40,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
     return CI.getCalledFunction();
   }
 
-  // When facing %flag.addr, find below:
-  // store %flag, ptr %flag.addr, align 4
-  Value *visitAllocaInst(AllocaInst &AI) {
-    if (AI.getName().endswith(".addr")) {
-      for (User *U : AI.users()) {
-        if (isa<StoreInst>(U)) {
-          return U;
-        }
-      }
-    }
-    return nullptr;
-  }
+  Value *visitAllocaInst(AllocaInst &AI) { return nullptr; }
 };
 
 } // namespace permod
