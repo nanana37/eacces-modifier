@@ -61,14 +61,14 @@ StringRef ConditionAnalysis::getStructName(Value &V) {
  * Get variable name
  */
 StringRef ConditionAnalysis::getVarName(Value &V) {
-  StringRef Name = getOrigin(V)->getName();
-  if (Name.empty())
-    Name = "Unnamed Condition";
-  if (Name.endswith(".addr"))
-    Name = Name.drop_back(5);
+  StringRef name = getOrigin(V)->getName();
+  if (name.empty())
+    name = "UNNAMED CONDITION";
+  if (name.endswith(".addr"))
+    name = name.drop_back(5);
 
-  DEBUG_PRINT2("Name: " << Name << "\n");
-  return Name;
+  DEBUG_PRINT2("name: " << name << "\n");
+  return name;
 }
 
 /*
