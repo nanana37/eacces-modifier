@@ -123,17 +123,17 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
   if (!CmpOp)
     return false;
 
-  Value *CmpOp2 = CmpI.getOperand(1);
-  if (!CmpOp2)
+  Value *CmpOp1 = CmpI.getOperand(1);
+  if (!CmpOp1)
     return false;
   /* if cmp with null
    e.g. if (!inode):
       %tobool = icmp ne %inode, null
       br i1 %tobool, label %if.end, label %if.then
    */
-  if (isa<ConstantPointerNull>(CmpOp2)) {
+  if (isa<ConstantPointerNull>(CmpOp1)) {
     name = getVarName(*CmpOp);
-    val = CmpOp2;
+    val = CmpOp1;
     type = (isBranchTrue(BrI, DestBB) != CmpI.isFalseWhenEqual()) ? NLLTRU
                                                                   : NLLFLS;
     conds.push_back(new Condition(name, val, type));
