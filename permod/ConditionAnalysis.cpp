@@ -91,6 +91,7 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
   formatStr[ANDTRU] = "[Permod] %s &== %d\n";
   formatStr[ANDFLS] = "[Permod] %s &!= %d\n";
   formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
+  formatStr[EXPECT] = "[Permod] %s expect %d\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
   formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
   formatStr[_OPEN_] = "[Permod] {\n";
@@ -194,6 +195,7 @@ if.end:                ; preds = %do.end
         DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
         return false;
       }
+      conds.push_back(new Condition(name, cast<ConstantInt>(arg1), EXPECT));
 
       Value *arg0 = CallI->getArgOperand(0);
       arg0 = getOrigin(*arg0);
@@ -208,7 +210,6 @@ if.end:                ; preds = %do.end
         conds.push_back(new Condition(getVarName(*arg0), arg1, type));
       }
 
-      conds.push_back(new Condition(name, val, type));
       return true;
     }
 
