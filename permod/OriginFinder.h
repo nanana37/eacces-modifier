@@ -41,6 +41,7 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
   }
 
   Value *visitAllocaInst(AllocaInst &AI) { return nullptr; }
+  Value *visitTruncInst(TruncInst &TI) { return TI.getOperand(0); }
 };
 
 } // namespace permod

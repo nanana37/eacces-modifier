@@ -32,6 +32,7 @@ Value *ConditionAnalysis::getOrigin(Value &V) {
   Value *val = &V;
 
   for (int i = 0; i < MAX_TRACE_DEPTH; i++) {
+    DEBUG_PRINT2("getOrigin: " << *val << "\n");
     if (!isa<Instruction>(val)) {
       return val;
     }
@@ -90,6 +91,7 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
   formatStr[ANDTRU] = "[Permod] %s &== %d\n";
   formatStr[ANDFLS] = "[Permod] %s &!= %d\n";
   formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
+  formatStr[EXPECT] = "[Permod] %s expect %d\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
   formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
   formatStr[_OPEN_] = "[Permod] {\n";
@@ -166,6 +168,51 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
 
     name = getVarName(*Callee);
     val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
+
+    // likely(a)/unlikely(a) macro become 'call llvm.expect(a, 1/0)'
+    /* if (likely(dir_mode & 0002))
+     *
+if.end:                ; preds = %do.end
+  %20 = load i16, ptr %dir_mode, align 2
+  %conv34 = zext i16 %20 to i32
+  %and35 = and i32 %conv34, 2
+  %tobool36 = icmp ne i32 %and35, 0
+  %lnot37 = xor i1 %tobool36, true
+  %lnot39 = xor i1 %lnot37, true
+  %lnot.ext40 = zext i1 %lnot39 to i32
+  %conv41 = sext i32 %lnot.ext40 to i64
+  %expval42 = call i64 @llvm.expect.i64(i64 %conv41, i64 1)
+  %tobool43 = icmp ne i64 %expval42, 0
+  br i1 %tobool43, label %if.then66, label %lor.lhs.false44
+     */
+    if (name.startswith("llvm.expect")) {
+      DEBUG_PRINT2("llvm.expect\n");
+
+      Value *arg1 = CallI->getArgOperand(1);
+      if (isa<ConstantInt>(arg1)) {
+        type = cast<ConstantInt>(arg1)->isZero() ? CALFLS : CALTRU;
+      } else {
+        DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
+        return false;
+      }
+      conds.push_back(new Condition(name, cast<ConstantInt>(arg1), EXPECT));
+
+      Value *arg0 = CallI->getArgOperand(0);
+      arg0 = getOrigin(*arg0);
+
+      if (isa<CmpInst>(arg0)) {
+        // ex: if (likely(a > 0))
+        findIfCond_cmp(BrI, cast<CmpInst>(*arg0), DestBB);
+      } else if (isa<CallInst>(arg0)) {
+        // ex: if (likely(func()))
+        findIfCond_call(BrI, cast<CallInst>(*arg0), DestBB);
+      } else {
+        conds.push_back(new Condition(getVarName(*arg0), arg1, type));
+      }
+
+      return true;
+    }
+
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
     conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
