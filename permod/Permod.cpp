@@ -121,7 +121,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       // TODO: Check `ret i32 -13`
       if (isa<ConstantInt>(RetVal)) {
         if (EBF.isErrno(*RetVal)) {
-          DEBUG_PRINT2("######## Found 'ret i32 -13'\n");
+          DEBUG_PRINT2("######## Found 'ret i32 -$ERRNO'\n");
         }
         // Lots of users for constant int
         continue;

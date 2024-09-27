@@ -11,6 +11,10 @@
 using namespace llvm;
 using namespace permod;
 
+#define RETSIZE 32
+#define ERRNOS                                                                 \
+  { EACCES, EPERM }
+
 // NOTE: Expect as Function has only one ret inst
 Value *ErrBBFinder::getReturnValue(Function &F) {
   for (auto &BB : F) {
@@ -36,8 +40,12 @@ Value *ErrBBFinder::findReturnValue(BasicBlock &BB) {
 
 bool ErrBBFinder::isErrno(Value &V) {
   if (auto *CI = dyn_cast<ConstantInt>(&V)) {
-    if (CI->getSExtValue() == -EACCES)
-      return true;
+    if (CI->getBitWidth() != RETSIZE)
+      return false;
+    for (auto ERRNO : ERRNOS) {
+      if (CI->getSExtValue() == -ERRNO)
+        return true;
+    }
   }
   return false;
 }
