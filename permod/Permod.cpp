@@ -49,7 +49,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
       // TODO: This should be class; only main() should be public
-      struct ConditionAnalysis ConditionAnalysis {};
+      class ConditionAnalysis ConditionAnalysis {};
 
       modified |= ConditionAnalysis.main(*ErrBB, F, *SI);
     }
@@ -72,7 +72,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
     DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
-    struct ConditionAnalysis ConditionAnalysis {};
+    class ConditionAnalysis ConditionAnalysis {};
 
     modified |= ConditionAnalysis.main(*ErrBB, F, SI);
 

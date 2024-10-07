@@ -17,7 +17,15 @@ extern const char *condTypeStr[];
 using namespace llvm;
 
 namespace permod {
-struct ConditionAnalysis {
+class ConditionAnalysis {
+private:
+  /* Variables */
+  // Prepare Array of Condition
+  typedef std::vector<Condition *> CondVec;
+  CondVec preConds;
+  CondVec postConds;
+  std::unordered_set<BasicBlock *> visitedBBs;
+
   // ****************************************************************************
   //                               Utility
   // ****************************************************************************
@@ -31,37 +39,35 @@ struct ConditionAnalysis {
    *                       Anlyzing Conditions
    * ****************************************************************************
    */
-
-  // Prepare Array of Condition
-  std::vector<Condition *> conds;
-  std::unordered_set<BasicBlock *> visitedBBs;
-
   /*
    * Delete all conditions
    * Call this when you continue to next ErrBB
    */
   void deleteAllCond() {
-    while (!conds.empty()) {
-      delete conds.back();
-      conds.pop_back();
-    }
+    preConds.clear();
+    postConds.clear();
   }
-  bool isEmpty() { return conds.empty(); }
+
+  bool isEmpty() { return preConds.empty() && postConds.empty(); }
 
   bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
     if (BrI.getSuccessor(0) == &DestBB)
       return true;
     return false;
   }
-  bool findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI, BasicBlock &DestBB);
-  bool findIfCond_call(BranchInst &BrI, CallInst &CallI, BasicBlock &DestBB);
-  bool findIfCond(BranchInst &BrI, BasicBlock &DestBB);
-  bool findSwCond(SwitchInst &SwI);
-  bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB);
-  void findAllConditions(BasicBlock &ErrBB, int depth = 0);
+  bool findIfCond_cmp(CondVec &conds, BranchInst &BrI, CmpInst &CmpI,
+                      BasicBlock &DestBB);
+  bool findIfCond_call(CondVec &conds, BranchInst &BrI, CallInst &CallI,
+                       BasicBlock &DestBB);
+  bool findIfCond(CondVec &conds, BranchInst &BrI, BasicBlock &DestBB);
+  bool findSwCond(CondVec &conds, SwitchInst &SwI);
+  bool findConditions(CondVec &conds, BasicBlock &CondBB, BasicBlock &DestBB);
+  void findPredConditions(BasicBlock &ErrBB, int depth = 0);
 
   void getDebugInfo(Instruction &I, Function &F);
   bool insertLoggers(BasicBlock &ErrBB, Function &F);
+
+public:
   bool main(BasicBlock &ErrBB, Function &F, Instruction &I);
 };
 } // namespace permod

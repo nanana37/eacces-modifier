@@ -117,8 +117,8 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
     %tobool = icmp ne i32 %and, 0
     br i1 %tobool, label %if.then, label %if.end
  */
-bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
-                                       BasicBlock &DestBB) {
+bool ConditionAnalysis::findIfCond_cmp(CondVec &conds, BranchInst &BrI,
+                                       CmpInst &CmpI, BasicBlock &DestBB) {
   StringRef name;
   Value *val;
   CondType type;
@@ -202,10 +202,10 @@ if.end:                ; preds = %do.end
 
       if (isa<CmpInst>(arg0)) {
         // ex: if (likely(a > 0))
-        findIfCond_cmp(BrI, cast<CmpInst>(*arg0), DestBB);
+        findIfCond_cmp(conds, BrI, cast<CmpInst>(*arg0), DestBB);
       } else if (isa<CallInst>(arg0)) {
         // ex: if (likely(func()))
-        findIfCond_call(BrI, cast<CallInst>(*arg0), DestBB);
+        findIfCond_call(conds, BrI, cast<CallInst>(*arg0), DestBB);
       } else {
         conds.push_back(new Condition(getVarName(*arg0), arg1, type));
       }
@@ -243,8 +243,8 @@ if.end:                ; preds = %do.end
     %call = call i32 @function()
     br i1 %call, label %if.then, label %if.end
  */
-bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
-                                        BasicBlock &DestBB) {
+bool ConditionAnalysis::findIfCond_call(CondVec &conds, BranchInst &BrI,
+                                        CallInst &CallI, BasicBlock &DestBB) {
   StringRef name;
   Value *val;
   CondType type;
@@ -266,7 +266,8 @@ bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
    - Call condition
     if (!func()) {}   // name:of func, val:0
  */
-bool ConditionAnalysis::findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
+bool ConditionAnalysis::findIfCond(CondVec &conds, BranchInst &BrI,
+                                   BasicBlock &DestBB) {
 
   // Branch sometimes has only one successor
   // e.g. br label %if.end
@@ -281,11 +282,11 @@ bool ConditionAnalysis::findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
 
   // And condition: if (flag & 2) {}
   if (isa<CmpInst>(IfCond)) {
-    return findIfCond_cmp(BrI, cast<CmpInst>(*IfCond), DestBB);
+    return findIfCond_cmp(conds, BrI, cast<CmpInst>(*IfCond), DestBB);
   }
   // Call condition: if (!func()) {}
   if (isa<CallInst>(IfCond)) {
-    return findIfCond_call(BrI, cast<CallInst>(*IfCond), DestBB);
+    return findIfCond_call(conds, BrI, cast<CallInst>(*IfCond), DestBB);
   }
   DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
   return false;
@@ -295,7 +296,7 @@ bool ConditionAnalysis::findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
  * Returns: (StringRef, Value*)
    - switch (flag) {}     // name:of flag, val:of flag
  */
-bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
+bool ConditionAnalysis::findSwCond(CondVec &conds, SwitchInst &SwI) {
   StringRef name;
   Value *val;
   Value *SwCond = SwI.getCondition();
@@ -313,7 +314,8 @@ bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
   return true;
 }
 
-bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
+bool ConditionAnalysis::findConditions(CondVec &conds, BasicBlock &CondBB,
+                                       BasicBlock &DestBB) {
   DEBUG_PRINT2("\n** findConditions **\n");
 
   // Get Condition
@@ -323,10 +325,10 @@ bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
    */
   if (auto *BrI = dyn_cast<BranchInst>(CondBB.getTerminator())) {
     DEBUG_PRINT2("Pred has BranchInst\n");
-    return findIfCond(*BrI, DestBB);
+    return findIfCond(conds, *BrI, DestBB);
   } else if (auto *SwI = dyn_cast<SwitchInst>(CondBB.getTerminator())) {
     DEBUG_PRINT2("Pred has SwitchInst\n");
-    return findSwCond(*SwI);
+    return findSwCond(conds, *SwI);
   } else {
     DEBUG_PRINT2("* CondBB terminator is not a branch or switch\n");
     return false;
@@ -334,12 +336,12 @@ bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
 }
 
 // Search from bottom to top (entry block)
-void ConditionAnalysis::findAllConditions(BasicBlock &ErrBB, int depth) {
-  DEBUG_PRINT2("\n*** findAllConditions ***\n");
+void ConditionAnalysis::findPredConditions(BasicBlock &ErrBB, int depth) {
+  DEBUG_PRINT2("\n*** findPredConditions ***\n");
 
   // Prevent infinite loop
   if (depth > MAX_TRACE_DEPTH) {
-    DEBUG_PRINT("************** Too deep for findAllConditions\n");
+    DEBUG_PRINT("************** Too deep for findPredConditions\n");
     return;
   }
 
@@ -353,12 +355,12 @@ void ConditionAnalysis::findAllConditions(BasicBlock &ErrBB, int depth) {
   visitedBBs.insert(&ErrBB);
 
   for (auto *PredBB : predecessors(&ErrBB)) {
-    conds.push_back(new Condition("", NULL, _CLSE_));
-    if (!findConditions(*PredBB, ErrBB)) {
-      DEBUG_PRINT("*** findCond has failed.\n");
+    preConds.push_back(new Condition("", NULL, _CLSE_));
+    if (!findConditions(preConds, *PredBB, ErrBB)) {
+      DEBUG_PRINT("*** findCond for predecessors has failed.\n");
     }
-    findAllConditions(*PredBB, depth);
-    conds.push_back(new Condition("", NULL, _OPEN_));
+    findPredConditions(*PredBB, depth);
+    preConds.push_back(new Condition("", NULL, _OPEN_));
   }
 
   return;
@@ -370,7 +372,7 @@ void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   // The analyzing function
   ErrBBFinder EBF;
   if (auto val = EBF.getErrno(I)) {
-    conds.push_back(new Condition(F.getName(), val, CALFLS));
+    preConds.push_back(new Condition(F.getName(), val, CALFLS));
     DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
   }
 
@@ -381,9 +383,9 @@ void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
   Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
   // File name and line number
-  conds.push_back(new Condition(filename, lineVal, DBINFO));
+  preConds.push_back(new Condition(filename, lineVal, DBINFO));
   // Hello
-  conds.push_back(new Condition("", NULL, HELLOO));
+  preConds.push_back(new Condition("", NULL, HELLOO));
 }
 
 bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
@@ -408,9 +410,9 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
   // Prepare arguments
   std::vector<Value *> args;
 
-  while (!conds.empty()) {
-    Condition *cond = conds.back();
-    conds.pop_back();
+  while (!preConds.empty()) {
+    Condition *cond = preConds.back();
+    preConds.pop_back();
 
     args.push_back(format[cond->getType()]);
     DEBUG_PRINT(condTypeStr[cond->getType()]);
@@ -441,7 +443,7 @@ bool ConditionAnalysis::main(BasicBlock &ErrBB, Function &F, Instruction &I) {
   bool modified = false;
 
   // Backtrace to find If/Switch Statement BB
-  findAllConditions(ErrBB);
+  findPredConditions(ErrBB);
   if (isEmpty()) {
     DEBUG_PRINT("** conds is empty\n");
     return false;
