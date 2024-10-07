@@ -184,7 +184,7 @@ e.g.,
 LLVM_DIR=/usr/lib/llvm-17/lib/cmake/llvm cmake ..
 
 # For Homebrew
-LLVM_DIR='brew --prefix llvm@17'/lib/cmake/llvm cmake ..
+LLVM_DIR=`brew --prefix llvm@17`/lib/cmake/llvm cmake ..
 ```
 
 ### No output
