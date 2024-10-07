@@ -43,7 +43,7 @@ private:
    * Delete all conditions
    * Call this when you continue to next ErrBB
    */
-  void deleteAllCond() {
+  void deleteAllConds() {
     preConds.clear();
     postConds.clear();
   }
@@ -63,6 +63,7 @@ private:
   bool findSwCond(CondVec &conds, SwitchInst &SwI);
   bool findConditions(CondVec &conds, BasicBlock &CondBB, BasicBlock &DestBB);
   void findPredConditions(BasicBlock &ErrBB, int depth = 0);
+  void findPostConditions(BasicBlock &ErrBB, int depth = 0);
 
   void getDebugInfo(Instruction &I, Function &F);
   bool insertLoggers(BasicBlock &ErrBB, Function &F);

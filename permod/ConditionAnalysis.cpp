@@ -366,6 +366,32 @@ void ConditionAnalysis::findPredConditions(BasicBlock &ErrBB, int depth) {
   return;
 }
 
+void ConditionAnalysis::findPostConditions(BasicBlock &ErrBB, int depth) {
+  DEBUG_PRINT2("\n*** findPostConditions ***\n");
+
+  // Prevent infinite loop
+  if (depth > MAX_TRACE_DEPTH) {
+    DEBUG_PRINT("************** Too deep for findPostConditions\n");
+    return;
+  }
+
+  if (depth != 0 && visitedBBs.find(&ErrBB) != visitedBBs.end()) {
+    DEBUG_PRINT2("************** Already visited\n");
+    return;
+  }
+  visitedBBs.insert(&ErrBB);
+
+  // TODO: Do not record if the path is returning other errno.
+  for (auto *SuccBB : successors(&ErrBB)) {
+    postConds.push_back(new Condition("", NULL, _CLSE_));
+    if (!findConditions(postConds, ErrBB, *SuccBB)) {
+      DEBUG_PRINT("*** findCond for successors has failed.\n");
+    }
+    findPostConditions(*SuccBB, depth + 1);
+    postConds.push_back(new Condition("", NULL, _OPEN_));
+  }
+}
+
 // Debug info
 // NOTE: need clang flag "-g"
 void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
@@ -436,6 +462,28 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     modified = true;
   }
 
+  for (auto cond : postConds) {
+    args.push_back(format[cond->getType()]);
+    DEBUG_PRINT(condTypeStr[cond->getType()]);
+
+    switch (cond->getType()) {
+    case _OPEN_:
+    case _CLSE_:
+      DEBUG_PRINT("\n");
+      break;
+    default:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getConst());
+      break;
+    }
+
+    builder.CreateCall(logFunc, args);
+    args.clear();
+    delete cond;
+    modified = true;
+  }
+
   return modified;
 }
 
@@ -444,6 +492,7 @@ bool ConditionAnalysis::main(BasicBlock &ErrBB, Function &F, Instruction &I) {
 
   // Backtrace to find If/Switch Statement BB
   findPredConditions(ErrBB);
+  findPostConditions(ErrBB);
   if (isEmpty()) {
     DEBUG_PRINT("** conds is empty\n");
     return false;
@@ -453,12 +502,8 @@ bool ConditionAnalysis::main(BasicBlock &ErrBB, Function &F, Instruction &I) {
 
   // Insert loggers
   modified = insertLoggers(ErrBB, F);
-  if (isEmpty()) {
-    DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
-  } else {
-    DEBUG_PRINT("** Failed to insert all logs\n");
-    deleteAllCond();
-  }
+  DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
+  deleteAllConds();
 
   return modified;
 }
