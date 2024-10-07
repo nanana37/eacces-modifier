@@ -463,7 +463,13 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
   }
 
   for (auto cond : postConds) {
-    args.push_back(format[cond->getType()]);
+    if (cond->getType() == _OPEN_) {
+      args.push_back(format[_CLSE_]);
+    } else if (cond->getType() == _CLSE_) {
+      args.push_back(format[_OPEN_]);
+    } else {
+      args.push_back(format[cond->getType()]);
+    }
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
     switch (cond->getType()) {
