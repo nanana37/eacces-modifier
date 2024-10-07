@@ -348,7 +348,7 @@ void ConditionAnalysis::findPredConditions(BasicBlock &ErrBB, int depth) {
   // Record visited BBs to prevent infinite loop
   // Visited BB is the basic block whose preds are already checked
   // = All the conditions to the block are already found
-  if (visitedBBs.find(&ErrBB) != visitedBBs.end()) {
+  if (depth != 0 && visitedBBs.find(&ErrBB) != visitedBBs.end()) {
     DEBUG_PRINT2("************** Already visited\n");
     return;
   }
@@ -359,7 +359,7 @@ void ConditionAnalysis::findPredConditions(BasicBlock &ErrBB, int depth) {
     if (!findConditions(preConds, *PredBB, ErrBB)) {
       DEBUG_PRINT("*** findCond for predecessors has failed.\n");
     }
-    findPredConditions(*PredBB, depth);
+    findPredConditions(*PredBB, depth + 1);
     preConds.push_back(new Condition("", NULL, _OPEN_));
   }
 
