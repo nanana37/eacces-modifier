@@ -117,8 +117,9 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
     %tobool = icmp ne i32 %and, 0
     br i1 %tobool, label %if.then, label %if.end
  */
-bool ConditionAnalysis::findIfCond_cmp(CondVec &conds, BranchInst &BrI,
-                                       CmpInst &CmpI, BasicBlock &DestBB) {
+Condition *ConditionAnalysis::findIfCond_cmp(CondVec &conds, BranchInst &BrI,
+                                             CmpInst &CmpI,
+                                             BasicBlock &DestBB) {
   StringRef name;
   Value *val;
   CondType type;
@@ -126,11 +127,11 @@ bool ConditionAnalysis::findIfCond_cmp(CondVec &conds, BranchInst &BrI,
 
   Value *CmpOp = CmpI.getOperand(0);
   if (!CmpOp)
-    return false;
+    return nullptr;
 
   Value *CmpOp1 = CmpI.getOperand(1);
   if (!CmpOp1)
-    return false;
+    return nullptr;
   /* if cmp with null
    e.g. if (!inode):
       %tobool = icmp ne %inode, null
@@ -141,8 +142,7 @@ bool ConditionAnalysis::findIfCond_cmp(CondVec &conds, BranchInst &BrI,
     val = CmpOp1;
     type = (isBranchTrue(BrI, DestBB) != CmpI.isFalseWhenEqual()) ? NLLTRU
                                                                   : NLLFLS;
-    conds.push_back(new Condition(name, val, type));
-    return true;
+    return new Condition(name, val, type);
   }
 
   // CmpOp: %and = and i32 %flag, 2
@@ -153,8 +153,7 @@ bool ConditionAnalysis::findIfCond_cmp(CondVec &conds, BranchInst &BrI,
       val = BinI->getOperand(1);
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
                                                                     : ANDFLS;
-      conds.push_back(new Condition(name, val, type));
-      return true;
+      return new Condition(name, val, type);
     default:
       DEBUG_PRINT("** Unexpected as BinI: " << *BinI << "\n");
     }
@@ -164,7 +163,7 @@ bool ConditionAnalysis::findIfCond_cmp(CondVec &conds, BranchInst &BrI,
   if (auto *CallI = dyn_cast<CallInst>(CmpOp)) {
     Function *Callee = CallI->getCalledFunction();
     if (!Callee)
-      return false;
+      return nullptr;
 
     name = getVarName(*Callee);
     val = ConstantInt::get(Type::getInt32Ty(CallI->getContext()), 0);
@@ -193,30 +192,28 @@ if.end:                ; preds = %do.end
         type = cast<ConstantInt>(arg1)->isZero() ? CALFLS : CALTRU;
       } else {
         DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
-        return false;
+        return nullptr;
       }
-      conds.push_back(new Condition(name, cast<ConstantInt>(arg1), EXPECT));
+      // conds.push_back(new Condition(name, cast<ConstantInt>(arg1), EXPECT));
 
       Value *arg0 = CallI->getArgOperand(0);
       arg0 = getOrigin(*arg0);
 
       if (isa<CmpInst>(arg0)) {
         // ex: if (likely(a > 0))
-        findIfCond_cmp(conds, BrI, cast<CmpInst>(*arg0), DestBB);
+        return findIfCond_cmp(conds, BrI, cast<CmpInst>(*arg0), DestBB);
       } else if (isa<CallInst>(arg0)) {
         // ex: if (likely(func()))
-        findIfCond_call(conds, BrI, cast<CallInst>(*arg0), DestBB);
+        return findIfCond_call(conds, BrI, cast<CallInst>(*arg0), DestBB);
       } else {
-        conds.push_back(new Condition(getVarName(*arg0), arg1, type));
+        // conds.push_back(new Condition(getVarName(*arg0), arg1, type));
+        return new Condition(getVarName(*arg0), arg1, type);
       }
-
-      return true;
     }
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
-    conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
-    return true;
+    return new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB));
   }
 
   // CmpOp: %1 = load i32, i32* %flag.addr, align 4
@@ -227,13 +224,11 @@ if.end:                ; preds = %do.end
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
                                                                   : CMPFLS;
-    conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
-
-    return true;
+    return new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB));
   }
 
   DEBUG_PRINT("** Unexpected as CmpOp: " << *CmpOp << "\n");
-  return false;
+  return nullptr;
 }
 
 /* Get name & value of if condition
@@ -243,21 +238,21 @@ if.end:                ; preds = %do.end
     %call = call i32 @function()
     br i1 %call, label %if.then, label %if.end
  */
-bool ConditionAnalysis::findIfCond_call(CondVec &conds, BranchInst &BrI,
-                                        CallInst &CallI, BasicBlock &DestBB) {
+Condition *ConditionAnalysis::findIfCond_call(CondVec &conds, BranchInst &BrI,
+                                              CallInst &CallI,
+                                              BasicBlock &DestBB) {
   StringRef name;
   Value *val;
   CondType type;
 
   Function *Callee = CallI.getCalledFunction();
   if (!Callee)
-    return false;
+    return nullptr;
 
   name = getVarName(*Callee);
   val = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
   type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-  conds.push_back(new Condition(name, val, type));
-  return true;
+  return new Condition(name, val, type);
 }
 
 /* Get name & value of if condition
@@ -266,19 +261,19 @@ bool ConditionAnalysis::findIfCond_call(CondVec &conds, BranchInst &BrI,
    - Call condition
     if (!func()) {}   // name:of func, val:0
  */
-bool ConditionAnalysis::findIfCond(CondVec &conds, BranchInst &BrI,
-                                   BasicBlock &DestBB) {
+Condition *ConditionAnalysis::findIfCond(CondVec &conds, BranchInst &BrI,
+                                         BasicBlock &DestBB) {
 
   // Branch sometimes has only one successor
   // e.g. br label %if.end
   if (!BrI.isConditional()) {
     DEBUG_PRINT2("Not a conditional branch\n");
-    return true;
+    return nullptr;
   }
 
   Value *IfCond = BrI.getCondition();
   if (!IfCond)
-    return false;
+    return nullptr;
 
   // And condition: if (flag & 2) {}
   if (isa<CmpInst>(IfCond)) {
@@ -289,14 +284,14 @@ bool ConditionAnalysis::findIfCond(CondVec &conds, BranchInst &BrI,
     return findIfCond_call(conds, BrI, cast<CallInst>(*IfCond), DestBB);
   }
   DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
-  return false;
+  return nullptr;
 }
 
 /* Get name & value of switch condition
  * Returns: (StringRef, Value*)
    - switch (flag) {}     // name:of flag, val:of flag
  */
-bool ConditionAnalysis::findSwCond(CondVec &conds, SwitchInst &SwI) {
+Condition *ConditionAnalysis::findSwCond(CondVec &conds, SwitchInst &SwI) {
   StringRef name;
   Value *val;
   Value *SwCond = SwI.getCondition();
@@ -307,15 +302,14 @@ bool ConditionAnalysis::findSwCond(CondVec &conds, SwitchInst &SwI) {
   // Get name
   SwCond = getOrigin(*SwCond);
   if (!SwCond)
-    return false;
+    return nullptr;
   name = getVarName(*SwCond);
 
-  conds.push_back(new Condition(name, val, SWITCH));
-  return true;
+  return new Condition(name, val, SWITCH);
 }
 
-bool ConditionAnalysis::findConditions(CondVec &conds, BasicBlock &CondBB,
-                                       BasicBlock &DestBB) {
+Condition *ConditionAnalysis::findConditions(CondVec &conds, BasicBlock &CondBB,
+                                             BasicBlock &DestBB) {
   DEBUG_PRINT2("\n** findConditions **\n");
 
   // Get Condition
@@ -331,7 +325,7 @@ bool ConditionAnalysis::findConditions(CondVec &conds, BasicBlock &CondBB,
     return findSwCond(conds, *SwI);
   } else {
     DEBUG_PRINT2("* CondBB terminator is not a branch or switch\n");
-    return false;
+    return nullptr;
   }
 }
 

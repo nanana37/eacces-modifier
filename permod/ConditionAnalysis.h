@@ -49,19 +49,21 @@ private:
   }
 
   bool isEmpty() { return preConds.empty() && postConds.empty(); }
-
   bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
     if (BrI.getSuccessor(0) == &DestBB)
       return true;
     return false;
   }
-  bool findIfCond_cmp(CondVec &conds, BranchInst &BrI, CmpInst &CmpI,
-                      BasicBlock &DestBB);
-  bool findIfCond_call(CondVec &conds, BranchInst &BrI, CallInst &CallI,
-                       BasicBlock &DestBB);
-  bool findIfCond(CondVec &conds, BranchInst &BrI, BasicBlock &DestBB);
-  bool findSwCond(CondVec &conds, SwitchInst &SwI);
-  bool findConditions(CondVec &conds, BasicBlock &CondBB, BasicBlock &DestBB);
+  bool isDead(BasicBlock &BB);
+
+  Condition *findIfCond_cmp(CondVec &conds, BranchInst &BrI, CmpInst &CmpI,
+                            BasicBlock &DestBB);
+  Condition *findIfCond_call(CondVec &conds, BranchInst &BrI, CallInst &CallI,
+                             BasicBlock &DestBB);
+  Condition *findIfCond(CondVec &conds, BranchInst &BrI, BasicBlock &DestBB);
+  Condition *findSwCond(CondVec &conds, SwitchInst &SwI);
+  Condition *findConditions(CondVec &conds, BasicBlock &CondBB,
+                            BasicBlock &DestBB);
   void findPredConditions(BasicBlock &ErrBB, int depth = 0);
   void findPostConditions(BasicBlock &ErrBB, int depth = 0);
 
