@@ -30,6 +30,8 @@ enum CondType {
   HELLOO,
   _OPEN_,
   _CLSE_,
+  _TRUE_,
+  _FLSE_,
   NUM_OF_CONDTYPE
 };
 

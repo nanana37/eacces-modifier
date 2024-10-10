@@ -77,24 +77,26 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
  */
 void ConditionAnalysis::prepFormat() {
   StringRef formatStr[NUM_OF_CONDTYPE];
-  formatStr[CMPTRU] = "[Permod] %s == %d\n";
-  formatStr[CMPFLS] = "[Permod] %s != %d\n";
-  formatStr[CMP_GT] = "[Permod] %s > %d\n";
-  formatStr[CMP_GE] = "[Permod] %s >= %d\n";
-  formatStr[CMP_LT] = "[Permod] %s < %d\n";
-  formatStr[CMP_LE] = "[Permod] %s <= %d\n";
-  formatStr[NLLTRU] = "[Permod] %s == null\n";
-  formatStr[NLLFLS] = "[Permod] %s != null\n";
-  formatStr[CALTRU] = "[Permod] %s() != %d\n";
-  formatStr[CALFLS] = "[Permod] %s() == %d\n";
-  formatStr[ANDTRU] = "[Permod] %s &== %d\n";
-  formatStr[ANDFLS] = "[Permod] %s &!= %d\n";
+  formatStr[CMPTRU] = "[Permod] %s == %d (%s)\n";
+  formatStr[CMPFLS] = "[Permod] %s != %d (%s)\n";
+  formatStr[CMP_GT] = "[Permod] %s > %d (%s)\n";
+  formatStr[CMP_GE] = "[Permod] %s >= %d (%s)\n";
+  formatStr[CMP_LT] = "[Permod] %s < %d (%s)\n";
+  formatStr[CMP_LE] = "[Permod] %s <= %d (%s)\n";
+  formatStr[NLLTRU] = "[Permod] %s == null (%s)\n";
+  formatStr[NLLFLS] = "[Permod] %s != null (%s)\n";
+  formatStr[CALTRU] = "[Permod] %s() != %d (%s)\n";
+  formatStr[CALFLS] = "[Permod] %s() == %d (%s)\n";
+  formatStr[ANDTRU] = "[Permod] %s &== %d (%s)\n";
+  formatStr[ANDFLS] = "[Permod] %s &!= %d (%s)\n";
   formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
   formatStr[EXPECT] = "[Permod] %s expect %d\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
   formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
   formatStr[_OPEN_] = "[Permod] {\n";
   formatStr[_CLSE_] = "[Permod] }\n";
+  formatStr[_TRUE_] = "true";
+  formatStr[_FLSE_] = "false";
 
   for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
     Value *formatVal = Builder.CreateGlobalStringPtr(formatStr[i]);
@@ -399,6 +401,11 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
 
   // Insert just before the terminator
   Builder.SetInsertPoint(ErrBB.getTerminator());
+  Value *termC = ErrBB.getTerminator()->getOperand(0);
+  if (!termC) {
+    DEBUG_PRINT("** Condition of terminator is NULL\n");
+    return false;
+  }
 
   // Prepare arguments
   std::vector<Value *> args;
@@ -416,10 +423,19 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     case _CLSE_:
       DEBUG_PRINT("\n");
       break;
+    case SWITCH:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
+      // args.push_back(cond->getConst());
+      args.push_back(termC);
+      break;
     default:
       DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
       args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
       args.push_back(cond->getConst());
+      Value *newSel =
+          Builder.CreateSelect(termC, Format[_TRUE_], Format[_FLSE_]);
+      args.push_back(newSel);
       break;
     }
 
