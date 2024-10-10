@@ -18,23 +18,48 @@ using namespace llvm;
 
 namespace permod {
 struct ConditionAnalysis {
+private:
+  /* Analysis Result */
+  std::vector<Condition *> conds;
+  std::unordered_set<BasicBlock *> visitedBBs;
+
+  /* Analysis Target */
+  Function *TargetFunc;
+  BasicBlock *RetBB;
+
+  /* IRBuilder */
+  IRBuilder<> builder;
+  LLVMContext &Ctx;
+
+  /* Logger */
+  Value *format[NUM_OF_CONDTYPE];
+  FunctionCallee LogFunc;
+
+  /* Constructor methods */
+  void prepFormat();
+  void prepLogger();
+
+public:
+  /* Constructor */
+  ConditionAnalysis(BasicBlock *RetBB)
+      : TargetFunc(RetBB->getParent()), RetBB(RetBB), builder(RetBB),
+        Ctx(RetBB->getContext()) {
+    prepFormat();
+    prepLogger();
+  }
+
   // ****************************************************************************
   //                               Utility
   // ****************************************************************************
   Value *getOrigin(Value &V);
   StringRef getStructName(Value &V);
   StringRef getVarName(Value &V);
-  void prepareFormat(Value *format[], IRBuilder<> &builder, LLVMContext &Ctx);
 
   /*
    * ****************************************************************************
    *                       Anlyzing Conditions
    * ****************************************************************************
    */
-
-  // Prepare Array of Condition
-  std::vector<Condition *> conds;
-  std::unordered_set<BasicBlock *> visitedBBs;
 
   /*
    * Delete all conditions
@@ -60,6 +85,7 @@ struct ConditionAnalysis {
   bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB);
   void findAllConditions(BasicBlock &ErrBB, int depth = 0);
 
+  /* Instrumentation */
   void getDebugInfo(Instruction &I, Function &F);
   bool insertLoggers(BasicBlock &ErrBB, Function &F);
   bool main(BasicBlock &ErrBB, Function &F, Instruction &I);

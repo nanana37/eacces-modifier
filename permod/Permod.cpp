@@ -118,7 +118,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           DEBUG_PRINT2(BB);
           continue;
         }
-        struct ConditionAnalysis CA {};
+        DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
+        struct ConditionAnalysis CA(&BB);
         // FIXME: the succesor should be determined dynamically
         CA.findConditions(BB, *BB.getTerminator()->getSuccessor(0));
         CA.insertLoggers(BB, F);

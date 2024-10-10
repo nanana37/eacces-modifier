@@ -75,8 +75,7 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
 /*
  * Prepare format string
  */
-void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
-                                      LLVMContext &Ctx) {
+void ConditionAnalysis::prepFormat() {
   StringRef formatStr[NUM_OF_CONDTYPE];
   formatStr[CMPTRU] = "[Permod] %s == %d\n";
   formatStr[CMPFLS] = "[Permod] %s != %d\n";
@@ -101,6 +100,14 @@ void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
     Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
     format[i] = builder.CreatePointerCast(formatVal, Type::getInt8PtrTy(Ctx));
   }
+}
+
+void ConditionAnalysis::prepLogger() {
+  // Prepare function
+  std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
+  Type *retType = Type::getVoidTy(Ctx);
+  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+  LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGER, funcType);
 }
 
 /*
@@ -390,21 +397,8 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
   DEBUG_PRINT("\n...Inserting log...\n");
   bool modified = false;
 
-  // Prepare builder
-  IRBuilder<> builder(&ErrBB);
   // Insert just before the terminator
   builder.SetInsertPoint(ErrBB.getTerminator());
-  LLVMContext &Ctx = ErrBB.getContext();
-
-  // Prepare function
-  std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
-  Type *retType = Type::getVoidTy(Ctx);
-  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-  FunctionCallee logFunc = F.getParent()->getOrInsertFunction(LOGGER, funcType);
-
-  // Prepare format
-  Value *format[NUM_OF_CONDTYPE];
-  prepareFormat(format, builder, Ctx);
 
   // Prepare arguments
   std::vector<Value *> args;
@@ -429,11 +423,13 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
       break;
     }
 
-    builder.CreateCall(logFunc, args);
+    builder.CreateCall(LogFunc, args);
     args.clear();
     delete cond;
     modified = true;
   }
+
+  builder.ClearInsertionPoint();
 
   return modified;
 }
