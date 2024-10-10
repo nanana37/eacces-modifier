@@ -122,7 +122,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         struct ConditionAnalysis CA(&BB);
         // FIXME: the succesor should be determined dynamically
         CA.findConditions(BB, *BB.getTerminator()->getSuccessor(0));
-        CA.insertLoggers(BB, F);
+        modified |= CA.insertLoggers(BB, F);
       }
     }
 
