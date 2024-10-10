@@ -20,19 +20,19 @@ namespace permod {
 struct ConditionAnalysis {
 private:
   /* Analysis Result */
-  std::vector<Condition *> conds;
-  std::unordered_set<BasicBlock *> visitedBBs;
+  std::vector<Condition *> Conds;
+  std::unordered_set<BasicBlock *> VistedBBs;
 
   /* Analysis Target */
   Function *TargetFunc;
   BasicBlock *RetBB;
 
   /* IRBuilder */
-  IRBuilder<> builder;
+  IRBuilder<> Builder;
   LLVMContext &Ctx;
 
   /* Logger */
-  Value *format[NUM_OF_CONDTYPE];
+  Value *Format[NUM_OF_CONDTYPE];
   FunctionCallee LogFunc;
 
   /* Constructor methods */
@@ -42,7 +42,7 @@ private:
 public:
   /* Constructor */
   ConditionAnalysis(BasicBlock *RetBB)
-      : TargetFunc(RetBB->getParent()), RetBB(RetBB), builder(RetBB),
+      : TargetFunc(RetBB->getParent()), RetBB(RetBB), Builder(RetBB),
         Ctx(RetBB->getContext()) {
     prepFormat();
     prepLogger();
@@ -66,12 +66,12 @@ public:
    * Call this when you continue to next ErrBB
    */
   void deleteAllCond() {
-    while (!conds.empty()) {
-      delete conds.back();
-      conds.pop_back();
+    while (!Conds.empty()) {
+      delete Conds.back();
+      Conds.pop_back();
     }
   }
-  bool isEmpty() { return conds.empty(); }
+  bool isEmpty() { return Conds.empty(); }
 
   bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
     if (BrI.getSuccessor(0) == &DestBB)
