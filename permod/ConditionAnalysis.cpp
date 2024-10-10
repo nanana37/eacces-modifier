@@ -392,7 +392,8 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
 
   // Prepare builder
   IRBuilder<> builder(&ErrBB);
-  builder.SetInsertPoint(&ErrBB, ErrBB.getFirstInsertionPt());
+  // Insert just before the terminator
+  builder.SetInsertPoint(ErrBB.getTerminator());
   LLVMContext &Ctx = ErrBB.getContext();
 
   // Prepare function
