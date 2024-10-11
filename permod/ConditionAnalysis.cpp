@@ -392,7 +392,7 @@ void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   // File name and line number
   Conds.push_back(new Condition(filename, lineVal, DBINFO));
   // Hello
-  Conds.push_back(new Condition("", NULL, HELLOO));
+  // Conds.push_back(new Condition("", NULL, HELLOO));
 }
 
 bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
@@ -406,6 +406,9 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     DEBUG_PRINT("** Condition of terminator is NULL\n");
     return false;
   }
+
+  // TODO: This must be useful, but logs become long.
+  // getDebugInfo(*ErrBB.getTerminator(), F);
 
   // Prepare arguments
   std::vector<Value *> args;
