@@ -128,12 +128,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         struct ConditionAnalysis CA(&BB);
         // NOTE: @DestBB is used to determine which path is true.
         CA.findConditions(BB, *BB.getTerminator()->getSuccessor(0));
-        modified |= CA.insertLoggers(BB, F);
+        modified |= CA.insertLoggers(BB);
       }
 
       struct ConditionAnalysis CA(RetI->getParent());
       CA.setRetCond(*RetI->getParent());
-      CA.insertLoggers(*RetI->getParent(), F);
+      CA.insertLoggers(*RetI->getParent());
     }
 
     if (modified) {
