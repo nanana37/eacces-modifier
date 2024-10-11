@@ -35,7 +35,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     /* Use-def chain to find the assignment of errno to the return value. */
     for (User *U : V.users()) {
-      StoreInst *SI = dyn_cast<StoreInst>(&V);
+      StoreInst *SI = dyn_cast<StoreInst>(U);
       if (!SI)
         continue;
 
@@ -104,8 +104,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (!RetVal)
         continue;
 
-      /* The function returns error value. */
-      if (isBeingErrno(*RetVal))
+      /* Insert loggers into function which returns error value. */
+      if (!isBeingErrno(*RetVal))
         continue;
 
       DEBUG_PRINT("\n///////////////////////////////////////\n");
@@ -120,7 +120,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
         DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
         struct ConditionAnalysis CA(&BB);
-        // FIXME: the succesor should be determined dynamically
+        // NOTE: @DestBB is used to determine which path is true.
         CA.findConditions(BB, *BB.getTerminator()->getSuccessor(0));
         modified |= CA.insertLoggers(BB, F);
       }
