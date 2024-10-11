@@ -86,6 +86,7 @@ public:
   void findAllConditions(BasicBlock &ErrBB, int depth = 0);
 
   /* Instrumentation */
+  void setRetCond(BasicBlock &theBB);
   void getDebugInfo(Instruction &I, Function &F);
   bool insertLoggers(BasicBlock &ErrBB, Function &F);
   bool main(BasicBlock &ErrBB, Function &F, Instruction &I);
