@@ -400,20 +400,20 @@ void ConditionAnalysis::setRetCond(BasicBlock &theBB) {
   Conds.push_back(new Condition("", NULL, RETURN));
 }
 
-bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
+bool ConditionAnalysis::insertLoggers(BasicBlock &theBB) {
   DEBUG_PRINT("\n...Inserting log...\n");
   bool modified = false;
 
   // Insert just before the terminator
-  Builder.SetInsertPoint(ErrBB.getTerminator());
-  Value *termC = ErrBB.getTerminator()->getOperand(0);
+  Builder.SetInsertPoint(theBB.getTerminator());
+  Value *termC = theBB.getTerminator()->getOperand(0);
   if (!termC) {
     DEBUG_PRINT("** Condition of terminator is NULL\n");
     return false;
   }
 
   // TODO: This must be useful, but logs become long.
-  // getDebugInfo(*ErrBB.getTerminator(), F);
+  // getDebugInfo(*ErrBB.getTerminator(), theBB.getParent());
 
   // Prepare arguments
   std::vector<Value *> args;
@@ -474,7 +474,7 @@ bool ConditionAnalysis::main(BasicBlock &ErrBB, Function &F, Instruction &I) {
   getDebugInfo(I, F);
 
   // Insert loggers
-  modified = insertLoggers(ErrBB, F);
+  modified = insertLoggers(ErrBB);
   if (isEmpty()) {
     DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
   } else {
