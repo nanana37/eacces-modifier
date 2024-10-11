@@ -95,22 +95,28 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         continue;
       }
 
-      /*
-       * Get return value of the function.
-       * There is only one return (& return value) in a function, thanks to
-       * mergereturn optimization.
-       */
-      Value *RetVal = EBF.getReturnValue(F);
-      if (!RetVal)
+      /* Find return statement of the function */
+      ReturnInst *RetI = EBF.findRetInst(F);
+      if (!RetI) {
+        DEBUG_PRINT2("*** No return\n");
         continue;
+      }
 
       /* Insert loggers into function which returns error value. */
-      if (!isBeingErrno(*RetVal))
+      Value *RetV = EBF.findRetValue(*RetI);
+      if (!RetV) {
+        DEBUG_PRINT2("*** No return value\n");
         continue;
+      }
+
+      /* Check whether the return value will be assigned errno. */
+      if (!isBeingErrno(*RetV)) {
+        DEBUG_PRINT2("*** No errno\n");
+        continue;
+      }
 
       DEBUG_PRINT("\n///////////////////////////////////////\n");
       DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
-
       /* Insert logger just before terminator of every BB */
       for (BasicBlock &BB : F) {
         if (BB.getTerminator()->getNumSuccessors() <= 1) {
@@ -124,6 +130,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         CA.findConditions(BB, *BB.getTerminator()->getSuccessor(0));
         modified |= CA.insertLoggers(BB, F);
       }
+
+      struct ConditionAnalysis CA(RetI->getParent());
+      CA.setRetCond(*RetI->getParent());
+      CA.insertLoggers(*RetI->getParent(), F);
     }
 
     if (modified) {

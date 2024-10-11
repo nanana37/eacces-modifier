@@ -97,6 +97,7 @@ void ConditionAnalysis::prepFormat() {
   formatStr[_CLSE_] = "[Permod] }\n";
   formatStr[_TRUE_] = "true";
   formatStr[_FLSE_] = "false";
+  formatStr[RETURN] = "[Permod] %d is returned.\n";
 
   for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
     Value *formatVal = Builder.CreateGlobalStringPtr(formatStr[i]);
@@ -395,6 +396,10 @@ void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   // Conds.push_back(new Condition("", NULL, HELLOO));
 }
 
+void ConditionAnalysis::setRetCond(BasicBlock &theBB) {
+  Conds.push_back(new Condition("", NULL, RETURN));
+}
+
 bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
   DEBUG_PRINT("\n...Inserting log...\n");
   bool modified = false;
@@ -421,6 +426,9 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
     switch (cond->getType()) {
+    case RETURN:
+      args.push_back(termC);
+      break;
     case HELLOO:
     case _OPEN_:
     case _CLSE_:

@@ -32,6 +32,7 @@ enum CondType {
   _CLSE_,
   _TRUE_,
   _FLSE_,
+  RETURN,
   NUM_OF_CONDTYPE
 };
 
