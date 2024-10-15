@@ -25,58 +25,40 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   ErrBBFinder EBF;
 
-  bool analyzeStorePtr(StoreInst &SI, Function &F) {
-    DEBUG_PRINT2("\n==AnalysisForStorePtr==\n");
-    DEBUG_VALUE(&SI);
+  /*
+   * Check whether @V (typically retval) will be assigned errno.
+   */
+  bool isBeingErrno(Value &V) {
+    /* When the function has a single return statement which returns errno. */
+    if (EBF.isErrno(V))
+      return true;
 
-    bool modified = false;
-
-    Value *ErrVal = EBF.getErrValue(SI);
-    if (!ErrVal)
-      return false;
-
-    DEBUG_VALUE(ErrVal);
-
-    for (User *U : ErrVal->users()) {
+    /* Use-def chain to find the assignment of errno to the return value. */
+    for (User *U : V.users()) {
       StoreInst *SI = dyn_cast<StoreInst>(U);
       if (!SI)
         continue;
-      BasicBlock *ErrBB = EBF.getErrBB(*SI);
-      if (!ErrBB)
-        continue;
-      DEBUG_PRINT("\n///////////////////////////////////////\n");
-      DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
-      DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
 
-      // TODO: This should be class; only main() should be public
-      struct ConditionAnalysis ConditionAnalysis {};
-
-      modified |= ConditionAnalysis.main(*ErrBB, F, *SI);
+      /* `return ERR_PTR(errno);` is converted into `store ptr` */
+      if (EBF.isStorePtr(*SI)) {
+        Value *ErrVal = EBF.getErrValue(*SI);
+        if (!ErrVal)
+          continue;
+        for (User *UP : ErrVal->users()) {
+          StoreInst *SIP = dyn_cast<StoreInst>(UP);
+          if (!SIP)
+            continue;
+          if (EBF.getErrBB(*SIP))
+            return true;
+        }
+      } else {
+        /* When one of multiple return statements returns errno. */
+        if (EBF.getErrBB(*SI))
+          return true;
+      }
     }
-    return modified;
-  }
 
-  bool analyzeStoreInt32(StoreInst &SI, Function &F) {
-    DEBUG_PRINT2("\n==AnalysisForStoreInt32==\n");
-    DEBUG_VALUE(&SI);
-
-    bool modified = false;
-
-    // Get Error-thrower BB "ErrBB"
-    /* store -13, ptr %1, align 4 */
-    BasicBlock *ErrBB = EBF.getErrBB(SI);
-    if (!ErrBB)
-      return false;
-
-    DEBUG_PRINT("\n///////////////////////////////////////\n");
-    DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
-    DEBUG_PRINT("Error-thrower BB: " << *ErrBB << "\n");
-
-    struct ConditionAnalysis ConditionAnalysis {};
-
-    modified |= ConditionAnalysis.main(*ErrBB, F, SI);
-
-    return modified;
+    return false;
   }
 
   /*
@@ -91,6 +73,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     for (auto &F : M.functions()) {
       DEBUG_PRINT2("\n-FUNCTION: " << F.getName() << "\n");
 
+      /* Skip some functions */
       // FIXME: this function cause crash
       if (F.getName() == "profile_transition") {
         DEBUG_PRINT("--- Skip profile_transition\n");
@@ -99,8 +82,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       } else {
         // continue;
       }
-
-      // Skip
       if (F.isDeclaration()) {
         DEBUG_PRINT2("--- Skip Declaration\n");
         continue;
@@ -114,33 +95,47 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         continue;
       }
 
-      Value *RetVal = EBF.getReturnValue(F);
-      if (!RetVal)
-        continue;
-
-      // TODO: Check `ret i32 -13`
-      if (isa<ConstantInt>(RetVal)) {
-        if (EBF.isErrno(*RetVal)) {
-          DEBUG_PRINT2("######## Found 'ret i32 -$ERRNO'\n");
-        }
-        // Lots of users for constant int
+      /* Find return statement of the function */
+      ReturnInst *RetI = EBF.findRetInst(F);
+      if (!RetI) {
+        DEBUG_PRINT2("*** No return\n");
         continue;
       }
 
-      for (User *U : RetVal->users()) {
-        StoreInst *SI = dyn_cast<StoreInst>(U);
-        if (!SI)
+      /* Insert loggers into function which returns error value. */
+      Value *RetV = EBF.findRetValue(*RetI);
+      if (!RetV) {
+        DEBUG_PRINT2("*** No return value\n");
+        continue;
+      }
+
+      /* Check whether the return value will be assigned errno. */
+      if (!isBeingErrno(*RetV)) {
+        DEBUG_PRINT2("*** No errno\n");
+        continue;
+      }
+
+      DEBUG_PRINT("\n///////////////////////////////////////\n");
+      DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
+      /* Insert logger just before terminator of every BB */
+      for (BasicBlock &BB : F) {
+        if (BB.getTerminator()->getNumSuccessors() <= 1) {
+          DEBUG_PRINT2("Skip BB: " << BB.getName() << "\n");
+          DEBUG_PRINT2(BB);
           continue;
-
-        // Analyze conditions & insert loggers
-        if (EBF.isStorePtr(*SI)) {
-          modified |= analyzeStorePtr(*SI, F);
-        } else {
-          // TODO: Is this really "else"?
-          modified |= analyzeStoreInt32(*SI, F);
         }
+        DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
+        struct ConditionAnalysis CA(&BB);
+        // NOTE: @DestBB is used to determine which path is true.
+        CA.findConditions(BB, *BB.getTerminator()->getSuccessor(0));
+        modified |= CA.insertLoggers(BB);
       }
+
+      struct ConditionAnalysis CA(RetI->getParent());
+      CA.setRetCond(*RetI->getParent());
+      CA.insertLoggers(*RetI->getParent());
     }
+
     if (modified) {
       DEBUG_PRINT("Modified\n");
       return PreservedAnalyses::none();

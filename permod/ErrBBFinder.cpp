@@ -15,25 +15,22 @@ using namespace permod;
 #define ERRNOS                                                                 \
   { EACCES, EPERM }
 
-// NOTE: Expect as Function has only one ret inst
-Value *ErrBBFinder::getReturnValue(Function &F) {
-  for (auto &BB : F) {
-    if (Value *RetVal = findReturnValue(BB))
-      return RetVal;
-  }
+// NOTE: maybe to find alloca is better?
+Value *ErrBBFinder::findRetValue(ReturnInst &RI) {
+  Value *RetVal = RI.getReturnValue();
+  if (isa_and_nonnull<ConstantInt>(RetVal))
+    return RetVal;
+  if (auto *LI = dyn_cast_or_null<LoadInst>(RetVal))
+    return LI->getPointerOperand();
   return nullptr;
 }
 
-// NOTE: maybe to find alloca is better?
-Value *ErrBBFinder::findReturnValue(BasicBlock &BB) {
-  if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
-    Value *RetVal = RI->getReturnValue();
-
-    if (isa_and_nonnull<ConstantInt>(RetVal))
-      return RetVal;
-
-    if (auto *LI = dyn_cast_or_null<LoadInst>(RetVal))
-      return LI->getPointerOperand();
+// NOTE: each function has only one ret inst, thanks to mergereturn pass.
+ReturnInst *ErrBBFinder::findRetInst(Function &F) {
+  for (auto &BB : F) {
+    if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
+      return RI;
+    }
   }
   return nullptr;
 }

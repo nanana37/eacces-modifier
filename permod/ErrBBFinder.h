@@ -16,8 +16,8 @@ using namespace llvm;
 namespace permod {
 
 struct ErrBBFinder {
-  Value *getReturnValue(Function &F);
-  Value *findReturnValue(BasicBlock &BB);
+  Value *findRetValue(ReturnInst &RI);
+  ReturnInst *findRetInst(Function &F);
   bool isErrno(Value &V);
   Value *getErrno(Value &V);
   bool isStoreErr(StoreInst &SI);
