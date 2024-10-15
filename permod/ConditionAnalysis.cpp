@@ -15,6 +15,8 @@
 using namespace llvm;
 using namespace permod;
 
+#define NONAME "UNNAMED CONDITION"
+
 // ****************************************************************************
 //                               Utility
 // ****************************************************************************
@@ -64,7 +66,7 @@ StringRef ConditionAnalysis::getStructName(Value &V) {
 StringRef ConditionAnalysis::getVarName(Value &V) {
   StringRef name = getOrigin(V)->getName();
   if (name.empty())
-    name = "UNNAMED CONDITION";
+    name = NONAME;
   if (name.endswith(".addr"))
     name = name.drop_back(5);
 
@@ -98,6 +100,8 @@ void ConditionAnalysis::prepFormat() {
   formatStr[_TRUE_] = "true";
   formatStr[_FLSE_] = "false";
   formatStr[RETURN] = "[Permod] %d is returned\n";
+  formatStr[_VARS_] = "[Permod] %s\n";
+  formatStr[_VARC_] = "[Permod] %d\n";
 
   for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
     Value *formatVal = Builder.CreateGlobalStringPtr(formatStr[i]);
@@ -225,7 +229,19 @@ if.end:                ; preds = %do.end
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
-    Conds.push_back(new Condition(name, val, type));
+    std::vector<ArgType> args;
+    DEBUG_PRINT2("num of args: " << CallI->arg_size() << "\n");
+    for (auto &arg : CallI->args()) {
+      DEBUG_PRINT2("arg: " << *arg << "\n");
+      StringRef name = getVarName(*arg);
+      if (name.startswith(NONAME) && isa<ConstantInt>(arg)) {
+        args.push_back(cast<ConstantInt>(arg));
+      } else {
+        args.push_back(getVarName(*arg));
+      }
+    }
+    // Conds.push_back(new Condition(name, val, type));
+    Conds.push_back(new Condition(name, val, type, args));
     return true;
   }
 
@@ -421,6 +437,27 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &theBB) {
 
     Builder.CreateCall(LogFunc, args);
     args.clear();
+
+    if (cond->getType() == CALTRU || cond->getType() == CALFLS) {
+      args.push_back(Format[_OPEN_]);
+      Builder.CreateCall(LogFunc, args);
+      args.clear();
+      for (auto arg : cond->getArgs()) {
+        if (auto s = std::get_if<StringRef>(&arg)) {
+          args.push_back(Format[_VARS_]);
+          args.push_back(Builder.CreateGlobalStringPtr(*s));
+        } else {
+          args.push_back(Format[_VARC_]);
+          args.push_back(std::get<ConstantInt *>(arg));
+        }
+        Builder.CreateCall(LogFunc, args);
+        args.clear();
+      }
+      args.push_back(Format[_CLSE_]);
+      Builder.CreateCall(LogFunc, args);
+      args.clear();
+    }
+
     delete cond;
     modified = true;
   }

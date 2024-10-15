@@ -5,6 +5,7 @@
 #include "llvm/IR/IRBuilder.h"
 
 #include "debug.h"
+#include <variant>
 
 using namespace llvm;
 
@@ -33,8 +34,12 @@ enum CondType {
   _TRUE_,
   _FLSE_,
   RETURN,
+  _VARS_, // String name of variable
+  _VARC_, // Constant value of variable
   NUM_OF_CONDTYPE
 };
+
+typedef std::variant<StringRef, ConstantInt *> ArgType;
 
 // Condition class
 // if (`variable` == `constant`)
@@ -46,10 +51,15 @@ private:
   CondType Type;
   void setType(CmpInst &CmpI, bool isBranchTrue);
 
+  /* optional */
+  // std::vector<StringRef> Args; // name of function arguments
+  std::vector<ArgType> Args; // name of function arguments
+
 public:
   StringRef getName() { return Name; }
   Value *getConst() { return Con; }
   CondType getType() { return Type; }
+  std::vector<ArgType> getArgs() { return Args; }
 
   Condition(StringRef name, Value *con, CondType type)
       : Name(name), Con(con), Type(type) {}
@@ -59,5 +69,10 @@ public:
       : Name(name), Con(con) {
     setType(CmpI, isBranchTrue);
   }
+
+  // CallInst with arguments
+  Condition(StringRef name, Value *con, CondType type,
+            std::vector<ArgType> args)
+      : Name(name), Con(con), Type(type), Args(args) {}
 };
 } // namespace permod

@@ -1,12 +1,12 @@
 #include <errno.h>
 #include <stdio.h>
 
-int isOdd(int x) { return x % 2; }
+int isOdd(int x, int y) { return x % 2; }
 
 int errfunc(int x) {
   printf("input x = %d\n", x);
 
-  if (!isOdd(x))
+  if (!isOdd(x, 0))
     return -EACCES;
 
   return 0;
