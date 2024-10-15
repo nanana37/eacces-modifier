@@ -225,7 +225,7 @@ if.end:                ; preds = %do.end
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
-    Conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
+    Conds.push_back(new Condition(name, val, type));
     return true;
   }
 
