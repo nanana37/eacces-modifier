@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 int errfunc(int x) {
-  printf("x = %d\n", x);
+  printf("input x = %d\n", x);
 
   if (x < 1) {
     // 0
@@ -26,14 +26,7 @@ int errfunc(int x) {
 
 int main() {
   for (int i = 0; i < 6; i++) {
-    int ret = errfunc(i);
-    switch (ret) {
-    case -EACCES:
-      printf("EACCES\n");
-      break;
-    default:
-      printf("default\n");
-      break;
-    }
+    errno = -errfunc(i);
+    perror("errfunc");
   }
 }

@@ -18,13 +18,42 @@ using namespace llvm;
 
 namespace permod {
 struct ConditionAnalysis {
+private:
+  /* Analysis Result */
+  std::vector<Condition *> Conds;
+  std::unordered_set<BasicBlock *> VistedBBs;
+
+  /* Analysis Target */
+  Function *TargetFunc;
+  BasicBlock *RetBB;
+
+  /* IRBuilder */
+  IRBuilder<> Builder;
+  LLVMContext &Ctx;
+
+  /* Logger */
+  Value *Format[NUM_OF_CONDTYPE];
+  FunctionCallee LogFunc;
+
+  /* Constructor methods */
+  void prepFormat();
+  void prepLogger();
+
+public:
+  /* Constructor */
+  ConditionAnalysis(BasicBlock *RetBB)
+      : TargetFunc(RetBB->getParent()), RetBB(RetBB), Builder(RetBB),
+        Ctx(RetBB->getContext()) {
+    prepFormat();
+    prepLogger();
+  }
+
   // ****************************************************************************
   //                               Utility
   // ****************************************************************************
   Value *getOrigin(Value &V);
   StringRef getStructName(Value &V);
   StringRef getVarName(Value &V);
-  void prepareFormat(Value *format[], IRBuilder<> &builder, LLVMContext &Ctx);
 
   /*
    * ****************************************************************************
@@ -32,21 +61,17 @@ struct ConditionAnalysis {
    * ****************************************************************************
    */
 
-  // Prepare Array of Condition
-  std::vector<Condition *> conds;
-  std::unordered_set<BasicBlock *> visitedBBs;
-
   /*
    * Delete all conditions
    * Call this when you continue to next ErrBB
    */
   void deleteAllCond() {
-    while (!conds.empty()) {
-      delete conds.back();
-      conds.pop_back();
+    while (!Conds.empty()) {
+      delete Conds.back();
+      Conds.pop_back();
     }
   }
-  bool isEmpty() { return conds.empty(); }
+  bool isEmpty() { return Conds.empty(); }
 
   bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
     if (BrI.getSuccessor(0) == &DestBB)
@@ -58,10 +83,10 @@ struct ConditionAnalysis {
   bool findIfCond(BranchInst &BrI, BasicBlock &DestBB);
   bool findSwCond(SwitchInst &SwI);
   bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB);
-  void findAllConditions(BasicBlock &ErrBB, int depth = 0);
 
+  /* Instrumentation */
+  void setRetCond(BasicBlock &theBB);
   void getDebugInfo(Instruction &I, Function &F);
-  bool insertLoggers(BasicBlock &ErrBB, Function &F);
-  bool main(BasicBlock &ErrBB, Function &F, Instruction &I);
+  bool insertLoggers(BasicBlock &theBB);
 };
 } // namespace permod

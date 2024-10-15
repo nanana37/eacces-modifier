@@ -75,32 +75,42 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
 /*
  * Prepare format string
  */
-void ConditionAnalysis::prepareFormat(Value *format[], IRBuilder<> &builder,
-                                      LLVMContext &Ctx) {
+void ConditionAnalysis::prepFormat() {
   StringRef formatStr[NUM_OF_CONDTYPE];
-  formatStr[CMPTRU] = "[Permod] %s == %d\n";
-  formatStr[CMPFLS] = "[Permod] %s != %d\n";
-  formatStr[CMP_GT] = "[Permod] %s > %d\n";
-  formatStr[CMP_GE] = "[Permod] %s >= %d\n";
-  formatStr[CMP_LT] = "[Permod] %s < %d\n";
-  formatStr[CMP_LE] = "[Permod] %s <= %d\n";
-  formatStr[NLLTRU] = "[Permod] %s == null\n";
-  formatStr[NLLFLS] = "[Permod] %s != null\n";
-  formatStr[CALTRU] = "[Permod] %s() != %d\n";
-  formatStr[CALFLS] = "[Permod] %s() == %d\n";
-  formatStr[ANDTRU] = "[Permod] %s &== %d\n";
-  formatStr[ANDFLS] = "[Permod] %s &!= %d\n";
+  formatStr[CMPTRU] = "[Permod] %s == %d (%s)\n";
+  formatStr[CMPFLS] = "[Permod] %s != %d (%s)\n";
+  formatStr[CMP_GT] = "[Permod] %s > %d (%s)\n";
+  formatStr[CMP_GE] = "[Permod] %s >= %d (%s)\n";
+  formatStr[CMP_LT] = "[Permod] %s < %d (%s)\n";
+  formatStr[CMP_LE] = "[Permod] %s <= %d (%s)\n";
+  formatStr[NLLTRU] = "[Permod] %s == null (%s)\n";
+  formatStr[NLLFLS] = "[Permod] %s != null (%s)\n";
+  formatStr[CALTRU] = "[Permod] %s() != %d (%s)\n";
+  formatStr[CALFLS] = "[Permod] %s() == %d (%s)\n";
+  formatStr[ANDTRU] = "[Permod] %s &== %d (%s)\n";
+  formatStr[ANDFLS] = "[Permod] %s &!= %d (%s)\n";
   formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
   formatStr[EXPECT] = "[Permod] %s expect %d\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
   formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
   formatStr[_OPEN_] = "[Permod] {\n";
   formatStr[_CLSE_] = "[Permod] }\n";
+  formatStr[_TRUE_] = "true";
+  formatStr[_FLSE_] = "false";
+  formatStr[RETURN] = "[Permod] %d is returned.\n";
 
   for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
-    Value *formatVal = builder.CreateGlobalStringPtr(formatStr[i]);
-    format[i] = builder.CreatePointerCast(formatVal, Type::getInt8PtrTy(Ctx));
+    Value *formatVal = Builder.CreateGlobalStringPtr(formatStr[i]);
+    Format[i] = Builder.CreatePointerCast(formatVal, Type::getInt8PtrTy(Ctx));
   }
+}
+
+void ConditionAnalysis::prepLogger() {
+  // Prepare function
+  std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
+  Type *retType = Type::getVoidTy(Ctx);
+  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+  LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGER, funcType);
 }
 
 /*
@@ -141,7 +151,7 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
     val = CmpOp1;
     type = (isBranchTrue(BrI, DestBB) != CmpI.isFalseWhenEqual()) ? NLLTRU
                                                                   : NLLFLS;
-    conds.push_back(new Condition(name, val, type));
+    Conds.push_back(new Condition(name, val, type));
     return true;
   }
 
@@ -153,7 +163,7 @@ bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
       val = BinI->getOperand(1);
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
                                                                     : ANDFLS;
-      conds.push_back(new Condition(name, val, type));
+      Conds.push_back(new Condition(name, val, type));
       return true;
     default:
       DEBUG_PRINT("** Unexpected as BinI: " << *BinI << "\n");
@@ -195,7 +205,7 @@ if.end:                ; preds = %do.end
         DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
         return false;
       }
-      conds.push_back(new Condition(name, cast<ConstantInt>(arg1), EXPECT));
+      Conds.push_back(new Condition(name, cast<ConstantInt>(arg1), EXPECT));
 
       Value *arg0 = CallI->getArgOperand(0);
       arg0 = getOrigin(*arg0);
@@ -207,7 +217,7 @@ if.end:                ; preds = %do.end
         // ex: if (likely(func()))
         findIfCond_call(BrI, cast<CallInst>(*arg0), DestBB);
       } else {
-        conds.push_back(new Condition(getVarName(*arg0), arg1, type));
+        Conds.push_back(new Condition(getVarName(*arg0), arg1, type));
       }
 
       return true;
@@ -215,7 +225,7 @@ if.end:                ; preds = %do.end
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
-    conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
+    Conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
     return true;
   }
 
@@ -227,7 +237,7 @@ if.end:                ; preds = %do.end
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CMPTRU
                                                                   : CMPFLS;
-    conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
+    Conds.push_back(new Condition(name, val, CmpI, isBranchTrue(BrI, DestBB)));
 
     return true;
   }
@@ -256,7 +266,7 @@ bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
   name = getVarName(*Callee);
   val = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
   type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-  conds.push_back(new Condition(name, val, type));
+  Conds.push_back(new Condition(name, val, type));
   return true;
 }
 
@@ -309,7 +319,7 @@ bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
     return false;
   name = getVarName(*SwCond);
 
-  conds.push_back(new Condition(name, val, SWITCH));
+  Conds.push_back(new Condition(name, val, SWITCH));
   return true;
 }
 
@@ -333,44 +343,13 @@ bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
   }
 }
 
-// Search from bottom to top (entry block)
-void ConditionAnalysis::findAllConditions(BasicBlock &ErrBB, int depth) {
-  DEBUG_PRINT2("\n*** findAllConditions ***\n");
-
-  // Prevent infinite loop
-  if (depth > MAX_TRACE_DEPTH) {
-    DEBUG_PRINT("************** Too deep for findAllConditions\n");
-    return;
-  }
-
-  // Record visited BBs to prevent infinite loop
-  // Visited BB is the basic block whose preds are already checked
-  // = All the conditions to the block are already found
-  if (visitedBBs.find(&ErrBB) != visitedBBs.end()) {
-    DEBUG_PRINT2("************** Already visited\n");
-    return;
-  }
-  visitedBBs.insert(&ErrBB);
-
-  for (auto *PredBB : predecessors(&ErrBB)) {
-    conds.push_back(new Condition("", NULL, _CLSE_));
-    if (!findConditions(*PredBB, ErrBB)) {
-      DEBUG_PRINT("*** findCond has failed.\n");
-    }
-    findAllConditions(*PredBB, depth);
-    conds.push_back(new Condition("", NULL, _OPEN_));
-  }
-
-  return;
-}
-
 // Debug info
 // NOTE: need clang flag "-g"
 void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   // The analyzing function
   ErrBBFinder EBF;
   if (auto val = EBF.getErrno(I)) {
-    conds.push_back(new Condition(F.getName(), val, CALFLS));
+    Conds.push_back(new Condition(F.getName(), val, CALFLS));
     DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
   }
 
@@ -381,82 +360,72 @@ void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
   Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
   // File name and line number
-  conds.push_back(new Condition(filename, lineVal, DBINFO));
+  Conds.push_back(new Condition(filename, lineVal, DBINFO));
   // Hello
-  conds.push_back(new Condition("", NULL, HELLOO));
+  // Conds.push_back(new Condition("", NULL, HELLOO));
 }
 
-bool ConditionAnalysis::insertLoggers(BasicBlock &ErrBB, Function &F) {
+void ConditionAnalysis::setRetCond(BasicBlock &theBB) {
+  Conds.push_back(new Condition("", NULL, RETURN));
+}
+
+bool ConditionAnalysis::insertLoggers(BasicBlock &theBB) {
   DEBUG_PRINT("\n...Inserting log...\n");
   bool modified = false;
 
-  // Prepare builder
-  IRBuilder<> builder(&ErrBB);
-  builder.SetInsertPoint(&ErrBB, ErrBB.getFirstInsertionPt());
-  LLVMContext &Ctx = ErrBB.getContext();
+  // Insert just before the terminator
+  Builder.SetInsertPoint(theBB.getTerminator());
+  Value *termC = theBB.getTerminator()->getOperand(0);
+  if (!termC) {
+    DEBUG_PRINT("** Condition of terminator is NULL\n");
+    return false;
+  }
 
-  // Prepare function
-  std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
-  Type *retType = Type::getVoidTy(Ctx);
-  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-  FunctionCallee logFunc = F.getParent()->getOrInsertFunction(LOGGER, funcType);
-
-  // Prepare format
-  Value *format[NUM_OF_CONDTYPE];
-  prepareFormat(format, builder, Ctx);
+  // TODO: This must be useful, but logs become long.
+  // getDebugInfo(*ErrBB.getTerminator(), theBB.getParent());
 
   // Prepare arguments
   std::vector<Value *> args;
 
-  while (!conds.empty()) {
-    Condition *cond = conds.back();
-    conds.pop_back();
+  while (!Conds.empty()) {
+    Condition *cond = Conds.back();
+    Conds.pop_back();
 
-    args.push_back(format[cond->getType()]);
+    args.push_back(Format[cond->getType()]);
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
     switch (cond->getType()) {
+    case RETURN:
+      args.push_back(termC);
+      break;
     case HELLOO:
     case _OPEN_:
     case _CLSE_:
       DEBUG_PRINT("\n");
       break;
+    case SWITCH:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
+      // args.push_back(cond->getConst());
+      args.push_back(termC);
+      break;
     default:
       DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
       args.push_back(cond->getConst());
+      Value *newSel =
+          Builder.CreateSelect(termC, Format[_TRUE_], Format[_FLSE_]);
+      args.push_back(newSel);
       break;
     }
 
-    builder.CreateCall(logFunc, args);
+    Builder.CreateCall(LogFunc, args);
     args.clear();
     delete cond;
     modified = true;
   }
 
-  return modified;
-}
-
-bool ConditionAnalysis::main(BasicBlock &ErrBB, Function &F, Instruction &I) {
-  bool modified = false;
-
-  // Backtrace to find If/Switch Statement BB
-  findAllConditions(ErrBB);
-  if (isEmpty()) {
-    DEBUG_PRINT("** conds is empty\n");
-    return false;
-  }
-
-  getDebugInfo(I, F);
-
-  // Insert loggers
-  modified = insertLoggers(ErrBB, F);
-  if (isEmpty()) {
-    DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
-  } else {
-    DEBUG_PRINT("** Failed to insert all logs\n");
-    deleteAllCond();
-  }
+  Builder.ClearInsertionPoint();
 
   return modified;
 }

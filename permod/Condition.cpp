@@ -7,9 +7,9 @@ using namespace permod;
 
 #ifdef DEBUG
 const char *condTypeStr[NUM_OF_CONDTYPE] = {
-    "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE",
-    "NLLTRU", "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS",
-    "SWITCH", "EXPECT", "DBINFO", "HELLOO", "_OPEN_", "_CLSE_"};
+    "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE", "NLLTRU",
+    "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS", "SWITCH", "EXPECT",
+    "DBINFO", "HELLOO", "_OPEN_", "_CLSE_", "_TRUE_", "_FLSE_", "RETURN"};
 #endif // DEBUG
 
 void Condition::setType(CmpInst &CmpI, bool isBranchTrue) {
