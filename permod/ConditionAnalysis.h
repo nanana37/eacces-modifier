@@ -83,12 +83,10 @@ public:
   bool findIfCond(BranchInst &BrI, BasicBlock &DestBB);
   bool findSwCond(SwitchInst &SwI);
   bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB);
-  void findAllConditions(BasicBlock &ErrBB, int depth = 0);
 
   /* Instrumentation */
   void setRetCond(BasicBlock &theBB);
   void getDebugInfo(Instruction &I, Function &F);
   bool insertLoggers(BasicBlock &theBB);
-  bool main(BasicBlock &ErrBB, Function &F, Instruction &I);
 };
 } // namespace permod

@@ -343,37 +343,6 @@ bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
   }
 }
 
-// Search from bottom to top (entry block)
-void ConditionAnalysis::findAllConditions(BasicBlock &ErrBB, int depth) {
-  DEBUG_PRINT2("\n*** findAllConditions ***\n");
-
-  // Prevent infinite loop
-  if (depth > MAX_TRACE_DEPTH) {
-    DEBUG_PRINT("************** Too deep for findAllConditions\n");
-    return;
-  }
-
-  // Record visited BBs to prevent infinite loop
-  // Visited BB is the basic block whose preds are already checked
-  // = All the conditions to the block are already found
-  if (VistedBBs.find(&ErrBB) != VistedBBs.end()) {
-    DEBUG_PRINT2("************** Already visited\n");
-    return;
-  }
-  VistedBBs.insert(&ErrBB);
-
-  for (auto *PredBB : predecessors(&ErrBB)) {
-    Conds.push_back(new Condition("", NULL, _CLSE_));
-    if (!findConditions(*PredBB, ErrBB)) {
-      DEBUG_PRINT("*** findCond has failed.\n");
-    }
-    findAllConditions(*PredBB, depth);
-    Conds.push_back(new Condition("", NULL, _OPEN_));
-  }
-
-  return;
-}
-
 // Debug info
 // NOTE: need clang flag "-g"
 void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
@@ -457,30 +426,6 @@ bool ConditionAnalysis::insertLoggers(BasicBlock &theBB) {
   }
 
   Builder.ClearInsertionPoint();
-
-  return modified;
-}
-
-bool ConditionAnalysis::main(BasicBlock &ErrBB, Function &F, Instruction &I) {
-  bool modified = false;
-
-  // Backtrace to find If/Switch Statement BB
-  findAllConditions(ErrBB);
-  if (isEmpty()) {
-    DEBUG_PRINT("** conds is empty\n");
-    return false;
-  }
-
-  getDebugInfo(I, F);
-
-  // Insert loggers
-  modified = insertLoggers(ErrBB);
-  if (isEmpty()) {
-    DEBUG_PRINT("~~~ Inserted all logs ~~~\n\n");
-  } else {
-    DEBUG_PRINT("** Failed to insert all logs\n");
-    deleteAllCond();
-  }
 
   return modified;
 }
