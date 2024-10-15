@@ -77,18 +77,18 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
  */
 void ConditionAnalysis::prepFormat() {
   StringRef formatStr[NUM_OF_CONDTYPE];
-  formatStr[CMPTRU] = "[Permod] %s == %d (%s)\n";
-  formatStr[CMPFLS] = "[Permod] %s != %d (%s)\n";
-  formatStr[CMP_GT] = "[Permod] %s > %d (%s)\n";
-  formatStr[CMP_GE] = "[Permod] %s >= %d (%s)\n";
-  formatStr[CMP_LT] = "[Permod] %s < %d (%s)\n";
-  formatStr[CMP_LE] = "[Permod] %s <= %d (%s)\n";
-  formatStr[NLLTRU] = "[Permod] %s == null (%s)\n";
-  formatStr[NLLFLS] = "[Permod] %s != null (%s)\n";
-  formatStr[CALTRU] = "[Permod] %s() != %d (%s)\n";
-  formatStr[CALFLS] = "[Permod] %s() == %d (%s)\n";
-  formatStr[ANDTRU] = "[Permod] %s &== %d (%s)\n";
-  formatStr[ANDFLS] = "[Permod] %s &!= %d (%s)\n";
+  formatStr[CMPTRU] = "[Permod] %s == %d is %s\n";
+  formatStr[CMPFLS] = "[Permod] %s != %d is %s\n";
+  formatStr[CMP_GT] = "[Permod] %s > %d is %s\n";
+  formatStr[CMP_GE] = "[Permod] %s >= %d is %s\n";
+  formatStr[CMP_LT] = "[Permod] %s < %d is %s\n";
+  formatStr[CMP_LE] = "[Permod] %s <= %d is %s\n";
+  formatStr[NLLTRU] = "[Permod] %s == null is %s\n";
+  formatStr[NLLFLS] = "[Permod] %s != null is %s\n";
+  formatStr[CALTRU] = "[Permod] %s() != %d is %s\n";
+  formatStr[CALFLS] = "[Permod] %s() == %d is %s\n";
+  formatStr[ANDTRU] = "[Permod] %s &== %d is %s\n";
+  formatStr[ANDFLS] = "[Permod] %s &!= %d is %s\n";
   formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
   formatStr[EXPECT] = "[Permod] %s expect %d\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
@@ -97,7 +97,7 @@ void ConditionAnalysis::prepFormat() {
   formatStr[_CLSE_] = "[Permod] }\n";
   formatStr[_TRUE_] = "true";
   formatStr[_FLSE_] = "false";
-  formatStr[RETURN] = "[Permod] %d is returned.\n";
+  formatStr[RETURN] = "[Permod] %d is returned\n";
 
   for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
     Value *formatVal = Builder.CreateGlobalStringPtr(formatStr[i]);
