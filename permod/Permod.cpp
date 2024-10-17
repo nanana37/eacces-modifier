@@ -75,12 +75,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       /* Skip some functions */
       // FIXME: this function cause crash
-      if (F.getName() == "profile_transition") {
-        DEBUG_PRINT("--- Skip profile_transition\n");
-        // DEBUG_PRINT(F);
+      if (F.getName() != "may_open") {
         continue;
-      } else {
-        // continue;
       }
       if (F.isDeclaration()) {
         DEBUG_PRINT2("--- Skip Declaration\n");
