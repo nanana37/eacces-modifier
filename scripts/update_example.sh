@@ -11,10 +11,10 @@ make
 cd $CWD
 # argument
 if [ $# -eq 0 ]; then
-	echo "No arguments supplied"
-	exit 1
+  echo "No arguments supplied"
+  exit 1
 fi
 
 echo "Compiling $1"
-clang -g -fno-discard-value-names -fpass-plugin=$HOME/eacces-modifier/build/permod/PermodPass.so $1
+clang -g -fno-discard-value-names -fpass-plugin=$HOME/eacces-modifier/build/permod/PermodPass.so $1.c
 echo "Done"
