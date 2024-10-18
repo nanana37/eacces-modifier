@@ -46,3 +46,6 @@ using namespace llvm;
 #else
 #define LOGGER "_printk"
 #endif // TEST
+
+#define F_BUF "buffer_cond"
+#define F_FLSH "flush_cond"

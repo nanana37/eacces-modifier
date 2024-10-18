@@ -87,6 +87,8 @@ public:
   /* Instrumentation */
   void setRetCond(BasicBlock &theBB);
   void getDebugInfo(Instruction &I, Function &F);
+  bool insertBufferFunc(BasicBlock &theBB);
+  bool insertFlushFunc(ReturnInst &RetI);
   bool insertLoggers(BasicBlock &theBB);
 };
 } // namespace permod

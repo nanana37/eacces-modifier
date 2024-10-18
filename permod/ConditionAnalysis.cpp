@@ -369,6 +369,83 @@ void ConditionAnalysis::setRetCond(BasicBlock &theBB) {
   Conds.push_back(new Condition("", NULL, RETURN));
 }
 
+bool ConditionAnalysis::insertBufferFunc(BasicBlock &theBB) {
+  DEBUG_PRINT("\n...Saving condition to buffer...\n");
+  bool modified = false;
+
+  // Insert just before the terminator
+  Builder.SetInsertPoint(theBB.getTerminator());
+
+  // Prepare function
+  std::vector<Type *> paramTypes = {};
+  Type *retType = Type::getVoidTy(Ctx);
+  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+  FunctionCallee BufferFunc =
+      TargetFunc->getParent()->getOrInsertFunction(F_BUF, funcType);
+
+  // Prepare arguments
+  std::vector<Value *> args;
+
+  Value *termC = theBB.getTerminator()->getOperand(0);
+  if (!termC) {
+    return false;
+  }
+
+  while (!Conds.empty()) {
+    Condition *cond = Conds.back();
+    Conds.pop_back();
+
+    args.push_back(Format[cond->getType()]);
+
+    switch (cond->getType()) {
+    case RETURN:
+      args.push_back(termC);
+    case HELLOO:
+    case _OPEN_:
+    case _CLSE_:
+      break;
+    case SWITCH:
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(termC);
+      break;
+    default:
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getConst());
+      Value *newSel =
+          Builder.CreateSelect(termC, Format[_TRUE_], Format[_FLSE_]);
+      args.push_back(newSel);
+      break;
+    }
+
+    Builder.CreateCall(BufferFunc);
+    args.clear();
+    delete cond;
+    modified = true;
+  }
+
+  Builder.ClearInsertionPoint();
+  return modified;
+}
+
+bool ConditionAnalysis::insertFlushFunc(ReturnInst &RetI) {
+
+  DEBUG_PRINT("\n...Flushing buffer at return...\n");
+  bool modified = false;
+
+  Builder.SetInsertPoint(&RetI);
+
+  // Prepare function
+  std::vector<Type *> paramTypes = {};
+  Type *retType = Type::getVoidTy(Ctx);
+  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+  FunctionCallee FlushFunc =
+      TargetFunc->getParent()->getOrInsertFunction(F_FLSH, funcType);
+
+  Builder.CreateCall(FlushFunc);
+  modified = true;
+  return modified;
+}
+
 bool ConditionAnalysis::insertLoggers(BasicBlock &theBB) {
   DEBUG_PRINT("\n...Inserting log...\n");
   bool modified = false;

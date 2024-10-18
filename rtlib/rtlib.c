@@ -1,6 +1,14 @@
 #include <stdio.h>
 
-void logcase(char *condition, int caseInt) {
-    printf("[PERMOD] ");
-    printf("%s is %d\n", condition, caseInt);
+int counter = 0;
+
+void buffer_cond() {
+  counter++;
+  printf("buffer_cond\n");
+}
+
+void flush_cond() {
+  printf("flush_cond\n");
+  printf("counter: %d\n", counter);
+  counter = 0;
 }
