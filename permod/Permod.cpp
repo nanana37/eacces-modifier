@@ -4,8 +4,8 @@
 
 #include "llvm/IR/DebugLoc.h"
 
-#include "ConditionAnalysis.h"
-#include "ErrBBFinder.h"
+#include "ConditionAnalysis.hpp"
+#include "ErrBBFinder.hpp"
 #include "debug.h"
 
 using namespace llvm;

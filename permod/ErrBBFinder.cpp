@@ -4,8 +4,8 @@
 #include "llvm/Pass.h"
 #include "llvm/Transforms/Utils/BasicBlockUtils.h"
 
-#include "ErrBBFinder.h"
-#include "OriginFinder.h"
+#include "ErrBBFinder.hpp"
+#include "OriginFinder.hpp"
 #include "debug.h"
 
 using namespace llvm;

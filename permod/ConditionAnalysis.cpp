@@ -6,10 +6,10 @@
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/IR/IRBuilder.h"
 
-#include "Condition.h"
-#include "ConditionAnalysis.h"
-#include "ErrBBFinder.h"
-#include "OriginFinder.h"
+#include "Condition.hpp"
+#include "ConditionAnalysis.hpp"
+#include "ErrBBFinder.hpp"
+#include "OriginFinder.hpp"
 #include "debug.h"
 
 using namespace llvm;

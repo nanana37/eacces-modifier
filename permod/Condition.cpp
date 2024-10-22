@@ -1,6 +1,6 @@
 //===-- Condition.cpp - Implement the Condition class ---------------------===//
 
-#include "Condition.h"
+#include "Condition.hpp"
 #include "debug.h"
 
 using namespace permod;
