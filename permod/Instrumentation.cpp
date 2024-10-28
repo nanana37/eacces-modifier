@@ -92,7 +92,7 @@ bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
   DEBUG_PRINT("\n...Insert flush function...\n");
   bool modified = false;
 
-  Builder.SetInsertPoint(&TheBB);
+  Builder.SetInsertPoint(TheBB.getTerminator());
 
   // Prepare function
   std::vector<Type *> paramTypes = {};
