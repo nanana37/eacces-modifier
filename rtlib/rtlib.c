@@ -19,8 +19,7 @@ void buffer_cond(long long nth, long long dest) {
 }
 
 void flush_cond() {
-  LogFunc("existList: 0x%llb\n", existList);
-  LogFunc("destList: 0x%llb\n", destList);
+  LogFunc("(ext)0x%llx, (dst)0x%llx\n", existList, destList);
   existList = 0;
   destList = 0;
 }

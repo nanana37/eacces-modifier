@@ -76,9 +76,13 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB) {
   while (!Conds.empty()) {
     Condition *cond = Conds.back();
     Conds.pop_back();
-    Builder.CreateCall(BufferFunc);
-    DEBUG_PRINT("CreateCall:Buffer\n");
+
+    args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), 2));
+    args.push_back(TheBB.getTerminator()->getOperand(0));
+    Builder.CreateCall(BufferFunc, args);
     args.clear();
+    DEBUG_PRINT("CreateCall:Buffer\n");
+
     delete cond;
     modified = true;
   }
