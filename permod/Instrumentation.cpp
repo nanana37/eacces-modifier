@@ -78,7 +78,26 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     Condition *cond = Conds.back();
     Conds.pop_back();
 
-#ifdef DEBUG2
+    // TODO: get func arguments
+#ifndef DEBUG2
+    DEBUG_PRINT("(" << cond_num << "th) ");
+    DEBUG_PRINT(condTypeStr[cond->getType()]);
+    switch (cond->getType()) {
+    case RETURN:
+      break;
+    case HELLOO:
+    case _OPEN_:
+    case _CLSE_:
+      DEBUG_PRINT("\n");
+      break;
+    case SWITCH:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      break;
+    default:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      break;
+    }
+#else
     args.push_back(Format[cond->getType()]);
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
