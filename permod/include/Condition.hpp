@@ -60,4 +60,6 @@ public:
     setType(CmpI, isBranchTrue);
   }
 };
+
+typedef std::vector<Condition *> CondStack;
 } // namespace permod

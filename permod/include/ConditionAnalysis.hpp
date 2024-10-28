@@ -65,24 +65,26 @@ public:
    * Delete all conditions
    * Call this when you continue to next ErrBB
    */
-  void deleteAllCond() {
+  void deleteAllCond(CondStack Conds) {
     while (!Conds.empty()) {
       delete Conds.back();
       Conds.pop_back();
     }
   }
-  bool isEmpty() { return Conds.empty(); }
+  bool isEmpty(CondStack Conds) { return Conds.empty(); }
 
   bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
     if (BrI.getSuccessor(0) == &DestBB)
       return true;
     return false;
   }
-  bool findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI, BasicBlock &DestBB);
-  bool findIfCond_call(BranchInst &BrI, CallInst &CallI, BasicBlock &DestBB);
-  bool findIfCond(BranchInst &BrI, BasicBlock &DestBB);
-  bool findSwCond(SwitchInst &SwI);
-  bool findConditions(BasicBlock &CondBB, BasicBlock &DestBB);
+  bool findIfCond_cmp(CondStack Conds, BranchInst &BrI, CmpInst &CmpI,
+                      BasicBlock &DestBB);
+  bool findIfCond_call(CondStack Conds, BranchInst &BrI, CallInst &CallI,
+                       BasicBlock &DestBB);
+  bool findIfCond(CondStack Conds, BranchInst &BrI, BasicBlock &DestBB);
+  bool findSwCond(CondStack Conds, SwitchInst &SwI);
+  bool findConditions(CondStack Conds, BasicBlock &CondBB, BasicBlock &DestBB);
 
   /* Instrumentation */
   void setRetCond(BasicBlock &theBB);

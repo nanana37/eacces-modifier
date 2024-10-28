@@ -127,8 +127,8 @@ void ConditionAnalysis::prepLogger() {
     %tobool = icmp ne i32 %and, 0
     br i1 %tobool, label %if.then, label %if.end
  */
-bool ConditionAnalysis::findIfCond_cmp(BranchInst &BrI, CmpInst &CmpI,
-                                       BasicBlock &DestBB) {
+bool ConditionAnalysis::findIfCond_cmp(CondStack Conds, BranchInst &BrI,
+                                       CmpInst &CmpI, BasicBlock &DestBB) {
   StringRef name;
   Value *val;
   CondType type;
@@ -212,10 +212,10 @@ if.end:                ; preds = %do.end
 
       if (isa<CmpInst>(arg0)) {
         // ex: if (likely(a > 0))
-        findIfCond_cmp(BrI, cast<CmpInst>(*arg0), DestBB);
+        findIfCond_cmp(Conds, BrI, cast<CmpInst>(*arg0), DestBB);
       } else if (isa<CallInst>(arg0)) {
         // ex: if (likely(func()))
-        findIfCond_call(BrI, cast<CallInst>(*arg0), DestBB);
+        findIfCond_call(Conds, BrI, cast<CallInst>(*arg0), DestBB);
       } else {
         Conds.push_back(new Condition(getVarName(*arg0), arg1, type));
       }
@@ -253,8 +253,8 @@ if.end:                ; preds = %do.end
     %call = call i32 @function()
     br i1 %call, label %if.then, label %if.end
  */
-bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
-                                        BasicBlock &DestBB) {
+bool ConditionAnalysis::findIfCond_call(CondStack Conds, BranchInst &BrI,
+                                        CallInst &CallI, BasicBlock &DestBB) {
   StringRef name;
   Value *val;
   CondType type;
@@ -276,7 +276,8 @@ bool ConditionAnalysis::findIfCond_call(BranchInst &BrI, CallInst &CallI,
    - Call condition
     if (!func()) {}   // name:of func, val:0
  */
-bool ConditionAnalysis::findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
+bool ConditionAnalysis::findIfCond(CondStack Conds, BranchInst &BrI,
+                                   BasicBlock &DestBB) {
 
   // Branch sometimes has only one successor
   // e.g. br label %if.end
@@ -291,11 +292,11 @@ bool ConditionAnalysis::findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
 
   // And condition: if (flag & 2) {}
   if (isa<CmpInst>(IfCond)) {
-    return findIfCond_cmp(BrI, cast<CmpInst>(*IfCond), DestBB);
+    return findIfCond_cmp(Conds, BrI, cast<CmpInst>(*IfCond), DestBB);
   }
   // Call condition: if (!func()) {}
   if (isa<CallInst>(IfCond)) {
-    return findIfCond_call(BrI, cast<CallInst>(*IfCond), DestBB);
+    return findIfCond_call(Conds, BrI, cast<CallInst>(*IfCond), DestBB);
   }
   DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
   return false;
@@ -305,7 +306,7 @@ bool ConditionAnalysis::findIfCond(BranchInst &BrI, BasicBlock &DestBB) {
  * Returns: (StringRef, Value*)
    - switch (flag) {}     // name:of flag, val:of flag
  */
-bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
+bool ConditionAnalysis::findSwCond(CondStack Conds, SwitchInst &SwI) {
   StringRef name;
   Value *val;
   Value *SwCond = SwI.getCondition();
@@ -323,7 +324,8 @@ bool ConditionAnalysis::findSwCond(SwitchInst &SwI) {
   return true;
 }
 
-bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
+bool ConditionAnalysis::findConditions(CondStack Conds, BasicBlock &CondBB,
+                                       BasicBlock &DestBB) {
   DEBUG_PRINT2("\n** findConditions **\n");
 
   // Get Condition
@@ -333,10 +335,10 @@ bool ConditionAnalysis::findConditions(BasicBlock &CondBB, BasicBlock &DestBB) {
    */
   if (auto *BrI = dyn_cast<BranchInst>(CondBB.getTerminator())) {
     DEBUG_PRINT2("Pred has BranchInst\n");
-    return findIfCond(*BrI, DestBB);
+    return findIfCond(Conds, *BrI, DestBB);
   } else if (auto *SwI = dyn_cast<SwitchInst>(CondBB.getTerminator())) {
     DEBUG_PRINT2("Pred has SwitchInst\n");
-    return findSwCond(*SwI);
+    return findSwCond(Conds, *SwI);
   } else {
     DEBUG_PRINT2("* CondBB terminator is not a branch or switch\n");
     return false;
