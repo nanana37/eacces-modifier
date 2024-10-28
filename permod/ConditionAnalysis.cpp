@@ -369,6 +369,60 @@ void ConditionAnalysis::setRetCond(BasicBlock &theBB) {
   Conds.push_back(new Condition("", NULL, RETURN));
 }
 
+bool ConditionAnalysis::insertBufferFunc(BasicBlock &theBB) {
+  DEBUG_PRINT("\n...Saving condition to buffer...\n");
+  bool modified = false;
+
+  // Insert just before the terminator
+  Builder.SetInsertPoint(theBB.getTerminator());
+
+  // Prepare function
+  std::vector<Type *> paramTypes = {};
+  Type *retType = Type::getVoidTy(Ctx);
+  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+  FunctionCallee BufferFunc =
+      TargetFunc->getParent()->getOrInsertFunction(FUNC_BUF, funcType);
+
+  // Prepare arguments
+  std::vector<Value *> args;
+
+  Value *termC = theBB.getTerminator()->getOperand(0);
+  if (!termC) {
+    return false;
+  }
+
+  while (!Conds.empty()) {
+    Condition *cond = Conds.back();
+    Conds.pop_back();
+    Builder.CreateCall(BufferFunc);
+    args.clear();
+    delete cond;
+    modified = true;
+  }
+
+  Builder.ClearInsertionPoint();
+  return modified;
+}
+
+bool ConditionAnalysis::insertFlushFunc(ReturnInst &RetI) {
+
+  DEBUG_PRINT("\n...Flushing buffer at return...\n");
+  bool modified = false;
+
+  Builder.SetInsertPoint(&RetI);
+
+  // Prepare function
+  std::vector<Type *> paramTypes = {};
+  Type *retType = Type::getVoidTy(Ctx);
+  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
+  FunctionCallee FlushFunc =
+      TargetFunc->getParent()->getOrInsertFunction(FUNC_FLUSH, funcType);
+
+  Builder.CreateCall(FlushFunc);
+  modified = true;
+  return modified;
+}
+
 bool ConditionAnalysis::insertLoggers(BasicBlock &theBB) {
   DEBUG_PRINT("\n...Inserting log...\n");
   bool modified = false;
