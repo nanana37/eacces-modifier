@@ -4,11 +4,11 @@
 CWD=$(pwd)
 
 # update pass
-cd ~/eacces-modifier/build
+cd ~/eacces-modifier/build || exit
 echo "Updating pass"
 make
 
-cd $CWD
+cd "$CWD" || exit
 # argument
 if [ $# -eq 0 ]; then
   echo "No arguments supplied"
@@ -16,5 +16,5 @@ if [ $# -eq 0 ]; then
 fi
 
 echo "Compiling $1"
-clang -g -fno-discard-value-names -fpass-plugin=$HOME/eacces-modifier/build/permod/PermodPass.so $1.c
+clang -g -fno-discard-value-names -fpass-plugin="$HOME"/eacces-modifier/build/permod/PermodPass.so "$1".c
 echo "Done"

@@ -3,7 +3,7 @@
 CONFIG=localmodconfig
 
 if [ $# -gt 0 ]; then
-	CONFIG=$1
+  CONFIG=$1
 fi
 
-make mrproper && make $CONFIG
+make mrproper && make "$CONFIG"
