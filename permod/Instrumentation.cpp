@@ -99,6 +99,18 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
       DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
       break;
     }
+
+    if (cond->getType() == CALTRU || cond->getType() == CALFLS) {
+      for (auto arg : cond->getArgs()) {
+        if (auto s = std::get_if<StringRef>(&arg)) {
+          DEBUG_PRINT(" " << *s);
+        } else {
+          DEBUG_PRINT(" " << *std::get<ConstantInt *>(arg));
+        }
+        DEBUG_PRINT(",");
+      }
+      DEBUG_PRINT("\n");
+    }
 #else
     args.push_back(Format[cond->getType()]);
     DEBUG_PRINT(condTypeStr[cond->getType()]);
