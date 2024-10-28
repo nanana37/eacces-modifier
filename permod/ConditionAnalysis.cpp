@@ -14,7 +14,10 @@
 using namespace llvm;
 using namespace permod;
 
+#define NONAME "UNNAMED CONDITION"
+
 namespace ConditionAnalysis {
+
 // ****************************************************************************
 //                               Utility
 // ****************************************************************************
@@ -64,7 +67,7 @@ StringRef getStructName(Value &V) {
 StringRef getVarName(Value &V) {
   StringRef name = getOrigin(V)->getName();
   if (name.empty())
-    name = "UNNAMED CONDITION";
+    name = NONAME;
   if (name.endswith(".addr"))
     name = name.drop_back(5);
 
@@ -202,7 +205,19 @@ if.end:                ; preds = %do.end
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
                                                                   : CALFLS;
-    Conds.push_back(new Condition(name, val, type));
+    std::vector<ArgType> args;
+    DEBUG_PRINT2("num of args: " << CallI->arg_size() << "\n");
+    for (auto &arg : CallI->args()) {
+      DEBUG_PRINT2("arg: " << *arg << "\n");
+      StringRef name = getVarName(*arg);
+      if (name.startswith(NONAME) && isa<ConstantInt>(arg)) {
+        args.push_back(cast<ConstantInt>(arg));
+      } else {
+        args.push_back(getVarName(*arg));
+      }
+    }
+    // Conds.push_back(new Condition(name, val, type));
+    Conds.push_back(new Condition(name, val, type, args));
     return true;
   }
 
