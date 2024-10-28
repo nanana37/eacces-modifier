@@ -4,6 +4,8 @@
 #include "llvm/IR/IRBuilder.h"
 
 #include "Condition.hpp"
+#include "macro.h"
+
 #ifdef DEBUG
 extern const char *condTypeStr[];
 #endif // DEBUG
