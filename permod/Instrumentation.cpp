@@ -51,7 +51,7 @@ void Instrumentation::prepLogger() {
   LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGER, funcType);
 }
 
-bool Instrumentation::insertBufferFunc(CondStack Conds, BasicBlock &TheBB) {
+bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB) {
   DEBUG_PRINT("\n...Insert buffer function...\n");
   bool modified = false;
 
@@ -77,6 +77,7 @@ bool Instrumentation::insertBufferFunc(CondStack Conds, BasicBlock &TheBB) {
     Condition *cond = Conds.back();
     Conds.pop_back();
     Builder.CreateCall(BufferFunc);
+    DEBUG_PRINT("CreateCall:Buffer\n");
     args.clear();
     delete cond;
     modified = true;
@@ -86,7 +87,7 @@ bool Instrumentation::insertBufferFunc(CondStack Conds, BasicBlock &TheBB) {
   return modified;
 }
 
-bool Instrumentation::insertFlushFunc(CondStack Conds, BasicBlock &TheBB) {
+bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
 
   DEBUG_PRINT("\n...Insert flush function...\n");
   bool modified = false;
@@ -101,11 +102,12 @@ bool Instrumentation::insertFlushFunc(CondStack Conds, BasicBlock &TheBB) {
       TargetFunc->getParent()->getOrInsertFunction(FLUSH_FUNC, funcType);
 
   Builder.CreateCall(FlushFunc);
+  DEBUG_PRINT("CreateCall:Flush\n");
   modified = true;
   return modified;
 }
 
-bool Instrumentation::insertLoggers(CondStack Conds, BasicBlock &TheBB) {
+bool Instrumentation::insertLoggers(CondStack &Conds, BasicBlock &TheBB) {
   DEBUG_PRINT("\n...Inserting log...\n");
   bool modified = false;
 

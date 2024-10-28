@@ -38,7 +38,7 @@ public:
   }
 
   /* Instrumentation */
-  bool insertBufferFunc(CondStack Conds, BasicBlock &TheBB);
-  bool insertFlushFunc(CondStack Conds, BasicBlock &TheBB);
-  bool insertLoggers(CondStack Conds, BasicBlock &TheBB);
+  bool insertBufferFunc(CondStack &Conds, BasicBlock &TheBB);
+  bool insertFlushFunc(CondStack &Conds, BasicBlock &TheBB);
+  bool insertLoggers(CondStack &Conds, BasicBlock &TheBB);
 };
