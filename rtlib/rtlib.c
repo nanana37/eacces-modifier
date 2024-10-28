@@ -12,6 +12,9 @@ long long existList = 0;
 long long destList = 0;
 
 void buffer_cond(long long nth, long long dest) {
+#ifdef DEBUG
+  LogFunc("buffer_cond(%lld, %lld)\n", nth, dest);
+#endif
   existList |= (1 << nth);
   if (dest) {
     destList |= (1 << nth);

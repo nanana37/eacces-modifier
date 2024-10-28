@@ -77,6 +77,40 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB) {
     Condition *cond = Conds.back();
     Conds.pop_back();
 
+#ifdef DEBUG
+    args.push_back(Format[cond->getType()]);
+    DEBUG_PRINT(condTypeStr[cond->getType()]);
+
+    switch (cond->getType()) {
+    case RETURN:
+      args.push_back(termC);
+      break;
+    case HELLOO:
+    case _OPEN_:
+    case _CLSE_:
+      DEBUG_PRINT("\n");
+      break;
+    case SWITCH:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
+      // args.push_back(cond->getConst());
+      args.push_back(termC);
+      break;
+    default:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getConst());
+      Value *newSel =
+          Builder.CreateSelect(termC, Format[_TRUE_], Format[_FLSE_]);
+      args.push_back(newSel);
+      break;
+    }
+
+    Builder.CreateCall(LogFunc, args);
+    args.clear();
+    DEBUG_PRINT("CreateCall:Logger\n");
+#endif // DEBUG
+
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), 2));
     args.push_back(TheBB.getTerminator()->getOperand(0));
     Builder.CreateCall(BufferFunc, args);
