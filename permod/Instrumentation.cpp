@@ -111,6 +111,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB) {
     DEBUG_PRINT("CreateCall:Logger\n");
 #endif // DEBUG
 
+    // FIXME: save Nth 
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), 2));
     args.push_back(TheBB.getTerminator()->getOperand(0));
     Builder.CreateCall(BufferFunc, args);
