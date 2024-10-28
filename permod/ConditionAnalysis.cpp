@@ -216,7 +216,6 @@ if.end:                ; preds = %do.end
         args.push_back(getVarName(*arg));
       }
     }
-    // Conds.push_back(new Condition(name, val, type));
     Conds.push_back(new Condition(name, val, type, args));
     return true;
   }

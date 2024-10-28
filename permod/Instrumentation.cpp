@@ -36,6 +36,8 @@ void Instrumentation::prepFormat() {
   formatStr[_TRUE_] = "true";
   formatStr[_FLSE_] = "false";
   formatStr[RETURN] = "[Permod] %d is returned\n";
+  formatStr[_VARS_] = "[Permod] %s\n";
+  formatStr[_VARC_] = "[Permod] %d\n";
 
   for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
     Value *formatVal = Builder.CreateGlobalStringPtr(formatStr[i]);
@@ -128,7 +130,27 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
 
     Builder.CreateCall(LogFunc, args);
     args.clear();
-    DEBUG_PRINT("CreateCall:Logger\n");
+
+    if (cond->getType() == CALTRU || cond->getType() == CALFLS) {
+      args.push_back(Format[_OPEN_]);
+      Builder.CreateCall(LogFunc, args);
+      args.clear();
+      for (auto arg : cond->getArgs()) {
+        if (auto s = std::get_if<StringRef>(&arg)) {
+          args.push_back(Format[_VARS_]);
+          args.push_back(Builder.CreateGlobalStringPtr(*s));
+        } else {
+          args.push_back(Format[_VARC_]);
+          args.push_back(std::get<ConstantInt *>(arg));
+        }
+        Builder.CreateCall(LogFunc, args);
+        args.clear();
+      }
+      args.push_back(Format[_CLSE_]);
+      Builder.CreateCall(LogFunc, args);
+      args.clear();
+    }
+
 #endif // DEBUG
 
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
