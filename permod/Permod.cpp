@@ -117,6 +117,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       DEBUG_PRINT("\n///////////////////////////////////////\n");
       DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
+
+      long long cond_num = 0;
+
       /* Insert logger just before terminator of every BB */
       for (BasicBlock &BB : F) {
         if (BB.getTerminator()->getNumSuccessors() <= 1) {
@@ -130,7 +133,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         ConditionAnalysis::findConditions(Conds, BB,
                                           *BB.getTerminator()->getSuccessor(0));
         class Instrumentation Ins(&BB);
-        modified |= Ins.insertBufferFunc(Conds, BB);
+        if (Ins.insertBufferFunc(Conds, BB, cond_num)) {
+          modified = true;
+          cond_num++;
+        }
       }
 
       CondStack RetConds;

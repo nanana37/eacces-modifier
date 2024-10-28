@@ -51,7 +51,8 @@ void Instrumentation::prepLogger() {
   LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGR_FUNC, funcType);
 }
 
-bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB) {
+bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
+                                       long long &cond_num) {
   DEBUG_PRINT("\n...Insert buffer function...\n");
   bool modified = false;
 
@@ -111,8 +112,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB) {
     DEBUG_PRINT("CreateCall:Logger\n");
 #endif // DEBUG
 
-    // FIXME: save Nth 
-    args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), 2));
+    args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
     args.push_back(TheBB.getTerminator()->getOperand(0));
     Builder.CreateCall(BufferFunc, args);
     args.clear();
