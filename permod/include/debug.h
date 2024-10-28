@@ -1,10 +1,9 @@
 #pragma once
 
-#include "llvm/IR/IRBuilder.h"
+#include "macro.h"
 
-#define DEBUG
-// #define DEBUG2
-// #define TEST
+// This is required for DEBUG_VALUE(x)
+#include "llvm/IR/IRBuilder.h"
 
 #ifdef DEBUG
 #define MAX_TRACE_DEPTH 20
@@ -46,3 +45,6 @@ using namespace llvm;
 #else
 #define LOGGER "_printk"
 #endif // TEST
+
+#define FUNC_BUF "buffer_cond"
+#define FUNC_FLUSH "flush_cond"

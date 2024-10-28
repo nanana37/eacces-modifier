@@ -75,9 +75,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       /* Skip some functions */
       // FIXME: this function cause crash
+#ifdef DEBUG_FIXME
       if (F.getName() != "may_open") {
         continue;
       }
+#endif
       if (F.isDeclaration()) {
         DEBUG_PRINT2("--- Skip Declaration\n");
         continue;
