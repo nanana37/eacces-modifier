@@ -132,11 +132,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         modified |= Ins.insertBufferFunc(Conds, BB);
       }
 
-      CondStack Conds;
+      CondStack RetConds;
       BasicBlock *RetBB = RetI->getParent();
-      ConditionAnalysis::setRetCond(Conds, *RetBB);
+      ConditionAnalysis::setRetCond(RetConds, *RetBB);
       class Instrumentation Ins(RetBB);
-      modified |= Ins.insertFlushFunc(Conds, *RetBB);
+      modified |= Ins.insertFlushFunc(RetConds, *RetBB);
     }
 
     if (modified) {
