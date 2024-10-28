@@ -5,7 +5,7 @@
 #include <linux/printk.h>
 int counter = 0;
 
-void FUNC_BUF() {
+void buffer_cond() {
   counter++;
   pr_info("buffer_cond\n");
 }

@@ -63,7 +63,7 @@ bool Instrumentation::insertBufferFunc(CondStack Conds, BasicBlock &TheBB) {
   Type *retType = Type::getVoidTy(Ctx);
   FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
   FunctionCallee BufferFunc =
-      TargetFunc->getParent()->getOrInsertFunction(FUNC_BUF, funcType);
+      TargetFunc->getParent()->getOrInsertFunction(BUFFR_FUNC, funcType);
 
   // Prepare arguments
   std::vector<Value *> args;
@@ -98,7 +98,7 @@ bool Instrumentation::insertFlushFunc(CondStack Conds, BasicBlock &TheBB) {
   Type *retType = Type::getVoidTy(Ctx);
   FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
   FunctionCallee FlushFunc =
-      TargetFunc->getParent()->getOrInsertFunction(FUNC_FLUSH, funcType);
+      TargetFunc->getParent()->getOrInsertFunction(FLUSH_FUNC, funcType);
 
   Builder.CreateCall(FlushFunc);
   modified = true;

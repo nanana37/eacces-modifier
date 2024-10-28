@@ -39,12 +39,3 @@ using namespace llvm;
   do {                                                                         \
   } while (0)
 #endif // DEBUG2
-
-#ifdef TEST
-#define LOGGER "printf"
-#else
-#define LOGGER "_printk"
-#endif // TEST
-
-#define FUNC_BUF "buffer_cond"
-#define FUNC_FLUSH "flush_cond"
