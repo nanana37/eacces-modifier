@@ -2,7 +2,7 @@
 
 #define DEBUG
 // #define DEBUG2
-#define TEST
+// #define TEST
 
 #ifndef TEST
 #define DEBUG_FIXME

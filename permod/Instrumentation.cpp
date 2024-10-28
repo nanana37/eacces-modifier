@@ -77,7 +77,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB) {
     Condition *cond = Conds.back();
     Conds.pop_back();
 
-#ifdef DEBUG
+#ifdef DEBUG2
     args.push_back(Format[cond->getType()]);
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
