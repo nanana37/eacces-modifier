@@ -89,8 +89,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         DEBUG_PRINT2("--- Skip llvm\n");
         continue;
       }
-      if (F.getName() == LOGGER) {
-        DEBUG_PRINT2("--- Skip Logger\n");
+      if (F.getName() == LOGGR_FUNC || F.getName() == BUFFR_FUNC ||
+          F.getName() == FLUSH_FUNC) {
+        DEBUG_PRINT2("--- Skip permod API\n");
         continue;
       }
 

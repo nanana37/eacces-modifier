@@ -8,6 +8,15 @@
 extern const char *condTypeStr[];
 #endif // DEBUG
 
+#ifndef TEST
+#define LOGGR_FUNC "_printk"
+#else
+#define LOGGR_FUNC "printf"
+#endif // TEST
+
+#define BUFFR_FUNC "buffer_cond"
+#define FLUSH_FUNC "flush_cond"
+
 using namespace llvm;
 using namespace permod;
 

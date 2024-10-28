@@ -48,7 +48,7 @@ void Instrumentation::prepLogger() {
   std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
   Type *retType = Type::getVoidTy(Ctx);
   FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-  LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGER, funcType);
+  LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGR_FUNC, funcType);
 }
 
 bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB) {
