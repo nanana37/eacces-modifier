@@ -2,9 +2,7 @@
 
 #pragma once
 
-#include "llvm/IR/IRBuilder.h"
-
-#include "debug.h"
+#include "llvm/IR/InstrTypes.h"
 
 using namespace llvm;
 

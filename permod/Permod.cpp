@@ -6,6 +6,7 @@
 
 #include "ConditionAnalysis.hpp"
 #include "ErrBBFinder.hpp"
+#include "Instrumentation.hpp"
 #include "debug.h"
 
 using namespace llvm;
@@ -123,15 +124,19 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           continue;
         }
         DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
-        struct ConditionAnalysis CA(&BB);
+        CondStack Conds;
         // NOTE: @DestBB is used to determine which path is true.
-        CA.findConditions(BB, *BB.getTerminator()->getSuccessor(0));
-        modified |= CA.insertLoggers(BB);
+        ConditionAnalysis::findConditions(Conds, BB,
+                                          *BB.getTerminator()->getSuccessor(0));
+        class Instrumentation Ins(&BB);
+        modified |= Ins.insertBufferFunc(Conds, BB);
       }
 
-      struct ConditionAnalysis CA(RetI->getParent());
-      CA.setRetCond(*RetI->getParent());
-      CA.insertLoggers(*RetI->getParent());
+      CondStack Conds;
+      BasicBlock *RetBB = RetI->getParent();
+      ConditionAnalysis::setRetCond(Conds, *RetBB);
+      class Instrumentation Ins(RetBB);
+      modified |= Ins.insertFlushFunc(Conds, *RetBB);
     }
 
     if (modified) {

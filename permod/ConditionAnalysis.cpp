@@ -4,7 +4,6 @@
 //
 
 #include "llvm/IR/DebugInfoMetadata.h"
-#include "llvm/IR/IRBuilder.h"
 
 #include "Condition.hpp"
 #include "ConditionAnalysis.hpp"
@@ -15,6 +14,7 @@
 using namespace llvm;
 using namespace permod;
 
+namespace ConditionAnalysis {
 // ****************************************************************************
 //                               Utility
 // ****************************************************************************
@@ -27,7 +27,7 @@ using namespace permod;
   %0 = load i32, ptr %flag.addr, align 4
 * TODO: may cause infinite loop
 */
-Value *ConditionAnalysis::getOrigin(Value &V) {
+Value *getOrigin(Value &V) {
   OriginFinder OF;
   Value *val = &V;
 
@@ -49,7 +49,7 @@ Value *ConditionAnalysis::getOrigin(Value &V) {
 /*
  * Get struct name, if the V is a member of struct
  */
-StringRef ConditionAnalysis::getStructName(Value &V) {
+StringRef getStructName(Value &V) {
   if (!isa<GetElementPtrInst>(V))
     return "";
   Value *PtrOp = cast<GetElementPtrInst>(V).getPointerOperand();
@@ -61,7 +61,7 @@ StringRef ConditionAnalysis::getStructName(Value &V) {
 /*
  * Get variable name
  */
-StringRef ConditionAnalysis::getVarName(Value &V) {
+StringRef getVarName(Value &V) {
   StringRef name = getOrigin(V)->getName();
   if (name.empty())
     name = "UNNAMED CONDITION";
@@ -73,51 +73,28 @@ StringRef ConditionAnalysis::getVarName(Value &V) {
 }
 
 /*
- * Prepare format string
- */
-void ConditionAnalysis::prepFormat() {
-  StringRef formatStr[NUM_OF_CONDTYPE];
-  formatStr[CMPTRU] = "[Permod] %s == %d is %s\n";
-  formatStr[CMPFLS] = "[Permod] %s != %d is %s\n";
-  formatStr[CMP_GT] = "[Permod] %s > %d is %s\n";
-  formatStr[CMP_GE] = "[Permod] %s >= %d is %s\n";
-  formatStr[CMP_LT] = "[Permod] %s < %d is %s\n";
-  formatStr[CMP_LE] = "[Permod] %s <= %d is %s\n";
-  formatStr[NLLTRU] = "[Permod] %s == null is %s\n";
-  formatStr[NLLFLS] = "[Permod] %s != null is %s\n";
-  formatStr[CALTRU] = "[Permod] %s() != %d is %s\n";
-  formatStr[CALFLS] = "[Permod] %s() == %d is %s\n";
-  formatStr[ANDTRU] = "[Permod] %s &== %d is %s\n";
-  formatStr[ANDFLS] = "[Permod] %s &!= %d is %s\n";
-  formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
-  formatStr[EXPECT] = "[Permod] %s expect %d\n";
-  formatStr[DBINFO] = "[Permod] %s: %d\n";
-  formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
-  formatStr[_OPEN_] = "[Permod] {\n";
-  formatStr[_CLSE_] = "[Permod] }\n";
-  formatStr[_TRUE_] = "true";
-  formatStr[_FLSE_] = "false";
-  formatStr[RETURN] = "[Permod] %d is returned\n";
-
-  for (int i = 0; i < NUM_OF_CONDTYPE; i++) {
-    Value *formatVal = Builder.CreateGlobalStringPtr(formatStr[i]);
-    Format[i] = Builder.CreatePointerCast(formatVal, Type::getInt8PtrTy(Ctx));
-  }
-}
-
-void ConditionAnalysis::prepLogger() {
-  // Prepare function
-  std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
-  Type *retType = Type::getVoidTy(Ctx);
-  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-  LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGER, funcType);
-}
-
-/*
  * ****************************************************************************
  *                       Anlyzing Conditions
  * ****************************************************************************
  */
+
+/*
+ * Delete all conditions
+ * Call this when you continue to next ErrBB
+ */
+void deleteAllCond(CondStack &Conds) {
+  while (!Conds.empty()) {
+    delete Conds.back();
+    Conds.pop_back();
+  }
+}
+bool isEmpty(CondStack &Conds) { return Conds.empty(); }
+
+bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
+  if (BrI.getSuccessor(0) == &DestBB)
+    return true;
+  return false;
+}
 
 /* Get name & value of if condition
    - C
@@ -127,8 +104,8 @@ void ConditionAnalysis::prepLogger() {
     %tobool = icmp ne i32 %and, 0
     br i1 %tobool, label %if.then, label %if.end
  */
-bool ConditionAnalysis::findIfCond_cmp(CondStack Conds, BranchInst &BrI,
-                                       CmpInst &CmpI, BasicBlock &DestBB) {
+bool findIfCond_cmp(CondStack &Conds, BranchInst &BrI, CmpInst &CmpI,
+                    BasicBlock &DestBB) {
   StringRef name;
   Value *val;
   CondType type;
@@ -253,8 +230,8 @@ if.end:                ; preds = %do.end
     %call = call i32 @function()
     br i1 %call, label %if.then, label %if.end
  */
-bool ConditionAnalysis::findIfCond_call(CondStack Conds, BranchInst &BrI,
-                                        CallInst &CallI, BasicBlock &DestBB) {
+bool findIfCond_call(CondStack &Conds, BranchInst &BrI, CallInst &CallI,
+                     BasicBlock &DestBB) {
   StringRef name;
   Value *val;
   CondType type;
@@ -276,8 +253,7 @@ bool ConditionAnalysis::findIfCond_call(CondStack Conds, BranchInst &BrI,
    - Call condition
     if (!func()) {}   // name:of func, val:0
  */
-bool ConditionAnalysis::findIfCond(CondStack Conds, BranchInst &BrI,
-                                   BasicBlock &DestBB) {
+bool findIfCond(CondStack &Conds, BranchInst &BrI, BasicBlock &DestBB) {
 
   // Branch sometimes has only one successor
   // e.g. br label %if.end
@@ -306,7 +282,7 @@ bool ConditionAnalysis::findIfCond(CondStack Conds, BranchInst &BrI,
  * Returns: (StringRef, Value*)
    - switch (flag) {}     // name:of flag, val:of flag
  */
-bool ConditionAnalysis::findSwCond(CondStack Conds, SwitchInst &SwI) {
+bool findSwCond(CondStack &Conds, SwitchInst &SwI) {
   StringRef name;
   Value *val;
   Value *SwCond = SwI.getCondition();
@@ -324,8 +300,7 @@ bool ConditionAnalysis::findSwCond(CondStack Conds, SwitchInst &SwI) {
   return true;
 }
 
-bool ConditionAnalysis::findConditions(CondStack Conds, BasicBlock &CondBB,
-                                       BasicBlock &DestBB) {
+bool findConditions(CondStack &Conds, BasicBlock &CondBB, BasicBlock &DestBB) {
   DEBUG_PRINT2("\n** findConditions **\n");
 
   // Get Condition
@@ -345,9 +320,8 @@ bool ConditionAnalysis::findConditions(CondStack Conds, BasicBlock &CondBB,
   }
 }
 
-// Debug info
 // NOTE: need clang flag "-g"
-void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
+void getDebugInfo(CondStack &Conds, Instruction &I, Function &F) {
   // The analyzing function
   ErrBBFinder EBF;
   if (auto val = EBF.getErrno(I)) {
@@ -367,121 +341,7 @@ void ConditionAnalysis::getDebugInfo(Instruction &I, Function &F) {
   // Conds.push_back(new Condition("", NULL, HELLOO));
 }
 
-void ConditionAnalysis::setRetCond(BasicBlock &theBB) {
+void setRetCond(CondStack &Conds, BasicBlock &theBB) {
   Conds.push_back(new Condition("", NULL, RETURN));
 }
-
-bool ConditionAnalysis::insertBufferFunc(BasicBlock &theBB) {
-  DEBUG_PRINT("\n...Saving condition to buffer...\n");
-  bool modified = false;
-
-  // Insert just before the terminator
-  Builder.SetInsertPoint(theBB.getTerminator());
-
-  // Prepare function
-  std::vector<Type *> paramTypes = {};
-  Type *retType = Type::getVoidTy(Ctx);
-  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-  FunctionCallee BufferFunc =
-      TargetFunc->getParent()->getOrInsertFunction(FUNC_BUF, funcType);
-
-  // Prepare arguments
-  std::vector<Value *> args;
-
-  Value *termC = theBB.getTerminator()->getOperand(0);
-  if (!termC) {
-    return false;
-  }
-
-  while (!Conds.empty()) {
-    Condition *cond = Conds.back();
-    Conds.pop_back();
-    Builder.CreateCall(BufferFunc);
-    args.clear();
-    delete cond;
-    modified = true;
-  }
-
-  Builder.ClearInsertionPoint();
-  return modified;
-}
-
-bool ConditionAnalysis::insertFlushFunc(ReturnInst &RetI) {
-
-  DEBUG_PRINT("\n...Flushing buffer at return...\n");
-  bool modified = false;
-
-  Builder.SetInsertPoint(&RetI);
-
-  // Prepare function
-  std::vector<Type *> paramTypes = {};
-  Type *retType = Type::getVoidTy(Ctx);
-  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-  FunctionCallee FlushFunc =
-      TargetFunc->getParent()->getOrInsertFunction(FUNC_FLUSH, funcType);
-
-  Builder.CreateCall(FlushFunc);
-  modified = true;
-  return modified;
-}
-
-bool ConditionAnalysis::insertLoggers(BasicBlock &theBB) {
-  DEBUG_PRINT("\n...Inserting log...\n");
-  bool modified = false;
-
-  // Insert just before the terminator
-  Builder.SetInsertPoint(theBB.getTerminator());
-  Value *termC = theBB.getTerminator()->getOperand(0);
-  if (!termC) {
-    DEBUG_PRINT("** Condition of terminator is NULL\n");
-    return false;
-  }
-
-  // TODO: This must be useful, but logs become long.
-  // getDebugInfo(*ErrBB.getTerminator(), theBB.getParent());
-
-  // Prepare arguments
-  std::vector<Value *> args;
-
-  while (!Conds.empty()) {
-    Condition *cond = Conds.back();
-    Conds.pop_back();
-
-    args.push_back(Format[cond->getType()]);
-    DEBUG_PRINT(condTypeStr[cond->getType()]);
-
-    switch (cond->getType()) {
-    case RETURN:
-      args.push_back(termC);
-      break;
-    case HELLOO:
-    case _OPEN_:
-    case _CLSE_:
-      DEBUG_PRINT("\n");
-      break;
-    case SWITCH:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      // args.push_back(cond->getConst());
-      args.push_back(termC);
-      break;
-    default:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      args.push_back(cond->getConst());
-      Value *newSel =
-          Builder.CreateSelect(termC, Format[_TRUE_], Format[_FLSE_]);
-      args.push_back(newSel);
-      break;
-    }
-
-    Builder.CreateCall(LogFunc, args);
-    args.clear();
-    delete cond;
-    modified = true;
-  }
-
-  Builder.ClearInsertionPoint();
-
-  return modified;
-}
+} // namespace ConditionAnalysis
