@@ -1,36 +1,26 @@
 #include "../permod/include/macro.h"
 
 #ifndef TEST
-
 #include <linux/printk.h>
-int counter = 0;
-
-void buffer_cond() {
-  counter++;
-  pr_info("buffer_cond\n");
-}
-
-void flush_cond() {
-  pr_info("flush_cond\n");
-  pr_info("counter: %d\n", counter);
-  counter = 0;
-}
-
-#else // TEST
-
+#define LogFunc(_fmt, ...) pr_info(_fmt, ##__VA_ARGS__)
+#else
 #include <stdio.h>
+#define LogFunc(_fmt, ...) printf(_fmt, ##__VA_ARGS__)
+#endif // TEST
 
-int counter = 0;
+long long existList = 0;
+long long destList = 0;
 
-void buffer_cond() {
-  counter++;
-  printf("buffer_cond\n");
+void buffer_cond(long long nth, long long dest) {
+  existList |= (1 << nth);
+  if (dest) {
+    destList |= (1 << nth);
+  }
 }
 
 void flush_cond() {
-  printf("flush_cond\n");
-  printf("counter: %d\n", counter);
-  counter = 0;
+  LogFunc("existList: 0x%llb\n", existList);
+  LogFunc("destList: 0x%llb\n", destList);
+  existList = 0;
+  destList = 0;
 }
-
-#endif // TEST
