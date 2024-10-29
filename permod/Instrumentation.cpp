@@ -23,8 +23,8 @@ void Instrumentation::prepFormat() {
   formatStr[CMP_LE] = "[Permod] %s <= %d is %s\n";
   formatStr[NLLTRU] = "[Permod] %s == null is %s\n";
   formatStr[NLLFLS] = "[Permod] %s != null is %s\n";
-  formatStr[CALTRU] = "[Permod] %s() != %d is %s\n";
-  formatStr[CALFLS] = "[Permod] %s() == %d is %s\n";
+  formatStr[CALTRU] = "[Permod] %s() == %d is %s\n";
+  formatStr[CALFLS] = "[Permod] %s() != %d is %s\n";
   formatStr[ANDTRU] = "[Permod] %s &== %d is %s\n";
   formatStr[ANDFLS] = "[Permod] %s &!= %d is %s\n";
   formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";

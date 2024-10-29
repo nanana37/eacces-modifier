@@ -180,7 +180,7 @@ if.end:                ; preds = %do.end
 
       Value *arg1 = CallI->getArgOperand(1);
       if (isa<ConstantInt>(arg1)) {
-        type = cast<ConstantInt>(arg1)->isZero() ? CALFLS : CALTRU;
+        type = cast<ConstantInt>(arg1)->isZero() ? CALTRU : CALFLS;
       } else {
         DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
         return false;
@@ -203,8 +203,8 @@ if.end:                ; preds = %do.end
       return true;
     }
 
-    type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALTRU
-                                                                  : CALFLS;
+    type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALFLS
+                                                                  : CALTRU;
     std::vector<ArgType> args;
     DEBUG_PRINT2("num of args: " << CallI->arg_size() << "\n");
     for (auto &arg : CallI->args()) {
@@ -256,7 +256,7 @@ bool findIfCond_call(CondStack &Conds, BranchInst &BrI, CallInst &CallI,
 
   name = getVarName(*Callee);
   val = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
-  type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
+  type = isBranchTrue(BrI, DestBB) ? CALFLS : CALTRU;
   Conds.push_back(new Condition(name, val, type));
   return true;
 }
@@ -339,7 +339,7 @@ void getDebugInfo(CondStack &Conds, Instruction &I, Function &F) {
   // The analyzing function
   ErrBBFinder EBF;
   if (auto val = EBF.getErrno(I)) {
-    Conds.push_back(new Condition(F.getName(), val, CALFLS));
+    Conds.push_back(new Condition(F.getName(), val, CALTRU));
     DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
   }
 
