@@ -193,7 +193,10 @@ bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
   FunctionCallee FlushFunc =
       TargetFunc->getParent()->getOrInsertFunction(FLUSH_FUNC, funcType);
 
-  Builder.CreateCall(FlushFunc);
+  std::vector<Value *> args;
+  args.push_back(TheBB.getTerminator()->getOperand(0));
+
+  Builder.CreateCall(FlushFunc, args);
   DEBUG_PRINT("CreateCall:Flush\n");
   modified = true;
   return modified;
