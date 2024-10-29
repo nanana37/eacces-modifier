@@ -32,7 +32,7 @@ enum CondType {
   _CLSE_,
   _TRUE_,
   _FLSE_,
-  RETURN,
+  _FUNC_,
   _VARS_, // String name of variable
   _VARC_, // Constant value of variable
   NUM_OF_CONDTYPE

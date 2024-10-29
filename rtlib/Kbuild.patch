@@ -1,0 +1,13 @@
+# patch to Kbuild in the root of the kernel source tree
+diff --git a/Kbuild b/Kbuild
+index 464b34a08..7afaf4761 100644
+--- a/Kbuild
++++ b/Kbuild
+@@ -76,6 +76,7 @@ prepare: $(offsets-file) missing-syscalls $(atomic-checks)
+ # Ordinary directory descending
+ # ---------------------------------------------------------------------------
+ 
++obj-y 		+= rtlib/
+ obj-y			+= init/
+ obj-y			+= usr/
+ obj-y			+= arch/$(SRCARCH)/
