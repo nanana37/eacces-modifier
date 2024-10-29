@@ -338,10 +338,7 @@ bool findConditions(CondStack &Conds, BasicBlock &CondBB, BasicBlock &DestBB) {
 void getDebugInfo(CondStack &Conds, Instruction &I, Function &F) {
   // The analyzing function
   ErrBBFinder EBF;
-  if (auto val = EBF.getErrno(I)) {
-    Conds.push_back(new Condition(F.getName(), val, CALTRU));
-    DEBUG_PRINT("ERRNO: " << F.getName() << " " << *val << "\n");
-  }
+  Conds.push_back(new Condition(F.getName(), NULL, _FUNC_));
 
   LLVMContext &Ctx = I.getContext();
   StringRef filename = F.getParent()->getSourceFileName();
@@ -356,6 +353,6 @@ void getDebugInfo(CondStack &Conds, Instruction &I, Function &F) {
 }
 
 void setRetCond(CondStack &Conds, BasicBlock &theBB) {
-  Conds.push_back(new Condition("", NULL, RETURN));
+  Conds.push_back(new Condition("", NULL, _FUNC_));
 }
 } // namespace ConditionAnalysis

@@ -21,10 +21,14 @@ void buffer_cond(long long nth, long long dest) {
   }
 }
 
-void flush_cond(int retval) {
+void flush_cond(const char *pathname, int line, const char *funcname,
+                int retval) {
   if (retval != 0) {
-    LogFunc("retval: %d\n", retval);
+    LogFunc("============== PERMOD ==============\n");
+    LogFunc("%s() returned %d\n", funcname, retval);
+    LogFunc("  %s:%d\n", pathname, line);
     LogFunc("(ext)0x%llx, (dst)0x%llx\n", existList, destList);
+    LogFunc("====================================\n");
   }
   existList = 0;
   destList = 0;

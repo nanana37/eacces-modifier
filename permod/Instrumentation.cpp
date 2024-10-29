@@ -35,7 +35,7 @@ void Instrumentation::prepFormat() {
   formatStr[_CLSE_] = "[Permod] }\n";
   formatStr[_TRUE_] = "true";
   formatStr[_FLSE_] = "false";
-  formatStr[RETURN] = "[Permod] %d is returned\n";
+  formatStr[_FUNC_] = "[Permod] %s() return\n";
   formatStr[_VARS_] = "[Permod] %s\n";
   formatStr[_VARC_] = "[Permod] %d\n";
 
@@ -85,7 +85,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     DEBUG_PRINT("(" << cond_num << "th) ");
     DEBUG_PRINT(condTypeStr[cond->getType()]);
     switch (cond->getType()) {
-    case RETURN:
+    case _FUNC_:
       break;
     case HELLOO:
     case _OPEN_:
@@ -116,7 +116,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
     switch (cond->getType()) {
-    case RETURN:
+    case _FUNC_:
       args.push_back(termC);
       break;
     case HELLOO:
@@ -194,7 +194,27 @@ bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
       TargetFunc->getParent()->getOrInsertFunction(FLUSH_FUNC, funcType);
 
   std::vector<Value *> args;
-  args.push_back(TheBB.getTerminator()->getOperand(0));
+
+  while (!Conds.empty()) {
+    Condition *cond = Conds.back();
+    Conds.pop_back();
+
+    DEBUG_PRINT(condTypeStr[cond->getType()]);
+    switch (cond->getType()) {
+    case DBINFO:
+      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(cond->getConst());
+      break;
+    case _FUNC_:
+      DEBUG_PRINT(" " << cond->getName() << "() return\n");
+      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
+      args.push_back(TheBB.getTerminator()->getOperand(0));
+      break;
+    default:
+      DEBUG_PRINT(" is unexpected condition type\n");
+    }
+  }
 
   Builder.CreateCall(FlushFunc, args);
   DEBUG_PRINT("CreateCall:Flush\n");
@@ -202,6 +222,7 @@ bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
   return modified;
 }
 
+// FIXME: This function is deprecated
 bool Instrumentation::insertLoggers(CondStack &Conds, BasicBlock &TheBB) {
   DEBUG_PRINT("\n...Inserting log...\n");
   bool modified = false;
@@ -228,7 +249,8 @@ bool Instrumentation::insertLoggers(CondStack &Conds, BasicBlock &TheBB) {
     DEBUG_PRINT(condTypeStr[cond->getType()]);
 
     switch (cond->getType()) {
-    case RETURN:
+    case _FUNC_:
+      // FIXME: the format is changed
       args.push_back(termC);
       break;
     case HELLOO:

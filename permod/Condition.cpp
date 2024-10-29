@@ -10,7 +10,7 @@ const char *condTypeStr[NUM_OF_CONDTYPE] = {
     "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE",
     "NLLTRU", "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS",
     "SWITCH", "EXPECT", "DBINFO", "HELLOO", "_OPEN_", "_CLSE_",
-    "_TRUE_", "_FLSE_", "RETURN", "_VARS_", "_VARC_"};
+    "_TRUE_", "_FLSE_", "_FUNC_", "_VARS_", "_VARC_"};
 #endif // DEBUG
 
 void Condition::setType(CmpInst &CmpI, bool isBranchTrue) {

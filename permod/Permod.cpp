@@ -141,7 +141,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       CondStack RetConds;
       BasicBlock *RetBB = RetI->getParent();
-      ConditionAnalysis::setRetCond(RetConds, *RetBB);
+      ConditionAnalysis::getDebugInfo(RetConds, *RetI, F);
       class Instrumentation Ins(RetBB);
       modified |= Ins.insertFlushFunc(RetConds, *RetBB);
     }
