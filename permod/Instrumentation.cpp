@@ -55,7 +55,7 @@ void Instrumentation::prepLogger() {
 
 bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
                                        long long &cond_num) {
-  DEBUG_PRINT("\n...Insert buffer function...\n");
+  DEBUG_PRINT("\n...Inserting buffer function...\n");
   bool modified = false;
 
   // Insert just before the terminator
@@ -181,10 +181,19 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
 
 bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
 
-  DEBUG_PRINT("\n...Insert flush function...\n");
+  DEBUG_PRINT("\n...Inserting flush function...\n");
   bool modified = false;
+  Instruction *TermInst = TheBB.getTerminator();
+  if (!TermInst || TermInst->getOpcode() != Instruction::Ret) {
+    DEBUG_PRINT("** Terminator " << *TermInst << " is invalid\n");
+    return false;
+  }
+  if (TermInst->getNumOperands() == 0) {
+    DEBUG_PRINT("** Terminator " << *TermInst << " has no operand\n");
+    return false;
+  }
 
-  Builder.SetInsertPoint(TheBB.getTerminator());
+  Builder.SetInsertPoint(TermInst);
 
   // Prepare function
   std::vector<Type *> paramTypes = {};
@@ -209,7 +218,7 @@ bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
     case _FUNC_:
       DEBUG_PRINT(" " << cond->getName() << "() return\n");
       args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      args.push_back(TheBB.getTerminator()->getOperand(0));
+      args.push_back(TermInst->getOperand(0));
       break;
     default:
       DEBUG_PRINT(" is unexpected condition type\n");
