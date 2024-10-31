@@ -20,6 +20,9 @@ void buffer_cond(long long nth, long long dest) {
     destList |= (1 << nth);
   }
 }
+#ifndef TEST
+EXPORT_SYMBOL(buffer_cond);
+#endif
 
 void flush_cond(const char *pathname, int line, const char *funcname,
                 int retval) {
@@ -33,3 +36,6 @@ void flush_cond(const char *pathname, int line, const char *funcname,
   existList = 0;
   destList = 0;
 }
+#ifndef TEST
+EXPORT_SYMBOL(flush_cond);
+#endif
