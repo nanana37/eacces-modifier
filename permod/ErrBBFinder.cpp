@@ -12,8 +12,8 @@ using namespace llvm;
 using namespace permod;
 
 #define RETSIZE 32
-#define ERRNOS                                                                 \
-  { EACCES, EPERM }
+#define ERRNOS {EACCES}
+// { EACCES, EPERM }
 
 // NOTE: maybe to find alloca is better?
 Value *ErrBBFinder::findRetValue(ReturnInst &RI) {

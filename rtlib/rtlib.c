@@ -26,9 +26,9 @@ EXPORT_SYMBOL(buffer_cond);
 
 void flush_cond(const char *pathname, int line, const char *funcname,
                 int retval) {
-  if (retval != 0) {
+  if (retval == -13) {
     LogFunc("============== PERMOD ==============\n");
-    LogFunc("%s() returned %d\n", funcname, retval);
+    LogFunc("%s() returned %ld\n", funcname, (long)retval);
     LogFunc("  %s:%d\n", pathname, line);
     LogFunc("(ext)0x%llx, (dst)0x%llx\n", existList, destList);
     LogFunc("====================================\n");
