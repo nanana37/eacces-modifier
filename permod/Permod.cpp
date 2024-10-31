@@ -68,19 +68,19 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
    *****************
    */
   PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
-    DEBUG_PRINT("\n@@@ PermodPass @@@\n");
+#ifndef TEST
+    /* Analyze only fs/ directory */
+    if (M.getName().find("/fs/") == std::string::npos) {
+      DEBUG_PRINT("Skip: " << M.getName() << "\n");
+      return PreservedAnalyses::all();
+    }
+#endif
     DEBUG_PRINT("Module: " << M.getName() << "\n");
     bool modified = false;
     for (auto &F : M.functions()) {
       DEBUG_PRINT2("\n-FUNCTION: " << F.getName() << "\n");
 
-      /* Skip some functions */
-      // FIXME: this function cause crash
-#ifdef DEBUG_FIXME
-      if (F.getName() != "may_open") {
-        continue;
-      }
-#endif
+      /* Skip specific functions */
       if (F.isDeclaration()) {
         DEBUG_PRINT2("--- Skip Declaration\n");
         continue;
