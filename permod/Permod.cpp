@@ -102,6 +102,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         continue;
       }
 
+#ifdef FIXME
       /* Insert loggers into function which returns error value. */
       Value *RetV = EBF.findRetValue(*RetI);
       if (!RetV) {
@@ -117,6 +118,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       DEBUG_PRINT("\n///////////////////////////////////////\n");
       DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
+#endif
 
       long long cond_num = 0;
 
