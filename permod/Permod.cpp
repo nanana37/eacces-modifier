@@ -100,6 +100,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         DEBUG_PRINT2("*** No return\n");
         continue;
       }
+      if (RetI->getNumOperands() == 0) {
+        DEBUG_PRINT2("** Terminator " << *RetI << " has no operand\n");
+        continue;
+      }
 
 #ifdef FIXME
       /* Insert loggers into function which returns error value. */
