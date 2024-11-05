@@ -81,7 +81,6 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     Conds.pop_back();
 
     // TODO: get func arguments
-#ifndef DEBUG2
     DEBUG_PRINT("(" << cond_num << "th) ");
     DEBUG_PRINT(condTypeStr[cond->getType()]);
     switch (cond->getType()) {
@@ -111,59 +110,6 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
       }
       DEBUG_PRINT("\n");
     }
-#else
-    args.push_back(Format[cond->getType()]);
-    DEBUG_PRINT(condTypeStr[cond->getType()]);
-
-    switch (cond->getType()) {
-    case _FUNC_:
-      args.push_back(termC);
-      break;
-    case HELLOO:
-    case _OPEN_:
-    case _CLSE_:
-      DEBUG_PRINT("\n");
-      break;
-    case SWITCH:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      // args.push_back(cond->getConst());
-      args.push_back(termC);
-      break;
-    default:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      args.push_back(cond->getConst());
-      Value *newSel =
-          Builder.CreateSelect(termC, Format[_TRUE_], Format[_FLSE_]);
-      args.push_back(newSel);
-      break;
-    }
-
-    Builder.CreateCall(LogFunc, args);
-    args.clear();
-
-    if (cond->getType() == CALTRU || cond->getType() == CALFLS) {
-      args.push_back(Format[_OPEN_]);
-      Builder.CreateCall(LogFunc, args);
-      args.clear();
-      for (auto arg : cond->getArgs()) {
-        if (auto s = std::get_if<StringRef>(&arg)) {
-          args.push_back(Format[_VARS_]);
-          args.push_back(Builder.CreateGlobalStringPtr(*s));
-        } else {
-          args.push_back(Format[_VARC_]);
-          args.push_back(std::get<ConstantInt *>(arg));
-        }
-        Builder.CreateCall(LogFunc, args);
-        args.clear();
-      }
-      args.push_back(Format[_CLSE_]);
-      Builder.CreateCall(LogFunc, args);
-      args.clear();
-    }
-
-#endif // DEBUG
 
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
     args.push_back(TheBB.getTerminator()->getOperand(0));
