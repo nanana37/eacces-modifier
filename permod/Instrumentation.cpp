@@ -55,7 +55,7 @@ void Instrumentation::prepLogger() {
 
 bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
                                        long long &cond_num) {
-  DEBUG_PRINT("\n...Inserting buffer function...\n");
+  DEBUG_PRINT2("\n...Inserting buffer function...\n");
   bool modified = false;
 
   // Insert just before the terminator
@@ -169,7 +169,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     args.push_back(TheBB.getTerminator()->getOperand(0));
     Builder.CreateCall(BufferFunc, args);
     args.clear();
-    DEBUG_PRINT("CreateCall:Buffer\n");
+    DEBUG_PRINT2("CreateCall:Buffer\n");
 
     delete cond;
     modified = true;
@@ -181,7 +181,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
 
 bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
 
-  DEBUG_PRINT("\n...Inserting flush function...\n");
+  DEBUG_PRINT2("\n...Inserting flush function...\n");
   bool modified = false;
   Instruction *TermInst = TheBB.getTerminator();
   if (!TermInst || TermInst->getOpcode() != Instruction::Ret) {

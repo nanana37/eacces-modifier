@@ -32,7 +32,6 @@ void Condition::setType(CmpInst &CmpI, bool isBranchTrue) {
   case CmpInst::Predicate::ICMP_ULT:
   case CmpInst::Predicate::ICMP_SLT:
     Type = isBranchTrue ? CMP_LT : CMP_GE;
-    DEBUG_PRINT(isBranchTrue);
     break;
   case CmpInst::Predicate::ICMP_ULE:
   case CmpInst::Predicate::ICMP_SLE:
@@ -40,7 +39,7 @@ void Condition::setType(CmpInst &CmpI, bool isBranchTrue) {
     break;
   default:
     DEBUG_PRINT("******* Sorry, Unexpected CmpInst::Predicate\n");
-    DEBUG_PRINT(CmpI);
+    DEBUG_PRINT2(CmpI);
     Type = DBINFO;
     break;
   }

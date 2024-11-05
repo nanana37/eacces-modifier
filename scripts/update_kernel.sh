@@ -8,4 +8,4 @@ cd ~/eacces-modifier/build || exit
 make
 
 cd "$CWD" || exit
-make -j 8 CC=clang KCFLAGS="-g -fno-discard-value-names -fpass-plugin=$HOME/eacces-modifier/build/permod/PermodPass.so" && sudo make modules_install && sudo make install
+make --silent -j 9 CC=clang KCFLAGS="-g -fno-discard-value-names -fpass-plugin=$HOME/eacces-modifier/build/permod/PermodPass.so" && sudo make modules_install && sudo make install

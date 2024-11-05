@@ -78,7 +78,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT("Module: " << M.getName() << "\n");
     bool modified = false;
     for (auto &F : M.functions()) {
-      DEBUG_PRINT2("\n-FUNCTION: " << F.getName() << "\n");
 
       /* Skip specific functions */
       if (F.isDeclaration()) {
@@ -120,6 +119,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
 #endif
 
+      DEBUG_PRINT("\nAnalyzing function: " << F.getName() << "\n");
       long long cond_num = 0;
 
       /* Insert logger just before terminator of every BB */
@@ -149,7 +149,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
     if (modified) {
-      DEBUG_PRINT("Modified\n");
+      DEBUG_PRINT2("Modified\n");
       return PreservedAnalyses::none();
     } else {
       DEBUG_PRINT2("Not Modified\n");
