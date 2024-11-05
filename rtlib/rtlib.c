@@ -24,13 +24,11 @@ void buffer_cond(long long nth, long long dest) {
 EXPORT_SYMBOL(buffer_cond);
 #endif
 
-void flush_cond(const char *pathname, int line, const char *funcname,
-                int retval) {
+void flush_cond(const char *pathname, const char *funcname, int retval) {
   if (retval == -13) {
     LogFunc("============== PERMOD ==============\n");
-    LogFunc("%s() returned %ld\n", funcname, (long)retval);
-    LogFunc("  %s:%d\n", pathname, line);
-    LogFunc("(ext)0x%llx, (dst)0x%llx\n", existList, destList);
+    LogFunc("[Permod] %s::%s() returned %d\n", pathname, funcname, retval);
+    LogFunc("[Permod] (ext)0x%llx, (dst)0x%llx\n", existList, destList);
     LogFunc("====================================\n");
   }
   existList = 0;

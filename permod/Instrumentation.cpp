@@ -169,7 +169,6 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     args.push_back(TheBB.getTerminator()->getOperand(0));
     Builder.CreateCall(BufferFunc, args);
     args.clear();
-    DEBUG_PRINT2("CreateCall:Buffer\n");
 
     delete cond;
     modified = true;
@@ -179,7 +178,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
   return modified;
 }
 
-bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
+bool Instrumentation::insertFlushFunc(DebugInfo &DBinfo, BasicBlock &TheBB) {
 
   DEBUG_PRINT2("\n...Inserting flush function...\n");
   bool modified = false;
@@ -203,30 +202,11 @@ bool Instrumentation::insertFlushFunc(CondStack &Conds, BasicBlock &TheBB) {
       TargetFunc->getParent()->getOrInsertFunction(FLUSH_FUNC, funcType);
 
   std::vector<Value *> args;
-
-  while (!Conds.empty()) {
-    Condition *cond = Conds.back();
-    Conds.pop_back();
-
-    DEBUG_PRINT(condTypeStr[cond->getType()]);
-    switch (cond->getType()) {
-    case DBINFO:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      args.push_back(cond->getConst());
-      break;
-    case _FUNC_:
-      DEBUG_PRINT(" " << cond->getName() << "() return\n");
-      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      args.push_back(TermInst->getOperand(0));
-      break;
-    default:
-      DEBUG_PRINT(" is unexpected condition type\n");
-    }
-  }
+  args.push_back(Builder.CreateGlobalStringPtr(DBinfo.first));
+  args.push_back(Builder.CreateGlobalStringPtr(DBinfo.second));
+  args.push_back(TermInst->getOperand(0)); // Return value
 
   Builder.CreateCall(FlushFunc, args);
-  DEBUG_PRINT("CreateCall:Flush\n");
   modified = true;
   return modified;
 }

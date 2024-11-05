@@ -76,4 +76,5 @@ public:
 };
 
 typedef std::vector<Condition *> CondStack;
+typedef std::pair<StringRef, StringRef> DebugInfo; // <filename, funcname>
 } // namespace permod

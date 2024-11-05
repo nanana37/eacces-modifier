@@ -51,6 +51,6 @@ public:
   /* Instrumentation */
   bool insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
                         long long &cond_num);
-  bool insertFlushFunc(CondStack &Conds, BasicBlock &TheBB);
+  bool insertFlushFunc(DebugInfo &DBinfo, BasicBlock &TheBB);
   bool insertLoggers(CondStack &Conds, BasicBlock &TheBB);
 };

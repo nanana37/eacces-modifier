@@ -335,21 +335,20 @@ bool findConditions(CondStack &Conds, BasicBlock &CondBB, BasicBlock &DestBB) {
 }
 
 // NOTE: need clang flag "-g"
-void getDebugInfo(CondStack &Conds, Instruction &I, Function &F) {
-  // The analyzing function
-  ErrBBFinder EBF;
-  Conds.push_back(new Condition(F.getName(), NULL, _FUNC_));
+void getDebugInfo(DebugInfo &DBinfo, Instruction &I, Function &F) {
+  // DebugInfo: File name
+  DBinfo.first = F.getParent()->getSourceFileName();
 
-  LLVMContext &Ctx = I.getContext();
-  StringRef filename = F.getParent()->getSourceFileName();
+  // DebugInfo: Function name
+  DBinfo.second = F.getName();
+
+  // FIXME: show line number
+  /*
   const DebugLoc &Loc = I.getDebugLoc();
   unsigned line = Loc->getLine();
-  DEBUG_PRINT("Debug info: " << filename << ":" << line << "\n");
+  DEBUG_PRINT2("Got debug info: " << filename << ":" << line << "\n");
   Value *lineVal = ConstantInt::get(Type::getInt32Ty(Ctx), line);
-  // File name and line number
-  Conds.push_back(new Condition(filename, lineVal, DBINFO));
-  // Hello
-  // Conds.push_back(new Condition("", NULL, HELLOO));
+  */
 }
 
 void setRetCond(CondStack &Conds, BasicBlock &theBB) {

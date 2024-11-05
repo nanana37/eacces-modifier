@@ -123,7 +123,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
 #endif
 
-      DEBUG_PRINT("\nAnalyzing function: " << F.getName() << "\n");
+      DebugInfo DBinfo;
+      BasicBlock *RetBB = RetI->getParent();
+      ConditionAnalysis::getDebugInfo(DBinfo, *RetI, F);
+
+      DEBUG_PRINT("-- Start of " << DBinfo.first << "::" << DBinfo.second
+                                 << " --\n");
+
       long long cond_num = 0;
 
       /* Insert logger just before terminator of every BB */
@@ -145,11 +151,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
       }
 
-      CondStack RetConds;
-      BasicBlock *RetBB = RetI->getParent();
-      ConditionAnalysis::getDebugInfo(RetConds, *RetI, F);
       class Instrumentation Ins(RetBB);
-      modified |= Ins.insertFlushFunc(RetConds, *RetBB);
+      modified |= Ins.insertFlushFunc(DBinfo, *RetBB);
+
+      DEBUG_PRINT("-- End of " << DBinfo.first << "::" << DBinfo.second
+                               << " --\n");
     }
 
     if (modified) {

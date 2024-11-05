@@ -38,5 +38,5 @@ bool findSwCond(CondStack &Conds, SwitchInst &SwI);
 bool findConditions(CondStack &Conds, BasicBlock &CondBB, BasicBlock &DestBB);
 
 void setRetCond(CondStack &Conds, BasicBlock &theBB);
-void getDebugInfo(CondStack &Conds, Instruction &I, Function &F);
+void getDebugInfo(DebugInfo &DBinfo, Instruction &I, Function &F);
 } // namespace ConditionAnalysis
