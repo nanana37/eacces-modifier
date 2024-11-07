@@ -54,7 +54,7 @@ void Instrumentation::prepLogger() {
 }
 
 bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
-                                       long long &cond_num) {
+                                       DebugInfo &DBinfo, long long &cond_num) {
   DEBUG_PRINT2("\n...Inserting buffer function...\n");
   bool modified = false;
 
@@ -81,7 +81,8 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     Conds.pop_back();
 
     // TODO: get func arguments
-    PRETTY_PRINT("(" << cond_num << "th) ");
+    PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "#" << cond_num
+                              << " ");
     PRETTY_PRINT(condTypeStr[cond->getType()]);
     switch (cond->getType()) {
     case _FUNC_:
@@ -89,18 +90,17 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     case HELLOO:
     case _OPEN_:
     case _CLSE_:
-      PRETTY_PRINT("\n");
       break;
     case SWITCH:
-      PRETTY_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      PRETTY_PRINT(" " << cond->getName() << ": " << *cond->getConst());
       break;
     default:
-      PRETTY_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      PRETTY_PRINT(" " << cond->getName() << ": " << *cond->getConst());
       break;
     }
 
     if (cond->getType() == CALTRU || cond->getType() == CALFLS) {
-      PRETTY_PRINT(TheBB.getParent()->getName() << "(");
+      PRETTY_PRINT(" with (");
       for (auto arg : cond->getArgs()) {
         if (auto s = std::get_if<StringRef>(&arg)) {
           PRETTY_PRINT(*s);
@@ -109,8 +109,10 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
         }
         PRETTY_PRINT(", ");
       }
-      PRETTY_PRINT(")\n");
+      PRETTY_PRINT(")");
     }
+
+    PRETTY_PRINT("\n");
 
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
     args.push_back(TheBB.getTerminator()->getOperand(0));

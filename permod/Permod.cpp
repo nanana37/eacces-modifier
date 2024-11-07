@@ -145,7 +145,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         ConditionAnalysis::findConditions(Conds, BB,
                                           *BB.getTerminator()->getSuccessor(0));
         class Instrumentation Ins(&BB);
-        if (Ins.insertBufferFunc(Conds, BB, cond_num)) {
+        if (Ins.insertBufferFunc(Conds, BB, DBinfo, cond_num)) {
           modified = true;
           cond_num++;
         }
