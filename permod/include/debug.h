@@ -5,11 +5,18 @@
 // This is required for DEBUG_VALUE(x)
 #include "llvm/IR/IRBuilder.h"
 
+using namespace llvm;
+
+#define PRETTY_PRINT(x)                                                        \
+  do {                                                                         \
+    errs() << x;                                                               \
+  } while (0)
+
 #ifdef DEBUG
 #define MAX_TRACE_DEPTH 20
 #define DEBUG_PRINT(x)                                                         \
   do {                                                                         \
-    errs() << x;                                                               \
+    outs() << x;                                                               \
   } while (0)
 #else
 #define MAX_TRACE_DEPTH 10
@@ -17,8 +24,6 @@
   do {                                                                         \
   } while (0)
 #endif // DEBUG
-
-using namespace llvm;
 
 #ifdef DEBUG2
 #define DEBUG_VALUE(x)                                                         \

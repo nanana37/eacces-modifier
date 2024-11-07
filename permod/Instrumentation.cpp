@@ -81,34 +81,35 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     Conds.pop_back();
 
     // TODO: get func arguments
-    DEBUG_PRINT("(" << cond_num << "th) ");
-    DEBUG_PRINT(condTypeStr[cond->getType()]);
+    PRETTY_PRINT("(" << cond_num << "th) ");
+    PRETTY_PRINT(condTypeStr[cond->getType()]);
     switch (cond->getType()) {
     case _FUNC_:
       break;
     case HELLOO:
     case _OPEN_:
     case _CLSE_:
-      DEBUG_PRINT("\n");
+      PRETTY_PRINT("\n");
       break;
     case SWITCH:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      PRETTY_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
       break;
     default:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
+      PRETTY_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
       break;
     }
 
     if (cond->getType() == CALTRU || cond->getType() == CALFLS) {
+      PRETTY_PRINT(TheBB.getParent()->getName() << "(");
       for (auto arg : cond->getArgs()) {
         if (auto s = std::get_if<StringRef>(&arg)) {
-          DEBUG_PRINT(" " << *s);
+          PRETTY_PRINT(*s);
         } else {
-          DEBUG_PRINT(" " << *std::get<ConstantInt *>(arg));
+          PRETTY_PRINT(*std::get<ConstantInt *>(arg));
         }
-        DEBUG_PRINT(",");
+        PRETTY_PRINT(", ");
       }
-      DEBUG_PRINT("\n");
+      PRETTY_PRINT(")\n");
     }
 
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
