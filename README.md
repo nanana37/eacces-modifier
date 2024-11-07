@@ -82,7 +82,7 @@ Simple example:
 make CC=clang \
   KCFLAGS="-fno-discard-value-names \
   -fpass-plugin=path_to_build/permod/PermodPass.so" \
-  fs/namei.c
+  fs/namei.o
 ```
 
 **Your original file**
