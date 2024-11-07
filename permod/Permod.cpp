@@ -128,7 +128,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       ConditionAnalysis::getDebugInfo(DBinfo, *RetI, F);
 
       PRETTY_PRINT("-- Start of " << DBinfo.first << "::" << DBinfo.second
-                                  << " -->\n");
+                                  << "() -->\n");
 
       long long cond_num = 0;
 
@@ -155,7 +155,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       modified |= Ins.insertFlushFunc(DBinfo, *RetBB);
 
       PRETTY_PRINT("<-- End of " << DBinfo.first << "::" << DBinfo.second
-                                 << " --\n");
+                                 << "() --\n");
     }
 
     if (modified) {

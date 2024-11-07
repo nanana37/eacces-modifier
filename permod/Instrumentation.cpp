@@ -81,26 +81,40 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     Conds.pop_back();
 
     // TODO: get func arguments
-    PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "#" << cond_num
-                              << " ");
-    PRETTY_PRINT(condTypeStr[cond->getType()]);
-    switch (cond->getType()) {
-    case _FUNC_:
-      break;
-    case HELLOO:
-    case _OPEN_:
-    case _CLSE_:
-      break;
-    case SWITCH:
-      PRETTY_PRINT(" " << cond->getName() << ": " << *cond->getConst());
-      break;
-    default:
-      PRETTY_PRINT(" " << cond->getName() << ": " << *cond->getConst());
-      break;
-    }
+    PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "()#" << cond_num
+                              << " {{");
 
-    if (cond->getType() == CALTRU || cond->getType() == CALFLS) {
-      PRETTY_PRINT(" with (");
+    StringRef name = cond->getName();
+    Value *val = cond->getConst();
+
+    switch (cond->getType()) {
+    case CMPTRU:
+      PRETTY_PRINT(name << " == " << *val);
+      break;
+    case CMPFLS:
+      PRETTY_PRINT(name << " != " << *val);
+      break;
+    case CMP_GT:
+      PRETTY_PRINT(name << " > " << *val);
+      break;
+    case CMP_GE:
+      PRETTY_PRINT(name << " >= " << *val);
+      break;
+    case CMP_LT:
+      PRETTY_PRINT(name << " < " << *val);
+      break;
+    case CMP_LE:
+      PRETTY_PRINT(name << " <= " << *val);
+      break;
+    case NLLTRU:
+      PRETTY_PRINT(name << " == null");
+      break;
+    case NLLFLS:
+      PRETTY_PRINT(name << " != null");
+      break;
+    case CALTRU:
+    case CALFLS:
+      PRETTY_PRINT(name << "(");
       for (auto arg : cond->getArgs()) {
         if (auto s = std::get_if<StringRef>(&arg)) {
           PRETTY_PRINT(*s);
@@ -109,10 +123,29 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
         }
         PRETTY_PRINT(", ");
       }
-      PRETTY_PRINT(")");
+      if (cond->getType() == CALTRU) {
+        PRETTY_PRINT(") == " << *val);
+      } else {
+        PRETTY_PRINT(") != " << *val);
+      }
+      break;
+    case ANDTRU:
+      PRETTY_PRINT(name << " &== " << *val);
+      break;
+    case ANDFLS:
+      PRETTY_PRINT(name << " &!= " << *val);
+      break;
+    case SWITCH:
+      PRETTY_PRINT("switch " << name);
+      break;
+    case EXPECT:
+      PRETTY_PRINT(name << " expect " << *val);
+      break;
+    default:
+      break;
     }
 
-    PRETTY_PRINT("\n");
+    PRETTY_PRINT("}}\n");
 
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
     args.push_back(TheBB.getTerminator()->getOperand(0));
