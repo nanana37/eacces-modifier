@@ -1,3 +1,6 @@
+import sys
+import re
+
 def filter_file_contents(filename, function_name, flag):
     with open(filename, 'r') as file:
         lines = file.readlines()
@@ -17,6 +20,21 @@ def filter_file_contents(filename, function_name, flag):
 
     return selected_lines
 
+def extract_function_name_and_flag():
+    input_data = sys.stdin.read()
+
+    # extract function name and flag
+    function_name_pattern = r'\[Permod\] (.+?) returned'
+    ext_flag_pattern = r'\(ext\)(0x[0-9a-fA-F]+)'
+
+    function_name_match = re.search(function_name_pattern, input_data)
+    ext_flag_match = re.search(ext_flag_pattern, input_data)
+
+    function_name = function_name_match.group(1).strip()
+    ext_flag = ext_flag_match.group(1).strip()
+
+    return function_name, ext_flag
+
 # Usage example
 if __name__ == "__main__":
     # path to build log
@@ -25,6 +43,10 @@ if __name__ == "__main__":
     # input from runtime log
     function_name = '/home/hiron/repo/github/torvalds/linux/fs/namei.c::inode_permission()'
     flag = 0x5
+
+    result = extract_function_name_and_flag()
+    function_name = result[0]
+    flag = int(result[1], 16)
 
     result = filter_file_contents(filename, function_name, flag)
 
