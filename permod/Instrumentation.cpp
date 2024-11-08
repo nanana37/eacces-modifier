@@ -82,7 +82,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
 
     // TODO: get func arguments
     PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "()#" << cond_num
-                              << " {{");
+                              << ": ");
 
     StringRef name = cond->getName();
     Value *val = cond->getConst();
@@ -145,7 +145,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
       break;
     }
 
-    PRETTY_PRINT("}}\n");
+    PRETTY_PRINT("\n");
 
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
     args.push_back(TheBB.getTerminator()->getOperand(0));
