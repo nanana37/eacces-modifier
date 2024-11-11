@@ -127,6 +127,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       BasicBlock *RetBB = RetI->getParent();
       ConditionAnalysis::getDebugInfo(DBinfo, *RetI, F);
 
+      DEBUG_PRINT2("Function:" << F << "\n");
+
       long long cond_num = 0;
 
       /* Insert logger just before terminator of every BB */
