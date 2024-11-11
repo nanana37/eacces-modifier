@@ -51,8 +51,11 @@ def append_dst(selected_lines, dst_flag):
 
 # Usage example
 if __name__ == "__main__":
-    # path to build log
+    # FIXME: Defalut path to build log
     filename = 'tmp/permod-full-1107'
+    # Get build log from argument
+    if len(sys.argv) > 1:
+        filename = sys.argv[1]
 
     # input from runtime log
     function_name = '/home/hiron/repo/github/torvalds/linux/fs/namei.c::inode_permission()'
