@@ -18,6 +18,8 @@ void buffer_cond(long long nth, long long dest) {
   existList |= (1 << nth);
   if (dest) {
     destList |= (1 << nth);
+  } else {
+    destList &= ~(1 << nth);
   }
 }
 #ifndef TEST
