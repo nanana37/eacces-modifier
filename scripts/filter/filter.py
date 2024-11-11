@@ -38,6 +38,18 @@ def filter_file_contents(filename, function_name, ext_flag):
 
     return selected_lines
 
+def append_dst(selected_lines, dst_flag):
+    for i, line in enumerate(selected_lines):
+        # extract [num]
+        num_start = line.index('#') + 1
+        num_end = line.index(': ')
+        num = int(line[num_start:num_end])
+        # compare with dst_flag
+        if dst_flag & (1 << num):
+            selected_lines[i] += ' (TRUE)'
+        else:
+            selected_lines[i] += ' (FALSE)'
+    return selected_lines
 
 # Usage example
 if __name__ == "__main__":
@@ -47,12 +59,15 @@ if __name__ == "__main__":
     # input from runtime log
     function_name = '/home/hiron/repo/github/torvalds/linux/fs/namei.c::inode_permission()'
     ext_flag = 0x5
+    dst_flag = 0x1
 
     result = extract_function_name_and_flag()
     function_name = result[0]
     ext_flag = int(result[1], 16)
+    dst_flag = int(result[2], 16)
 
     result = filter_file_contents(filename, function_name, ext_flag)
+    result = append_dst(result, dst_flag)
 
     for line in result:
         print(line)
