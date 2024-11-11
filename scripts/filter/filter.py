@@ -1,9 +1,7 @@
 import sys
 import re
 
-def extract_function_name_and_flag():
-    input_data = sys.stdin.read()
-
+def extract_function_name_and_flag(input_data):
     # extract function name and flag
     function_name_pattern = r'\[Permod\] (.+?) returned'
     ext_flag_pattern = r'\(ext\)(0x[0-9a-fA-F]+)'
@@ -61,14 +59,18 @@ if __name__ == "__main__":
     ext_flag = 0x5
     dst_flag = 0x1
 
-    result = extract_function_name_and_flag()
-    function_name = result[0]
-    ext_flag = int(result[1], 16)
-    dst_flag = int(result[2], 16)
+    input_data = sys.stdin.read()
+    matches = re.findall(r"={14} PERMOD ={14}.*?={35}", input_data, re.DOTALL)
 
-    result = filter_file_contents(filename, function_name, ext_flag)
-    result = append_dst(result, dst_flag)
+    for i, match in enumerate(matches, 1):
+        result = extract_function_name_and_flag(match)
+        function_name = result[0]
+        ext_flag = int(result[1], 16)
+        dst_flag = int(result[2], 16)
 
-    for line in result:
-        print(line)
+        result = filter_file_contents(filename, function_name, ext_flag)
+        result = append_dst(result, dst_flag)
+
+        for line in result:
+            print(line)
 
