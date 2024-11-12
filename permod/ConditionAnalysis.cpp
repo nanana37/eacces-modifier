@@ -180,7 +180,7 @@ if.end:                ; preds = %do.end
 
       Value *arg1 = CallI->getArgOperand(1);
       if (isa<ConstantInt>(arg1)) {
-        type = cast<ConstantInt>(arg1)->isZero() ? CALTRU : CALFLS;
+        type = cast<ConstantInt>(arg1)->isZero() ? CALFLS : CALTRU;
       } else {
         DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
         return false;
@@ -256,7 +256,7 @@ bool findIfCond_call(CondStack &Conds, BranchInst &BrI, CallInst &CallI,
 
   name = getVarName(*Callee);
   val = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
-  type = isBranchTrue(BrI, DestBB) ? CALFLS : CALTRU;
+  type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
   Conds.push_back(new Condition(name, val, type));
   return true;
 }
