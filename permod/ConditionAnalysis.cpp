@@ -112,7 +112,7 @@ bool findIfCond_cmp(CondStack &Conds, BranchInst &BrI, CmpInst &CmpI,
   StringRef name;
   Value *val;
   CondType type;
-  DEBUG_PRINT2("CMP: " << *CmpI.getParent() << "\n");
+  DEBUG_PRINT2("CMP: " << CmpI << "\n");
 
   Value *CmpOp = CmpI.getOperand(0);
   if (!CmpOp)
@@ -146,7 +146,11 @@ bool findIfCond_cmp(CondStack &Conds, BranchInst &BrI, CmpInst &CmpI,
       Conds.push_back(new Condition(name, val, type));
       return true;
     default:
+      DEBUG_PRINT("\n*************************************\n");
       DEBUG_PRINT("** Unexpected as BinI: " << *BinI << "\n");
+      DEBUG_PRINT("Function: " << BrI.getFunction()->getName() << "\n");
+      DEBUG_PRINT2("BB: " << *BrI.getParent() << "\n");
+      DEBUG_PRINT("*************************************\n");
     }
   }
 
@@ -182,7 +186,11 @@ if.end:                ; preds = %do.end
       if (isa<ConstantInt>(arg1)) {
         type = cast<ConstantInt>(arg1)->isZero() ? CALFLS : CALTRU;
       } else {
+        DEBUG_PRINT("\n*************************************\n");
         DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
+        DEBUG_PRINT("Function: " << BrI.getFunction()->getName() << "\n");
+        DEBUG_PRINT2("BB: " << *BrI.getParent() << "\n");
+        DEBUG_PRINT("*************************************\n");
         return false;
       }
       Conds.push_back(new Condition(name, cast<ConstantInt>(arg1), EXPECT));
@@ -232,8 +240,11 @@ if.end:                ; preds = %do.end
 
     return true;
   }
-
+  DEBUG_PRINT("\n*************************************\n");
   DEBUG_PRINT("** Unexpected as CmpOp: " << *CmpOp << "\n");
+  DEBUG_PRINT("Function: " << BrI.getFunction()->getName() << "\n");
+  DEBUG_PRINT("BB: " << *BrI.getParent() << "\n");
+  DEBUG_PRINT("*************************************\n");
   return false;
 }
 
@@ -288,7 +299,11 @@ bool findIfCond(CondStack &Conds, BranchInst &BrI, BasicBlock &DestBB) {
   if (isa<CallInst>(IfCond)) {
     return findIfCond_call(Conds, BrI, cast<CallInst>(*IfCond), DestBB);
   }
+  DEBUG_PRINT("\n*************************************\n");
   DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
+  DEBUG_PRINT("Function: " << BrI.getFunction()->getName() << "\n");
+  DEBUG_PRINT2("BB: " << *BrI.getParent() << "\n");
+  DEBUG_PRINT("*************************************\n");
   return false;
 }
 
