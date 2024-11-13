@@ -26,6 +26,10 @@ class Instrumentation {
   /* Analysis Target */
   Function *TargetFunc;
 
+  /* Flags */
+  AllocaInst *DstFlag;
+  AllocaInst *ExtFlag;
+
   /* IRBuilder */
   LLVMContext &Ctx;
   IRBuilder<> Builder;
@@ -37,12 +41,15 @@ class Instrumentation {
   /* Constructor methods */
   void prepFormat();
   void prepLogger();
+  void prepFlags();
 
 public:
   /* Constructor */
   Instrumentation(Function *TargetFunc)
       : TargetFunc(TargetFunc), Ctx(TargetFunc->getContext()),
-        Builder(TargetFunc->getContext()) {}
+        Builder(TargetFunc->getContext()) {
+    prepFlags();
+  }
 
   /* Instrumentation */
   bool insertBufferFunc(CondStack &Conds, BasicBlock &TheBB, DebugInfo &DBinfo,

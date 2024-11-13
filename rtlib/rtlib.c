@@ -8,33 +8,32 @@
 #define LogFunc(_fmt, ...) printf(_fmt, ##__VA_ARGS__)
 #endif // TEST
 
-long long existList = 0;
-long long destList = 0;
-
-void buffer_cond(long long nth, long long dest) {
+void buffer_cond(long long *ext_list, long long *dst_list, long long nth,
+                 long long dest) {
 #ifdef DEBUG2
   LogFunc("buffer_cond(%lld, %lld)\n", nth, dest);
 #endif
-  existList |= (1 << nth);
+  *ext_list |= (1 << nth);
   if (dest) {
-    destList |= (1 << nth);
+    *dst_list |= (1 << nth);
   } else {
-    destList &= ~(1 << nth);
+    *dst_list &= ~(1 << nth);
   }
 }
 #ifndef TEST
 EXPORT_SYMBOL(buffer_cond);
 #endif
 
-void flush_cond(const char *pathname, const char *funcname, int retval) {
+void flush_cond(long long *ext_list, long long *dst_list, const char *pathname,
+                const char *funcname, int retval) {
   if (retval == -13) {
     LogFunc("============== PERMOD ==============\n");
     LogFunc("[Permod] %s::%s() returned %d\n", pathname, funcname, retval);
-    LogFunc("[Permod] (ext)0x%llx, (dst)0x%llx\n", existList, destList);
+    LogFunc("[Permod] (ext)0x%llx, (dst)0x%llx\n", *ext_list, *dst_list);
     LogFunc("====================================\n");
   }
-  existList = 0;
-  destList = 0;
+  *ext_list = 0;
+  *dst_list = 0;
 }
 #ifndef TEST
 EXPORT_SYMBOL(flush_cond);

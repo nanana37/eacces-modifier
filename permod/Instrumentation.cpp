@@ -54,6 +54,17 @@ void Instrumentation::prepLogger() {
   LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGR_FUNC, funcType);
 }
 
+// Ext flag represents whether the condition exists in the runtime path
+// Dst flag represents true or false of the condition
+void Instrumentation::prepFlags() {
+  Builder.SetInsertPoint(&TargetFunc->getEntryBlock().front());
+  ExtFlag = Builder.CreateAlloca(Type::getInt64Ty(Ctx), nullptr, "ext_list");
+  DstFlag = Builder.CreateAlloca(Type::getInt64Ty(Ctx), nullptr, "dst_list");
+  Builder.CreateStore(ConstantInt::get(Type::getInt64Ty(Ctx), 0), ExtFlag);
+  Builder.CreateStore(ConstantInt::get(Type::getInt64Ty(Ctx), 0), DstFlag);
+  Builder.ClearInsertionPoint();
+}
+
 bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
                                        DebugInfo &DBinfo, long long &cond_num) {
   DEBUG_PRINT2("\n...Inserting buffer function...\n");
@@ -148,6 +159,8 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
 
     PRETTY_PRINT("\n");
 
+    args.push_back(ExtFlag);
+    args.push_back(DstFlag);
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
     args.push_back(TheBB.getTerminator()->getOperand(0));
     Builder.CreateCall(BufferFunc, args);
@@ -185,6 +198,8 @@ bool Instrumentation::insertFlushFunc(DebugInfo &DBinfo, BasicBlock &TheBB) {
       TargetFunc->getParent()->getOrInsertFunction(FLUSH_FUNC, funcType);
 
   std::vector<Value *> args;
+  args.push_back(ExtFlag);
+  args.push_back(DstFlag);
   args.push_back(Builder.CreateGlobalStringPtr(DBinfo.first));
   args.push_back(Builder.CreateGlobalStringPtr(DBinfo.second));
   args.push_back(TermInst->getOperand(0)); // Return value
