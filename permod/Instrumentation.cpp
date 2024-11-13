@@ -45,6 +45,7 @@ void Instrumentation::prepFormat() {
   }
 }
 
+// FIXME: The LOGGR_FUNC is deprecated, use BUFFR_FUNC & FLUSH_FUNC instead
 void Instrumentation::prepLogger() {
   // Prepare function
   std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
