@@ -25,11 +25,10 @@ using namespace permod;
 class Instrumentation {
   /* Analysis Target */
   Function *TargetFunc;
-  BasicBlock *RetBB;
 
   /* IRBuilder */
-  IRBuilder<> Builder;
   LLVMContext &Ctx;
+  IRBuilder<> Builder;
 
   /* Logger */
   Value *Format[NUM_OF_CONDTYPE];
@@ -41,12 +40,9 @@ class Instrumentation {
 
 public:
   /* Constructor */
-  Instrumentation(BasicBlock *RetBB)
-      : TargetFunc(RetBB->getParent()), RetBB(RetBB), Builder(RetBB),
-        Ctx(RetBB->getContext()) {
-    prepFormat();
-    prepLogger();
-  }
+  Instrumentation(Function *TargetFunc)
+      : TargetFunc(TargetFunc), Ctx(TargetFunc->getContext()),
+        Builder(TargetFunc->getContext()) {}
 
   /* Instrumentation */
   bool insertBufferFunc(CondStack &Conds, BasicBlock &TheBB, DebugInfo &DBinfo,

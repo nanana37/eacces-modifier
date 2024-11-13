@@ -129,6 +129,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       DEBUG_PRINT2("Function:" << F << "\n");
 
+      class Instrumentation Ins(&F);
       long long cond_num = 0;
 
       /* Insert logger just before terminator of every BB */
@@ -143,14 +144,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         // NOTE: @DestBB is used to determine which path is true.
         ConditionAnalysis::findConditions(Conds, BB,
                                           *BB.getTerminator()->getSuccessor(0));
-        class Instrumentation Ins(&BB);
         if (Ins.insertBufferFunc(Conds, BB, DBinfo, cond_num)) {
           modified = true;
           cond_num++;
         }
       }
 
-      class Instrumentation Ins(RetBB);
       modified |= Ins.insertFlushFunc(DBinfo, *RetBB);
     }
 
