@@ -301,12 +301,11 @@ bool findIfCond(CondStack &Conds, BranchInst &BrI, BasicBlock &DestBB) {
   if (isa<CallInst>(IfCond)) {
     return findIfCond_call(Conds, BrI, cast<CallInst>(*IfCond), DestBB);
   }
-  DEBUG_PRINT("\n*************************************\n");
-  DEBUG_PRINT("** Unexpected as IfCond: " << *IfCond << "\n");
-  DEBUG_PRINT("Function: " << BrI.getFunction()->getName() << "\n");
-  DEBUG_PRINT2("BB: " << *BrI.getParent() << "\n");
-  DEBUG_PRINT("*************************************\n");
-  return false;
+
+  IfCond = getOrigin(*IfCond);
+  DEBUG_PRINT2("IfCond: " << *IfCond << "\n");
+  Conds.push_back(new Condition(getVarName(*IfCond), NULL, SINGLE));
+  return true;
 }
 
 /* Get name & value of switch condition

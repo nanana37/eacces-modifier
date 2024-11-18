@@ -26,6 +26,7 @@ enum CondType {
   ANDFLS,
   SWITCH,
   EXPECT,
+  SINGLE,
   DBINFO,
   HELLOO,
   _OPEN_,

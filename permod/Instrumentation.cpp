@@ -29,6 +29,7 @@ void Instrumentation::prepFormat() {
   formatStr[ANDFLS] = "[Permod] %s &!= %d is %s\n";
   formatStr[SWITCH] = "[Permod] %s == %d (switch)\n";
   formatStr[EXPECT] = "[Permod] %s expect %d\n";
+  formatStr[SINGLE] = "[Permod] %s\n";
   formatStr[DBINFO] = "[Permod] %s: %d\n";
   formatStr[HELLOO] = "--- Hello, I'm Permod ---\n";
   formatStr[_OPEN_] = "[Permod] {\n";
@@ -152,6 +153,9 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
       break;
     case EXPECT:
       PRETTY_PRINT(name << " expect " << *val);
+      break;
+    case SINGLE:
+      PRETTY_PRINT(name);
       break;
     default:
       break;
