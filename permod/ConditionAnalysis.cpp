@@ -137,13 +137,15 @@ bool findIfCond_cmp(CondStack &Conds, BranchInst &BrI, CmpInst &CmpI,
 
   // CmpOp: %and = and i32 %flag, 2
   if (auto *BinI = dyn_cast<BinaryOperator>(CmpOp)) {
+    Value *flag;
     switch (BinI->getOpcode()) {
     case Instruction::BinaryOps::And:
       name = getVarName(*BinI);
-      val = BinI->getOperand(1);
+      val = CmpOp1;
+      flag = BinI->getOperand(1);
       type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
                                                                     : ANDFLS;
-      Conds.push_back(new Condition(name, val, type));
+      Conds.push_back(new Condition(name, val, type, flag));
       return true;
     default:
       DEBUG_PRINT("\n*************************************\n");

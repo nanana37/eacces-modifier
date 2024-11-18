@@ -53,12 +53,14 @@ private:
 
   /* optional (only used for function call) */
   std::vector<ArgType> Args;
+  Value *Flag;
 
 public:
   StringRef getName() { return Name; }
   Value *getConst() { return Con; }
   CondType getType() { return Type; }
   std::vector<ArgType> getArgs() { return Args; }
+  Value *getFlag() { return Flag; }
 
   Condition(StringRef name, Value *con, CondType type)
       : Name(name), Con(con), Type(type) {}
@@ -73,6 +75,10 @@ public:
   Condition(StringRef name, Value *con, CondType type,
             std::vector<ArgType> args)
       : Name(name), Con(con), Type(type), Args(args) {}
+
+  // And condition
+  Condition(StringRef name, Value *con, CondType type, Value *flag)
+      : Name(name), Con(con), Type(type), Flag(flag) {}
 };
 
 typedef std::vector<Condition *> CondStack;

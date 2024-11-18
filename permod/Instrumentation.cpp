@@ -142,10 +142,10 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
       }
       break;
     case ANDTRU:
-      PRETTY_PRINT(name << " &== " << *val);
+      PRETTY_PRINT(name << " & " << *cond->getFlag() << " == " << *val);
       break;
     case ANDFLS:
-      PRETTY_PRINT(name << " &!= " << *val);
+      PRETTY_PRINT(name << " & " << *cond->getFlag() << " != " << *val);
       break;
     case SWITCH:
       PRETTY_PRINT("switch " << name);
