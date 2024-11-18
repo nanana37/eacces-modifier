@@ -93,6 +93,8 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     Condition *cond = Conds.back();
     Conds.pop_back();
 
+    DEBUG_PRINT("Condition: " << condTypeStr[cond->getType()] << "\n");
+
     // TODO: get func arguments
     PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "()#" << cond_num
                               << ": ");

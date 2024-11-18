@@ -22,6 +22,18 @@ namespace ConditionAnalysis {
 //                               Utility
 // ****************************************************************************
 
+Value *getLatestValue(AllocaInst &AI, BasicBlock &TheBB) {
+  Value *val = nullptr;
+  for (auto &I : TheBB) {
+    if (auto *StoreI = dyn_cast<StoreInst>(&I)) {
+      if (StoreI->getPointerOperand() == &AI) {
+        val = StoreI->getValueOperand();
+      }
+    }
+  }
+  return val;
+}
+
 /*
 * Backtrace from load to store
 * Get original variable (%0 is %flag)
@@ -40,6 +52,10 @@ Value *getOrigin(Value &V) {
       return val;
     }
     Value *original = OF.visit(cast<Instruction>(val));
+    if (isa<AllocaInst>(val)) {
+      original = getLatestValue(cast<AllocaInst>(*val),
+                                *cast<Instruction>(V).getParent());
+    }
     if (!original) {
       return val;
     }
@@ -151,7 +167,7 @@ bool findIfCond_cmp(CondStack &Conds, BranchInst &BrI, CmpInst &CmpI,
       DEBUG_PRINT("\n*************************************\n");
       DEBUG_PRINT("** Unexpected as BinI: " << *BinI << "\n");
       DEBUG_PRINT("Function: " << BrI.getFunction()->getName() << "\n");
-      DEBUG_PRINT2("BB: " << *BrI.getParent() << "\n");
+      // DEBUG_PRINT2("BB: " << *BrI.getParent() << "\n");
       DEBUG_PRINT("*************************************\n");
     }
   }
@@ -191,7 +207,7 @@ if.end:                ; preds = %do.end
         DEBUG_PRINT("\n*************************************\n");
         DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
         DEBUG_PRINT("Function: " << BrI.getFunction()->getName() << "\n");
-        DEBUG_PRINT2("BB: " << *BrI.getParent() << "\n");
+        // DEBUG_PRINT2("BB: " << *BrI.getParent() << "\n");
         DEBUG_PRINT("*************************************\n");
         return false;
       }
@@ -352,6 +368,11 @@ bool findConditions(CondStack &Conds, BasicBlock &CondBB, BasicBlock &DestBB) {
 
 // NOTE: need clang flag "-g"
 void getDebugInfo(DebugInfo &DBinfo, Instruction &I, Function &F) {
+  if (!I.getDebugLoc()) {
+    DEBUG_PRINT("** No debug info, please compile with '-g'\n");
+    return;
+  }
+
   // DebugInfo: File name
   DBinfo.first = F.getParent()->getSourceFileName();
 
