@@ -115,6 +115,20 @@ bool isBranchTrue(BranchInst &BrI, BasicBlock &DestBB) {
   return false;
 }
 
+std::vector<ArgType> getArgs(CallInst &CallI) {
+  std::vector<ArgType> args;
+  for (auto &arg : CallI.args()) {
+    DEBUG_PRINT2("arg: " << *arg << "\n");
+    StringRef name = getVarName(*arg);
+    if (name.startswith(NONAME) && isa<ConstantInt>(arg)) {
+      args.push_back(cast<ConstantInt>(arg));
+    } else {
+      args.push_back(getVarName(*arg));
+    }
+  }
+  return args;
+}
+
 /* Get name & value of if condition
    - C
     if (flag & 2) {}     // name:of flag, val:val
@@ -201,9 +215,7 @@ if.end:                ; preds = %do.end
       DEBUG_PRINT2("llvm.expect\n");
 
       Value *arg1 = CallI->getArgOperand(1);
-      if (isa<ConstantInt>(arg1)) {
-        type = cast<ConstantInt>(arg1)->isZero() ? CALFLS : CALTRU;
-      } else {
+      if (!isa<ConstantInt>(arg1)) {
         DEBUG_PRINT("\n*************************************\n");
         DEBUG_PRINT("** Unexpected as arg1: " << *arg1 << "\n");
         DEBUG_PRINT("Function: " << BrI.getFunction()->getName() << "\n");
@@ -223,7 +235,9 @@ if.end:                ; preds = %do.end
         // ex: if (likely(func()))
         findIfCond_call(Conds, BrI, cast<CallInst>(*arg0), DestBB);
       } else {
-        Conds.push_back(new Condition(getVarName(*arg0), arg1, type));
+        type = cast<ConstantInt>(arg1)->isZero() ? CALFLS : CALTRU;
+        std::vector<ArgType> args = getArgs(*CallI);
+        Conds.push_back(new Condition(getVarName(*arg0), arg1, type, args));
       }
 
       return true;
@@ -231,17 +245,7 @@ if.end:                ; preds = %do.end
 
     type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? CALFLS
                                                                   : CALTRU;
-    std::vector<ArgType> args;
-    DEBUG_PRINT2("num of args: " << CallI->arg_size() << "\n");
-    for (auto &arg : CallI->args()) {
-      DEBUG_PRINT2("arg: " << *arg << "\n");
-      StringRef name = getVarName(*arg);
-      if (name.startswith(NONAME) && isa<ConstantInt>(arg)) {
-        args.push_back(cast<ConstantInt>(arg));
-      } else {
-        args.push_back(getVarName(*arg));
-      }
-    }
+    std::vector<ArgType> args = getArgs(*CallI);
     Conds.push_back(new Condition(name, val, type, args));
     return true;
   }
@@ -283,10 +287,11 @@ bool findIfCond_call(CondStack &Conds, BranchInst &BrI, CallInst &CallI,
   if (!Callee)
     return false;
 
+  std::vector<ArgType> args = getArgs(CallI);
   name = getVarName(*Callee);
   val = ConstantInt::get(Type::getInt32Ty(CallI.getContext()), 0);
   type = isBranchTrue(BrI, DestBB) ? CALTRU : CALFLS;
-  Conds.push_back(new Condition(name, val, type));
+  Conds.push_back(new Condition(name, val, type, args));
   return true;
 }
 
