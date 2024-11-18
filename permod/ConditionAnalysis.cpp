@@ -3,11 +3,8 @@
 // Analyze conditions that lead to an error
 //
 
-#include "llvm/IR/DebugInfoMetadata.h"
-
-#include "Condition.hpp"
 #include "ConditionAnalysis.hpp"
-#include "ErrBBFinder.hpp"
+#include "Condition.hpp"
 #include "OriginFinder.hpp"
 #include "debug.h"
 
@@ -22,6 +19,8 @@ namespace ConditionAnalysis {
 //                               Utility
 // ****************************************************************************
 
+/* Get the latest definition in @TheBB of the allocated value */
+// FIXME: the value is sometimes CallInst, but call analisys can't be applied.
 Value *getLatestValue(AllocaInst &AI, BasicBlock &TheBB) {
   Value *val = nullptr;
   for (auto &I : TheBB) {
