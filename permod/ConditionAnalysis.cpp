@@ -9,10 +9,10 @@
 #include "debug.h"
 
 using namespace llvm;
-using namespace permod;
 
 #define NONAME "UNNAMED CONDITION"
 
+namespace permod {
 namespace ConditionAnalysis {
 
 // ****************************************************************************
@@ -408,3 +408,4 @@ void setRetCond(CondStack &Conds, BasicBlock &theBB) {
   Conds.push_back(new Condition("", NULL, _FUNC_));
 }
 } // namespace ConditionAnalysis
+} // namespace permod

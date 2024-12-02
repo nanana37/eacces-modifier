@@ -14,8 +14,8 @@ extern const char *condTypeStr[];
 #endif // DEBUG
 
 using namespace llvm;
-using namespace permod;
 
+namespace permod {
 namespace ConditionAnalysis {
 // ****************************************************************************
 //                               Utility
@@ -41,3 +41,4 @@ bool findConditions(CondStack &Conds, BasicBlock &CondBB, BasicBlock &DestBB);
 void setRetCond(CondStack &Conds, BasicBlock &theBB);
 void getDebugInfo(DebugInfo &DBinfo, Instruction &I, Function &F);
 } // namespace ConditionAnalysis
+} // namespace permod

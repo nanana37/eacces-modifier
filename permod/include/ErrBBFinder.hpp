@@ -14,16 +14,16 @@
 using namespace llvm;
 
 namespace permod {
+namespace ErrBBFinder {
 
-struct ErrBBFinder {
-  Value *findRetValue(ReturnInst &RI);
-  ReturnInst *findRetInst(Function &F);
-  bool isErrno(Value &V);
-  Value *getErrno(Value &V);
-  bool isStoreErr(StoreInst &SI);
-  BasicBlock *getErrBB(StoreInst &SI);
-  bool isStorePtr(StoreInst &SI);
-  Value *getErrValue(StoreInst &SI);
-};
+Value *findRetValue(ReturnInst &RI);
+ReturnInst *findRetInst(Function &F);
+bool isErrno(Value &V);
+Value *getErrno(Value &V);
+bool isStoreErr(StoreInst &SI);
+BasicBlock *getErrBB(StoreInst &SI);
+bool isStorePtr(StoreInst &SI);
+Value *getErrValue(StoreInst &SI);
 
+} // namespace ErrBBFinder
 } // namespace permod

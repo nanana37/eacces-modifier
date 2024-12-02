@@ -13,6 +13,8 @@ using namespace llvm;
 
 namespace permod {
 
+namespace EBF = ErrBBFinder;
+
 /*
  * Find 'return -ERRNO'
     * The statement turns into:
@@ -24,14 +26,12 @@ namespace permod {
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
-  ErrBBFinder EBF;
-
   /*
    * Check whether @V (typically retval) will be assigned errno.
    */
   bool isBeingErrno(Value &V) {
     /* When the function has a single return statement which returns errno. */
-    if (EBF.isErrno(V))
+    if (EBF::isErrno(V))
       return true;
 
     /* Use-def chain to find the assignment of errno to the return value. */
@@ -41,20 +41,20 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         continue;
 
       /* `return ERR_PTR(errno);` is converted into `store ptr` */
-      if (EBF.isStorePtr(*SI)) {
-        Value *ErrVal = EBF.getErrValue(*SI);
+      if (EBF::isStorePtr(*SI)) {
+        Value *ErrVal = EBF::getErrValue(*SI);
         if (!ErrVal)
           continue;
         for (User *UP : ErrVal->users()) {
           StoreInst *SIP = dyn_cast<StoreInst>(UP);
           if (!SIP)
             continue;
-          if (EBF.getErrBB(*SIP))
+          if (EBF::getErrBB(*SIP))
             return true;
         }
       } else {
         /* When one of multiple return statements returns errno. */
-        if (EBF.getErrBB(*SI))
+        if (EBF::getErrBB(*SI))
           return true;
       }
     }
@@ -95,7 +95,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
 
       /* Find return statement of the function */
-      ReturnInst *RetI = EBF.findRetInst(F);
+      ReturnInst *RetI = EBF::findRetInst(F);
       if (!RetI) {
         DEBUG_PRINT2("*** No return\n");
         continue;
@@ -107,7 +107,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
 #ifdef FIXME
       /* Insert loggers into function which returns error value. */
-      Value *RetV = EBF.findRetValue(*RetI);
+      Value *RetV = EBF::findRetValue(*RetI);
       if (!RetV) {
         DEBUG_PRINT2("*** No return value\n");
         continue;

@@ -9,14 +9,16 @@
 #include "debug.h"
 
 using namespace llvm;
-using namespace permod;
 
 #define RETSIZE 32
 #define ERRNOS {EACCES}
 // { EACCES, EPERM }
 
+namespace permod {
+namespace ErrBBFinder {
+
 // NOTE: maybe to find alloca is better?
-Value *ErrBBFinder::findRetValue(ReturnInst &RI) {
+Value *findRetValue(ReturnInst &RI) {
   Value *RetVal = RI.getReturnValue();
   if (isa_and_nonnull<ConstantInt>(RetVal))
     return RetVal;
@@ -26,7 +28,7 @@ Value *ErrBBFinder::findRetValue(ReturnInst &RI) {
 }
 
 // NOTE: each function has only one ret inst, thanks to mergereturn pass.
-ReturnInst *ErrBBFinder::findRetInst(Function &F) {
+ReturnInst *findRetInst(Function &F) {
   for (auto &BB : F) {
     if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
       return RI;
@@ -35,7 +37,7 @@ ReturnInst *ErrBBFinder::findRetInst(Function &F) {
   return nullptr;
 }
 
-bool ErrBBFinder::isErrno(Value &V) {
+bool isErrno(Value &V) {
   if (auto *CI = dyn_cast<ConstantInt>(&V)) {
     if (CI->getBitWidth() != RETSIZE)
       return false;
@@ -47,7 +49,7 @@ bool ErrBBFinder::isErrno(Value &V) {
   return false;
 }
 
-Value *ErrBBFinder::getErrno(Value &V) {
+Value *getErrno(Value &V) {
   if (isErrno(V))
     return &V;
 
@@ -63,7 +65,7 @@ Value *ErrBBFinder::getErrno(Value &V) {
   return nullptr;
 }
 
-bool ErrBBFinder::isStoreErr(StoreInst &SI) {
+bool isStoreErr(StoreInst &SI) {
   Value *ValOp = SI.getValueOperand();
   // NOTE: return -ERRNO;
   if (isErrno(*ValOp))
@@ -80,14 +82,14 @@ bool ErrBBFinder::isStoreErr(StoreInst &SI) {
    store i32 -13，ptr %1, align 4
  * Returns: BasicBlock*
  */
-BasicBlock *ErrBBFinder::getErrBB(StoreInst &SI) {
+BasicBlock *getErrBB(StoreInst &SI) {
   if (!isStoreErr(SI))
     return nullptr;
 
   return SI.getParent();
 }
 
-bool ErrBBFinder::isStorePtr(StoreInst &SI) {
+bool isStorePtr(StoreInst &SI) {
   return SI.getValueOperand()->getType()->isPointerTy();
 }
 
@@ -98,7 +100,7 @@ bool ErrBBFinder::isStorePtr(StoreInst &SI) {
 // %conv156 = sext i32 %103 to i64, !dbg !8574
 // %call157 = call ptr @ERR_PTR(i64 noundef %conv156) #22,
 // store ptr %call157, ptr %retval, align 8, !dbg !8576
-Value *ErrBBFinder::getErrValue(StoreInst &SI) {
+Value *getErrValue(StoreInst &SI) {
   DEBUG_PRINT2("\ngetErrValue of " << SI << "\n");
 
   CallInst *CI = dyn_cast<CallInst>(SI.getValueOperand());
@@ -132,3 +134,6 @@ Value *ErrBBFinder::getErrValue(StoreInst &SI) {
 
   return ErrVal;
 }
+
+} // namespace ErrBBFinder
+} // namespace permod
