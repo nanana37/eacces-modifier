@@ -172,8 +172,20 @@ bool findIfCond_cmp(CondStack &Conds, BranchInst &BrI, CmpInst &CmpI,
       name = getVarName(*BinI);
       val = CmpOp1;
       flag = BinI->getOperand(1);
-      type = (isBranchTrue(BrI, DestBB) == CmpI.isFalseWhenEqual()) ? ANDTRU
-                                                                    : ANDFLS;
+      // FIXME: handle more cases
+      switch (CmpI.getPredicate()) {
+      case CmpInst::Predicate::ICMP_EQ:
+        type = ANDTRU;
+        break;
+      case CmpInst::Predicate::ICMP_NE:
+        type = ANDFLS;
+        break;
+      default:
+        DEBUG_PRINT("******* Sorry, Unexpected CmpInst::Predicate\n");
+        DEBUG_PRINT2(CmpI);
+        type = DBINFO;
+        break;
+      }
       Conds.push_back(new Condition(name, val, type, flag));
       return true;
     default:
