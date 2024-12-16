@@ -57,8 +57,8 @@ void Instrumentation::prepFlags() {
   Builder.ClearInsertionPoint();
 }
 
-bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
-                                       DebugInfo &DBinfo, long long &cond_num) {
+bool Instrumentation::insertBufferFunc(BasicBlock &TheBB, DebugInfo &DBinfo,
+                                       long long &cond_num) {
   DEBUG_PRINT2("\n...Inserting buffer function...\n");
   bool modified = false;
 
@@ -75,99 +75,15 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
   // Prepare arguments
   std::vector<Value *> args;
 
-  Value *termC = TheBB.getTerminator()->getOperand(0);
-  if (!termC) {
-    return false;
-  }
+  /* Instrumentation for Runtime Logging */
+  args.push_back(ExtFlag);
+  args.push_back(DstFlag);
+  args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
+  args.push_back(TheBB.getTerminator()->getOperand(0));
+  Builder.CreateCall(BufferFunc, args);
+  args.clear();
 
-  while (!Conds.empty()) {
-    Condition *cond = Conds.back();
-    Conds.pop_back();
-
-    /* Build Log for Function Summary */
-    DEBUG_PRINT("Condition: " << condTypeStr[cond->getType()] << "\n");
-
-    // TODO: get func arguments
-    PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "()#" << cond_num
-                              << ": ");
-
-    StringRef name = cond->getName();
-    Value *val = cond->getConst();
-
-    switch (cond->getType()) {
-    case CMPTRU:
-      PRETTY_PRINT(name << " == " << *val);
-      break;
-    case CMPFLS:
-      PRETTY_PRINT(name << " != " << *val);
-      break;
-    case CMP_GT:
-      PRETTY_PRINT(name << " > " << *val);
-      break;
-    case CMP_GE:
-      PRETTY_PRINT(name << " >= " << *val);
-      break;
-    case CMP_LT:
-      PRETTY_PRINT(name << " < " << *val);
-      break;
-    case CMP_LE:
-      PRETTY_PRINT(name << " <= " << *val);
-      break;
-    case NLLTRU:
-      PRETTY_PRINT(name << " == null");
-      break;
-    case NLLFLS:
-      PRETTY_PRINT(name << " != null");
-      break;
-    case CALTRU:
-    case CALFLS:
-      PRETTY_PRINT(name << "(");
-      for (auto arg : cond->getArgs()) {
-        if (auto s = std::get_if<StringRef>(&arg)) {
-          PRETTY_PRINT(*s);
-        } else {
-          PRETTY_PRINT(*std::get<ConstantInt *>(arg));
-        }
-        PRETTY_PRINT(", ");
-      }
-      if (cond->getType() == CALTRU) {
-        PRETTY_PRINT(") == " << *val);
-      } else {
-        PRETTY_PRINT(") != " << *val);
-      }
-      break;
-    case ANDTRU:
-      PRETTY_PRINT(name << " & " << *cond->getFlag() << " == " << *val);
-      break;
-    case ANDFLS:
-      PRETTY_PRINT(name << " & " << *cond->getFlag() << " != " << *val);
-      break;
-    case SWITCH:
-      PRETTY_PRINT("switch " << name);
-      break;
-    case EXPECT:
-      PRETTY_PRINT(name << " expect " << *val);
-      break;
-    case SINGLE:
-      PRETTY_PRINT(name);
-      break;
-    default:
-      break;
-    }
-
-    PRETTY_PRINT("\n");
-
-    /* Instrumentation for Runtime Logging */
-    args.push_back(ExtFlag);
-    args.push_back(DstFlag);
-    args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
-    args.push_back(TheBB.getTerminator()->getOperand(0));
-    Builder.CreateCall(BufferFunc, args);
-    args.clear();
-
-    delete cond;
-    modified = true;
-  }
+  modified = true;
 
   Builder.ClearInsertionPoint();
   return modified;

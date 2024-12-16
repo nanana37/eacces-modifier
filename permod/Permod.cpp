@@ -153,6 +153,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
         DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
 
+        PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "()#" << cond_num
+                                  << ": ");
+
         Instruction *term = BB.getTerminator();
         if (isa<BranchInst>(term) && term->getNumSuccessors() == 2) {
           BranchInst *BrI = cast<BranchInst>(term);
@@ -166,14 +169,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           continue;
         }
 
-        CondStack Conds;
-        // NOTE: @DestBB is used to determine which path is true.
-        // ConditionAnalysis::findConditions(Conds, BB,
-        //                                   *BB.getTerminator()->getSuccessor(0));
-        // if (Ins.insertBufferFunc(Conds, BB, DBinfo, cond_num)) {
-        //   modified = true;
-        //   cond_num++;
-        // }
+        if (Ins.insertBufferFunc(BB, DBinfo, cond_num)) {
+          modified = true;
+          cond_num++;
+        }
       }
 
       modified |= Ins.insertFlushFunc(DBinfo, *RetBB);
