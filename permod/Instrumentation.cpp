@@ -84,6 +84,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
     Condition *cond = Conds.back();
     Conds.pop_back();
 
+    /* Build Log for Function Summary */
     DEBUG_PRINT("Condition: " << condTypeStr[cond->getType()] << "\n");
 
     // TODO: get func arguments
@@ -156,6 +157,7 @@ bool Instrumentation::insertBufferFunc(CondStack &Conds, BasicBlock &TheBB,
 
     PRETTY_PRINT("\n");
 
+    /* Instrumentation for Runtime Logging */
     args.push_back(ExtFlag);
     args.push_back(DstFlag);
     args.push_back(ConstantInt::get(Type::getInt64Ty(Ctx), cond_num));
