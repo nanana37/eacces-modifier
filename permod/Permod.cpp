@@ -22,6 +22,70 @@ namespace permod {
         ret i32 %2
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
+
+  void printValue(Value *Parent) {
+    if (isa<BasicBlock>(Parent)) {
+      return;
+    }
+    if (isa<Function>(Parent)) {
+      PRETTY_PRINT(cast<Function>(Parent)->getName());
+      return;
+    }
+
+    Instruction *I = dyn_cast<Instruction>(Parent);
+    if (!I) {
+      PRETTY_PRINT(*Parent);
+      return;
+    }
+
+    if (isa<AllocaInst>(I)) {
+      PRETTY_PRINT(ConditionAnalysis::getVarName(*I));
+      return;
+    }
+
+    Value *Child;
+    for (int i = 0; i < I->getNumOperands(); i++) {
+      Child = I->getOperand(i);
+      DEBUG_PRINT2("Parent: " << *Parent << " Child: " << *Child << "\n");
+      printValue(Child);
+
+      if (i == 0) {
+        if (isa<CmpInst>(I)) {
+          switch (cast<CmpInst>(I)->getPredicate()) {
+          case CmpInst::Predicate::ICMP_EQ:
+            PRETTY_PRINT(" == ");
+            break;
+          case CmpInst::Predicate::ICMP_NE:
+            PRETTY_PRINT(" != ");
+            break;
+          case CmpInst::Predicate::ICMP_UGT:
+          case CmpInst::Predicate::ICMP_SGT:
+            PRETTY_PRINT(" > ");
+            break;
+          case CmpInst::Predicate::ICMP_UGE:
+          case CmpInst::Predicate::ICMP_SGE:
+            PRETTY_PRINT(" >= ");
+            break;
+          case CmpInst::Predicate::ICMP_ULT:
+          case CmpInst::Predicate::ICMP_SLT:
+            PRETTY_PRINT(" < ");
+            break;
+          case CmpInst::Predicate::ICMP_ULE:
+          case CmpInst::Predicate::ICMP_SLE:
+            PRETTY_PRINT(" <= ");
+            break;
+          default:
+            PRETTY_PRINT(" cmp_" << cast<CmpInst>(I)->getPredicate() << " ");
+          }
+        } else {
+          if (isa<LoadInst>(I))
+            continue;
+          PRETTY_PRINT(" " << I->getOpcodeName() << " ");
+        }
+      }
+    }
+  }
+
   /*
    *****************
    * main function *
@@ -88,14 +152,28 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           continue;
         }
         DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
+
+        Instruction *term = BB.getTerminator();
+        if (isa<BranchInst>(term) && term->getNumSuccessors() == 2) {
+          BranchInst *BrI = cast<BranchInst>(term);
+          printValue(BrI->getCondition());
+          PRETTY_PRINT("\n");
+        } else if (isa<SwitchInst>(term)) {
+          printValue(term);
+          PRETTY_PRINT("\n");
+        } else {
+          DEBUG_PRINT2("Skip this terminator: " << *term << "\n");
+          continue;
+        }
+
         CondStack Conds;
         // NOTE: @DestBB is used to determine which path is true.
-        ConditionAnalysis::findConditions(Conds, BB,
-                                          *BB.getTerminator()->getSuccessor(0));
-        if (Ins.insertBufferFunc(Conds, BB, DBinfo, cond_num)) {
-          modified = true;
-          cond_num++;
-        }
+        // ConditionAnalysis::findConditions(Conds, BB,
+        //                                   *BB.getTerminator()->getSuccessor(0));
+        // if (Ins.insertBufferFunc(Conds, BB, DBinfo, cond_num)) {
+        //   modified = true;
+        //   cond_num++;
+        // }
       }
 
       modified |= Ins.insertFlushFunc(DBinfo, *RetBB);
