@@ -5,15 +5,12 @@
 #include "llvm/IR/DebugLoc.h"
 
 #include "ConditionAnalysis.hpp"
-#include "ErrBBFinder.hpp"
 #include "Instrumentation.hpp"
 #include "debug.h"
 
 using namespace llvm;
 
 namespace permod {
-
-namespace EBF = ErrBBFinder;
 
 /*
  * Find 'return -ERRNO'
@@ -25,43 +22,6 @@ namespace EBF = ErrBBFinder;
         ret i32 %2
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
-
-  /*
-   * Check whether @V (typically retval) will be assigned errno.
-   */
-  bool isBeingErrno(Value &V) {
-    /* When the function has a single return statement which returns errno. */
-    if (EBF::isErrno(V))
-      return true;
-
-    /* Use-def chain to find the assignment of errno to the return value. */
-    for (User *U : V.users()) {
-      StoreInst *SI = dyn_cast<StoreInst>(U);
-      if (!SI)
-        continue;
-
-      /* `return ERR_PTR(errno);` is converted into `store ptr` */
-      if (EBF::isStorePtr(*SI)) {
-        Value *ErrVal = EBF::getErrValue(*SI);
-        if (!ErrVal)
-          continue;
-        for (User *UP : ErrVal->users()) {
-          StoreInst *SIP = dyn_cast<StoreInst>(UP);
-          if (!SIP)
-            continue;
-          if (EBF::getErrBB(*SIP))
-            return true;
-        }
-      } else {
-        /* When one of multiple return statements returns errno. */
-        if (EBF::getErrBB(*SI))
-          return true;
-      }
-    }
-
-    return false;
-  }
-
   /*
    *****************
    * main function *
@@ -95,7 +55,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
 
       /* Find return statement of the function */
-      ReturnInst *RetI = EBF::findRetInst(F);
+      ReturnInst *RetI;
+      for (auto &BB : F) {
+        if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
+          RetI = RI;
+          break;
+        }
+      }
       if (!RetI) {
         DEBUG_PRINT2("*** No return\n");
         continue;
@@ -104,24 +70,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         DEBUG_PRINT2("** Terminator " << *RetI << " has no operand\n");
         continue;
       }
-
-#ifdef FIXME
-      /* Insert loggers into function which returns error value. */
-      Value *RetV = EBF::findRetValue(*RetI);
-      if (!RetV) {
-        DEBUG_PRINT2("*** No return value\n");
-        continue;
-      }
-
-      /* Check whether the return value will be assigned errno. */
-      if (!isBeingErrno(*RetV)) {
-        DEBUG_PRINT2("*** No errno\n");
-        continue;
-      }
-
-      DEBUG_PRINT("\n///////////////////////////////////////\n");
-      DEBUG_PRINT(F.getName() << " has 'return -ERRNO'\n");
-#endif
 
       DebugInfo DBinfo;
       BasicBlock *RetBB = RetI->getParent();

@@ -46,15 +46,6 @@ void Instrumentation::prepFormat() {
   }
 }
 
-// FIXME: The LOGGR_FUNC is deprecated, use BUFFR_FUNC & FLUSH_FUNC instead
-void Instrumentation::prepLogger() {
-  // Prepare function
-  std::vector<Type *> paramTypes = {Type::getInt32Ty(Ctx)};
-  Type *retType = Type::getVoidTy(Ctx);
-  FunctionType *funcType = FunctionType::get(retType, paramTypes, false);
-  LogFunc = TargetFunc->getParent()->getOrInsertFunction(LOGGR_FUNC, funcType);
-}
-
 // Ext flag represents whether the condition exists in the runtime path
 // Dst flag represents true or false of the condition
 void Instrumentation::prepFlags() {
@@ -212,68 +203,5 @@ bool Instrumentation::insertFlushFunc(DebugInfo &DBinfo, BasicBlock &TheBB) {
 
   Builder.CreateCall(FlushFunc, args);
   modified = true;
-  return modified;
-}
-
-// FIXME: This function is deprecated
-bool Instrumentation::insertLoggers(CondStack &Conds, BasicBlock &TheBB) {
-  DEBUG_PRINT("\n...Inserting log...\n");
-  bool modified = false;
-
-  // Insert just before the terminator
-  Builder.SetInsertPoint(TheBB.getTerminator());
-  Value *termC = TheBB.getTerminator()->getOperand(0);
-  if (!termC) {
-    DEBUG_PRINT("** Condition of terminator is NULL\n");
-    return false;
-  }
-
-  // TODO: This must be useful, but logs become long.
-  // getDebugInfo(*ErrBB.getTerminator(), theBB.getParent());
-
-  // Prepare arguments
-  std::vector<Value *> args;
-
-  while (!Conds.empty()) {
-    Condition *cond = Conds.back();
-    Conds.pop_back();
-
-    args.push_back(Format[cond->getType()]);
-    DEBUG_PRINT(condTypeStr[cond->getType()]);
-
-    switch (cond->getType()) {
-    case _FUNC_:
-      // FIXME: the format is changed
-      args.push_back(termC);
-      break;
-    case HELLOO:
-    case _OPEN_:
-    case _CLSE_:
-      DEBUG_PRINT("\n");
-      break;
-    case SWITCH:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      // args.push_back(cond->getConst());
-      args.push_back(termC);
-      break;
-    default:
-      DEBUG_PRINT(" " << cond->getName() << ": " << *cond->getConst() << "\n");
-      args.push_back(Builder.CreateGlobalStringPtr(cond->getName()));
-      args.push_back(cond->getConst());
-      Value *newSel =
-          Builder.CreateSelect(termC, Format[_TRUE_], Format[_FLSE_]);
-      args.push_back(newSel);
-      break;
-    }
-
-    Builder.CreateCall(LogFunc, args);
-    args.clear();
-    delete cond;
-    modified = true;
-  }
-
-  Builder.ClearInsertionPoint();
-
   return modified;
 }

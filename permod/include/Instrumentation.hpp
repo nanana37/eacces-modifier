@@ -40,7 +40,6 @@ class Instrumentation {
 
   /* Constructor methods */
   void prepFormat();
-  void prepLogger();
   void prepFlags();
 
 public:
@@ -55,5 +54,4 @@ public:
   bool insertBufferFunc(CondStack &Conds, BasicBlock &TheBB, DebugInfo &DBinfo,
                         long long &cond_num);
   bool insertFlushFunc(DebugInfo &DBinfo, BasicBlock &TheBB);
-  bool insertLoggers(CondStack &Conds, BasicBlock &TheBB);
 };

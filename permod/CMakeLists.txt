@@ -5,6 +5,5 @@ add_llvm_pass_plugin(PermodPass
     Permod.cpp
     Condition.cpp
     ConditionAnalysis.cpp
-    ErrBBFinder.cpp
     Instrumentation.cpp
 )
