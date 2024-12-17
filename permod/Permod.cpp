@@ -43,6 +43,22 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return;
     }
 
+    if (isa<CallInst>(I)) {
+      CallInst *CI = cast<CallInst>(I);
+      PRETTY_PRINT(CI->getCalledFunction()->getName() << "(");
+
+      Value *Arg;
+      for (auto &Arg : CI->args()) {
+        printValue(Arg.get());
+        if (std::next(&Arg) != CI->arg_end()) {
+          PRETTY_PRINT(", ");
+        }
+      }
+
+      PRETTY_PRINT(")");
+      return;
+    }
+
     Value *Child;
     for (int i = 0; i < I->getNumOperands(); i++) {
       Child = I->getOperand(i);
