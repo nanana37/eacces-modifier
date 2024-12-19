@@ -65,15 +65,14 @@ Value *getOrigin(Value &V) {
 }
 
 /*
- * Get struct name, if the V is a member of struct
+ * Get struct name
  */
-StringRef getStructName(Value &V) {
-  if (!isa<GetElementPtrInst>(V))
-    return "";
-  Value *PtrOp = cast<GetElementPtrInst>(V).getPointerOperand();
-  if (!PtrOp)
-    return "";
-  return getVarName(*PtrOp);
+StringRef getStructName(GetElementPtrInst &GEPI) {
+  Type *BaseType = GEPI.getSourceElementType();
+  if (StructType *ST = dyn_cast<StructType>(BaseType)) {
+    return ST->getName();
+  }
+  return NONAME;
 }
 
 /*

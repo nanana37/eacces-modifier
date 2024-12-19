@@ -22,7 +22,7 @@ namespace ConditionAnalysis {
 // ****************************************************************************
 Value *getLatestValue(AllocaInst &AI, BasicBlock &TheBB);
 Value *getOrigin(Value &V);
-StringRef getStructName(Value &V);
+StringRef getStructName(GetElementPtrInst &GEPI);
 StringRef getVarName(Value &V);
 
 /*

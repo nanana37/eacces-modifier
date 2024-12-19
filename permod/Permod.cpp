@@ -77,9 +77,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return;
     }
 
+    // TODO: Nested struct
     if (isa<GetElementPtrInst>(I)) {
       GetElementPtrInst *GEP = cast<GetElementPtrInst>(I);
-      printValue(GEP->getPointerOperand());
+      PRETTY_PRINT(ConditionAnalysis::getStructName(*GEP));
       PRETTY_PRINT("->");
       PRETTY_PRINT(ConditionAnalysis::getVarName(*GEP));
       return;
