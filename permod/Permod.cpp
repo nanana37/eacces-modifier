@@ -34,7 +34,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     Instruction *I = dyn_cast<Instruction>(Parent);
     if (!I) {
-      PRETTY_PRINT(*Parent);
+      if (isa<ConstantInt>(Parent)) {
+        PRETTY_PRINT(cast<ConstantInt>(Parent)->getSExtValue());
+        return;
+      }
+      PRETTY_PRINT(Parent->getName());
       return;
     }
 
@@ -52,7 +56,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     if (isa<CallInst>(I)) {
       CallInst *CI = cast<CallInst>(I);
-      PRETTY_PRINT(CI->getCalledFunction()->getName() << "(");
+
+      if (CI->getCalledFunction() == nullptr) {
+        PRETTY_PRINT("call ");
+        return;
+      }
+
+      PRETTY_PRINT(ConditionAnalysis::getVarName(*CI->getCalledFunction())
+                   << "(");
 
       Value *Arg;
       for (auto &Arg : CI->args()) {
