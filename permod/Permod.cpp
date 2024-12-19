@@ -111,10 +111,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             PRETTY_PRINT(" cmp_" << cast<CmpInst>(I)->getPredicate() << " ");
           }
         } else {
-          if (isa<LoadInst>(I))
+          if (isa<LoadInst>(I) || isa<SExtInst>(I) || isa<ZExtInst>(I) ||
+              isa<TruncInst>(I)) {
             continue;
+          }
           PRETTY_PRINT(" " << I->getOpcodeName() << " ");
         }
+      } else if (i != I->getNumOperands() - 1) {
+        PRETTY_PRINT(" ");
       }
     }
   }
