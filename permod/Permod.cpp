@@ -39,6 +39,13 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
     if (isa<AllocaInst>(I)) {
+      // Allocated value are somtimes stored another value after allocation.
+      if (auto *val = ConditionAnalysis::getLatestValue(cast<AllocaInst>(*I),
+                                                        *I->getParent())) {
+        printValue(val);
+        return;
+      }
+
       PRETTY_PRINT(ConditionAnalysis::getVarName(*I));
       return;
     }
@@ -58,6 +65,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       PRETTY_PRINT(")");
       return;
     }
+
+    if (isa<GetElementPtrInst>(I)) {
+      GetElementPtrInst *GEP = cast<GetElementPtrInst>(I);
+      printValue(GEP->getPointerOperand());
+      PRETTY_PRINT("->");
+      PRETTY_PRINT(ConditionAnalysis::getVarName(*GEP));
+      return;
+    }
+
+    DEBUG_PRINT2("\n[TODO] Parent: " << *Parent << "\n");
 
     Value *Child;
     for (int i = 0; i < I->getNumOperands(); i++) {

@@ -42,9 +42,11 @@ struct OriginFinder : public InstVisitor<OriginFinder, Value *> {
 
   Value *visitAllocaInst(AllocaInst &AI) { return nullptr; }
   Value *visitTruncInst(TruncInst &TI) { return TI.getOperand(0); }
-  Value *visitGetElementPtrInst(GetElementPtrInst &GEPI) {
-    return GEPI.getPointerOperand();
-  }
+
+  /* The value defined by GEP (a member of the struct) has the same name with
+   * the definition. For example, `s->x` is represented as `%x = getelementptr
+   * %struct.s, ...` */
+  Value *visitGetElementPtrInst(GetElementPtrInst &GEPI) { return nullptr; }
 };
 
 } // namespace permod
