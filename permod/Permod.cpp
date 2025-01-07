@@ -89,47 +89,50 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT2("\n[TODO] Parent: " << *Parent << "\n");
 
     Value *Child;
-    for (int i = 0; i < I->getNumOperands(); i++) {
+
+    Child = I->getOperand(0);
+    DEBUG_PRINT2("Parent: " << *Parent << " Child: " << *Child << "\n");
+    printValue(Child);
+    if (isa<CmpInst>(I)) {
+      switch (cast<CmpInst>(I)->getPredicate()) {
+      case CmpInst::Predicate::ICMP_EQ:
+        PRETTY_PRINT(" == ");
+        break;
+      case CmpInst::Predicate::ICMP_NE:
+        PRETTY_PRINT(" != ");
+        break;
+      case CmpInst::Predicate::ICMP_UGT:
+      case CmpInst::Predicate::ICMP_SGT:
+        PRETTY_PRINT(" > ");
+        break;
+      case CmpInst::Predicate::ICMP_UGE:
+      case CmpInst::Predicate::ICMP_SGE:
+        PRETTY_PRINT(" >= ");
+        break;
+      case CmpInst::Predicate::ICMP_ULT:
+      case CmpInst::Predicate::ICMP_SLT:
+        PRETTY_PRINT(" < ");
+        break;
+      case CmpInst::Predicate::ICMP_ULE:
+      case CmpInst::Predicate::ICMP_SLE:
+        PRETTY_PRINT(" <= ");
+        break;
+      default:
+        PRETTY_PRINT(" cmp_" << cast<CmpInst>(I)->getPredicate() << " ");
+      }
+    } else if (isa<LoadInst>(I) || isa<SExtInst>(I) || isa<ZExtInst>(I) ||
+               isa<TruncInst>(I)) {
+      // DO NOTHING
+    } else {
+      PRETTY_PRINT(" " << I->getOpcodeName() << " ");
+    }
+
+    for (int i = 1; i < I->getNumOperands(); i++) {
       Child = I->getOperand(i);
       DEBUG_PRINT2("Parent: " << *Parent << " Child: " << *Child << "\n");
       printValue(Child);
 
-      if (i == 0) {
-        if (isa<CmpInst>(I)) {
-          switch (cast<CmpInst>(I)->getPredicate()) {
-          case CmpInst::Predicate::ICMP_EQ:
-            PRETTY_PRINT(" == ");
-            break;
-          case CmpInst::Predicate::ICMP_NE:
-            PRETTY_PRINT(" != ");
-            break;
-          case CmpInst::Predicate::ICMP_UGT:
-          case CmpInst::Predicate::ICMP_SGT:
-            PRETTY_PRINT(" > ");
-            break;
-          case CmpInst::Predicate::ICMP_UGE:
-          case CmpInst::Predicate::ICMP_SGE:
-            PRETTY_PRINT(" >= ");
-            break;
-          case CmpInst::Predicate::ICMP_ULT:
-          case CmpInst::Predicate::ICMP_SLT:
-            PRETTY_PRINT(" < ");
-            break;
-          case CmpInst::Predicate::ICMP_ULE:
-          case CmpInst::Predicate::ICMP_SLE:
-            PRETTY_PRINT(" <= ");
-            break;
-          default:
-            PRETTY_PRINT(" cmp_" << cast<CmpInst>(I)->getPredicate() << " ");
-          }
-        } else {
-          if (isa<LoadInst>(I) || isa<SExtInst>(I) || isa<ZExtInst>(I) ||
-              isa<TruncInst>(I)) {
-            continue;
-          }
-          PRETTY_PRINT(" " << I->getOpcodeName() << " ");
-        }
-      } else if (i != I->getNumOperands() - 1) {
+      if (i != I->getNumOperands() - 1) {
         PRETTY_PRINT(" ");
       }
     }
