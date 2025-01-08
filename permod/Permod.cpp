@@ -6,6 +6,7 @@
 
 #include "ConditionAnalysis.hpp"
 #include "Instrumentation.hpp"
+#include "Utils.hpp"
 #include "debug.h"
 
 using namespace llvm;
@@ -28,17 +29,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return;
     }
     if (isa<Function>(Parent)) {
-      PRETTY_PRINT(cast<Function>(Parent)->getName());
+      pr_pretty() << cast<Function>(Parent)->getName();
       return;
     }
 
     Instruction *I = dyn_cast<Instruction>(Parent);
     if (!I) {
       if (isa<ConstantInt>(Parent)) {
-        PRETTY_PRINT(cast<ConstantInt>(Parent)->getSExtValue());
+        pr_pretty() << cast<ConstantInt>(Parent)->getSExtValue();
         return;
       }
-      PRETTY_PRINT(Parent->getName());
+      pr_pretty() << Parent->getName();
       return;
     }
 
@@ -50,7 +51,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return;
       }
 
-      PRETTY_PRINT(ConditionAnalysis::getVarName(*I));
+      pr_pretty() << ConditionAnalysis::getVarName(*I);
       return;
     }
 
@@ -58,31 +59,31 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       CallInst *CI = cast<CallInst>(I);
 
       if (CI->getCalledFunction() == nullptr) {
-        PRETTY_PRINT("call ");
+        pr_pretty() << "call ";
         return;
       }
 
-      PRETTY_PRINT(ConditionAnalysis::getVarName(*CI->getCalledFunction())
-                   << "(");
+      pr_pretty() << ConditionAnalysis::getVarName(*CI->getCalledFunction())
+                  << "(";
 
       Value *Arg;
       for (auto &Arg : CI->args()) {
         printValue(Arg.get());
         if (std::next(&Arg) != CI->arg_end()) {
-          PRETTY_PRINT(", ");
+          pr_pretty() << ", ";
         }
       }
 
-      PRETTY_PRINT(")");
+      pr_pretty() << ")";
       return;
     }
 
     // TODO: Nested struct
     if (isa<GetElementPtrInst>(I)) {
       GetElementPtrInst *GEP = cast<GetElementPtrInst>(I);
-      PRETTY_PRINT(ConditionAnalysis::getStructName(*GEP));
-      PRETTY_PRINT("->");
-      PRETTY_PRINT(ConditionAnalysis::getVarName(*GEP));
+      pr_pretty() << ConditionAnalysis::getStructName(*GEP);
+      pr_pretty() << "->";
+      pr_pretty() << ConditionAnalysis::getVarName(*GEP);
       return;
     }
 
@@ -96,35 +97,35 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (isa<CmpInst>(I)) {
       switch (cast<CmpInst>(I)->getPredicate()) {
       case CmpInst::Predicate::ICMP_EQ:
-        PRETTY_PRINT(" == ");
+        pr_pretty() << " == ";
         break;
       case CmpInst::Predicate::ICMP_NE:
-        PRETTY_PRINT(" != ");
+        pr_pretty() << " != ";
         break;
       case CmpInst::Predicate::ICMP_UGT:
       case CmpInst::Predicate::ICMP_SGT:
-        PRETTY_PRINT(" > ");
+        pr_pretty() << " > ";
         break;
       case CmpInst::Predicate::ICMP_UGE:
       case CmpInst::Predicate::ICMP_SGE:
-        PRETTY_PRINT(" >= ");
+        pr_pretty() << " >= ";
         break;
       case CmpInst::Predicate::ICMP_ULT:
       case CmpInst::Predicate::ICMP_SLT:
-        PRETTY_PRINT(" < ");
+        pr_pretty() << " < ";
         break;
       case CmpInst::Predicate::ICMP_ULE:
       case CmpInst::Predicate::ICMP_SLE:
-        PRETTY_PRINT(" <= ");
+        pr_pretty() << " <= ";
         break;
       default:
-        PRETTY_PRINT(" cmp_" << cast<CmpInst>(I)->getPredicate() << " ");
+        pr_pretty() << " cmp_" << cast<CmpInst>(I)->getPredicate() << " ";
       }
     } else if (isa<LoadInst>(I) || isa<SExtInst>(I) || isa<ZExtInst>(I) ||
                isa<TruncInst>(I)) {
       // DO NOTHING
     } else {
-      PRETTY_PRINT(" " << I->getOpcodeName() << " ");
+      pr_pretty() << " " << I->getOpcodeName() << " ";
     }
 
     for (int i = 1; i < I->getNumOperands(); i++) {
@@ -133,7 +134,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       printValue(Child);
 
       if (i != I->getNumOperands() - 1) {
-        PRETTY_PRINT(" ");
+        pr_pretty() << " ";
       }
     }
   }
@@ -205,17 +206,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         }
         DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
 
-        PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "()#" << cond_num
-                                  << ": ");
+        pr_pretty() << DBinfo.first << "::" << DBinfo.second << "()#"
+                    << cond_num << ": ";
 
         Instruction *term = BB.getTerminator();
         if (isa<BranchInst>(term) && term->getNumSuccessors() == 2) {
           BranchInst *BrI = cast<BranchInst>(term);
           printValue(BrI->getCondition());
-          PRETTY_PRINT("\n");
+          pr_pretty() << "\n";
         } else if (isa<SwitchInst>(term)) {
           printValue(term);
-          PRETTY_PRINT("\n");
+          pr_pretty() << "\n";
         } else {
           DEBUG_PRINT2("Skip this terminator: " << *term << "\n");
           continue;

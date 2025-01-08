@@ -1,8 +1,5 @@
 #pragma once
 #include "llvm/Support/raw_ostream.h"
-
-#include "macro.h"
-
 #include <sstream>
 
 namespace permod {
@@ -15,7 +12,11 @@ public:
 
   // << operator for member function
   template <typename T> LogStream &operator<<(const T &value) {
-    buffer << value;
+    if constexpr (std::is_same_v<T, llvm::StringRef>) {
+      buffer << value.str();
+    } else {
+      buffer << value;
+    }
     return *this;
   }
 
@@ -26,7 +27,7 @@ public:
 
   // Explit flush
   void flush() {
-    outputStream << buffer.str() << "\n";
+    outputStream << buffer.str();
     buffer.str("");
     buffer.clear(); // Clear the state
   }
@@ -36,21 +37,8 @@ private:
   std::ostringstream buffer;
 };
 
-inline LogStream pr_pretty() { return LogStream(llvm::errs()); }
-
-inline LogStream pr_debug() {
-#ifdef DEBUG
-  return LogStream(llvm::outs());
-#else
-  return LogStream(llvm::nulls());
-#endif
-}
-inline LogStream pr_debug2() {
-#ifdef DEBUG2
-  return LogStream(llvm::outs());
-#else
-  return LogStream(llvm::nulls());
-#endif
-}
+LogStream pr_pretty();
+LogStream pr_debug();
+LogStream pr_debug2();
 
 } // namespace permod
