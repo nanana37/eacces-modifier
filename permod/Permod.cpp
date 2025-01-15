@@ -23,12 +23,13 @@ namespace permod {
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
 
-  void printValue(Value *Parent) {
+  void printValue(Value *Parent, BasicBlock *CondBB) {
+    // BB won't be a part of condition
     if (isa<BasicBlock>(Parent)) {
       return;
     }
     if (isa<Function>(Parent)) {
-      PRETTY_PRINT(cast<Function>(Parent)->getName());
+      DEBUG_PRINT("Should we print function here?");
       return;
     }
 
@@ -38,19 +39,33 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         PRETTY_PRINT(cast<ConstantInt>(Parent)->getSExtValue());
         return;
       }
+      // null pointer does not have name
+      if (isa<ConstantPointerNull>(Parent)) {
+        PRETTY_PRINT("NULL");
+        return;
+      }
       PRETTY_PRINT(Parent->getName());
       return;
     }
 
     if (isa<AllocaInst>(I)) {
-      // Allocated value are somtimes stored another value after allocation.
-      if (auto *val = ConditionAnalysis::getLatestValue(cast<AllocaInst>(*I),
-                                                        *I->getParent())) {
-        printValue(val);
-        return;
+      StringRef name = I->getName();
+
+      // Pointer variable X passed as function arugment is loaded to X.addr.
+      if (name.endswith(".addr")) {
+        name = name.drop_back(5);
       }
 
-      PRETTY_PRINT(ConditionAnalysis::getVarName(*I));
+      // The name of function argument is acceptable.
+      Function *F = I->getFunction();
+      for (auto &Arg : F->args()) {
+        DEBUG_PRINT("Arg: " << Arg << "\n");
+        if (Arg.getName().equals(name)) {
+          break;
+        }
+      }
+
+      PRETTY_PRINT(name);
       return;
     }
 
@@ -62,12 +77,14 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         return;
       }
 
-      PRETTY_PRINT(ConditionAnalysis::getVarName(*CI->getCalledFunction())
-                   << "(");
+      StringRef name = CI->getCalledFunction()->getName();
+      if (name.empty())
+        name = "NONAME FUNCTION";
+      PRETTY_PRINT(name << "(");
 
       Value *Arg;
       for (auto &Arg : CI->args()) {
-        printValue(Arg.get());
+        printValue(Arg.get(), CondBB);
         if (std::next(&Arg) != CI->arg_end()) {
           PRETTY_PRINT(", ");
         }
@@ -78,6 +95,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
     // TODO: Nested struct
+    // FIXME: stop using getVarName()
     if (isa<GetElementPtrInst>(I)) {
       GetElementPtrInst *GEP = cast<GetElementPtrInst>(I);
       PRETTY_PRINT(ConditionAnalysis::getStructName(*GEP));
@@ -91,8 +109,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     Value *Child;
 
     Child = I->getOperand(0);
-    DEBUG_PRINT2("Parent: " << *Parent << " Child: " << *Child << "\n");
-    printValue(Child);
+    DEBUG_PRINT2("Parent: " << *Parent << "\nChild: " << *Child << "\n");
+    printValue(Child, CondBB);
     if (isa<CmpInst>(I)) {
       switch (cast<CmpInst>(I)->getPredicate()) {
       case CmpInst::Predicate::ICMP_EQ:
@@ -129,8 +147,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     for (int i = 1; i < I->getNumOperands(); i++) {
       Child = I->getOperand(i);
-      DEBUG_PRINT2("Parent: " << *Parent << " Child: " << *Child << "\n");
-      printValue(Child);
+      DEBUG_PRINT2("Parent: " << *Parent << "\nChild: " << *Child << "\n");
+      printValue(Child, CondBB);
 
       if (i != I->getNumOperands() - 1) {
         PRETTY_PRINT(" ");
@@ -169,6 +187,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         DEBUG_PRINT2("--- Skip permod API\n");
         continue;
       }
+      if (!F.getName().startswith("proc_lookup_de")) {
+        // continue;
+      }
+      DEBUG_PRINT(F);
 
       /* Find return statement of the function */
       ReturnInst *RetI;
@@ -199,8 +221,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       /* Insert logger just before terminator of every BB */
       for (BasicBlock &BB : F) {
         if (BB.getTerminator()->getNumSuccessors() <= 1) {
-          DEBUG_PRINT2("Skip BB: " << BB.getName() << "\n");
-          DEBUG_PRINT2(BB);
           continue;
         }
         DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
@@ -211,10 +231,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         Instruction *term = BB.getTerminator();
         if (isa<BranchInst>(term) && term->getNumSuccessors() == 2) {
           BranchInst *BrI = cast<BranchInst>(term);
-          printValue(BrI->getCondition());
+          printValue(BrI->getCondition(), &BB);
           PRETTY_PRINT("\n");
         } else if (isa<SwitchInst>(term)) {
-          printValue(term);
+          printValue(term, &BB);
           PRETTY_PRINT("\n");
         } else {
           DEBUG_PRINT2("Skip this terminator: " << *term << "\n");
