@@ -9,8 +9,9 @@
 #include "debug.h"
 
 using namespace llvm;
+using namespace permod;
 
-namespace permod {
+namespace {
 
 /*
  * Find 'return -ERRNO'
@@ -258,9 +259,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return PreservedAnalyses::all();
     }
   };
-}; // namespace
+};
 
-} // namespace permod
+} // namespace
 
 extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo
 llvmGetPassPluginInfo() {
@@ -270,7 +271,7 @@ llvmGetPassPluginInfo() {
           .RegisterPassBuilderCallbacks = [](PassBuilder &PB) {
             PB.registerPipelineStartEPCallback(
                 [](ModulePassManager &MPM, OptimizationLevel Level) {
-                  MPM.addPass(permod::PermodPass());
+                  MPM.addPass(PermodPass());
                 });
           }};
 }
