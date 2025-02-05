@@ -47,6 +47,12 @@ cmake ..  # Generate the Makefile.
 make  # Actually build the pass.
 ```
 
+CMake option for Homebrew & clangd
+
+```bash
+LLVM_DIR=`brew --prefix llvm@17`/lib/cmake/llvm CMAKE_EXPORT_COMPILE_COMMANDS=1 cmake ..
+```
+
 See [Trouble shooting](#cmake-error) if you encounter a CMake error.
 
 ## Usage
