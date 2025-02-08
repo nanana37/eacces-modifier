@@ -238,6 +238,13 @@ e.g.,
 CMAKE_EXPORT_COMPILE_COMMANDS=1 cmake ..
 ```
 
+Furthermore, sometimes clangd misses even stdlib.
+Tell where it is like below.
+
+```sh
+cmake -DCMAKE_CXX_COMPILER=clang++-17 -DCMAKE_CXX_FLAGS="-stdlib=libc++ -std=c++17" ..
+```
+
 ## References
 
 Used [Adrian Sampson's LLLVM turorial](https://github.com/sampsyo/llvm-pass-skeleton) as template.
