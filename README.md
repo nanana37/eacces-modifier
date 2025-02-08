@@ -35,6 +35,22 @@ This tool will make logs about:
   - The lower version may not work.
   - We are using [the New Pass Manager](https://llvm.org/docs/NewPassManager.html).
 
+### Install a specific version of LLVM
+
+- [Official Guide](apt.llvm.org)
+
+```sh
+wget https://apt.llvm.org/llvm.sh
+chmod +x llvm.sh
+sudo ./llvm.sh 
+```
+
+- Homebrew
+
+```sh
+brew install llvm@17
+```
+
 ### Build command
 
 This makes a shared object `build/permod/PermodPass.{so|dylib}` (`.so` on Linux / `.dylib` on macOS).
@@ -47,13 +63,21 @@ cmake ..  # Generate the Makefile.
 make  # Actually build the pass.
 ```
 
-CMake option for Homebrew & clangd
+### CMake options
+
+- Identify the LLVM path & generate compile_commands.json.
+
+```sh
+LLLVM_DIR=/usr/lib/llvm-17/lib/cmake/llvm CMAKE_EXPORT_COMPILE_COMMANDS=1 cmake ..
+```
+
+- If installed via Homebrew
 
 ```bash
 LLVM_DIR=`brew --prefix llvm@17`/lib/cmake/llvm CMAKE_EXPORT_COMPILE_COMMANDS=1 cmake ..
 ```
 
-See [Trouble shooting](#cmake-error) if you encounter a CMake error.
+See [Trouble shooting](#cmake-error) when encountering error for CMake.
 
 ## Usage
 
