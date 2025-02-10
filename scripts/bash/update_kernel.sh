@@ -11,10 +11,10 @@ make
 
 cd "$CWD" || exit
 make \
-  -j"$(nproc)" \
+  -j"1" \
   CC=clang \
   LOCALVERSION=-mod-"$VERSION" \
   KCFLAGS="-g -fno-discard-value-names -fpass-plugin=$PERMOD_DIR/build/permod/PermodPass.so" \
-  2>"$HOME"/filter/tmp/permod-"$VERSION"
+  2>"$HOME"/filter/tmp/permod-"$VERSION" # -j"$(nproc)" \
 
 # sudo make modules_install && sudo make install
