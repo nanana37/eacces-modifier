@@ -64,7 +64,12 @@ def get_log_files(target: Path) -> typing.List[Path]:
 
 
 def compilation_flags(additional_flags=[]):
-    FLAGS = ["-g", "-fno-inline-functions", "-fno-builtin-bcmp"]
+    FLAGS = [
+        "-g",
+        "-fno-discard-value-names",
+        "-fno-inline-functions",
+        "-fno-builtin-bcmp",
+    ]
     return FLAGS + additional_flags
 
 
