@@ -8,7 +8,22 @@ from pathlib import Path
 import click
 
 from Permod import utils
-from Permod.constants import LINUX_ROOT, LOG_DIR, PASS_PATH, RTLIB_DIR
+from Permod.constants import LINUX_ROOT, LOG_DIR, BUILD_DIR, PASS_PATH, RTLIB_DIR
+
+
+def update_pass():
+    make_command = ["make"]
+    result = subprocess.run(make_command, cwd=BUILD_DIR, stderr=subprocess.PIPE)
+    if result.returncode != 0:
+        raise Exception("Failed to update pass")
+
+
+def compile_rtlib():
+    command = ["clang", "-c", f"{RTLIB_DIR}/rtlib.c"]
+    result = subprocess.run(command, stderr=subprocess.PIPE)
+    print(result.stderr.decode("utf-8"))
+    if result.returncode != 0:
+        raise Exception("Failed to compile rtlib")
 
 
 @click.group()
@@ -18,8 +33,8 @@ def commands():
 
 @commands.command()
 @click.option("--target", "-t", default=LINUX_ROOT)
-# @click.option("--file", "-f", default=None)
-# @click.option("--measure", "-m", is_flag=True)
+@click.option("--file", "-f", default=None)
+@click.option("--measure", "-m", is_flag=True)
 def linux(target, file, measure):
     print(f"Start running analyzer:{PASS_PATH}")
     tmplog = os.path.join(LOG_DIR, "tmplog")
@@ -74,14 +89,6 @@ def linux(target, file, measure):
     print(f"Logged to file {log}")
 
 
-def compile_rtlib():
-    command = ["clang", "-c", f"{RTLIB_DIR}/rtlib.c"]
-    result = subprocess.run(command, stderr=subprocess.PIPE)
-    print(result.stderr.decode("utf-8"))
-    if result.returncode != 0:
-        raise Exception("Failed to compile rtlib")
-
-
 @commands.command()
 @click.argument("target", type=click.Path(exists=True))
 def test(target):
@@ -130,4 +137,8 @@ def test(target):
 
 
 if __name__ == "__main__":
+    try:
+        update_pass()
+    except Exception as e:
+        print(e)
     commands()
