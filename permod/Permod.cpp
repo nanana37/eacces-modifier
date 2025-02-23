@@ -57,10 +57,10 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         name = name.drop_back(5);
       }
 
-      // The name of function argument is acceptable.
+      // The name of the function's argument is acceptable to be printed.
       Function *F = I->getFunction();
       for (auto &Arg : F->args()) {
-        DEBUG_PRINT("Arg: " << Arg << "\n");
+        DEBUG_PRINT2("Arg: " << Arg << "\n");
         if (Arg.getName().equals(name)) {
           break;
         }
@@ -191,7 +191,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (!F.getName().startswith("proc_lookup_de")) {
         // continue;
       }
-      DEBUG_PRINT(F);
 
       /* Find return statement of the function */
       ReturnInst *RetI;
