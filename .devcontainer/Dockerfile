@@ -32,4 +32,10 @@ RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${LLVM_VER
     update-alternatives --install /usr/bin/clang-tidy clang-tidy /usr/bin/clang-tidy-${LLVM_VERSION} 100 && \
     update-alternatives --install /usr/bin/clang-format clang-format /usr/bin/clang-format-${LLVM_VERSION} 100
 
+# Install for Linux Kernel Build
+RUN apt-get update && apt-get install -y \
+    bc binutils bison dwarves flex gcc git make openssl \
+    pahole perl-base libssl-dev libelf-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 CMD ["/bin/bash"]
