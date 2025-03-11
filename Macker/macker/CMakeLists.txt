@@ -1,12 +1,11 @@
-add_library(MyClangPlugin SHARED
+add_library(Macker SHARED
   main.cpp
   MyPPCallbacks.cpp
-  MyASTConsumer.cpp
-  MyFrontendAction.cpp
+  # MyASTConsumer.cpp
+  # MyFrontendAction.cpp
 )
 
-target_link_libraries(MyClangPlugin
-  clangBasic
+target_link_libraries(Macker clangBasic
   clangFrontend
   clangAST
   clangASTMatchers
@@ -21,6 +20,6 @@ target_link_libraries(MyClangPlugin
   clangAnalysis
   )
 
-set_target_properties(MyClangPlugin PROPERTIES
+set_target_properties(Macker PROPERTIES
   PREFIX ""
   )

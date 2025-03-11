@@ -1,14 +1,25 @@
 #include "MyPPCallbacks.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Frontend/CompilerInstance.h"
+#include "clang/Frontend/FrontendAction.h"
 #include "clang/Frontend/FrontendPluginRegistry.h"
 
 namespace {
+
+class MacroTrackerConsumer : public ASTConsumer {
+ CompilerInstance &Instance;
+
+public:
+  MacroTrackerConsumer(CompilerInstance &Instance) : Instance(Instance) {
+    Instance.getPreprocessor().addPPCallbacks(std::make_unique<MyPPCallbacks>(Instance));
+  }
+};
+
 class MyPPCallbacksAction : public PluginASTAction {
 protected:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile) override {
-    return std::make_unique<ASTConsumer>();
+    return std::make_unique<MacroTrackerConsumer>(CI);
   }
 
   bool ParseArgs(const CompilerInstance &CI,
@@ -16,10 +27,10 @@ protected:
     return true;
   }
 
-  bool BeginSourceFileAction(CompilerInstance &CI) override {
-    Preprocessor &PP = CI.getPreprocessor();
-    PP.addPPCallbacks(std::make_unique<MyPPCallbacks>(CI));
-    return true;
+  // Enable this plugin to run after the main action
+  // i.e., same as -add-plugin
+  PluginASTAction::ActionType getActionType() override {
+    return AddAfterMainAction;
   }
 
   void ExecuteAction() override { PluginASTAction::ExecuteAction(); }
@@ -27,4 +38,4 @@ protected:
 } // namespace
 
 static FrontendPluginRegistry::Add<MyPPCallbacksAction>
-    X("my-ppcallback-plugin", "Example plugin with PPCallbacks");
+    X("macro-tracker", "Trace macro with PPCallbacks");
