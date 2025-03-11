@@ -1,25 +1,35 @@
+#include "MyASTVisitor.h"
 #include "MyPPCallbacks.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
 #include "clang/Frontend/FrontendPluginRegistry.h"
+#include "clang/Rewrite/Core/Rewriter.h"
 
 namespace {
 
 class MacroTrackerConsumer : public ASTConsumer {
- CompilerInstance &Instance;
+private:
+  MyASTVisitor visitor;
 
 public:
-  MacroTrackerConsumer(CompilerInstance &Instance) : Instance(Instance) {
+  MacroTrackerConsumer(Rewriter &R, CompilerInstance &Instance) : visitor(R, Instance.getSourceManager()) {
     Instance.getPreprocessor().addPPCallbacks(std::make_unique<MyPPCallbacks>(Instance));
+  }
+
+  void HandleTranslationUnit(ASTContext &Context) override {
+    visitor.TraverseDecl(Context.getTranslationUnitDecl());
   }
 };
 
-class MyPPCallbacksAction : public PluginASTAction {
+class MacroTrackerAction : public PluginASTAction {
+private:
+  Rewriter rewriter;
+
 protected:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile) override {
-    return std::make_unique<MacroTrackerConsumer>(CI);
+    return std::make_unique<MacroTrackerConsumer>(rewriter, CI);
   }
 
   bool ParseArgs(const CompilerInstance &CI,
@@ -37,5 +47,5 @@ protected:
 };
 } // namespace
 
-static FrontendPluginRegistry::Add<MyPPCallbacksAction>
+static FrontendPluginRegistry::Add<MacroTrackerAction>
     X("macro-tracker", "Trace macro with PPCallbacks");

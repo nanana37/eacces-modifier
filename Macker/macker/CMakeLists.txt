@@ -1,7 +1,6 @@
 add_library(Macker SHARED
   main.cpp
   MyPPCallbacks.cpp
-  # MyASTConsumer.cpp
   # MyFrontendAction.cpp
 )
 
