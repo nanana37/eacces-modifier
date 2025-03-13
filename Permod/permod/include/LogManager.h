@@ -1,10 +1,10 @@
 #ifndef PERMOD_LOG_MANAGER_H
 #define PERMOD_LOG_MANAGER_H
 
-#include "llvm/IR/DebugLoc.h"
 #include "llvm/Support/raw_ostream.h"
 #include <string>
 #include <vector>
+#include <mutex>
 
 using namespace llvm;
 
@@ -14,7 +14,7 @@ class ConditionPrinter {
 public:
   ConditionPrinter() : OS(ConditionStr) {}
 
-  template <typename T> 
+  template <typename T>
   ConditionPrinter &operator<<(const T &Val) {
     OS << Val;
     return *this;
@@ -28,28 +28,38 @@ private:
   llvm::raw_string_ostream OS;
 };
 
-// Structure definition stays in header
-struct ConditionEntry {
+struct LogEntry {
   std::string FileName;
-  unsigned LineNum;
+  unsigned LineNumber;
   std::string FunctionName;
+  std::string EventType;
   unsigned ConditionID;
-  std::string Type;
-  std::string ConditionStr;
+  std::string Content;
 };
 
 class LogManager {
 public:
   static LogManager &getInstance();
 
-  void addCondition(StringRef FileName, StringRef FuncName, unsigned LineNum,
-                    StringRef CondStr, unsigned CondID, StringRef Type);
+  void addEntry(StringRef FileName,
+               unsigned LineNumber,
+               StringRef FuncName,
+               StringRef EventType,
+               unsigned CondID,
+               StringRef Content);
 
-  void writeCSV(llvm::raw_ostream &OS);
+  void writeAllLogs(bool SortByLocation = true);
+
+  void setOutputFile(const std::string& Filename) {
+    std::lock_guard<std::mutex> lock(LogMutex);
+    OutputFileName = Filename;
+  }
 
 private:
   LogManager() {}
-  std::vector<ConditionEntry> Conditions;
+  std::vector<LogEntry> Logs;
+  std::mutex LogMutex;
+  std::string OutputFileName = "permod_conditions.csv";
 
   std::string escapeCSV(const std::string &Str);
 };

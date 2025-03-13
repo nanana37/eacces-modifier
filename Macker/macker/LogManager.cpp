@@ -4,45 +4,45 @@
 
 namespace macker {
 
-std::string escapeCSV(const std::string &str) {
-    if (str.find('"') == std::string::npos && str.find(',') == std::string::npos) {
-        return str;
+std::string escapeCSV(const std::string &Str) {
+    if (Str.find('"') == std::string::npos && Str.find(',') == std::string::npos) {
+        return Str;
     }
-    std::string escaped = str;
+    std::string Escaped = Str;
     // Replace quotes with double quotes
-    size_t pos = 0;
-    while ((pos = escaped.find('"', pos)) != std::string::npos) {
-        escaped.replace(pos, 1, "\"\"");
-        pos += 2;
+    size_t Pos = 0;
+    while ((Pos = Escaped.find('"', Pos)) != std::string::npos) {
+        Escaped.replace(Pos, 1, "\"\"");
+        Pos += 2;
     }
-    return "\"" + escaped + "\"";
+    return "\"" + Escaped + "\"";
 }
 
 LogManager& LogManager::getInstance() {
-    static LogManager instance;
-    return instance;
+    static LogManager Instance;
+    return Instance;
 }
 
 LogManager::LogManager() {
     // Initialize only
 }
 
-void LogManager::addEntry(const std::string& eventType, 
-                         const std::string& fileName, 
-                         int lineNumber,
-                         const std::string& functionName,
-                         const std::string& content,
-                         const std::string& extraInfo) {
-    std::lock_guard<std::mutex> lock(logMutex);
-    logs.push_back({fileName, lineNumber, functionName, eventType, content, extraInfo});
+void LogManager::addEntry(const std::string& EventType, 
+                         const std::string& FileName, 
+                         int LineNumber,
+                         const std::string& FunctionName,
+                         const std::string& Content,
+                         const std::string& ExtraInfo) {
+    std::lock_guard<std::mutex> lock(LogMutex);
+    Logs.push_back({FileName, LineNumber, FunctionName, EventType, Content, ExtraInfo});
 }
 
-void LogManager::writeAllLogs(bool sortByLocation) {
-    std::lock_guard<std::mutex> lock(logMutex);
+void LogManager::writeAllLogs(bool SortByLocation) {
+    std::lock_guard<std::mutex> lock(LogMutex);
     
     // Create a file output stream like Permod does
     std::error_code EC;
-    llvm::raw_fd_ostream OS(outputFileName, EC);
+    llvm::raw_fd_ostream OS(OutputFileName, EC);
     
     if (EC) {
         llvm::errs() << "Error opening output file: " << EC.message() << "\n";
@@ -53,38 +53,38 @@ void LogManager::writeAllLogs(bool sortByLocation) {
     OS << "File,Line,Function,EventType,Content,ExtraInfo\n";
     
     // Sort using the same criteria as Permod
-    if (sortByLocation) {
-        std::sort(logs.begin(), logs.end(), [](const LogEntry& a, const LogEntry& b) {
-            if (a.fileName != b.fileName)
-                return a.fileName < b.fileName;
+    if (SortByLocation) {
+        std::sort(Logs.begin(), Logs.end(), [](const LogEntry& A, const LogEntry& B) {
+            if (A.FileName != B.FileName)
+                return A.FileName < B.FileName;
             
-            if (a.lineNumber != b.lineNumber)
-                return a.lineNumber < b.lineNumber;
+            if (A.LineNumber != B.LineNumber)
+                return A.LineNumber < B.LineNumber;
                 
-            if (a.functionName != b.functionName)
-                return a.functionName < b.functionName;
+            if (A.FunctionName != B.FunctionName)
+                return A.FunctionName < B.FunctionName;
                 
-            return a.eventType < b.eventType;
+            return A.EventType < B.EventType;
         });
     }
     
     // Write entries in Permod order
-    for (const auto& entry : logs) {
-        OS << escapeCSV(entry.fileName) << ","
-           << entry.lineNumber << ","
-           << escapeCSV(entry.functionName) << ","
-           << escapeCSV(entry.eventType) << ","
-           << escapeCSV(entry.content) << ","
-           << escapeCSV(entry.extraInfo) << "\n";
+    for (const auto& Entry : Logs) {
+        OS << escapeCSV(Entry.FileName) << ","
+           << Entry.LineNumber << ","
+           << escapeCSV(Entry.FunctionName) << ","
+           << escapeCSV(Entry.EventType) << ","
+           << escapeCSV(Entry.Content) << ","
+           << escapeCSV(Entry.ExtraInfo) << "\n";
     }
     
     // Clear logs after writing
-    logs.clear();
+    Logs.clear();
     
     // Close the file
     OS.close();
     
-    llvm::outs() << "Results written to " << outputFileName << "\n";
+    llvm::outs() << "Results written to " << OutputFileName << "\n";
 }
 
 } // namespace macker

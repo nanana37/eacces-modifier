@@ -8,41 +8,42 @@
 namespace macker {
 
 // Helper function for CSV escaping
-std::string escapeCSV(const std::string &str);
+std::string escapeCSV(const std::string &Str);
 
 // Centralized log manager compatible with Permod style
 class LogManager {
 public:
     struct LogEntry {
-        std::string fileName;
-        int lineNumber;
-        std::string functionName;
-        std::string eventType; 
-        std::string content;
-        std::string extraInfo;
+        std::string FileName;
+        int LineNumber;
+        std::string FunctionName;
+        std::string EventType; 
+        std::string Content;
+        std::string ExtraInfo;
     };
 
     static LogManager& getInstance();
     
-    void addEntry(const std::string& eventType, 
-                 const std::string& fileName, 
-                 int lineNumber,
-                 const std::string& functionName,
-                 const std::string& content,
-                 const std::string& extraInfo = "");
+    void addEntry(const std::string& EventType, 
+                 const std::string& FileName, 
+                 int LineNumber,
+                 const std::string& FunctionName,
+                 const std::string& Content,
+                 const std::string& ExtraInfo = "");
                  
-    void writeAllLogs(bool sortByLocation = true);
+    void writeAllLogs(bool SortByLocation = true);
     
     // Set output file name (defaults to "macker_results.csv")
-    void setOutputFile(const std::string& filename) {
-        outputFileName = filename;
+    void setOutputFile(const std::string& Filename) {
+        std::lock_guard<std::mutex> lock(LogMutex);
+        OutputFileName = Filename;
     }
     
 private:
     LogManager();
-    std::vector<LogEntry> logs;
-    std::mutex logMutex;
-    std::string outputFileName = "macker_results.csv";
+    std::vector<LogEntry> Logs;
+    std::mutex LogMutex;
+    std::string OutputFileName = "macker_results.csv";
 };
 
 } // namespace macker

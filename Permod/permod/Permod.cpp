@@ -206,8 +206,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         LineNum = DL.getLine();
       }
 
-      LogManager::getInstance().addCondition(
-        DBinfo.first, DBinfo.second, LineNum, Printer->str(), CondID, CondType);
+      LogManager::getInstance().addEntry(
+        DBinfo.first, LineNum, DBinfo.second, CondType, CondID, Printer->str());
         
       // Add instrumentation
       if (Ins.insertBufferFunc(BB, DBinfo, CondID)) {
@@ -234,7 +234,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     std::error_code EC;
     llvm::raw_fd_ostream OS("permod_conditions.csv", EC);
     if (!EC) {
-      LogManager::getInstance().writeCSV(OS);
+      LogManager::getInstance().writeAllLogs(true);
     }
     
     return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();

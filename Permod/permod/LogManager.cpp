@@ -2,52 +2,10 @@
 
 namespace permod {
 
-// Static instance accessor
-LogManager &LogManager::getInstance() {
-  static LogManager Instance;
-  return Instance;
-}
-
-// Add a condition entry
-void LogManager::addCondition(StringRef FileName, StringRef FuncName, 
-                           unsigned LineNum, StringRef CondStr,
-                           unsigned CondID, StringRef Type) {
-  Conditions.push_back({FileName.str(), LineNum, FuncName.str(),
-                        CondID, Type.str(), CondStr.str()});
-}
-
-// Write conditions to CSV
-void LogManager::writeCSV(llvm::raw_ostream &OS) {
-  OS << "File,Line,Function,ID,Type,Condition\n";
-
-  std::sort(Conditions.begin(), Conditions.end(),
-            [](const ConditionEntry &A, const ConditionEntry &B) {
-              if (A.FileName != B.FileName)
-                return A.FileName < B.FileName;
-              if (A.LineNum != B.LineNum)
-                return A.LineNum < B.LineNum;
-              if (A.FunctionName != B.FunctionName)
-                return A.FunctionName < B.FunctionName;
-              return A.ConditionID < B.ConditionID;
-            });
-
-  for (const auto &Entry : Conditions) {
-    OS << escapeCSV(Entry.FileName) << "," 
-       << Entry.LineNum << "," 
-       << escapeCSV(Entry.FunctionName) << ","
-       << Entry.ConditionID << ","
-       << escapeCSV(Entry.Type) << "," 
-       << escapeCSV(Entry.ConditionStr)
-       << "\n";
-  }
-}
-
-// Helper function to escape CSV strings
 std::string LogManager::escapeCSV(const std::string &Str) {
-  if (Str.find('"') == std::string::npos &&
-      Str.find(',') == std::string::npos)
+  if (Str.find('"') == std::string::npos && Str.find(',') == std::string::npos) {
     return Str;
-
+  }
   std::string Escaped = Str;
   size_t Pos = 0;
   while ((Pos = Escaped.find('"', Pos)) != std::string::npos) {
@@ -55,6 +13,61 @@ std::string LogManager::escapeCSV(const std::string &Str) {
     Pos += 2;
   }
   return "\"" + Escaped + "\"";
+}
+
+// Static instance accessor
+LogManager &LogManager::getInstance() {
+  static LogManager Instance;
+  return Instance;
+}
+
+// Add a log entry
+void LogManager::addEntry(StringRef FileName, unsigned LineNumber, 
+                          StringRef FuncName, StringRef EventType, 
+                          unsigned CondID, StringRef Content) {
+  Logs.push_back({FileName.str(), LineNumber, FuncName.str(), 
+                  EventType.str(), CondID, Content.str()});
+}
+
+// Write logs to CSV
+void LogManager::writeAllLogs(bool SortByLocation) {
+  std::lock_guard<std::mutex> lock(LogMutex);
+  
+  std::error_code EC;
+  llvm::raw_fd_ostream OS(OutputFileName, EC);
+  
+  if (EC) {
+    llvm::errs() << "Error opening output file: " << EC.message() << "\n";
+    return;
+  }
+  
+  OS << "File,Line,Function,EventType,ID,Content\n";
+
+  std::sort(Logs.begin(), Logs.end(),
+            [](const LogEntry &A, const LogEntry &B) {
+              if (A.FileName != B.FileName)
+                return A.FileName < B.FileName;
+              if (A.LineNumber != B.LineNumber)
+                return A.LineNumber < B.LineNumber;
+              if (A.FunctionName != B.FunctionName)
+                return A.FunctionName < B.FunctionName;
+              return A.ConditionID < B.ConditionID;
+            });
+
+  for (const auto &Entry : Logs) {
+    OS << escapeCSV(Entry.FileName) << "," 
+       << Entry.LineNumber << "," 
+       << escapeCSV(Entry.FunctionName) << ","
+       << escapeCSV(Entry.EventType) << ","
+       << Entry.ConditionID << ","
+       << escapeCSV(Entry.Content)
+       << "\n";
+  }
+  
+  Logs.clear();
+  OS.close();
+  
+  llvm::outs() << "Results written to " << OutputFileName << "\n";
 }
 
 } // namespace permod
