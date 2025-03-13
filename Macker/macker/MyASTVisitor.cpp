@@ -1,8 +1,10 @@
+#include "Utilities.h"
 #include "MyASTVisitor.h"
 #include "clang/Lex/Lexer.h"
 #include "llvm/Support/raw_ostream.h"
 
 using namespace clang;
+using namespace macker;
 
 // Constructor implementation
 MyASTVisitor::MyASTVisitor(Rewriter &R, SourceManager &SM)
@@ -12,20 +14,6 @@ MyASTVisitor::MyASTVisitor(Rewriter &R, SourceManager &SM)
 }
 
 // Method implementations
-std::string MyASTVisitor::escapeCSV(const std::string &str) {
-  if (str.find('"') == std::string::npos && str.find(',') == std::string::npos) {
-    return str;
-  }
-  std::string escaped = str;
-  // Replace quotes with double quotes
-  size_t pos = 0;
-  while ((pos = escaped.find('"', pos)) != std::string::npos) {
-    escaped.replace(pos, 1, "\"\"");
-    pos += 2;
-  }
-  return "\"" + escaped + "\"";
-}
-
 std::string MyASTVisitor::getFuncName(FunctionDecl *Func) {
   if (Func) {
     return Func->getNameInfo().getAsString();
@@ -66,11 +54,8 @@ void MyASTVisitor::getFileAndLine(SourceLocation Loc, std::string &File, int &Li
 
 void MyASTVisitor::writeCSVRow(const std::string &Function, const std::string &File, 
                 int Line, const std::string &StmtType, const std::string &Condition) {
-  llvm::outs() << escapeCSV(Function) << ","
-              << escapeCSV(File) << ","
-              << Line << ","
-              << escapeCSV(StmtType) << ","
-              << escapeCSV(Condition) << "\n";
+  LogManager::getInstance().addEntry(
+      StmtType, File, Line, Function, Condition, "");
 }
 
 bool MyASTVisitor::VisitFunctionDecl(FunctionDecl *Func) {

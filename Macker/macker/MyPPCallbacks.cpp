@@ -1,8 +1,13 @@
 #include "MyPPCallbacks.h"
+#include "Utilities.h"
 
+using namespace clang;
 using namespace llvm;
+using namespace macker;
 
-MyPPCallbacks::MyPPCallbacks(CompilerInstance &CI) : CI(CI) {}
+MyPPCallbacks::MyPPCallbacks(CompilerInstance &CI) : CI(CI) {
+  // No header needed - LogManager handles this
+}
 
 void MyPPCallbacks::MacroDefined(const Token &MacroNameTok,
                                  const MacroDirective *MD) {
@@ -16,14 +21,24 @@ void MyPPCallbacks::MacroDefined(const Token &MacroNameTok,
 
   StringRef MacroName = II->getName();
 
-  std::string MacroValue;
-  Preprocessor &PP = CI.getPreprocessor();
-  for (const Token &Tok : MI->tokens()) {
-    StringRef TokSpelling = PP.getSpelling(Tok);
-    MacroValue += TokSpelling.str() + " ";
-  }
+  std::string MacroValue = getTokenString(MI);
 
-  errs() << "[MacroDefined] " << MacroName << " = " << MacroValue << "\n";
+  // Get file and line info
+  SourceLocation Loc = MacroNameTok.getLocation();
+  std::string FileName;
+  unsigned int LineNumber;
+
+  getFileAndLine(Loc, FileName, LineNumber);
+
+  // Use LogManager for consistent output
+  LogManager::getInstance().addEntry(
+    "MacroDefined", 
+    FileName, 
+    LineNumber, 
+    "", // No function name for macros
+    MacroName.str(),
+    MacroValue
+  );
 }
 
 void MyPPCallbacks::MacroExpands(const Token &MacroNameTok,
@@ -33,25 +48,48 @@ void MyPPCallbacks::MacroExpands(const Token &MacroNameTok,
   if (FileName.size() <= 0) {
     return;
   }
+  
   unsigned int LineNumber =
       CI.getSourceManager().getSpellingLineNumber(Range.getBegin());
 
-  errs() << "[MacroExpands]";
-  errs() << "  " << FileName << ":" << LineNumber << "\n";
-  errs() << MacroNameTok.getIdentifierInfo()->getName();
+  StringRef MacroName = MacroNameTok.getIdentifierInfo()->getName();
+  std::string ExpansionText;
 
- // Get expanded text
- if (const MacroInfo *MI = MD.getMacroInfo()) {
-    std::string ExpansionText;
-    Preprocessor &PP = CI.getPreprocessor();
-    
-    // Get tokens from the macro definition
-    for (const Token &Tok : MI->tokens()) {
-      if (ExpansionText.size() > 0)
-        ExpansionText += " ";
-      ExpansionText += PP.getSpelling(Tok);
-    }
-
-    errs() << " => " << ExpansionText << "\n";
+  // Get expanded text
+  if (const MacroInfo *MI = MD.getMacroInfo()) {
+    ExpansionText = getTokenString(MI);
   }
+
+  // Use LogManager for consistent output
+  LogManager::getInstance().addEntry(
+    "MacroExpands", 
+    FileName.str(), 
+    LineNumber, 
+    "", // No function name for macros
+    MacroName.str(),
+    ExpansionText
+  );
+}
+
+void MyPPCallbacks::getFileAndLine(SourceLocation Loc, std::string &FileName, unsigned int &LineNumber) {
+  if (!Loc.isValid()) {
+    FileName = "unknown";
+    LineNumber = 0;
+    return;
+  }
+
+  FileName = CI.getSourceManager().getFilename(Loc).str();
+  LineNumber = CI.getSourceManager().getSpellingLineNumber(Loc);
+}
+
+std::string MyPPCallbacks::getTokenString(const MacroInfo *MI) {
+  std::string Result;
+  Preprocessor &PP = CI.getPreprocessor();
+  
+  for (const Token &Tok : MI->tokens()) {
+    if (!Result.empty())
+      Result += " ";
+    Result += PP.getSpelling(Tok);
+  }
+  return Result;
 }

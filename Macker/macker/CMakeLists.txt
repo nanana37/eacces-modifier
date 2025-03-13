@@ -2,6 +2,7 @@ add_library(Macker SHARED
   main.cpp
   MyPPCallbacks.cpp
   MyASTVisitor.cpp
+  Utilities.cpp
   # MyFrontendAction.cpp
 )
 

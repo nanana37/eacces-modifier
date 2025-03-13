@@ -20,7 +20,6 @@ public:
   bool VisitCaseStmt(CaseStmt *Case);
 
 private:
-  std::string escapeCSV(const std::string &str);
   std::string getFuncName(FunctionDecl *Func);
   void getFileAndLine(SourceLocation Loc, std::string &File, int &Line);
   void writeCSVRow(const std::string &Function, const std::string &File, 

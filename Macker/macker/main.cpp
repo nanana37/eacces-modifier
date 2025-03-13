@@ -1,5 +1,6 @@
 #include "MyASTVisitor.h"
 #include "MyPPCallbacks.h"
+#include "Utilities.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
@@ -19,6 +20,9 @@ public:
 
   void HandleTranslationUnit(ASTContext &Context) override {
     visitor.TraverseDecl(Context.getTranslationUnitDecl());
+    
+    // Output the logs after traversal is complete
+    macker::LogManager::getInstance().writeAllLogs(true);
   }
 };
 
@@ -38,12 +42,13 @@ protected:
   }
 
   // Enable this plugin to run after the main action
-  // i.e., same as -add-plugin
   PluginASTAction::ActionType getActionType() override {
     return AddAfterMainAction;
   }
 
-  void ExecuteAction() override { PluginASTAction::ExecuteAction(); }
+  void ExecuteAction() override { 
+    PluginASTAction::ExecuteAction();
+  }
 };
 } // namespace
 

@@ -17,6 +17,8 @@ public:
 
 private:
   CompilerInstance &CI;
+  void getFileAndLine(SourceLocation Loc, std::string &FileName, unsigned int &LineNumber);
+  std::string getTokenString(const MacroInfo *MI);
 };
 
 #endif // MY_PP_CALLBACKS_H
