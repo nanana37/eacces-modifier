@@ -1,4 +1,4 @@
-#include "Utilities.h"
+#include "LogManager.h"
 #include "MyASTVisitor.h"
 #include "clang/Lex/Lexer.h"
 #include "llvm/Support/raw_ostream.h"
@@ -9,8 +9,6 @@ using namespace macker;
 // Constructor implementation
 MyASTVisitor::MyASTVisitor(Rewriter &R, SourceManager &SM)
     : rewriter(R), srcManager(SM), CurrentFunction(nullptr) {
-  // Write CSV header
-  llvm::outs() << "Function,File,Line,StatementType,Condition\n";
 }
 
 // Method implementations
@@ -54,8 +52,15 @@ void MyASTVisitor::getFileAndLine(SourceLocation Loc, std::string &File, int &Li
 
 void MyASTVisitor::writeCSVRow(const std::string &Function, const std::string &File, 
                 int Line, const std::string &StmtType, const std::string &Condition) {
+  // Call LogManager with the correct parameter order to match our fields:
+  // File, Line, Function, EventType, Content, ExtraInfo
   LogManager::getInstance().addEntry(
-      StmtType, File, Line, Function, Condition, "");
+      StmtType,  // EventType
+      File,      // File
+      Line,      // Line
+      Function,  // Function
+      Condition, // Content
+      "");       // ExtraInfo
 }
 
 bool MyASTVisitor::VisitFunctionDecl(FunctionDecl *Func) {

@@ -1,5 +1,5 @@
-#ifndef MACKER_UTILITIES_H
-#define MACKER_UTILITIES_H
+#ifndef MACKER_LOG_MANAGER_H
+#define MACKER_LOG_MANAGER_H
 
 #include <string>
 #include <vector>
@@ -7,16 +7,17 @@
 
 namespace macker {
 
+// Helper function for CSV escaping
 std::string escapeCSV(const std::string &str);
 
-// Centralized log manager
+// Centralized log manager compatible with Permod style
 class LogManager {
 public:
     struct LogEntry {
-        std::string eventType;
         std::string fileName;
         int lineNumber;
         std::string functionName;
+        std::string eventType; 
         std::string content;
         std::string extraInfo;
     };
@@ -32,13 +33,18 @@ public:
                  
     void writeAllLogs(bool sortByLocation = true);
     
+    // Set output file name (defaults to "macker_results.csv")
+    void setOutputFile(const std::string& filename) {
+        outputFileName = filename;
+    }
+    
 private:
     LogManager();
     std::vector<LogEntry> logs;
     std::mutex logMutex;
-    bool headerWritten = false;
+    std::string outputFileName = "macker_results.csv";
 };
 
 } // namespace macker
 
-#endif // MACKER_UTILITIES_H
+#endif // MACKER_LOG_MANAGER_H

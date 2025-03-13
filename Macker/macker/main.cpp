@@ -1,6 +1,6 @@
 #include "MyASTVisitor.h"
 #include "MyPPCallbacks.h"
-#include "Utilities.h"
+#include "LogManager.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
