@@ -12,10 +12,17 @@ namespace {
 class MacroTrackerConsumer : public ASTConsumer {
 private:
   MyASTVisitor visitor;
+  bool enablePPCallbacks;
 
 public:
-  MacroTrackerConsumer(Rewriter &R, CompilerInstance &Instance) : visitor(R, Instance.getSourceManager()) {
-    Instance.getPreprocessor().addPPCallbacks(std::make_unique<MyPPCallbacks>(Instance));
+  MacroTrackerConsumer(Rewriter &R, CompilerInstance &Instance, bool EnablePPCallbacks) 
+    : visitor(R, Instance.getSourceManager()),
+      enablePPCallbacks(EnablePPCallbacks) {
+    
+    // Only add PP callbacks if explicitly enabled
+    if (enablePPCallbacks) {
+      Instance.getPreprocessor().addPPCallbacks(std::make_unique<MyPPCallbacks>(Instance));
+    }
   }
 
   void HandleTranslationUnit(ASTContext &Context) override {
@@ -29,15 +36,28 @@ public:
 class MacroTrackerAction : public PluginASTAction {
 private:
   Rewriter rewriter;
+  bool enablePPCallbacks;
+
+public:
+  MacroTrackerAction() : enablePPCallbacks(false) {}
 
 protected:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile) override {
-    return std::make_unique<MacroTrackerConsumer>(rewriter, CI);
+    return std::make_unique<MacroTrackerConsumer>(rewriter, CI, enablePPCallbacks);
   }
 
   bool ParseArgs(const CompilerInstance &CI,
                  const std::vector<std::string> &args) override {
+    for (const auto &arg : args) {
+      if (arg == "-enable-pp" || arg == "--enable-pp") {
+        enablePPCallbacks = true;
+      }
+      else if (arg == "-help" || arg == "--help") {
+        llvm::errs() << "Macro Tracker Plugin Options:\n"
+                     << "  -enable-pp, --enable-pp   : Enable preprocessing callbacks\n";
+      }
+    }
     return true;
   }
 
