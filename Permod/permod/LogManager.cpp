@@ -47,8 +47,6 @@ void LogManager::writeAllLogs(bool SortByLocation) {
             [](const LogEntry &A, const LogEntry &B) {
               if (A.FileName != B.FileName)
                 return A.FileName < B.FileName;
-              if (A.LineNumber != B.LineNumber)
-                return A.LineNumber < B.LineNumber;
               if (A.FunctionName != B.FunctionName)
                 return A.FunctionName < B.FunctionName;
               return A.ConditionID < B.ConditionID;
