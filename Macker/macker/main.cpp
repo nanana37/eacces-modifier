@@ -1,6 +1,6 @@
+#include "LogManager.h"
 #include "MyASTVisitor.h"
 #include "MyPPCallbacks.h"
-#include "LogManager.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
@@ -15,19 +15,21 @@ private:
   bool enablePPCallbacks;
 
 public:
-  MacroTrackerConsumer(Rewriter &R, CompilerInstance &Instance, bool EnablePPCallbacks) 
-    : visitor(R, Instance.getSourceManager()),
-      enablePPCallbacks(EnablePPCallbacks) {
-    
+  MacroTrackerConsumer(Rewriter &R, CompilerInstance &Instance,
+                       bool EnablePPCallbacks)
+      : visitor(R, Instance.getSourceManager()),
+        enablePPCallbacks(EnablePPCallbacks) {
+
     // Only add PP callbacks if explicitly enabled
     if (enablePPCallbacks) {
-      Instance.getPreprocessor().addPPCallbacks(std::make_unique<MyPPCallbacks>(Instance));
+      Instance.getPreprocessor().addPPCallbacks(
+          std::make_unique<MyPPCallbacks>(Instance));
     }
   }
 
   void HandleTranslationUnit(ASTContext &Context) override {
     visitor.TraverseDecl(Context.getTranslationUnitDecl());
-    
+
     // Output the logs after traversal is complete
     macker::LogManager::getInstance().writeAllLogs(true);
   }
@@ -44,7 +46,8 @@ public:
 protected:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile) override {
-    return std::make_unique<MacroTrackerConsumer>(rewriter, CI, enablePPCallbacks);
+    return std::make_unique<MacroTrackerConsumer>(
+        rewriter, CI, enablePPCallbacks);
   }
 
   bool ParseArgs(const CompilerInstance &CI,
@@ -52,10 +55,10 @@ protected:
     for (const auto &arg : args) {
       if (arg == "-enable-pp" || arg == "--enable-pp") {
         enablePPCallbacks = true;
-      }
-      else if (arg == "-help" || arg == "--help") {
-        llvm::errs() << "Macro Tracker Plugin Options:\n"
-                     << "  -enable-pp, --enable-pp   : Enable preprocessing callbacks\n";
+      } else if (arg == "-help" || arg == "--help") {
+        llvm::errs()
+            << "Macro Tracker Plugin Options:\n"
+            << "  -enable-pp, --enable-pp   : Enable preprocessing callbacks\n";
       }
     }
     return true;
@@ -66,9 +69,7 @@ protected:
     return AddAfterMainAction;
   }
 
-  void ExecuteAction() override { 
-    PluginASTAction::ExecuteAction();
-  }
+  void ExecuteAction() override { PluginASTAction::ExecuteAction(); }
 };
 } // namespace
 

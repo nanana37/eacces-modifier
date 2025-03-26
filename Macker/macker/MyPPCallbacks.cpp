@@ -31,14 +31,12 @@ void MyPPCallbacks::MacroDefined(const Token &MacroNameTok,
   getFileAndLine(Loc, FileName, LineNumber);
 
   // Use LogManager for consistent output
-  LogManager::getInstance().addEntry(
-    "MacroDefined", 
-    FileName, 
-    LineNumber, 
-    "", // No function name for macros
-    MacroName.str(),
-    MacroValue
-  );
+  LogManager::getInstance().addEntry("MacroDefined",
+                                     FileName,
+                                     LineNumber,
+                                     "", // No function name for macros
+                                     MacroName.str(),
+                                     MacroValue);
 }
 
 void MyPPCallbacks::MacroExpands(const Token &MacroNameTok,
@@ -48,7 +46,7 @@ void MyPPCallbacks::MacroExpands(const Token &MacroNameTok,
   if (FileName.size() <= 0) {
     return;
   }
-  
+
   unsigned int LineNumber =
       CI.getSourceManager().getSpellingLineNumber(Range.getBegin());
 
@@ -61,17 +59,16 @@ void MyPPCallbacks::MacroExpands(const Token &MacroNameTok,
   }
 
   // Use LogManager for consistent output
-  LogManager::getInstance().addEntry(
-    "MacroExpands", 
-    FileName.str(), 
-    LineNumber, 
-    "", // No function name for macros
-    MacroName.str(),
-    ExpansionText
-  );
+  LogManager::getInstance().addEntry("MacroExpands",
+                                     FileName.str(),
+                                     LineNumber,
+                                     "", // No function name for macros
+                                     MacroName.str(),
+                                     ExpansionText);
 }
 
-void MyPPCallbacks::getFileAndLine(SourceLocation Loc, std::string &FileName, unsigned int &LineNumber) {
+void MyPPCallbacks::getFileAndLine(SourceLocation Loc, std::string &FileName,
+                                   unsigned int &LineNumber) {
   if (!Loc.isValid()) {
     FileName = "unknown";
     LineNumber = 0;
@@ -85,7 +82,7 @@ void MyPPCallbacks::getFileAndLine(SourceLocation Loc, std::string &FileName, un
 std::string MyPPCallbacks::getTokenString(const MacroInfo *MI) {
   std::string Result;
   Preprocessor &PP = CI.getPreprocessor();
-  
+
   for (const Token &Tok : MI->tokens()) {
     if (!Result.empty())
       Result += " ";

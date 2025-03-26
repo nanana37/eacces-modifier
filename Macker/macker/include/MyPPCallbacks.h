@@ -17,7 +17,8 @@ public:
 
 private:
   CompilerInstance &CI;
-  void getFileAndLine(SourceLocation Loc, std::string &FileName, unsigned int &LineNumber);
+  void getFileAndLine(SourceLocation Loc, std::string &FileName,
+                      unsigned int &LineNumber);
   std::string getTokenString(const MacroInfo *MI);
 };
 

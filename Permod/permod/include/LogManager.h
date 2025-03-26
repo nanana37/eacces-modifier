@@ -2,9 +2,9 @@
 #define PERMOD_LOG_MANAGER_H
 
 #include "llvm/Support/raw_ostream.h"
+#include <mutex>
 #include <string>
 #include <vector>
-#include <mutex>
 
 using namespace llvm;
 
@@ -41,16 +41,12 @@ class LogManager {
 public:
   static LogManager &getInstance();
 
-  void addEntry(StringRef FileName,
-               unsigned LineNumber,
-               StringRef FuncName,
-               StringRef EventType,
-               unsigned CondID,
-               StringRef Content);
+  void addEntry(StringRef FileName, unsigned LineNumber, StringRef FuncName,
+                StringRef EventType, unsigned CondID, StringRef Content);
 
   void writeAllLogs(bool SortByLocation = true);
 
-  void setOutputFile(const std::string& Filename) {
+  void setOutputFile(const std::string &Filename) {
     std::lock_guard<std::mutex> lock(LogMutex);
     OutputFileName = Filename;
   }

@@ -12,7 +12,7 @@ using namespace clang;
 class MyASTVisitor : public RecursiveASTVisitor<MyASTVisitor> {
 public:
   explicit MyASTVisitor(Rewriter &R, SourceManager &SM);
-  
+
   bool VisitFunctionDecl(FunctionDecl *Func);
   bool VisitIfStmt(IfStmt *If);
   void analyzeIfCondition(Expr *Cond);
@@ -22,8 +22,9 @@ public:
 private:
   std::string getFuncName(FunctionDecl *Func);
   void getFileAndLine(SourceLocation Loc, std::string &File, int &Line);
-  void writeCSVRow(const std::string &Function, const std::string &File, 
-                  int Line, const std::string &StmtType, const std::string &Condition);
+  void writeCSVRow(const std::string &Function, const std::string &File,
+                   int Line, const std::string &StmtType,
+                   const std::string &Condition);
   std::string getSourceText(SourceRange range);
 
   Rewriter &rewriter;

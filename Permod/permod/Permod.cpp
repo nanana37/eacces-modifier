@@ -4,8 +4,8 @@
 
 #include "ConditionAnalysis.hpp"
 #include "Instrumentation.hpp"
-#include "debug.h"
 #include "LogManager.h"
+#include "debug.h"
 
 using namespace llvm;
 using namespace permod;
@@ -24,19 +24,19 @@ namespace {
 struct PermodPass : public PassInfoMixin<PermodPass> {
   // Use a pointer instead of direct member
   std::unique_ptr<ConditionPrinter> Printer;
-  
+
   // Constructor initializes the pointer
   PermodPass() : Printer(std::make_unique<ConditionPrinter>()) {}
-  
+
   // Now these can be defaulted
-  PermodPass(PermodPass&&) = default;
-  PermodPass& operator=(PermodPass&&) = default;
-  
+  PermodPass(PermodPass &&) = default;
+  PermodPass &operator=(PermodPass &&) = default;
+
   // Break down printValue into smaller methods
   void printValue(Value *V, BasicBlock *CondBB) {
     if (isa<BasicBlock>(V) || isa<Function>(V))
       return;
-    
+
     if (Instruction *I = dyn_cast<Instruction>(V)) {
       printInstruction(I, CondBB);
     } else {
@@ -44,17 +44,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return;
     }
   }
-  
+
   void printConstantOrArgument(Value *V) {
     if (ConstantInt *CI = dyn_cast<ConstantInt>(V)) {
-      *Printer << CI->getSExtValue();  // Use *Printer to dereference
+      *Printer << CI->getSExtValue(); // Use *Printer to dereference
     } else if (isa<ConstantPointerNull>(V)) {
       *Printer << "NULL";
     } else {
       *Printer << V->getName();
     }
   }
-  
+
   void printInstruction(Instruction *I, BasicBlock *CondBB) {
     if (AllocaInst *AI = dyn_cast<AllocaInst>(I)) {
       printAlloca(AI);
@@ -66,7 +66,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       printGenericInstruction(I, CondBB);
     }
   }
-  
+
   void printAlloca(AllocaInst *AI) {
     StringRef name = AI->getName();
 
@@ -171,24 +171,26 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // Extract debug info
     DebugInfo DBinfo;
     ReturnInst *RetI = findReturnInst(F);
-    if (!RetI) return false;
-    
+    if (!RetI)
+      return false;
+
     ConditionAnalysis::getDebugInfo(DBinfo, *RetI, F);
-    
+
     // Perform instrumentation
     Instrumentation Ins(&F);
     long long CondID = 0;
-    
+
     for (BasicBlock &BB : F) {
       if (BB.getTerminator()->getNumSuccessors() <= 1)
         continue;
-        
+
       Printer->clear();
-      *Printer << DBinfo.first << "::" << DBinfo.second << "()#" << CondID << ": ";
-      
+      *Printer << DBinfo.first << "::" << DBinfo.second << "()#" << CondID
+               << ": ";
+
       Instruction *Term = BB.getTerminator();
       std::string CondType;
-      
+
       if (BranchInst *BrI = dyn_cast<BranchInst>(Term)) {
         if (Term->getNumSuccessors() == 2) {
           printValue(BrI->getCondition(), &BB);
@@ -200,21 +202,25 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       } else {
         continue;
       }
-      
+
       unsigned LineNum = 0;
       if (DebugLoc DL = Term->getDebugLoc()) {
         LineNum = DL.getLine();
       }
 
-      LogManager::getInstance().addEntry(
-        DBinfo.first, LineNum, DBinfo.second, CondType, CondID, Printer->str());
-        
+      LogManager::getInstance().addEntry(DBinfo.first,
+                                         LineNum,
+                                         DBinfo.second,
+                                         CondType,
+                                         CondID,
+                                         Printer->str());
+
       // Add instrumentation
       if (Ins.insertBufferFunc(BB, DBinfo, CondID)) {
         CondID++;
       }
     }
-    
+
     return Ins.insertFlushFunc(DBinfo, *RetI->getParent());
   }
 
@@ -222,41 +228,43 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // Filter modules
     if (!shouldProcessModule(M))
       return PreservedAnalyses::all();
-      
+
     bool Modified = false;
     for (auto &F : M.functions()) {
       if (shouldProcessFunction(F)) {
         Modified |= analyzeFunction(F);
       }
     }
-    
+
     // Write all logs to a CSV file
     std::error_code EC;
     llvm::raw_fd_ostream OS("permod_conditions.csv", EC);
     if (!EC) {
       LogManager::getInstance().writeAllLogs(true);
     }
-    
+
     return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();
   }
-  
+
   // Helper methods
   bool shouldProcessModule(Module &M) {
 #ifndef TEST
-    return M.getName().find("/fs/") != std::string::npos;
+    return M.getName().find("fs/") != std::string::npos;
 #else
     return true;
 #endif
   }
-  
+
   bool shouldProcessFunction(Function &F) {
+    // clang-format off
     return !F.isDeclaration() && 
            !F.getName().startswith("llvm") &&
            F.getName() != LOGGR_FUNC && 
            F.getName() != BUFFR_FUNC &&
            F.getName() != FLUSH_FUNC;
+    // clang-format on
   }
-  
+
   ReturnInst *findReturnInst(Function &F) {
     for (auto &BB : F) {
       if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {

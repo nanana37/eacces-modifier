@@ -7,7 +7,7 @@
     "remoteUser": "vscode",
     "mounts": [
         "source=${localWorkspaceFolder},target=/home/vscode/eacces-modifier,type=bind",
-        "source=/path/to/linux-kernel,target=/home/vscode/linux-kernel,type=bind"
+        "source=${localWorkspaceFolder}/../kernel/linux,target=/home/vscode/linux-kernel,type=bind"
     ],
     "workspaceFolder": "/home/vscode/eacces-modifier",
     "postCreateCommand": "cd /home/vscode/eacces-modifier && cmake -S Permod -B Permod/build && cmake -S Macker -B Macker/build",
