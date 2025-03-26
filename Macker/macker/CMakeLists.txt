@@ -6,7 +6,15 @@ add_library(Macker SHARED
   # MyFrontendAction.cpp
 )
 
-target_link_libraries(Macker clangBasic
+target_include_directories(Macker
+  PRIVATE
+    ${LLVM_INCLUDE_DIRS}
+    ${CLANG_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+target_link_libraries(Macker
+  clangBasic
   clangFrontend
   clangAST
   clangASTMatchers
@@ -19,8 +27,8 @@ target_link_libraries(Macker clangBasic
   clangSerialization
   clangTooling
   clangAnalysis
-  )
+)
 
 set_target_properties(Macker PROPERTIES
   PREFIX ""
-  )
+)

@@ -1,5 +1,3 @@
-include_directories(./include)
-
 add_llvm_pass_plugin(PermodPass
     # List your source files here.
     Permod.cpp
@@ -7,4 +5,10 @@ add_llvm_pass_plugin(PermodPass
     ConditionAnalysis.cpp
     Instrumentation.cpp
     LogManager.cpp
+)
+
+target_include_directories(PermodPass
+    PRIVATE
+    ./include
+    ${LLVM_INCLUDE_DIRS}
 )
