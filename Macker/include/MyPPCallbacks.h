@@ -4,7 +4,6 @@
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Lex/PPCallbacks.h"
 #include "clang/Lex/Preprocessor.h"
-#include "llvm/Support/raw_ostream.h"
 
 using namespace clang;
 
@@ -18,6 +17,8 @@ public:
 
 private:
   CompilerInstance &CI;
+  void getFileAndLine(SourceLocation Loc, std::string &FileName, unsigned int &LineNumber);
+  std::string getTokenString(const MacroInfo *MI);
 };
 
 #endif // MY_PP_CALLBACKS_H

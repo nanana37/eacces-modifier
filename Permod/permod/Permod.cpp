@@ -2,11 +2,10 @@
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/PassPlugin.h"
 
-#include "llvm/IR/DebugLoc.h"
-
 #include "ConditionAnalysis.hpp"
 #include "Instrumentation.hpp"
 #include "debug.h"
+#include "LogManager.h"
 
 using namespace llvm;
 using namespace permod;
@@ -23,243 +22,250 @@ namespace {
         ret i32 %2
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
-
-  void printValue(Value *Parent, BasicBlock *CondBB) {
-    // BB won't be a part of condition
-    if (isa<BasicBlock>(Parent)) {
+  // Use a pointer instead of direct member
+  std::unique_ptr<ConditionPrinter> Printer;
+  
+  // Constructor initializes the pointer
+  PermodPass() : Printer(std::make_unique<ConditionPrinter>()) {}
+  
+  // Now these can be defaulted
+  PermodPass(PermodPass&&) = default;
+  PermodPass& operator=(PermodPass&&) = default;
+  
+  // Break down printValue into smaller methods
+  void printValue(Value *V, BasicBlock *CondBB) {
+    if (isa<BasicBlock>(V) || isa<Function>(V))
+      return;
+    
+    if (Instruction *I = dyn_cast<Instruction>(V)) {
+      printInstruction(I, CondBB);
+    } else {
+      printConstantOrArgument(V);
       return;
     }
-    if (isa<Function>(Parent)) {
-      DEBUG_PRINT("Should we print function here?");
-      return;
+  }
+  
+  void printConstantOrArgument(Value *V) {
+    if (ConstantInt *CI = dyn_cast<ConstantInt>(V)) {
+      *Printer << CI->getSExtValue();  // Use *Printer to dereference
+    } else if (isa<ConstantPointerNull>(V)) {
+      *Printer << "NULL";
+    } else {
+      *Printer << V->getName();
+    }
+  }
+  
+  void printInstruction(Instruction *I, BasicBlock *CondBB) {
+    if (AllocaInst *AI = dyn_cast<AllocaInst>(I)) {
+      printAlloca(AI);
+    } else if (CallInst *CI = dyn_cast<CallInst>(I)) {
+      printCall(CI, CondBB);
+    } else if (GetElementPtrInst *GEP = dyn_cast<GetElementPtrInst>(I)) {
+      printGEP(GEP);
+    } else {
+      printGenericInstruction(I, CondBB);
+    }
+  }
+  
+  void printAlloca(AllocaInst *AI) {
+    StringRef name = AI->getName();
+
+    // Pointer variable X passed as function arugment is loaded to X.addr.
+    if (name.endswith(".addr")) {
+      name = name.drop_back(5);
     }
 
-    Instruction *I = dyn_cast<Instruction>(Parent);
-    if (!I) {
-      if (isa<ConstantInt>(Parent)) {
-        PRETTY_PRINT(cast<ConstantInt>(Parent)->getSExtValue());
-        return;
+    // The name of the function's argument is acceptable to be printed.
+    Function *F = AI->getFunction();
+    for (auto &Arg : F->args()) {
+      DEBUG_PRINT2("Arg: " << Arg << "\n");
+      if (Arg.getName().equals(name)) {
+        break;
       }
-      // null pointer does not have name
-      if (isa<ConstantPointerNull>(Parent)) {
-        PRETTY_PRINT("NULL");
-        return;
-      }
-      PRETTY_PRINT(Parent->getName());
-      return;
     }
 
-    if (isa<AllocaInst>(I)) {
-      StringRef name = I->getName();
+    *Printer << name;
+  }
 
-      // Pointer variable X passed as function arugment is loaded to X.addr.
-      if (name.endswith(".addr")) {
-        name = name.drop_back(5);
-      }
-
-      // The name of the function's argument is acceptable to be printed.
-      Function *F = I->getFunction();
-      for (auto &Arg : F->args()) {
-        DEBUG_PRINT2("Arg: " << Arg << "\n");
-        if (Arg.getName().equals(name)) {
-          break;
-        }
-      }
-
-      PRETTY_PRINT(name);
-      return;
-    }
-
-    if (isa<CallInst>(I)) {
-      CallInst *CI = cast<CallInst>(I);
-
-      if (CI->getCalledFunction() == nullptr) {
-        PRETTY_PRINT("call ");
-        return;
-      }
-
-      StringRef name = CI->getCalledFunction()->getName();
-      if (name.empty())
-        name = "NONAME FUNCTION";
-      PRETTY_PRINT(name << "(");
-
-      Value *Arg;
-      for (auto &Arg : CI->args()) {
-        printValue(Arg.get(), CondBB);
-        if (std::next(&Arg) != CI->arg_end()) {
-          PRETTY_PRINT(", ");
-        }
-      }
-
-      PRETTY_PRINT(")");
-      return;
-    }
-
-    // TODO: Nested struct
-    // FIXME: stop using getVarName()
-    if (isa<GetElementPtrInst>(I)) {
-      GetElementPtrInst *GEP = cast<GetElementPtrInst>(I);
-      PRETTY_PRINT(ConditionAnalysis::getStructName(*GEP));
-      PRETTY_PRINT("->");
-      PRETTY_PRINT(ConditionAnalysis::getVarName(*GEP));
+  void printCall(CallInst *CI, BasicBlock *CondBB) {
+    if (CI->getCalledFunction() == nullptr) {
+      *Printer << "call ";
       return;
     }
 
-    DEBUG_PRINT2("\n[TODO] Parent: " << *Parent << "\n");
+    StringRef name = CI->getCalledFunction()->getName();
+    if (name.empty())
+      name = "NONAME FUNCTION";
+    *Printer << name << "(";
+
+    Value *Arg;
+    for (auto &Arg : CI->args()) {
+      printValue(Arg.get(), CondBB);
+      if (std::next(&Arg) != CI->arg_end()) {
+        *Printer << ", ";
+      }
+    }
+
+    *Printer << ")";
+  }
+
+  void printGEP(GetElementPtrInst *GEP) {
+    *Printer << ConditionAnalysis::getStructName(*GEP);
+    *Printer << "->";
+    *Printer << ConditionAnalysis::getVarName(*GEP);
+  }
+
+  void printGenericInstruction(Instruction *I, BasicBlock *CondBB) {
+    DEBUG_PRINT2("\n[TODO] Parent: " << *I << "\n");
 
     Value *Child;
 
     Child = I->getOperand(0);
-    DEBUG_PRINT2("Parent: " << *Parent << "\nChild: " << *Child << "\n");
+    DEBUG_PRINT2("Parent: " << *I << "\nChild: " << *Child << "\n");
     printValue(Child, CondBB);
     if (isa<CmpInst>(I)) {
       switch (cast<CmpInst>(I)->getPredicate()) {
       case CmpInst::Predicate::ICMP_EQ:
-        PRETTY_PRINT(" == ");
+        *Printer << " == ";
         break;
       case CmpInst::Predicate::ICMP_NE:
-        PRETTY_PRINT(" != ");
+        *Printer << " != ";
         break;
       case CmpInst::Predicate::ICMP_UGT:
       case CmpInst::Predicate::ICMP_SGT:
-        PRETTY_PRINT(" > ");
+        *Printer << " > ";
         break;
       case CmpInst::Predicate::ICMP_UGE:
       case CmpInst::Predicate::ICMP_SGE:
-        PRETTY_PRINT(" >= ");
+        *Printer << " >= ";
         break;
       case CmpInst::Predicate::ICMP_ULT:
       case CmpInst::Predicate::ICMP_SLT:
-        PRETTY_PRINT(" < ");
+        *Printer << " < ";
         break;
       case CmpInst::Predicate::ICMP_ULE:
       case CmpInst::Predicate::ICMP_SLE:
-        PRETTY_PRINT(" <= ");
+        *Printer << " <= ";
         break;
       default:
-        PRETTY_PRINT(" cmp_" << cast<CmpInst>(I)->getPredicate() << " ");
+        *Printer << " cmp_" << cast<CmpInst>(I)->getPredicate() << " ";
       }
     } else if (isa<LoadInst>(I) || isa<SExtInst>(I) || isa<ZExtInst>(I) ||
                isa<TruncInst>(I)) {
       // DO NOTHING
     } else {
-      PRETTY_PRINT(" " << I->getOpcodeName() << " ");
+      *Printer << " " << I->getOpcodeName() << " ";
     }
 
     for (int i = 1; i < I->getNumOperands(); i++) {
       Child = I->getOperand(i);
-      DEBUG_PRINT2("Parent: " << *Parent << "\nChild: " << *Child << "\n");
+      DEBUG_PRINT2("Parent: " << *I << "\nChild: " << *Child << "\n");
       printValue(Child, CondBB);
 
       if (i != I->getNumOperands() - 1) {
-        PRETTY_PRINT(" ");
+        *Printer << " ";
       }
     }
   }
-
-  /*
-   *****************
-   * main function *
-   *****************
-   */
-  PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
-#ifndef TEST
-    /* Analyze only fs/ directory */
-    if (M.getName().find("/fs/") == std::string::npos) {
-      DEBUG_PRINT("Skip: " << M.getName() << "\n");
-      return PreservedAnalyses::all();
-    }
-#endif
-    DEBUG_PRINT("Module: " << M.getName() << "\n");
-    bool modified = false;
-    for (auto &F : M.functions()) {
-
-      /* Skip specific functions */
-      if (F.isDeclaration()) {
-        DEBUG_PRINT2("--- Skip Declaration\n");
+  bool analyzeFunction(Function &F) {
+    // Extract debug info
+    DebugInfo DBinfo;
+    ReturnInst *RetI = findReturnInst(F);
+    if (!RetI) return false;
+    
+    ConditionAnalysis::getDebugInfo(DBinfo, *RetI, F);
+    
+    // Perform instrumentation
+    Instrumentation Ins(&F);
+    long long CondID = 0;
+    
+    for (BasicBlock &BB : F) {
+      if (BB.getTerminator()->getNumSuccessors() <= 1)
         continue;
-      }
-      if (F.getName().startswith("llvm")) {
-        DEBUG_PRINT2("--- Skip llvm\n");
-        continue;
-      }
-      if (F.getName() == LOGGR_FUNC || F.getName() == BUFFR_FUNC ||
-          F.getName() == FLUSH_FUNC) {
-        DEBUG_PRINT2("--- Skip permod API\n");
-        continue;
-      }
-      if (!F.getName().startswith("proc_lookup_de")) {
-        // continue;
-      }
-
-      /* Find return statement of the function */
-      ReturnInst *RetI;
-      for (auto &BB : F) {
-        if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
-          RetI = RI;
-          break;
-        }
-      }
-      if (!RetI) {
-        DEBUG_PRINT2("*** No return\n");
-        continue;
-      }
-      if (RetI->getNumOperands() == 0) {
-        DEBUG_PRINT2("** Terminator " << *RetI << " has no operand\n");
-        continue;
-      }
-
-      DebugInfo DBinfo;
-      BasicBlock *RetBB = RetI->getParent();
-      ConditionAnalysis::getDebugInfo(DBinfo, *RetI, F);
-
-      DEBUG_PRINT2("Function:" << F << "\n");
-
-      class Instrumentation Ins(&F);
-      long long cond_num = 0;
-
-      /* Insert logger just before terminator of every BB */
-      for (BasicBlock &BB : F) {
-        if (BB.getTerminator()->getNumSuccessors() <= 1) {
-          continue;
-        }
-        DEBUG_PRINT2("Instrumenting BB: " << BB.getName() << "\n");
-
-        PRETTY_PRINT(DBinfo.first << "::" << DBinfo.second << "()#" << cond_num
-                                  << ": ");
-
-        Instruction *term = BB.getTerminator();
-        if (isa<BranchInst>(term) && term->getNumSuccessors() == 2) {
-          BranchInst *BrI = cast<BranchInst>(term);
+        
+      Printer->clear();
+      *Printer << DBinfo.first << "::" << DBinfo.second << "()#" << CondID << ": ";
+      
+      Instruction *Term = BB.getTerminator();
+      std::string CondType;
+      
+      if (BranchInst *BrI = dyn_cast<BranchInst>(Term)) {
+        if (Term->getNumSuccessors() == 2) {
           printValue(BrI->getCondition(), &BB);
-          PRETTY_PRINT("\n");
-        } else if (isa<SwitchInst>(term)) {
-          printValue(term, &BB);
-          PRETTY_PRINT("\n");
-        } else {
-          DEBUG_PRINT2("Skip this terminator: " << *term << "\n");
-          continue;
+          CondType = "if";
         }
-
-        if (Ins.insertBufferFunc(BB, DBinfo, cond_num)) {
-          modified = true;
-          cond_num++;
-        }
+      } else if (SwitchInst *SI = dyn_cast<SwitchInst>(Term)) {
+        printValue(Term, &BB);
+        CondType = "switch";
+      } else {
+        continue;
+      }
+      
+      unsigned LineNum = 0;
+      if (DebugLoc DL = Term->getDebugLoc()) {
+        LineNum = DL.getLine();
       }
 
-      modified |= Ins.insertFlushFunc(DBinfo, *RetBB);
+      LogManager::getInstance().addEntry(
+        DBinfo.first, LineNum, DBinfo.second, CondType, CondID, Printer->str());
+        
+      // Add instrumentation
+      if (Ins.insertBufferFunc(BB, DBinfo, CondID)) {
+        CondID++;
+      }
     }
+    
+    return Ins.insertFlushFunc(DBinfo, *RetI->getParent());
+  }
 
-    if (modified) {
-      DEBUG_PRINT2("Modified\n");
-      return PreservedAnalyses::none();
-    } else {
-      DEBUG_PRINT2("Not Modified\n");
+  PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM) {
+    // Filter modules
+    if (!shouldProcessModule(M))
       return PreservedAnalyses::all();
+      
+    bool Modified = false;
+    for (auto &F : M.functions()) {
+      if (shouldProcessFunction(F)) {
+        Modified |= analyzeFunction(F);
+      }
     }
-  };
+    
+    // Write all logs to a CSV file
+    std::error_code EC;
+    llvm::raw_fd_ostream OS("permod_conditions.csv", EC);
+    if (!EC) {
+      LogManager::getInstance().writeAllLogs(true);
+    }
+    
+    return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();
+  }
+  
+  // Helper methods
+  bool shouldProcessModule(Module &M) {
+#ifndef TEST
+    return M.getName().find("/fs/") != std::string::npos;
+#else
+    return true;
+#endif
+  }
+  
+  bool shouldProcessFunction(Function &F) {
+    return !F.isDeclaration() && 
+           !F.getName().startswith("llvm") &&
+           F.getName() != LOGGR_FUNC && 
+           F.getName() != BUFFR_FUNC &&
+           F.getName() != FLUSH_FUNC;
+  }
+  
+  ReturnInst *findReturnInst(Function &F) {
+    for (auto &BB : F) {
+      if (auto *RI = dyn_cast_or_null<ReturnInst>(BB.getTerminator())) {
+        return RI;
+      }
+    }
+    return nullptr;
+  }
 };
-
 } // namespace
 
 extern "C" LLVM_ATTRIBUTE_WEAK ::llvm::PassPluginLibraryInfo

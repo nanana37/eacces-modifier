@@ -5,15 +5,13 @@
 mkdir build && cd build
 cmake .. && make
 cd ..
-clang -Xclang -load -Xclang ${MACKER_DIR}/build/macker/MyClangPlugin.so \
-  -Xclang -plugin -Xclang my-ppcallback-plugin \
-  test/test.c
+clang -fplugin=${MACKER_DIR}/build/macker/Macker.so test/test.c
 ```
 
 ### For Linux Kernel
 ```sh
 rm fs/namei.o
 yes "" | make CC=clang \
-  KCFLAGS="-Xclang -load -Xclang ${MACKER_DIR}/build/macker/MyClangPlugin.so -Xclang -plugin -Xclang my-ppcallback-plugin" \
+  KCFLAGS="-fplugin=${MACKER_DIR}/build/macker/Macker.so" \
   fs/namei.o
 ```

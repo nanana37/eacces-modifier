@@ -6,6 +6,7 @@ bin/
 a.out
 *.o
 *.so
+*.csv
 .cache/
 
 trace.dat
