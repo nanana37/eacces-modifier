@@ -12,3 +12,7 @@ target_include_directories(PermodPass
     ./include
     ${LLVM_INCLUDE_DIRS}
 )
+
+if(DEFINED USER_MODE AND USER_MODE)
+    target_compile_definitions(PermodPass PRIVATE USER_MODE=1)
+endif()

@@ -248,7 +248,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
   // Helper methods
   bool shouldProcessModule(Module &M) {
-#ifndef TEST
+#ifndef USER_MODE
     return M.getName().find("fs/") != std::string::npos;
 #else
     return true;

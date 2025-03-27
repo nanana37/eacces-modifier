@@ -1,6 +1,7 @@
 .vscode/
 
 build/
+build-user/
 
 bin/
 a.out

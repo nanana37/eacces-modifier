@@ -2,4 +2,4 @@
 
 #define DEBUG
 // #define DEBUG2
-// #define TEST
+// #define USER_MODE

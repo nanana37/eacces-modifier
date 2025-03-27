@@ -1,12 +1,12 @@
 #include "../permod/include/macro.h"
 
-#ifndef TEST
+#ifndef USER_MODE
 #include <linux/printk.h>
 #define LogFunc(_fmt, ...) pr_info(_fmt, ##__VA_ARGS__)
 #else
 #include <stdio.h>
 #define LogFunc(_fmt, ...) printf(_fmt, ##__VA_ARGS__)
-#endif // TEST
+#endif // USER_MODE
 
 void buffer_cond(long long *ext_list, long long *dst_list, long long nth,
                  long long dest) {
@@ -20,7 +20,7 @@ void buffer_cond(long long *ext_list, long long *dst_list, long long nth,
     *dst_list &= ~(1 << nth);
   }
 }
-#ifndef TEST
+#ifndef USER_MODE
 EXPORT_SYMBOL(buffer_cond);
 #endif
 
@@ -35,6 +35,6 @@ void flush_cond(long long *ext_list, long long *dst_list, const char *pathname,
   *ext_list = 0;
   *dst_list = 0;
 }
-#ifndef TEST
+#ifndef USER_MODE
 EXPORT_SYMBOL(flush_cond);
 #endif
