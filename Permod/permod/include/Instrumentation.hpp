@@ -10,11 +10,11 @@
 extern const char *condTypeStr[];
 #endif // DEBUG
 
-#ifndef USER_MODE
+#if defined(KERNEL_MODE)
 #define LOGGR_FUNC "_printk"
 #else
 #define LOGGR_FUNC "printf"
-#endif // USER_MODE
+#endif
 
 #define BUFFR_FUNC "buffer_cond"
 #define FLUSH_FUNC "flush_cond"

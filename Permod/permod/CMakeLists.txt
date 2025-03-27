@@ -13,6 +13,6 @@ target_include_directories(PermodPass
     ${LLVM_INCLUDE_DIRS}
 )
 
-if(DEFINED USER_MODE AND USER_MODE)
-    target_compile_definitions(PermodPass PRIVATE USER_MODE=1)
+if(DEFINED KERNEL_MODE AND KERNEL_MODE)
+    target_compile_definitions(PermodPass PRIVATE KERNEL_MODE=1)
 endif()

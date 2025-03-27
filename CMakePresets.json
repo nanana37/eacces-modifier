@@ -15,14 +15,14 @@
             }
         },
         {
-            "name": "user",
+            "name": "kernel",
             "inherits": "default",
-            "binaryDir": "${sourceDir}/build-user",
+            "binaryDir": "${sourceDir}/build-kernel",
             "cacheVariables": {
-                "USER_MODE": "1"
+                "KERNEL_MODE": "1"
             },
             "environment": {
-                "BUILD_DIR": "/home/vscode/eacces-modifier/build-user",
+                "BUILD_DIR": "/home/vscode/eacces-modifier/build-kernel",
                 "MACKER_REL_PATH": "Macker/macker/Macker.so",
                 "PERMOD_REL_PATH": "Permod/permod/PermodPass.so"
             }
@@ -34,8 +34,8 @@
             "configurePreset": "default"
         },
         {
-            "name": "user",
-            "configurePreset": "user"
+            "name": "kernel",
+            "configurePreset": "kernel"
         }
     ]
 }

@@ -2,9 +2,6 @@
 
 ## Quick Start
 ```sh
-mkdir build && cd build
-cmake .. && make
-cd ..
 clang -fplugin=${BUILD_DIR}/${MACKER_REL_PATH} test/test.c
 ```
 

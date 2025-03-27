@@ -16,8 +16,8 @@ Use CMake on the root.
 ### Run for a user file
 
 ```sh
-cmake --preset user
-cmake --build --preset user
+cmake --preset default
+cmake --build --preset default
 ```
 
 ```sh
@@ -27,8 +27,8 @@ clang -fplugin=${BUILD_DIR}/${MACKER_REL_PATH} -fplugin=${BUILD_DIR}/${PERMOD_RE
 ### Run for a kernel file
 
 ```sh
-cmake --preset default
-cmake --build --preset default
+cmake --preset kernel
+cmake --build --preset kernel
 ```
 
 In the kernel source directory:
