@@ -4,9 +4,10 @@ build/
 build-kernel/
 
 bin/
-a.out
+*.out
 *.o
 *.so
+*.a
 *.csv
 .cache/
 

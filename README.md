@@ -13,27 +13,29 @@ This repository contains the code for the EACCES Modifier project. The project a
 
 Use CMake on the root.
 
-### Run for a user file
+- Run for a user file
 
 ```sh
-cmake --preset default
-cmake --build --preset default
+./scripts/user.sh <path-to-file>
+
+# Example
+./scripts/user.sh test/test.c # the result will be test/*.csv
 ```
 
+- Run for a kernel file
+
 ```sh
-clang -fplugin=${BUILD_DIR}/${MACKER_REL_PATH} -fplugin=${BUILD_DIR}/${PERMOD_REL_PATH} test.c
+./scripts/kernel.sh <path-to-kernel-src> <target.o>
+
+# Example
+./scripts/kernel.sh ../linux-kernel fs/namei.o
 ```
 
-### Run for a kernel file
+- Run for whole kernel
 
 ```sh
-cmake --preset kernel
-cmake --build --preset kernel
-```
+./scripts/kernel.sh <path-to-kernel-src> all
 
-In the kernel source directory:
-
-```sh
-rm fs/namei.o
-yes "" | make CC=clang KCFLAGS="-g -fno-discard-value-names -fplugin=${BUILD_DIR}/${MACKER_REL_PATH} -fplugin=${BUILD_DIR}/${PERMOD_REL_PATH}" fs/namei.o
+# Example
+./scripts/kernel.sh ../linux-kernel all
 ```
