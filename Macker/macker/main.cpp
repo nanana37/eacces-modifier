@@ -53,12 +53,13 @@ protected:
   bool ParseArgs(const CompilerInstance &CI,
                  const std::vector<std::string> &args) override {
     for (const auto &arg : args) {
-      if (arg == "-enable-pp" || arg == "--enable-pp") {
+      if (arg == "enable-pp") {
+        llvm::outs() << "Macker: Preprocessing callbacks enabled\n";
         enablePPCallbacks = true;
-      } else if (arg == "-help" || arg == "--help") {
+      } else if (arg == "help") {
         llvm::errs()
             << "Macro Tracker Plugin Options:\n"
-            << "  -enable-pp, --enable-pp   : Enable preprocessing callbacks\n";
+            << "  enable-pp   : Enable preprocessing callbacks\n";
       }
     }
     return true;
@@ -74,4 +75,4 @@ protected:
 } // namespace
 
 static FrontendPluginRegistry::Add<MacroTrackerAction>
-    X("macro-tracker", "Trace macro with PPCallbacks");
+    X("macro_tracker", "Trace macro with PPCallbacks");
