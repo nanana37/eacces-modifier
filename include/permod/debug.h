@@ -1,6 +1,6 @@
 #pragma once
 
-#include "macro.h"
+#include "permod/macro.h"
 
 // This is required for DEBUG_VALUE(x)
 #include "llvm/IR/IRBuilder.h"

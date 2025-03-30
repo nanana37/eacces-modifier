@@ -3,8 +3,8 @@
 
 #include "llvm/IR/IRBuilder.h"
 
-#include "Condition.hpp"
-#include "macro.h"
+#include "permod/Condition.hpp"
+#include "permod/macro.h"
 
 #ifdef DEBUG
 extern const char *condTypeStr[];

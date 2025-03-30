@@ -9,7 +9,6 @@ add_llvm_pass_plugin(PermodPass
 
 target_include_directories(PermodPass
     PRIVATE
-    ./include
     ${LLVM_INCLUDE_DIRS}
 )
 

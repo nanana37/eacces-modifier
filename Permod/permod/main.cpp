@@ -2,10 +2,10 @@
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/PassPlugin.h"
 
-#include "ConditionAnalysis.hpp"
-#include "Instrumentation.hpp"
-#include "LogManager.h"
-#include "debug.h"
+#include "permod/ConditionAnalysis.hpp"
+#include "permod/Instrumentation.hpp"
+#include "permod/LogManager.h"
+#include "permod/debug.h"
 
 using namespace llvm;
 using namespace permod;

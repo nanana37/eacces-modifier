@@ -1,4 +1,4 @@
-#include "LogManager.h"
+#include "permod/LogManager.h"
 
 namespace permod {
 

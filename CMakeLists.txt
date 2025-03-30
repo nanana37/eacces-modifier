@@ -17,6 +17,8 @@ add_definitions(${LLVM_DEFINITIONS})
 include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 
+# Find our modules
+include_directories(include)
 add_subdirectory(Macker/macker)
 add_subdirectory(Permod/permod)
 add_subdirectory(Permod/rtlib)

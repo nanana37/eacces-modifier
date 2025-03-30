@@ -1,8 +1,8 @@
 #include "llvm/IR/IRBuilder.h"
 
-#include "Condition.hpp"
-#include "Instrumentation.hpp"
-#include "debug.h"
+#include "permod/Condition.hpp"
+#include "permod/Instrumentation.hpp"
+#include "permod/debug.h"
 #ifdef DEBUG
 extern const char *condTypeStr[];
 #endif // DEBUG

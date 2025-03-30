@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "Condition.hpp"
-#include "macro.h"
+#include "permod/Condition.hpp"
+#include "permod/macro.h"
 #include "llvm/IR/Instructions.h"
 
 #ifdef DEBUG

@@ -3,10 +3,10 @@
 // Analyze conditions that lead to an error
 //
 
-#include "ConditionAnalysis.hpp"
-#include "Condition.hpp"
-#include "OriginFinder.hpp"
-#include "debug.h"
+#include "permod/ConditionAnalysis.hpp"
+#include "permod/Condition.hpp"
+#include "permod/OriginFinder.hpp"
+#include "permod/debug.h"
 
 using namespace llvm;
 

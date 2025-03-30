@@ -10,7 +10,6 @@ target_include_directories(Macker
   PRIVATE
     ${LLVM_INCLUDE_DIRS}
     ${CLANG_INCLUDE_DIRS}
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 target_link_libraries(Macker
