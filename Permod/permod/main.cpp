@@ -237,11 +237,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
     // Write all logs to a CSV file
-    std::error_code EC;
-    llvm::raw_fd_ostream OS("permod_conditions.csv", EC);
-    if (!EC) {
-      LogManager::getInstance().writeAllLogs(true);
-    }
+    LogManager::getInstance().writeAllLogs(true);
 
     return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();
   }

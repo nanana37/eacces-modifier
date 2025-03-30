@@ -57,9 +57,8 @@ protected:
         llvm::outs() << "Macker: Preprocessing callbacks enabled\n";
         enablePPCallbacks = true;
       } else if (arg == "help") {
-        llvm::errs()
-            << "Macro Tracker Plugin Options:\n"
-            << "  enable-pp   : Enable preprocessing callbacks\n";
+        llvm::errs() << "Macro Tracker Plugin Options:\n"
+                     << "  enable-pp   : Enable preprocessing callbacks\n";
       }
     }
     return true;
