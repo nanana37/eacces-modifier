@@ -18,7 +18,7 @@ include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 
 # Find our modules
-include_directories(include)
+include_directories(${CMAKE_SOURCE_DIR}/include)
 add_subdirectory(Macker/macker)
 add_subdirectory(Permod/permod)
 add_subdirectory(Permod/rtlib)
