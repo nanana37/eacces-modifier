@@ -39,6 +39,9 @@ void LogManager::addEntry(const std::string &EventType,
 }
 
 void LogManager::writeAllLogs(bool SortByLocation) {
+#if defined(DEBUG)
+  llvm::outs() << "Macker: Writing logs to CSV file...\n";
+#endif
   std::lock_guard<std::mutex> lock(LogMutex);
 
   // Create a file output stream like Permod does

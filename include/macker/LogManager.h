@@ -40,7 +40,7 @@ private:
   LogManager();
   std::vector<LogEntry> Logs;
   std::mutex LogMutex;
-  std::string OutputFileName = "macker_results.csv";
+  std::string OutputFileName = "macker_logs.csv";
 };
 
 } // namespace macker

@@ -55,7 +55,7 @@ private:
   LogManager() {}
   std::vector<LogEntry> Logs;
   std::mutex LogMutex;
-  std::string OutputFileName = "permod_conditions.csv";
+  std::string OutputFileName = "permod_logs.csv";
 
   std::string escapeCSV(const std::string &Str);
 };

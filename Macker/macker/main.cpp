@@ -28,7 +28,21 @@ public:
   }
 
   void HandleTranslationUnit(ASTContext &Context) override {
+#if defined(DEBUG)
+    llvm::outs() << "Macker: Starting macro tracking...\n";
+#endif
     visitor.TraverseDecl(Context.getTranslationUnitDecl());
+
+#if defined(DEBUG)
+    llvm::outs() << "Macker: Macro tracking completed.\n";
+    llvm::outs() << "Macker: Writing logs to CSV file...\n";
+    std::string fileName =
+        Context.getSourceManager()
+            .getFileEntryForID(Context.getSourceManager().getMainFileID())
+            ->getName()
+            .str();
+    llvm::outs() << "Macker: File: " << fileName << "\n";
+#endif
 
     // Output the logs after traversal is complete
     macker::LogManager::getInstance().writeAllLogs(true);
@@ -64,9 +78,10 @@ protected:
     return true;
   }
 
-  // Enable this plugin to run after the main action
   PluginASTAction::ActionType getActionType() override {
-    return AddAfterMainAction;
+    // NOTE: This plugin should run before the main action (e.g., compilation)
+    // to ensure that logs are generated to be used by the LLVM pass.
+    return AddBeforeMainAction;
   }
 
   void ExecuteAction() override { PluginASTAction::ExecuteAction(); }

@@ -2,13 +2,14 @@
 #include "llvm/Passes/PassBuilder.h"
 #include "llvm/Passes/PassPlugin.h"
 
+#include "macker/LogManager.h"
 #include "permod/ConditionAnalysis.hpp"
 #include "permod/Instrumentation.hpp"
 #include "permod/LogManager.h"
+#include "permod/LogParser.h"
 #include "permod/debug.h"
 
 using namespace llvm;
-using namespace permod;
 
 namespace {
 
@@ -176,6 +177,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
     ConditionAnalysis::getDebugInfo(DBinfo, *RetI, F);
 
+#if defined(KERNEL_MODE)
+    // Print IR
+    if (F.getName() == "acl_permission_check") {
+      // if (F.getName() == "may_open") {
+      DEBUG_PRINT("Function: " << F.getName() << "\n");
+      DEBUG_PRINT(F << "\n");
+    } else {
+      return false;
+    }
+#endif
+
     // Perform instrumentation
     Instrumentation Ins(&F);
     long long CondID = 0;
@@ -208,6 +220,17 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         LineNum = DL.getLine();
       }
 
+#if not defined(KERNEL_MODE)
+      DEBUG_PRINT("******\n");
+      DEBUG_PRINT("Adding entry to LogManager\n");
+      DEBUG_PRINT("DBinfo: " << DBinfo.first << ", " << DBinfo.second << "\n");
+      DEBUG_PRINT("LineNum: " << LineNum << "\n");
+      DEBUG_PRINT2("CondType: " << CondType << "\n");
+      DEBUG_PRINT2("CondID: " << CondID << "\n");
+      DEBUG_PRINT("Printer: " << Printer->str() << "\n");
+      DEBUG_PRINT(BB << "\n");
+      DEBUG_PRINT("******\n");
+#endif
       LogManager::getInstance().addEntry(DBinfo.first,
                                          LineNum,
                                          DBinfo.second,
@@ -229,6 +252,22 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (!shouldProcessModule(M))
       return PreservedAnalyses::all();
 
+    // Parse Macker Logs
+    LogParser parser("macker_logs.csv");
+    parser.parse();
+
+#if defined(DEBUG)
+    // Print parsed logs for debugging
+    const auto &logs = parser.getParsedLogs();
+    for (const auto &log : logs) {
+      llvm::outs() << "File: " << log.FileName << ", Line: " << log.LineNumber
+                   << ", Function: " << log.FunctionName
+                   << ", Event: " << log.EventType
+                   << ", Content: " << log.Content
+                   << ", Extra: " << log.ExtraInfo << "\n";
+    }
+#endif
+
     bool Modified = false;
     for (auto &F : M.functions()) {
       if (shouldProcessFunction(F)) {
@@ -236,6 +275,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
     }
 
+#if defined(DEBUG)
+    llvm::outs() << "Permod: Finished analyzing functions.\n";
+    llvm::outs() << "Permod: Writing logs to CSV file...\n";
+    llvm::outs() << "Permod: File: " << M.getName() << "\n";
+#endif
     // Write all logs to a CSV file
     LogManager::getInstance().writeAllLogs(true);
 

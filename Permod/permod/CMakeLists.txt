@@ -5,6 +5,7 @@ add_llvm_pass_plugin(PermodPass
     ConditionAnalysis.cpp
     Instrumentation.cpp
     LogManager.cpp
+    LogParser.cpp
 )
 
 target_include_directories(PermodPass
