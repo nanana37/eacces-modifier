@@ -1,6 +1,6 @@
 #pragma once
 
-#include "permod/macro.h"
+#include "utils/macro.h"
 
 // This is required for DEBUG_VALUE(x)
 #include "llvm/IR/IRBuilder.h"
@@ -12,7 +12,7 @@ using namespace llvm;
     errs() << x;                                                               \
   } while (0)
 
-#ifdef DEBUG
+#if defined(DEBUG)
 #define MAX_TRACE_DEPTH 20
 #define DEBUG_PRINT(x)                                                         \
   do {                                                                         \
@@ -25,7 +25,7 @@ using namespace llvm;
   } while (0)
 #endif // DEBUG
 
-#ifdef DEBUG2
+#if defined(DEBUG2)
 #define DEBUG_VALUE(x)                                                         \
   do {                                                                         \
     if (!x)                                                                    \

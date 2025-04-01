@@ -1,5 +1,4 @@
-#ifndef MY_AST_VISITOR_H
-#define MY_AST_VISITOR_H
+#pragma once
 
 #include "clang/AST/RecursiveASTVisitor.h"
 #include "clang/AST/Stmt.h"
@@ -31,5 +30,3 @@ private:
   SourceManager &srcManager;
   FunctionDecl *CurrentFunction;
 };
-
-#endif // MY_AST_VISITOR_H

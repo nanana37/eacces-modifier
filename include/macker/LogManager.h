@@ -1,5 +1,4 @@
-#ifndef MACKER_LOG_MANAGER_H
-#define MACKER_LOG_MANAGER_H
+#pragma once
 
 #include <mutex>
 #include <string>
@@ -44,5 +43,3 @@ private:
 };
 
 } // namespace macker
-
-#endif // MACKER_LOG_MANAGER_H

@@ -6,7 +6,7 @@
 #include "permod/ConditionAnalysis.hpp"
 #include "permod/Condition.hpp"
 #include "permod/OriginFinder.hpp"
-#include "permod/debug.h"
+#include "utils/debug.h"
 
 using namespace llvm;
 

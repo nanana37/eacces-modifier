@@ -1,5 +1,4 @@
-#ifndef PERMOD_LOGPARSER_H
-#define PERMOD_LOGPARSER_H
+#pragma once
 
 #include "macker/LogManager.h"
 #include <string>
@@ -19,5 +18,3 @@ private:
 };
 
 } // namespace permod
-
-#endif // PERMOD_LOGPARSER_H

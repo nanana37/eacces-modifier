@@ -8,7 +8,7 @@
 
 void buffer_cond(long long *ext_list, long long *dst_list, long long nth,
                  long long dest) {
-#ifdef DEBUG2
+#if defined(DEBUG)
   LogFunc("buffer_cond(%lld, %lld)\n", nth, dest);
 #endif
   *ext_list |= (1 << nth);

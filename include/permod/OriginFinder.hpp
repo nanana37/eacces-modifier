@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "permod/debug.h"
+#include "utils/debug.h"
 #include "llvm/IR/InstVisitor.h"
 #include "llvm/IR/Instructions.h"
 

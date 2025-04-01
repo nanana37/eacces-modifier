@@ -6,10 +6,10 @@
 #pragma once
 
 #include "permod/Condition.hpp"
-#include "permod/macro.h"
+#include "utils/macro.h"
 #include "llvm/IR/Instructions.h"
 
-#ifdef DEBUG
+#if defined(DEBUG)
 extern const char *condTypeStr[];
 #endif // DEBUG
 

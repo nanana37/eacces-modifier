@@ -2,8 +2,8 @@
 
 #include "permod/Condition.hpp"
 #include "permod/Instrumentation.hpp"
-#include "permod/debug.h"
-#ifdef DEBUG
+#include "utils/debug.h"
+#if defined(DEBUG)
 extern const char *condTypeStr[];
 #endif // DEBUG
 

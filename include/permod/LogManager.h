@@ -1,5 +1,4 @@
-#ifndef PERMOD_LOG_MANAGER_H
-#define PERMOD_LOG_MANAGER_H
+#pragma once
 
 #include "llvm/Support/raw_ostream.h"
 #include <mutex>
@@ -61,5 +60,3 @@ private:
 };
 
 } // namespace permod
-
-#endif // PERMOD_LOG_MANAGER_H

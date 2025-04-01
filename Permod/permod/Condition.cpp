@@ -1,11 +1,11 @@
 //===-- Condition.cpp - Implement the Condition class ---------------------===//
 
 #include "permod/Condition.hpp"
-#include "permod/debug.h"
+#include "utils/debug.h"
 
 using namespace permod;
 
-#ifdef DEBUG
+#if defined(DEBUG)
 const char *condTypeStr[NUM_OF_CONDTYPE] = {
     "CMPTRU", "CMPFLS", "CMP_GT", "CMP_GE", "CMP_LT", "CMP_LE",
     "NLLTRU", "NLLFLS", "CALTRU", "CALFLS", "ANDTRU", "ANDFLS",

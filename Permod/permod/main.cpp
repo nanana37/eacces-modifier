@@ -7,7 +7,7 @@
 #include "permod/Instrumentation.hpp"
 #include "permod/LogManager.h"
 #include "permod/LogParser.h"
-#include "permod/debug.h"
+#include "utils/debug.h"
 
 using namespace llvm;
 
@@ -220,7 +220,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         LineNum = DL.getLine();
       }
 
-#if not defined(KERNEL_MODE)
+#if defined(DEBUG2)
       DEBUG_PRINT("******\n");
       DEBUG_PRINT("Adding entry to LogManager\n");
       DEBUG_PRINT("DBinfo: " << DBinfo.first << ", " << DBinfo.second << "\n");
@@ -256,7 +256,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     LogParser parser("macker_logs.csv");
     parser.parse();
 
-#if defined(DEBUG)
+#if defined(DEBUG2)
     // Print parsed logs for debugging
     const auto &logs = parser.getParsedLogs();
     for (const auto &log : logs) {
