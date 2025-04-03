@@ -85,7 +85,7 @@ bool MyASTVisitor::VisitIfStmt(IfStmt *If) {
 
 void MyASTVisitor::analyzeIfCondition(Expr *Cond) {
   if (BinaryOperator *BO = dyn_cast<BinaryOperator>(Cond)) {
-    if (BO->getOpcode() == BO_LOr) {
+    if (BO->getOpcode() == BO_LOr || BO->getOpcode() == BO_LAnd) {
       analyzeIfCondition(BO->getLHS());
       analyzeIfCondition(BO->getRHS());
       return;
@@ -135,9 +135,10 @@ bool MyASTVisitor::VisitCaseStmt(CaseStmt *Case) {
 }
 
 std::string MyASTVisitor::getSourceText(SourceRange range) {
-  return Lexer::getSourceText(CharSourceRange::getTokenRange(range),
-                              srcManager,
-                              LangOptions(),
-                              0)
-      .str();
+  std::string Text =
+      Lexer::getSourceText(
+          CharSourceRange::getTokenRange(range), srcManager, LangOptions(), 0)
+          .str();
+  Text.erase(std::remove(Text.begin(), Text.end(), '\n'), Text.end());
+  return Text;
 }
