@@ -39,17 +39,29 @@ void LogParser::parse() {
       }
     }
 
-    // Split the line into components
+    // Split the line into components, handling fields enclosed in double quotes
     std::istringstream LineStream(Line);
     std::string FileName, LineNumber, FunctionName, EventType, Content,
         ExtraInfo;
 
-    std::getline(LineStream, FileName, ',');
-    std::getline(LineStream, LineNumber, ',');
-    std::getline(LineStream, FunctionName, ',');
-    std::getline(LineStream, EventType, ',');
-    std::getline(LineStream, Content, ',');
-    std::getline(LineStream, ExtraInfo, ',');
+    auto getField = [](std::istringstream &stream) -> std::string {
+      std::string field;
+      if (stream.peek() == '"') {
+        stream.get(); // Consume the opening quote
+        std::getline(stream, field, '"');
+        stream.get(); // Consume the comma after the closing quote
+      } else {
+        std::getline(stream, field, ',');
+      }
+      return field;
+    };
+
+    FileName = getField(LineStream);
+    LineNumber = getField(LineStream);
+    FunctionName = getField(LineStream);
+    EventType = getField(LineStream);
+    Content = getField(LineStream);
+    ExtraInfo = getField(LineStream);
 
     if (LineNumber.empty() ||
         !std::all_of(LineNumber.begin(), LineNumber.end(), ::isdigit)) {
