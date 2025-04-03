@@ -27,7 +27,7 @@ public:
                 int LineNumber, const std::string &FunctionName,
                 const std::string &Content, const std::string &ExtraInfo = "");
 
-  void writeAllLogs(bool SortByLocation = true);
+  void writeAllLogs(bool SortByLocation = false);
 
   // Set output file name (defaults to "macker_results.csv")
   void setOutputFile(const std::string &Filename) {

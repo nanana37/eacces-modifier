@@ -45,7 +45,7 @@ public:
 #endif
 
     // Output the logs after traversal is complete
-    macker::LogManager::getInstance().writeAllLogs(true);
+    macker::LogManager::getInstance().writeAllLogs();
   }
 };
 

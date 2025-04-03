@@ -43,7 +43,7 @@ public:
   void addEntry(StringRef FileName, unsigned LineNumber, StringRef FuncName,
                 StringRef EventType, unsigned CondID, StringRef Content);
 
-  void writeAllLogs(bool SortByLocation = true);
+  void writeAllLogs(bool SortByLocation = false);
 
   void setOutputFile(const std::string &Filename) {
     std::lock_guard<std::mutex> lock(LogMutex);

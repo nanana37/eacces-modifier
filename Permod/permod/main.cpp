@@ -281,7 +281,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     llvm::outs() << "Permod: File: " << M.getName() << "\n";
 #endif
     // Write all logs to a CSV file
-    LogManager::getInstance().writeAllLogs(true);
+    LogManager::getInstance().writeAllLogs();
 
     return Modified ? PreservedAnalyses::none() : PreservedAnalyses::all();
   }
