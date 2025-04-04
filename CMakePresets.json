@@ -6,12 +6,12 @@
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release"
+                "USER_MODE": "1"
             }
         },
         {
             "name": "kernel",
-            "inherits": "default",
+            "generator": "Ninja",
             "binaryDir": "${sourceDir}/build-kernel",
             "cacheVariables": {
                 "KERNEL_MODE": "1"

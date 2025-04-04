@@ -8,6 +8,9 @@ bin/
 *.o
 *.so
 *.a
+*.o.cmd
+*.o.d
+
 *.csv
 .cache/
 

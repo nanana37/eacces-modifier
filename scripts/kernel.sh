@@ -58,7 +58,7 @@ cd "$KERNEL_SRC"
 # TODO: Build whole kernel with rtlib
 # Need to put Permod/rtlib in the kernel source tree
 if [ "$TARGET" == "all" ]; then
-  yes "" | make CC=clang KCFLAGS="$CLANG_OPTS"
+  yes "" | make -j 16 CC=clang KCFLAGS="$CLANG_OPTS"
   exit 0
 fi
 
