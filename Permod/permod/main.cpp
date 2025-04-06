@@ -235,8 +235,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                                               << "\n");
 
       Printer->clear();
-      *Printer << DBinfo.first << "::" << DBinfo.second << "()#" << CondID
-               << ": ";
       *Printer << mackerLogEntry->Content;
 
       std::string CondType;
