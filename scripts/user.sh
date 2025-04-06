@@ -1,8 +1,12 @@
 #!/bin/bash
 
 # Parse command line arguments
-while getopts ":mh" opt; do
+while getopts ":mhd" opt; do
   case $opt in
+    d)
+      echo "** Debug mode enabled **"
+      MODE_DEBUG=1
+      ;;
     m)
       echo "** Macro tracking enabled **"
       MODE_MACRO_TRACKING=1
@@ -25,6 +29,9 @@ if [ -z "$TARGET" ]; then
   exit 1
 fi
 
+if [ $MODE_DEBUG ]; then
+  echo "** Sorry, debug mode is not supported yet **"
+fi
 cmake --preset default
 cmake --build --preset default
 

@@ -3,6 +3,8 @@
 #include "clang/Lex/Lexer.h"
 #include "llvm/Support/raw_ostream.h"
 
+#include "utils/debug.h"
+
 using namespace clang;
 using namespace macker;
 
@@ -56,7 +58,8 @@ void MyASTVisitor::getFileAndLine(SourceLocation Loc, std::string &File,
 void MyASTVisitor::writeCSVRow(const std::string &Function,
                                const std::string &File, int Line,
                                const std::string &StmtType,
-                               const std::string &Condition) {
+                               const std::string &Condition,
+                               const std::string &Extra = "") {
   // Call LogManager with the correct parameter order to match our fields:
   // File, Line, Function, EventType, Content, ExtraInfo
   LogManager::getInstance().addEntry(StmtType,  // EventType
@@ -64,7 +67,7 @@ void MyASTVisitor::writeCSVRow(const std::string &Function,
                                      Line,      // Line
                                      Function,  // Function
                                      Condition, // Content
-                                     "");       // ExtraInfo
+                                     Extra);    // ExtraInfo
 }
 
 bool MyASTVisitor::VisitFunctionDecl(FunctionDecl *Func) {
@@ -125,12 +128,26 @@ bool MyASTVisitor::VisitCaseStmt(CaseStmt *Case) {
 
   SourceRange CaseRange = LHS->getSourceRange();
   std::string CaseText = getSourceText(CaseRange);
+  std::string ValueText = CaseText;
 
   std::string File;
   int Line;
   getFileAndLine(CaseRange.getBegin(), File, Line);
 
-  writeCSVRow(getFuncName(CurrentFunction), File, Line, "case", CaseText);
+  // Find if the case text is being expanded as a macro
+  auto EMList = LogManager::getInstance().getExpandedMacros();
+  const auto &EM =
+      std::find_if(EMList.begin(),
+                   EMList.end(),
+                   [&](const LogManager::ExpandedMacroInfo &EM) {
+                     return EM.FileName == File && EM.LineNumber == Line;
+                   });
+  if (EM != EMList.end() && EM->MacroName == CaseText) {
+    DEBUG_PRINT2("Found expanded macro: " << EM->MacroName << "\n");
+    ValueText = EM->MacroValue;
+  }
+  writeCSVRow(
+      getFuncName(CurrentFunction), File, Line, "case", CaseText, ValueText);
   return true;
 }
 

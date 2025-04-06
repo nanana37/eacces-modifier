@@ -204,22 +204,33 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (Term->getMetadata("nosanitize"))
         continue;
 
+      // print the terminator instruction
+      DEBUG_PRINT2("Term: " << *Term << "\n");
+      DEBUG_PRINT2("(LLVM) Line: " << (Term->getDebugLoc()).getLine() << "\n");
+
       // Check if the terminator of the current block has been logged
       const macker::LogManager::LogEntry *mackerLogEntry = nullptr;
       for (const auto &log : FunctionLogs) {
+        // Skip "case" log entries
+        // TODO: reffer to them when analyzing "switch"
         if ("case" == log.EventType) {
           DEBUG_PRINT2("Found case log entry: " << log.Content << "\n");
           continue;
         }
-        if (log.LineNumber == (Term->getDebugLoc()).getLine() &&
-            log.FunctionName == F.getName()) {
+        // print log entry
+        DEBUG_PRINT2("Log: " << log.Content << "\n");
+        DEBUG_PRINT2("File: " << log.FileName << "\n");
+        DEBUG_PRINT2("(Clang) Line: " << log.LineNumber << "\n");
+        if (log.LineNumber == (Term->getDebugLoc()).getLine()) {
+          DEBUG_PRINT2("Found macker log entry: " << log.Content << "\n");
           mackerLogEntry = &log;
           break;
         }
       }
-      DEBUG_PRINT2("Terminator: " << *Term << "\n");
-      if (!mackerLogEntry)
+      if (!mackerLogEntry) {
+        DEBUG_PRINT2("No macker log entry found\n");
         continue;
+      }
       DEBUG_PRINT2("Found macker log entry: " << mackerLogEntry->Content
                                               << "\n");
 
@@ -266,6 +277,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       // Add instrumentation
       if (Ins.insertBufferFunc(BB, DBinfo, CondID)) {
         CondID++;
+        DEBUG_PRINT2("Inserted at " << BB.getName() << "\n");
+        DEBUG_PRINT2(BB << "\n");
       }
     }
 
@@ -320,11 +333,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       }
     }
 
-#if defined(DEBUG)
-    llvm::outs() << "Permod: Finished analyzing functions.\n";
-    llvm::outs() << "Permod: Writing logs to CSV file...\n";
-    llvm::outs() << "Permod: File: " << M.getName() << "\n";
-#endif
+    DEBUG_PRINT2("Permod: Finished analyzing functions.\n");
+    DEBUG_PRINT2("Permod: Writing logs to CSV file...\n");
+    DEBUG_PRINT2("Permod: File: " << M.getName() << "\n");
     // Write all logs to a CSV file
     LogManager::getInstance().writeAllLogs();
 

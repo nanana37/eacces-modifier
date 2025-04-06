@@ -1,6 +1,8 @@
 // test.c
 #include <stdio.h>
 
+#define EACCES 13
+
 #define HOGE 123
 #define FOO(x) ((x) + 1)
 
@@ -11,41 +13,45 @@
 
 #define CHECK(x) ((x) > 0)
 
+int func(int i) {
+  if (CHECK(i)) {
+    printf("check\n");
+  } else {
+    printf("not check\n");
+  }
+
+  if (i == 0) {
+    printf("i is 0\n");
+  } else if (i == 1 || i == 4) {
+    printf("i is 1\n");
+  } else {
+    printf("i is not 0 or 1\n");
+  }
+
+  switch (i) {
+  case CASE_1:
+    printf("case 1\n");
+  case CASE_2:
+    printf("case 2\n");
+    return -EACCES;
+  case CASE_3:
+    printf("case 3\n");
+    return -EACCES;
+  default:
+    printf("default\n");
+    break;
+  }
+
+  return 0;
+}
+
 int main() {
   int a = HOGE;
   int b = FOO(a);
   printf("%d\n", b);
 
   for (int i = 0; i < 5; i++) {
-    if (CHECK(i)) {
-      printf("check\n");
-    } else {
-      printf("not check\n");
-    }
-
-    if (i == 0) {
-      printf("i is 0\n");
-    } else if (i == 1 || i == 4) {
-      printf("i is 1\n");
-    } else {
-      printf("i is not 0 or 1\n");
-    }
-
-    switch (i) {
-    case CASE_1:
-      printf("case 1\n");
-      break;
-    case CASE_2:
-      printf("case 2\n");
-      break;
-    case CASE_3:
-      printf("case 3\n");
-      break;
-    default:
-      printf("default\n");
-      break;
-    }
+    func(i);
   }
-
   return 0;
 }

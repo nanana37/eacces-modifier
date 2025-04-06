@@ -23,7 +23,7 @@ private:
   void getFileAndLine(SourceLocation Loc, std::string &File, int &Line);
   void writeCSVRow(const std::string &Function, const std::string &File,
                    int Line, const std::string &StmtType,
-                   const std::string &Condition);
+                   const std::string &Condition, const std::string &Extra);
   std::string getSourceText(SourceRange range);
 
   Rewriter &rewriter;

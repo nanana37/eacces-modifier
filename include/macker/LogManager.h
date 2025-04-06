@@ -29,10 +29,27 @@ public:
 
   void writeAllLogs(bool SortByLocation = false);
 
-  // Set output file name (defaults to "macker_results.csv")
+  // Set output file name (defaults to "macker_logs.csv")
   void setOutputFile(const std::string &Filename) {
     std::lock_guard<std::mutex> lock(LogMutex);
     OutputFileName = Filename;
+  }
+
+  struct ExpandedMacroInfo {
+    std::string MacroName;
+    std::string MacroValue;
+    std::string FileName;
+    int LineNumber;
+  };
+  void addExpandedMacro(const std::string &MacroName,
+                        const std::string &MacroValue,
+                        const std::string &FileName, int LineNumber) {
+    std::lock_guard<std::mutex> lock(LogMutex);
+    ExpandedMacros.push_back({MacroName, MacroValue, FileName, LineNumber});
+  }
+  // Get expanded macros
+  const std::vector<ExpandedMacroInfo> &getExpandedMacros() const {
+    return ExpandedMacros;
   }
 
 private:
@@ -40,6 +57,7 @@ private:
   std::vector<LogEntry> Logs;
   std::mutex LogMutex;
   std::string OutputFileName = "macker_logs.csv";
+  std::vector<ExpandedMacroInfo> ExpandedMacros;
 };
 
 } // namespace macker

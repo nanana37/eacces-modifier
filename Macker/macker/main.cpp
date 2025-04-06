@@ -7,6 +7,8 @@
 #include "clang/Frontend/FrontendPluginRegistry.h"
 #include "clang/Rewrite/Core/Rewriter.h"
 
+#include "utils/debug.h"
+
 namespace {
 
 class MacroTrackerConsumer : public ASTConsumer {
@@ -28,12 +30,10 @@ public:
   }
 
   void HandleTranslationUnit(ASTContext &Context) override {
-#if defined(DEBUG)
-    llvm::outs() << "Macker: Starting macro tracking...\n";
-#endif
+    DEBUG_PRINT2("Macker: Starting macro tracking...\n");
     visitor.TraverseDecl(Context.getTranslationUnitDecl());
 
-#if defined(DEBUG)
+#if defined(DEBUG2)
     llvm::outs() << "Macker: Macro tracking completed.\n";
     llvm::outs() << "Macker: Writing logs to CSV file...\n";
     std::string fileName =
@@ -66,9 +66,23 @@ protected:
 
   bool ParseArgs(const CompilerInstance &CI,
                  const std::vector<std::string> &args) override {
+
+    std::string fileName =
+        CI.getSourceManager()
+            .getFileEntryForID(CI.getSourceManager().getMainFileID())
+            ->getName()
+            .str();
+#if defined(KERNEL) && defined(DEBUG)
+    // FIXME: Macker currently only works with fs/namei.c
+    DEBUG_PRINT("Macker: This plugin only works with fs/namei.c\n");
+    if (fileName.find("fs/namei.c") == std::string::npos) {
+      return false;
+    }
+#endif
+
     for (const auto &arg : args) {
       if (arg == "enable-pp") {
-        llvm::outs() << "Macker: Preprocessing callbacks enabled\n";
+        DEBUG_PRINT2("Macker: Preprocessing callbacks enabled\n");
         enablePPCallbacks = true;
       } else if (arg == "help") {
         llvm::errs() << "Macro Tracker Plugin Options:\n"

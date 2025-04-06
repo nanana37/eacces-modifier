@@ -5,5 +5,5 @@ add_library(Permod_rt STATIC
 if(DEFINED USER_MODE AND USER_MODE)
     target_compile_definitions(Permod_rt PRIVATE USER_MODE=1)
 elseif(DEFINED KERNEL_MODE AND KERNEL_MODE)
-    target_compile_definitions(PermodPass PRIVATE KERNEL_MODE=1)
+    target_compile_definitions(Permod_rt PRIVATE KERNEL_MODE=1)
 endif()
