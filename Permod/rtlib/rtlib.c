@@ -1,6 +1,6 @@
 #if !defined(USER_MODE)
 #include <linux/printk.h>
-#define LogFunc(_fmt, ...) pr_info(_fmt, ##__VA_ARGS__)
+#define LogFunc(_fmt, ...) pr_debug(_fmt, ##__VA_ARGS__)
 #else // USER_MODE
 #include <stdio.h>
 #define LogFunc(_fmt, ...) fprintf(stderr, _fmt, ##__VA_ARGS__)

@@ -73,9 +73,9 @@ protected:
             ->getName()
             .str();
 #if defined(KERNEL) && defined(DEBUG)
-    // FIXME: Macker currently only works with fs/namei.c
-    DEBUG_PRINT("Macker: This plugin only works with fs/namei.c\n");
-    if (fileName.find("fs/namei.c") == std::string::npos) {
+    // FIXME: Macker currently only works with specified file names.
+    DEBUG_PRINT("Macker: This plugin only works with fs\n");
+    if (fileName.find("fs") == std::string::npos) {
       return false;
     }
 #endif

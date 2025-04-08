@@ -343,7 +343,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   // Helper methods
   bool shouldProcessModule(Module &M) {
 #if defined(KERNEL_MODE)
-    return M.getName().find("fs/namei.c") != std::string::npos;
+    return M.getName().find("fs/") != std::string::npos;
 #else
     return true;
 #endif
