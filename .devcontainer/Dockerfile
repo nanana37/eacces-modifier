@@ -35,7 +35,7 @@ RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-${LLVM_VER
 # Install for Linux Kernel Build
 RUN apt-get update && apt-get install -y \
     bc binutils bison dwarves flex gcc git make openssl \
-    pahole perl-base libssl-dev libelf-dev zstd \
+    pahole perl-base libssl-dev libelf-dev zstd lz4 kmod \
     && rm -rf /var/lib/apt/lists/*
 
 CMD ["/bin/bash"]
