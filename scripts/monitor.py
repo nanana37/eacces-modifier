@@ -56,5 +56,7 @@ with open(args.log_file) as f:
                 # Output line number and content
                 if entry['EventType'] == "if":
                     print(f"[#{entry['Line']}] {entry['Content']} ({'True' if ((flagB >> i) & 1) else 'False'})")
+                elif entry['EventType'] == "if-reverse":
+                    print(f"[#{entry['Line']}] {entry['Content']} ({'False' if ((flagB >> i) & 1) else 'True'})")
                 elif entry['EventType'] == "switch":
                     print(f"[#{entry['Line']}] {entry['Content']} (switch)")

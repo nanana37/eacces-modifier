@@ -39,56 +39,18 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       return;
 
     DEBUG_PRINT("printValue: " << *V << "\n");
-    if (Instruction *I = dyn_cast<Instruction>(V)) {
+    DEBUG_PRINT("BB: " << *CondBB << "\n");
+    if (auto *I = dyn_cast<Instruction>(V)) {
       printInstruction(I, CondBB);
-    } else {
-      // printConstantOrArgument(V);
-      return;
     }
-  }
 
-  void printConstantOrArgument(Value *V) {
-    if (ConstantInt *CI = dyn_cast<ConstantInt>(V)) {
-      *Printer << CI->getSExtValue(); // Use *Printer to dereference
-    } else if (isa<ConstantPointerNull>(V)) {
-      *Printer << "NULL";
-    } else {
-      *Printer << V->getName();
-    }
+    return;
   }
 
   void printInstruction(Instruction *I, BasicBlock *CondBB) {
     DEBUG_PRINT("printInstruction: " << *I << "\n");
-    if (AllocaInst *AI = dyn_cast<AllocaInst>(I)) {
-      // printAlloca(AI);
-    } else if (CallInst *CI = dyn_cast<CallInst>(I)) {
-      printCall(CI, CondBB);
-    } else if (GetElementPtrInst *GEP = dyn_cast<GetElementPtrInst>(I)) {
-      printGEP(GEP);
-    } else {
-      printGenericInstruction(I, CondBB);
-    }
-  }
-
-  void printAlloca(AllocaInst *AI) {
-    DEBUG_PRINT("printAlloca: " << *AI << "\n");
-    StringRef name = AI->getName();
-
-    // Pointer variable X passed as function arugment is loaded to X.addr.
-    if (name.endswith(".addr")) {
-      name = name.drop_back(5);
-    }
-
-    // The name of the function's argument is acceptable to be printed.
-    Function *F = AI->getFunction();
-    for (auto &Arg : F->args()) {
-      DEBUG_PRINT2("Arg: " << Arg << "\n");
-      if (Arg.getName().equals(name)) {
-        break;
-      }
-    }
-
-    *Printer << name;
+    printGenericInstruction(I, CondBB);
+    return;
   }
 
   Value *getLatestValue(AllocaInst *AI, BasicBlock *TheBB) {
@@ -107,36 +69,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     return val;
   }
 
-  void printCall(CallInst *CI, BasicBlock *CondBB) {
-    if (CI->getCalledFunction() == nullptr) {
-      *Printer << "call ";
-      return;
-    }
-
-    StringRef name = CI->getCalledFunction()->getName();
-    if (name.empty())
-      name = "NONAME FUNCTION";
-    *Printer << name << "(";
-
-    Value *Arg;
-    for (auto &Arg : CI->args()) {
-      printValue(Arg.get(), CondBB);
-      if (std::next(&Arg) != CI->arg_end()) {
-        *Printer << ", ";
-      }
-    }
-
-    *Printer << ")";
-  }
-
-  void printGEP(GetElementPtrInst *GEP) {
-    *Printer << ConditionAnalysis::getStructName(*GEP);
-    *Printer << "->";
-    *Printer << ConditionAnalysis::getVarName(*GEP);
-  }
-
   void printGenericInstruction(Instruction *I, BasicBlock *CondBB) {
-    DEBUG_PRINT2("\n[TODO] Parent: " << *I << "\n");
+    DEBUG_PRINT("printGenericInstruction: " << *I << "\n");
 
     Value *Child;
     for (int i = 0; i < I->getNumOperands(); i++) {
@@ -165,54 +99,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       printValue(Child, CondBB);
     }
     return;
-
-    Child = I->getOperand(0);
-    DEBUG_PRINT2("Parent: " << *I << "\nChild: " << *Child << "\n");
-    printValue(Child, CondBB);
-    if (isa<CmpInst>(I)) {
-      switch (cast<CmpInst>(I)->getPredicate()) {
-      case CmpInst::Predicate::ICMP_EQ:
-        *Printer << " == ";
-        break;
-      case CmpInst::Predicate::ICMP_NE:
-        *Printer << " != ";
-        break;
-      case CmpInst::Predicate::ICMP_UGT:
-      case CmpInst::Predicate::ICMP_SGT:
-        *Printer << " > ";
-        break;
-      case CmpInst::Predicate::ICMP_UGE:
-      case CmpInst::Predicate::ICMP_SGE:
-        *Printer << " >= ";
-        break;
-      case CmpInst::Predicate::ICMP_ULT:
-      case CmpInst::Predicate::ICMP_SLT:
-        *Printer << " < ";
-        break;
-      case CmpInst::Predicate::ICMP_ULE:
-      case CmpInst::Predicate::ICMP_SLE:
-        *Printer << " <= ";
-        break;
-      default:
-        *Printer << " cmp_" << cast<CmpInst>(I)->getPredicate() << " ";
-      }
-    } else if (isa<LoadInst>(I) || isa<SExtInst>(I) || isa<ZExtInst>(I) ||
-               isa<TruncInst>(I)) {
-      // DO NOTHING
-    } else {
-      *Printer << " " << I->getOpcodeName() << " ";
-    }
-
-    for (int i = 1; i < I->getNumOperands(); i++) {
-      Child = I->getOperand(i);
-      DEBUG_PRINT2("Parent: " << *I << "\nChild: " << *Child << "\n");
-      printValue(Child, CondBB);
-
-      if (i != I->getNumOperands() - 1) {
-        *Printer << " ";
-      }
-    }
   }
+
   bool
   analyzeFunction(Function &F,
                   std::vector<macker::LogManager::LogEntry> &FunctionLogs) {
@@ -284,10 +172,19 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       std::string CondType;
 
+      /*
+        Check the order of sucessors, because it may be reversed by LLVM.
+        e.g., `if(!x)`(x == 0 is True) is converted to `cmp ne i32 %x, 0`(False)
+        Reversed if will be like `br i1 %cmp, label %if.else, label %if.then`,
+        instead of `br i1 %cmp, label %if.then, label %if.else`.
+        */
       if (BranchInst *BrI = dyn_cast<BranchInst>(Term)) {
         if (Term->getNumSuccessors() == 2) {
           printValue(BrI->getCondition(), &BB);
           CondType = "if";
+          if (Term->getSuccessor(1)->getName().starts_with("if.then")) {
+            CondType = "if-reverse";
+          }
         }
       } else if (SwitchInst *SI = dyn_cast<SwitchInst>(Term)) {
         CondType = "switch";

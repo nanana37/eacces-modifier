@@ -4,6 +4,16 @@
 int errfunc(int x) {
   printf("input x = %d\n", x);
 
+  if (!x) {
+    // 0
+    return -EACCES;
+  } else if (x == 1) {
+    // 1
+    return -EACCES;
+  } else {
+    return -EACCES;
+  }
+
   if (x < 1) {
     // 0
     return -EACCES;
