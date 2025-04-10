@@ -3,7 +3,7 @@
 
 #define EACCES 13
 
-#define HOGE 123
+#define HOGE 1
 #define FOO(x) ((x) + 1)
 
 // prepare switch case
@@ -20,12 +20,10 @@ int func(int i) {
     printf("not check\n");
   }
 
-  if (i == 0) {
-    printf("i is 0\n");
-  } else if (i == 1 || i == 4) {
-    printf("i is 1\n");
-  } else {
-    printf("i is not 0 or 1\n");
+  if (i == HOGE) {
+    printf("i is HOGE\n");
+  } else if (i == FOO(i)) {
+    printf("i is FOO\n");
   }
 
   switch (i) {

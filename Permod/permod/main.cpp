@@ -38,10 +38,11 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     if (isa<BasicBlock>(V) || isa<Function>(V))
       return;
 
+    DEBUG_PRINT("printValue: " << *V << "\n");
     if (Instruction *I = dyn_cast<Instruction>(V)) {
       printInstruction(I, CondBB);
     } else {
-      printConstantOrArgument(V);
+      // printConstantOrArgument(V);
       return;
     }
   }
@@ -57,8 +58,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   void printInstruction(Instruction *I, BasicBlock *CondBB) {
+    DEBUG_PRINT("printInstruction: " << *I << "\n");
     if (AllocaInst *AI = dyn_cast<AllocaInst>(I)) {
-      printAlloca(AI);
+      // printAlloca(AI);
     } else if (CallInst *CI = dyn_cast<CallInst>(I)) {
       printCall(CI, CondBB);
     } else if (GetElementPtrInst *GEP = dyn_cast<GetElementPtrInst>(I)) {
@@ -69,6 +71,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
   }
 
   void printAlloca(AllocaInst *AI) {
+    DEBUG_PRINT("printAlloca: " << *AI << "\n");
     StringRef name = AI->getName();
 
     // Pointer variable X passed as function arugment is loaded to X.addr.
@@ -86,6 +89,22 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     }
 
     *Printer << name;
+  }
+
+  Value *getLatestValue(AllocaInst *AI, BasicBlock *TheBB) {
+    if (!AI)
+      return nullptr;
+    // Search for the latest value of the AllocaInst
+    Value *val = nullptr;
+    for (auto &I : *TheBB) {
+      if (auto *StoreI = dyn_cast<StoreInst>(&I)) {
+        if (StoreI->getPointerOperand() == AI) {
+          val = StoreI->getValueOperand();
+          break;
+        }
+      }
+    }
+    return val;
   }
 
   void printCall(CallInst *CI, BasicBlock *CondBB) {
@@ -120,6 +139,32 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     DEBUG_PRINT2("\n[TODO] Parent: " << *I << "\n");
 
     Value *Child;
+    for (int i = 0; i < I->getNumOperands(); i++) {
+      Child = I->getOperand(i);
+      if (auto val = getLatestValue(dyn_cast<AllocaInst>(Child), CondBB)) {
+        if (!isa<Instruction>(val)) {
+          return;
+        }
+        *Printer << " (";
+        if (auto *I = dyn_cast<Instruction>(val)) {
+          if (I->getDebugLoc()) {
+            DEBUG_PRINT("Line: " << I->getDebugLoc().getLine() << "\n");
+            *Printer << "[#" << I->getDebugLoc().getLine() << "] ";
+          }
+        }
+        if (isa<CallInst>(val)) {
+          Function *F = cast<CallInst>(val)->getCalledFunction();
+          if (F) {
+            *Printer << Child->getName() << " = " << F->getName() << "()";
+          } else {
+            *Printer << "NONAME FUNCTION";
+          }
+        }
+        *Printer << ")";
+      }
+      printValue(Child, CondBB);
+    }
+    return;
 
     Child = I->getOperand(0);
     DEBUG_PRINT2("Parent: " << *I << "\nChild: " << *Child << "\n");
@@ -241,6 +286,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
 
       if (BranchInst *BrI = dyn_cast<BranchInst>(Term)) {
         if (Term->getNumSuccessors() == 2) {
+          printValue(BrI->getCondition(), &BB);
           CondType = "if";
         }
       } else if (SwitchInst *SI = dyn_cast<SwitchInst>(Term)) {
