@@ -79,7 +79,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         if (!isa<Instruction>(val)) {
           return;
         }
-        *Printer << " (";
+        DEBUG_PRINT("Additional definition: " << *val << "\n");
         if (auto *I = dyn_cast<Instruction>(val)) {
           if (I->getDebugLoc()) {
             DEBUG_PRINT("Line: " << I->getDebugLoc().getLine() << "\n");
@@ -94,7 +94,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             *Printer << "NONAME FUNCTION";
           }
         }
-        *Printer << ")";
       }
       printValue(Child, CondBB);
     }
@@ -168,7 +167,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                                               << "\n");
 
       Printer->clear();
-      *Printer << mackerLogEntry->Content;
 
       std::string CondType;
 
@@ -197,22 +195,12 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         LineNum = DL.getLine();
       }
 
-#if defined(DEBUG2)
-      DEBUG_PRINT("******\n");
-      DEBUG_PRINT("Adding entry to LogManager\n");
-      DEBUG_PRINT("DBinfo: " << DBinfo.first << ", " << DBinfo.second << "\n");
-      DEBUG_PRINT("LineNum: " << LineNum << "\n");
-      DEBUG_PRINT2("CondType: " << CondType << "\n");
-      DEBUG_PRINT2("CondID: " << CondID << "\n");
-      DEBUG_PRINT("Printer: " << Printer->str() << "\n");
-      DEBUG_PRINT(BB << "\n");
-      DEBUG_PRINT("******\n");
-#endif
       LogManager::getInstance().addEntry(DBinfo.first,
                                          LineNum,
                                          DBinfo.second,
                                          CondType,
                                          CondID,
+                                         mackerLogEntry->Content,
                                          Printer->str());
 
       // Add instrumentation

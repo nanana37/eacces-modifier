@@ -60,3 +60,5 @@ with open(args.log_file) as f:
                     print(f"[#{entry['Line']}] {entry['Content']} ({'False' if ((flagB >> i) & 1) else 'True'})")
                 elif entry['EventType'] == "switch":
                     print(f"[#{entry['Line']}] {entry['Content']} (switch)")
+                if entry['ExtraInfo']:
+                    print(f"  >> {entry['ExtraInfo']}")

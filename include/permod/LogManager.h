@@ -34,6 +34,7 @@ struct LogEntry {
   std::string EventType;
   unsigned ConditionID;
   std::string Content;
+  std::string ExtraInfo;
 };
 
 class LogManager {
@@ -41,7 +42,8 @@ public:
   static LogManager &getInstance();
 
   void addEntry(StringRef FileName, unsigned LineNumber, StringRef FuncName,
-                StringRef EventType, unsigned CondID, StringRef Content);
+                StringRef EventType, unsigned CondID, StringRef Content,
+                StringRef ExtraInfo);
 
   void writeAllLogs(bool SortByLocation = false);
 

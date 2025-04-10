@@ -25,13 +25,15 @@ LogManager &LogManager::getInstance() {
 // Add a log entry
 void LogManager::addEntry(StringRef FileName, unsigned LineNumber,
                           StringRef FuncName, StringRef EventType,
-                          unsigned CondID, StringRef Content) {
+                          unsigned CondID, StringRef Content,
+                          StringRef ExtraInfo) {
   Logs.push_back({FileName.str(),
                   LineNumber,
                   FuncName.str(),
                   EventType.str(),
                   CondID,
-                  Content.str()});
+                  Content.str(),
+                  ExtraInfo.str()});
 }
 
 // Write logs to CSV
@@ -46,7 +48,7 @@ void LogManager::writeAllLogs(bool SortByLocation) {
     return;
   }
 
-  OS << "File,Line,Function,EventType,ID,Content\n";
+  OS << "File,Line,Function,EventType,ID,Content,ExtraInfo\n";
 
   std::sort(Logs.begin(), Logs.end(), [](const LogEntry &A, const LogEntry &B) {
     if (A.FileName != B.FileName)
@@ -63,7 +65,8 @@ void LogManager::writeAllLogs(bool SortByLocation) {
        << escapeCSV(Entry.FunctionName) << ","
        << escapeCSV(Entry.EventType) << ","
        << Entry.ConditionID << ","
-       << escapeCSV(Entry.Content)
+       << escapeCSV(Entry.Content) << ","
+       << escapeCSV(Entry.ExtraInfo)
        << "\n";
     // clang-format on
   }
