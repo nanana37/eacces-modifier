@@ -27,18 +27,18 @@ private:
   llvm::raw_string_ostream OS;
 };
 
-struct LogEntry {
-  std::string FileName;
-  unsigned LineNumber;
-  std::string FunctionName;
-  std::string EventType;
-  unsigned ConditionID;
-  std::string Content;
-  std::string ExtraInfo;
-};
-
 class LogManager {
 public:
+  struct LogEntry {
+    std::string FileName;
+    unsigned LineNumber;
+    std::string FunctionName;
+    std::string EventType;
+    unsigned ConditionID;
+    std::string Content;
+    std::string ExtraInfo;
+  };
+
   static LogManager &getInstance();
 
   void addEntry(StringRef FileName, unsigned LineNumber, StringRef FuncName,

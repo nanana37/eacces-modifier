@@ -70,7 +70,7 @@ void LogParser::parse() {
       continue;
     }
 
-    int LineNum = std::stoi(LineNumber);
+    unsigned LineNum = std::stoi(LineNumber);
 
     ParsedLogs.push_back(
         {FileName, LineNum, FunctionName, EventType, Content, ExtraInfo});

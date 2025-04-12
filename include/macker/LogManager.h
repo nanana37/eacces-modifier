@@ -14,7 +14,7 @@ class LogManager {
 public:
   struct LogEntry {
     std::string FileName;
-    int LineNumber;
+    unsigned LineNumber;
     std::string FunctionName;
     std::string EventType;
     std::string Content;
@@ -24,7 +24,7 @@ public:
   static LogManager &getInstance();
 
   void addEntry(const std::string &EventType, const std::string &FileName,
-                int LineNumber, const std::string &FunctionName,
+                unsigned LineNumber, const std::string &FunctionName,
                 const std::string &Content, const std::string &ExtraInfo = "");
 
   void writeAllLogs(bool SortByLocation = false);
@@ -39,11 +39,11 @@ public:
     std::string MacroName;
     std::string MacroValue;
     std::string FileName;
-    int LineNumber;
+    unsigned LineNumber;
   };
   void addExpandedMacro(const std::string &MacroName,
                         const std::string &MacroValue,
-                        const std::string &FileName, int LineNumber) {
+                        const std::string &FileName, unsigned LineNumber) {
     std::lock_guard<std::mutex> lock(LogMutex);
     ExpandedMacros.push_back({MacroName, MacroValue, FileName, LineNumber});
   }

@@ -29,7 +29,7 @@ LogManager::LogManager() {
 }
 
 void LogManager::addEntry(const std::string &EventType,
-                          const std::string &FileName, int LineNumber,
+                          const std::string &FileName, unsigned LineNumber,
                           const std::string &FunctionName,
                           const std::string &Content,
                           const std::string &ExtraInfo) {

@@ -21,9 +21,19 @@ int func(int x) {
   return 0;
 }
 
+int funcX(int y) {
+  int error = 1;
+  error = check_acl(y);
+  if (error != -EAGAIN) {
+    return error;
+  }
+  return 0;
+}
+
 int main() {
   for (int i = 0; i < 2; i++) {
     int error = func(i);
+    error = funcX(i);
     if (error == -EAGAIN) {
       printf("Error: EAGAIN\n");
     } else if (error == -EACCES) {

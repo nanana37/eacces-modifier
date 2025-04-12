@@ -9,6 +9,9 @@
 #include "permod/LogParser.h"
 #include "utils/debug.h"
 
+#include <queue>
+#include <unordered_set>
+
 using namespace llvm;
 
 namespace {
@@ -23,81 +26,74 @@ namespace {
         ret i32 %2
  */
 struct PermodPass : public PassInfoMixin<PermodPass> {
+  /* // Uncomment this if you want to use ConditionPrinter
   // Use a pointer instead of direct member
   std::unique_ptr<ConditionPrinter> Printer;
 
   // Constructor initializes the pointer
   PermodPass() : Printer(std::make_unique<ConditionPrinter>()) {}
+  */
 
-  // Now these can be defaulted
+  // Constructor
+  PermodPass() = default;
   PermodPass(PermodPass &&) = default;
   PermodPass &operator=(PermodPass &&) = default;
 
-  // Break down printValue into smaller methods
-  void printValue(Value *V, BasicBlock *CondBB) {
-    if (isa<BasicBlock>(V) || isa<Function>(V))
+  std::queue<unsigned> LineNumQueue;       // FIFO queue for LineNum
+  std::unordered_set<unsigned> LineNumSet; // Set to track duplicates
+
+  void traceValue(Value *V, int depth = 0) {
+    if (!V)
       return;
+    if (depth > 10)
+      return; // Prevent infinite recursion
 
-    DEBUG_PRINT("printValue: " << *V << "\n");
-    DEBUG_PRINT("BB: " << *CondBB << "\n");
-    if (auto *I = dyn_cast<Instruction>(V)) {
-      printInstruction(I, CondBB);
-    }
+    if (auto *inst = dyn_cast<Instruction>(V)) {
+      if (DebugLoc DL = inst->getDebugLoc()) {
+        unsigned LineNum = DL->getLine();
+        // print with depth
+        DEBUG_PRINT2(std::string(depth * 2, ' ')
+                     << "Line: " << LineNum << *V << "\n");
 
-    return;
-  }
-
-  void printInstruction(Instruction *I, BasicBlock *CondBB) {
-    DEBUG_PRINT("printInstruction: " << *I << "\n");
-    printGenericInstruction(I, CondBB);
-    return;
-  }
-
-  Value *getLatestValue(AllocaInst *AI, BasicBlock *TheBB) {
-    if (!AI)
-      return nullptr;
-    // Search for the latest value of the AllocaInst
-    Value *val = nullptr;
-    for (auto &I : *TheBB) {
-      if (auto *StoreI = dyn_cast<StoreInst>(&I)) {
-        if (StoreI->getPointerOperand() == AI) {
-          val = StoreI->getValueOperand();
-          break;
+        if (LineNumSet.find(LineNum) == LineNumSet.end()) {
+          // Add LineNum to FIFO if not already present
+          LineNumQueue.push(LineNum);
+          LineNumSet.insert(LineNum);
         }
       }
     }
-    return val;
+
+    if (auto *icmp = dyn_cast<ICmpInst>(V)) {
+      /* Trace each operands of cmp inst */
+      traceValue(icmp->getOperand(0), depth + 1);
+      traceValue(icmp->getOperand(1), depth + 1);
+    } else if (auto *load = dyn_cast<LoadInst>(V)) {
+      /* Find store inst for the pointer operand of the load inst */
+      Value *ptr = load->getPointerOperand();
+      findLastStore(ptr, *load->getFunction(), depth + 1);
+    } else if (auto *call = dyn_cast<CallInst>(V)) {
+      /* TODO: trace each argument */
+      errs() << std::string(depth * 2, ' ')
+             << "Function call: " << call->getCalledFunction()->getName()
+             << "\n";
+    } else if (auto *binop = dyn_cast<BinaryOperator>(V)) {
+      traceValue(binop->getOperand(0), depth + 1);
+      traceValue(binop->getOperand(1), depth + 1);
+    } else if (isa<Constant>(V)) {
+      /* Do Nothing */
+    }
   }
 
-  void printGenericInstruction(Instruction *I, BasicBlock *CondBB) {
-    DEBUG_PRINT("printGenericInstruction: " << *I << "\n");
-
-    Value *Child;
-    for (int i = 0; i < I->getNumOperands(); i++) {
-      Child = I->getOperand(i);
-      if (auto val = getLatestValue(dyn_cast<AllocaInst>(Child), CondBB)) {
-        if (!isa<Instruction>(val)) {
-          return;
-        }
-        DEBUG_PRINT("Additional definition: " << *val << "\n");
-        if (auto *I = dyn_cast<Instruction>(val)) {
-          if (I->getDebugLoc()) {
-            DEBUG_PRINT("Line: " << I->getDebugLoc().getLine() << "\n");
-            *Printer << "[#" << I->getDebugLoc().getLine() << "] ";
-          }
-        }
-        if (isa<CallInst>(val)) {
-          Function *F = cast<CallInst>(val)->getCalledFunction();
-          if (F) {
-            *Printer << Child->getName() << " = " << F->getName() << "()";
-          } else {
-            *Printer << "NONAME FUNCTION";
+  void findLastStore(Value *ptr, Function &F, int depth) {
+    for (auto &BB : F) {
+      for (auto &I : BB) {
+        if (auto *store = dyn_cast<StoreInst>(&I)) {
+          if (store->getPointerOperand() == ptr) {
+            traceValue(store->getValueOperand(), depth);
           }
         }
       }
-      printValue(Child, CondBB);
     }
-    return;
   }
 
   bool
@@ -149,10 +145,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
           DEBUG_PRINT2("Found case log entry: " << log.Content << "\n");
           continue;
         }
-        // print log entry
-        DEBUG_PRINT2("Log: " << log.Content << "\n");
-        DEBUG_PRINT2("File: " << log.FileName << "\n");
-        DEBUG_PRINT2("(Clang) Line: " << log.LineNumber << "\n");
         if (log.LineNumber == (Term->getDebugLoc()).getLine()) {
           DEBUG_PRINT2("Found macker log entry: " << log.Content << "\n");
           mackerLogEntry = &log;
@@ -166,7 +158,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       DEBUG_PRINT2("Found macker log entry: " << mackerLogEntry->Content
                                               << "\n");
 
-      Printer->clear();
+      // Init
+      LineNumQueue = std::queue<unsigned>();
+      LineNumSet.clear();
 
       std::string CondType;
 
@@ -176,15 +170,16 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         Reversed if will be like `br i1 %cmp, label %if.else, label %if.then`,
         instead of `br i1 %cmp, label %if.then, label %if.else`.
         */
-      if (BranchInst *BrI = dyn_cast<BranchInst>(Term)) {
-        if (Term->getNumSuccessors() == 2) {
-          printValue(BrI->getCondition(), &BB);
+      if (auto *BrI = dyn_cast<BranchInst>(Term)) {
+        if (BrI->isConditional()) {
+          auto *Cond = BrI->getCondition();
+          traceValue(Cond);
           CondType = "if";
           if (Term->getSuccessor(1)->getName().starts_with("if.then")) {
             CondType = "if-reverse";
           }
         }
-      } else if (SwitchInst *SI = dyn_cast<SwitchInst>(Term)) {
+      } else if (auto *SI = dyn_cast<SwitchInst>(Term)) {
         CondType = "switch";
       } else {
         continue;
@@ -195,13 +190,25 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
         LineNum = DL.getLine();
       }
 
+      // Print the condition
+      std::string LineNumStr;
+      while (!LineNumQueue.empty()) {
+        unsigned LineNum = LineNumQueue.front();
+        LineNumQueue.pop();
+        LineNumStr += std::to_string(LineNum) + ",";
+      }
+      if (!LineNumStr.empty()) {
+        LineNumStr.pop_back(); // Remove the trailing comma
+      }
+      DEBUG_PRINT2("LineNum: " << LineNumStr << "\n");
+
       LogManager::getInstance().addEntry(DBinfo.first,
                                          LineNum,
                                          DBinfo.second,
                                          CondType,
                                          CondID,
                                          mackerLogEntry->Content,
-                                         Printer->str());
+                                         LineNumStr);
 
       // Add instrumentation
       if (Ins.insertBufferFunc(BB, DBinfo, CondID)) {
@@ -222,18 +229,7 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
     // Parse Macker Logs
     LogParser parser("macker_logs.csv");
     parser.parse();
-
     const auto &logs = parser.getParsedLogs();
-#if defined(DEBUG2)
-    // Print parsed logs for debugging
-    for (const auto &log : logs) {
-      llvm::outs() << "File: " << log.FileName << ", Line: " << log.LineNumber
-                   << ", Function: " << log.FunctionName
-                   << ", Event: " << log.EventType
-                   << ", Content: " << log.Content
-                   << ", Extra: " << log.ExtraInfo << "\n";
-    }
-#endif
 
     bool Modified = false;
     for (auto &F : M.functions()) {
@@ -245,17 +241,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
             FunctionLogs.push_back(log);
           }
         }
-#if defined(DEBUG2)
-        // print the logs for the current function
-        for (const auto &log : FunctionLogs) {
-          llvm::outs() << "File: " << log.FileName
-                       << ", Line: " << log.LineNumber
-                       << ", Function: " << log.FunctionName
-                       << ", Event: " << log.EventType
-                       << ", Content: " << log.Content
-                       << ", Extra: " << log.ExtraInfo << "\n";
-        }
-#endif
 
         // Process the function with its logs
         Modified |= analyzeFunction(F, FunctionLogs);
