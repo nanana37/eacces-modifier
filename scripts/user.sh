@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Initial setup
+unset MODE_DEBUG
+unset MODE_MACRO_TRACKING
+
 # Parse command line arguments
 while getopts ":mhd" opt; do
   case $opt in
@@ -30,10 +34,14 @@ if [ -z "$TARGET" ]; then
 fi
 
 if [ $MODE_DEBUG ]; then
-  echo "** Sorry, debug mode is not supported yet **"
+echo "Building with debug preset"
+  cmake --preset debug
+  cmake --build --preset debug
+else
+echo "Building with default preset"
+  cmake --preset default
+  cmake --build --preset default
 fi
-cmake --preset default
-cmake --build --preset default
 
 BUILD_DIR=/home/vscode/eacces-modifier/build
 MACKER_REL_PATH=Macker/macker/Macker.so

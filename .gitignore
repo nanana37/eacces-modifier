@@ -2,6 +2,7 @@
 
 build/
 build-kernel/
+build-debug/
 
 bin/
 *.out
