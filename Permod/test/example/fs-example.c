@@ -18,6 +18,10 @@ int func(int x) {
   if (error != -EAGAIN) {
     return error;
   }
+  int y = check_acl(x);
+  if (y == 0) {
+    y = 1;
+  }
   return 0;
 }
 

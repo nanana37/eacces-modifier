@@ -1,4 +1,5 @@
 #include "macker/LogManager.h"
+#include "macker/LogParser.h"
 #include "macker/MyASTVisitor.h"
 #include "macker/MyPPCallbacks.h"
 #include "clang/AST/ASTConsumer.h"
@@ -18,8 +19,9 @@ private:
 
 public:
   MacroTrackerConsumer(Rewriter &R, CompilerInstance &Instance,
-                       bool EnablePPCallbacks)
-      : visitor(R, Instance.getSourceManager()),
+                       bool EnablePPCallbacks, macker::LogParser &Parser,
+                       const std::string &TargetFile)
+      : visitor(R, Instance.getSourceManager(), Parser, TargetFile),
         enablePPCallbacks(EnablePPCallbacks) {
 
     // Only add PP callbacks if explicitly enabled
@@ -60,8 +62,15 @@ public:
 protected:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile) override {
+    std::string LogFileName = "permod_logs.csv";
+    macker::LogParser parser(LogFileName);
+    std::string TargetFile =
+        CI.getSourceManager()
+            .getFileEntryForID(CI.getSourceManager().getMainFileID())
+            ->getName()
+            .str();
     return std::make_unique<MacroTrackerConsumer>(
-        rewriter, CI, enablePPCallbacks);
+        rewriter, CI, enablePPCallbacks, parser, TargetFile);
   }
 
   bool ParseArgs(const CompilerInstance &CI,
@@ -95,7 +104,8 @@ protected:
   PluginASTAction::ActionType getActionType() override {
     // NOTE: This plugin should run before the main action (e.g., compilation)
     // to ensure that logs are generated to be used by the LLVM pass.
-    return AddBeforeMainAction;
+    // return AddBeforeMainAction;
+    return AddAfterMainAction;
   }
 
   void ExecuteAction() override { PluginASTAction::ExecuteAction(); }

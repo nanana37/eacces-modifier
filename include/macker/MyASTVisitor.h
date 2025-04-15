@@ -6,11 +6,16 @@
 #include "clang/Basic/SourceManager.h"
 #include "clang/Rewrite/Core/Rewriter.h"
 
+#include "macker/LogParser.h"
+#include "permod/LogManager.h"
+
 using namespace clang;
 
 class MyASTVisitor : public RecursiveASTVisitor<MyASTVisitor> {
 public:
-  explicit MyASTVisitor(Rewriter &R, SourceManager &SM);
+  explicit MyASTVisitor(Rewriter &R, SourceManager &SM,
+                        macker::LogParser &Parser,
+                        const std::string &TargetFile);
 
   bool VisitFunctionDecl(FunctionDecl *Func);
   bool VisitIfStmt(IfStmt *If);
@@ -25,8 +30,11 @@ private:
                    int Line, const std::string &StmtType,
                    const std::string &Condition, const std::string &Extra);
   std::string getSourceText(SourceRange range);
+  std::string getSourceTextFromStartLine(int startLine);
 
   Rewriter &rewriter;
   SourceManager &srcManager;
   FunctionDecl *CurrentFunction;
+  macker::LogParser &logParser;
+  std::vector<permod::LogManager::LogEntry> FilteredLogs;
 };

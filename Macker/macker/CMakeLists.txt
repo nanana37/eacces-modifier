@@ -3,6 +3,7 @@ add_library(Macker SHARED
   MyPPCallbacks.cpp
   MyASTVisitor.cpp
   LogManager.cpp
+  LogParser.cpp
   # MyFrontendAction.cpp
 )
 

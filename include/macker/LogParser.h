@@ -9,7 +9,7 @@ namespace macker {
 class LogParser {
 public:
   explicit LogParser(const std::string &FileName);
-  void parse();
+  void parse(const std::string &TargetFile);
   const std::vector<permod::LogManager::LogEntry> &getParsedLogs() const;
 
 private:

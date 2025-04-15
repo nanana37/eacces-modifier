@@ -73,9 +73,9 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       findLastStore(ptr, *load->getFunction(), depth + 1);
     } else if (auto *call = dyn_cast<CallInst>(V)) {
       /* TODO: trace each argument */
-      errs() << std::string(depth * 2, ' ')
-             << "Function call: " << call->getCalledFunction()->getName()
-             << "\n";
+      // errs() << std::string(depth * 2, ' ')
+      //        << "Function call: " << call->getCalledFunction()->getName()
+      //        << "\n";
     } else if (auto *binop = dyn_cast<BinaryOperator>(V)) {
       traceValue(binop->getOperand(0), depth + 1);
       traceValue(binop->getOperand(1), depth + 1);
@@ -132,32 +132,6 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
       if (Term->getMetadata("nosanitize"))
         continue;
 
-      // print the terminator instruction
-      DEBUG_PRINT2("Term: " << *Term << "\n");
-      DEBUG_PRINT2("(LLVM) Line: " << (Term->getDebugLoc()).getLine() << "\n");
-
-      // Check if the terminator of the current block has been logged
-      const macker::LogManager::LogEntry *mackerLogEntry = nullptr;
-      for (const auto &log : FunctionLogs) {
-        // Skip "case" log entries
-        // TODO: reffer to them when analyzing "switch"
-        if ("case" == log.EventType) {
-          DEBUG_PRINT2("Found case log entry: " << log.Content << "\n");
-          continue;
-        }
-        if (log.LineNumber == (Term->getDebugLoc()).getLine()) {
-          DEBUG_PRINT2("Found macker log entry: " << log.Content << "\n");
-          mackerLogEntry = &log;
-          break;
-        }
-      }
-      if (!mackerLogEntry) {
-        DEBUG_PRINT2("No macker log entry found\n");
-        continue;
-      }
-      DEBUG_PRINT2("Found macker log entry: " << mackerLogEntry->Content
-                                              << "\n");
-
       // Init
       LineNumQueue = std::queue<unsigned>();
       LineNumSet.clear();
@@ -207,8 +181,8 @@ struct PermodPass : public PassInfoMixin<PermodPass> {
                                          DBinfo.second,
                                          CondType,
                                          CondID,
-                                         mackerLogEntry->Content,
-                                         LineNumStr);
+                                         LineNumStr,
+                                         "");
 
       // Add instrumentation
       if (Ins.insertBufferFunc(BB, DBinfo, CondID)) {

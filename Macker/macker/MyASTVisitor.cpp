@@ -1,16 +1,31 @@
 #include "macker/MyASTVisitor.h"
 #include "macker/LogManager.h"
+#include "macker/LogParser.h"
 #include "clang/Lex/Lexer.h"
-#include "llvm/Support/raw_ostream.h"
 
 #include "utils/debug.h"
+#include <sstream>
 
 using namespace clang;
 using namespace macker;
 
 // Constructor implementation
-MyASTVisitor::MyASTVisitor(Rewriter &R, SourceManager &SM)
-    : rewriter(R), srcManager(SM), CurrentFunction(nullptr) {}
+MyASTVisitor::MyASTVisitor(Rewriter &R, SourceManager &SM,
+                           macker::LogParser &Parser,
+                           const std::string &TargetFile)
+    : rewriter(R), srcManager(SM), logParser(Parser), CurrentFunction(nullptr) {
+  logParser.parse(TargetFile);
+  const auto &ParsedLogs = logParser.getParsedLogs();
+  for (const auto &LogEntry : ParsedLogs) {
+    if (LogEntry.FileName == TargetFile) {
+      FilteredLogs.push_back(LogEntry);
+      DEBUG_PRINT("Parsed log entry: "
+                  << LogEntry.FileName << ", " << LogEntry.LineNumber << ", "
+                  << LogEntry.FunctionName << ", " << LogEntry.EventType << ", "
+                  << LogEntry.Content << ", " << LogEntry.ExtraInfo << "\n");
+    }
+  }
+}
 
 // Method implementations
 std::string MyASTVisitor::getFuncName(FunctionDecl *Func) {
@@ -73,7 +88,18 @@ void MyASTVisitor::writeCSVRow(const std::string &Function,
 bool MyASTVisitor::VisitFunctionDecl(FunctionDecl *Func) {
   if (Func->hasBody()) {
     CurrentFunction = Func;
+    std::string FuncSignature = Func->getReturnType().getAsString() + " " + Func->getNameInfo().getAsString() + "(";
+    for (unsigned i = 0; i < Func->getNumParams(); ++i) {
+      ParmVarDecl *Param = Func->getParamDecl(i);
+      if (i > 0)
+        FuncSignature += ", ";
+      FuncSignature += Param->getType().getAsString() + " " + Param->getNameAsString();
+    }
+    FuncSignature += ")";
+    DEBUG_PRINT("Function signature: " << FuncSignature << "\n");
   }
+  DEBUG_PRINT2("Function: " << *Func << "\n");
+  // get the function signature
   return true;
 }
 
@@ -87,7 +113,7 @@ bool MyASTVisitor::VisitIfStmt(IfStmt *If) {
 }
 
 void MyASTVisitor::analyzeIfCondition(Expr *Cond) {
-  if (BinaryOperator *BO = dyn_cast<BinaryOperator>(Cond)) {
+  if (clang::BinaryOperator *BO = dyn_cast<clang::BinaryOperator>(Cond)) {
     if (BO->getOpcode() == BO_LOr || BO->getOpcode() == BO_LAnd) {
       analyzeIfCondition(BO->getLHS());
       analyzeIfCondition(BO->getRHS());
@@ -102,7 +128,55 @@ void MyASTVisitor::analyzeIfCondition(Expr *Cond) {
   int Line;
   getFileAndLine(CondRange.getBegin(), File, Line);
 
-  writeCSVRow(getFuncName(CurrentFunction), File, Line, "if", CondText);
+  std::string ExtraInfo;
+  // Get all the source texts stored in the LineNumQueue
+  for (const auto &LogEntry : FilteredLogs) {
+    if (LogEntry.LineNumber != Line)
+      continue;
+    if (LogEntry.FileName != File)
+      continue;
+    // if (LogEntry.FunctionName != getFuncName(CurrentFunction))
+    //   continue;
+    // Found the log entry
+    DEBUG_PRINT("Content: " << LogEntry.Content << "\n");
+    // parse the LogEntry.Content into LineNumQueue
+    // e.g., "1,2,3,4" -> {1, 2, 3, 4}
+    std::vector<unsigned> LineNumQueue;
+    std::stringstream ss(LogEntry.Content);
+    std::string token;
+    while (std::getline(ss, token, ',')) {
+      try {
+        LineNumQueue.push_back(std::stoul(token));
+      } catch (const std::exception &e) {
+        DEBUG_PRINT("Error parsing token: " << token << ", " << e.what()
+                                            << "\n");
+      }
+    }
+
+    while (!LineNumQueue.empty()) {
+      unsigned LineNum = LineNumQueue.back();
+      LineNumQueue.pop_back();
+      if (LineNum == Line) {
+        continue;
+      }
+      std::string LineText = getSourceTextFromStartLine(LineNum);
+      if (LineText.empty()) {
+        DEBUG_PRINT("Error: Empty line text for line number: " << LineNum
+                                                               << "\n");
+        continue;
+      }
+      ExtraInfo += LineText + ",";
+    }
+    // Remove the last comma
+    if (!ExtraInfo.empty()) {
+      ExtraInfo.pop_back();
+    }
+    break;
+  }
+  DEBUG_PRINT("ExtraInfo: " << ExtraInfo << "\n");
+
+  writeCSVRow(
+      getFuncName(CurrentFunction), File, Line, "if", CondText, ExtraInfo);
 }
 
 bool MyASTVisitor::VisitSwitchStmt(SwitchStmt *Switch) {
@@ -158,4 +232,50 @@ std::string MyASTVisitor::getSourceText(SourceRange range) {
           .str();
   Text.erase(std::remove(Text.begin(), Text.end(), '\n'), Text.end());
   return Text;
+}
+
+std::string MyASTVisitor::getSourceTextFromStartLine(int startLine) {
+  // Get the file ID for the main field
+  FileID fileID = srcManager.getMainFileID();
+
+  // Get the start location of the specified line
+  SourceLocation lineStart = srcManager.translateLineCol(fileID, startLine, 1);
+
+  if (!lineStart.isValid()) {
+    return "Invalid start line number";
+  }
+
+  // Initialize variables for dynamic line detection
+  SourceLocation currentLineStart = lineStart;
+  SourceLocation nextLineStart;
+  std::string result;
+
+  while (true) {
+    // Get the start location of the next line
+    nextLineStart = srcManager.translateLineCol(fileID, startLine + 1, 1);
+
+    // If the next line is invalid, assume we've reached the end of the file
+    if (!nextLineStart.isValid()) {
+      nextLineStart = srcManager.getLocForEndOfFile(fileID);
+    }
+
+    // Create a source range for the current line
+    SourceRange lineRange(currentLineStart, nextLineStart.getLocWithOffset(-1));
+
+    // Extract the source text for the current line
+    std::string lineText = getSourceText(lineRange);
+    result += lineText;
+
+    // Check if the current line ends with a semicolon or closing parenthesis
+    if (!lineText.empty() &&
+        (lineText.back() == ';' || lineText.back() == ')')) {
+      break;
+    }
+
+    // Move to the next line
+    currentLineStart = nextLineStart;
+    startLine++;
+  }
+
+  return result;
 }
