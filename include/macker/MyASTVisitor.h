@@ -37,4 +37,5 @@ private:
   FunctionDecl *CurrentFunction;
   macker::LogParser &logParser;
   std::vector<permod::LogManager::LogEntry> FilteredLogs;
+  std::string CurrentFunctionSignature;
 };

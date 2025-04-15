@@ -19,10 +19,11 @@ MyASTVisitor::MyASTVisitor(Rewriter &R, SourceManager &SM,
   for (const auto &LogEntry : ParsedLogs) {
     if (LogEntry.FileName == TargetFile) {
       FilteredLogs.push_back(LogEntry);
-      DEBUG_PRINT("Parsed log entry: "
-                  << LogEntry.FileName << ", " << LogEntry.LineNumber << ", "
-                  << LogEntry.FunctionName << ", " << LogEntry.EventType << ", "
-                  << LogEntry.Content << ", " << LogEntry.ExtraInfo << "\n");
+      DEBUG_PRINT2("Parsed log entry: "
+                   << LogEntry.FileName << ", " << LogEntry.LineNumber << ", "
+                   << LogEntry.FunctionName << ", " << LogEntry.EventType
+                   << ", " << LogEntry.Content << ", " << LogEntry.ExtraInfo
+                   << "\n");
     }
   }
 }
@@ -88,15 +89,18 @@ void MyASTVisitor::writeCSVRow(const std::string &Function,
 bool MyASTVisitor::VisitFunctionDecl(FunctionDecl *Func) {
   if (Func->hasBody()) {
     CurrentFunction = Func;
-    std::string FuncSignature = Func->getReturnType().getAsString() + " " + Func->getNameInfo().getAsString() + "(";
+    std::string FuncSignature = Func->getReturnType().getAsString() + " " +
+                                Func->getNameInfo().getAsString() + "(";
     for (unsigned i = 0; i < Func->getNumParams(); ++i) {
       ParmVarDecl *Param = Func->getParamDecl(i);
       if (i > 0)
         FuncSignature += ", ";
-      FuncSignature += Param->getType().getAsString() + " " + Param->getNameAsString();
+      FuncSignature +=
+          Param->getType().getAsString() + " " + Param->getNameAsString();
     }
     FuncSignature += ")";
-    DEBUG_PRINT("Function signature: " << FuncSignature << "\n");
+    CurrentFunctionSignature = FuncSignature;
+    DEBUG_PRINT2("Function signature: " << FuncSignature << "\n");
   }
   DEBUG_PRINT2("Function: " << *Func << "\n");
   // get the function signature
@@ -138,7 +142,7 @@ void MyASTVisitor::analyzeIfCondition(Expr *Cond) {
     // if (LogEntry.FunctionName != getFuncName(CurrentFunction))
     //   continue;
     // Found the log entry
-    DEBUG_PRINT("Content: " << LogEntry.Content << "\n");
+    DEBUG_PRINT2("Content: " << LogEntry.Content << "\n");
     // parse the LogEntry.Content into LineNumQueue
     // e.g., "1,2,3,4" -> {1, 2, 3, 4}
     std::vector<unsigned> LineNumQueue;
@@ -173,7 +177,22 @@ void MyASTVisitor::analyzeIfCondition(Expr *Cond) {
     }
     break;
   }
-  DEBUG_PRINT("ExtraInfo: " << ExtraInfo << "\n");
+  DEBUG_PRINT2("ExtraInfo: " << ExtraInfo << "\n");
+
+  if (!CurrentFunctionSignature.empty()) {
+    std::string CurrentFunctionFile;
+    int CurrentFunctionLine;
+    getFileAndLine(CurrentFunction->getLocation(),
+                   CurrentFunctionFile,
+                   CurrentFunctionLine);
+    LogManager::getInstance().addEntry("signature",
+                                       CurrentFunctionFile,
+                                       CurrentFunctionLine,
+                                       getFuncName(CurrentFunction),
+                                       CurrentFunctionSignature,
+                                       "");
+    CurrentFunctionSignature.clear();
+  }
 
   writeCSVRow(
       getFuncName(CurrentFunction), File, Line, "if", CondText, ExtraInfo);
@@ -190,6 +209,21 @@ bool MyASTVisitor::VisitSwitchStmt(SwitchStmt *Switch) {
   std::string File;
   int Line;
   getFileAndLine(CondRange.getBegin(), File, Line);
+
+  if (!CurrentFunctionSignature.empty()) {
+    std::string CurrentFunctionFile;
+    int CurrentFunctionLine;
+    getFileAndLine(CurrentFunction->getLocation(),
+                   CurrentFunctionFile,
+                   CurrentFunctionLine);
+    LogManager::getInstance().addEntry("signature",
+                                       CurrentFunctionFile,
+                                       CurrentFunctionLine,
+                                       getFuncName(CurrentFunction),
+                                       CurrentFunctionSignature,
+                                       "");
+    CurrentFunctionSignature.clear();
+  }
 
   writeCSVRow(getFuncName(CurrentFunction), File, Line, "switch", CondText);
   return true;
@@ -234,6 +268,10 @@ std::string MyASTVisitor::getSourceText(SourceRange range) {
   return Text;
 }
 
+/* FIXME: Use clang library
+ idea: prepare a map of line numbers to source text on
+ RecursiveASTVisitor::VisitStmt()
+ */
 std::string MyASTVisitor::getSourceTextFromStartLine(int startLine) {
   // Get the file ID for the main field
   FileID fileID = srcManager.getMainFileID();
