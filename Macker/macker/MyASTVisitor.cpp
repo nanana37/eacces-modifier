@@ -116,6 +116,59 @@ bool MyASTVisitor::VisitIfStmt(IfStmt *If) {
   return true;
 }
 
+#ifdef HOGE
+bool MyASTVisitor::VisitIfStmt(IfStmt *ifStmt) {
+  auto cond = ifStmt->getCond();
+  llvm::outs() << "ifStmt: "
+               << ifStmt->getSourceRange().getBegin().printToString(srcManager)
+               << "\n";
+  if (auto *binOp = dyn_cast<clang::BinaryOperator>(cond)) {
+    llvm::outs() << "BinaryOperator: "
+                 << binOp->getSourceRange().getBegin().printToString(srcManager)
+                 << "\n";
+    if (binOp->isComparisonOp()) {
+      llvm::outs() << "Comparison operator: "
+                   << binOp->getSourceRange().getBegin().printToString(
+                          srcManager)
+                   << "\n";
+      auto *lhs = binOp->getLHS()->IgnoreParenCasts();
+      auto *rhs = binOp->getRHS()->IgnoreParenCasts();
+      if (auto *lhsDeclRef = dyn_cast<DeclRefExpr>(lhs)) {
+        auto *var = lhsDeclRef->getDecl();
+        llvm::outs() << "Comparing variable: " << var->getName() << "\n";
+
+        // try to find assignment to this variable in parent block
+        if (CurrentFunction && CurrentFunction->hasBody()) {
+          Stmt *body = CurrentFunction->getBody();
+          for (Stmt *stmt : body->children()) {
+            // Look for BinaryOperator (assignment)
+            if (auto *assignOp = dyn_cast<clang::BinaryOperator>(stmt)) {
+              if (assignOp->getOpcode() == BO_Assign) {
+                auto *lhsAssign = assignOp->getLHS()->IgnoreParenCasts();
+                auto *rhsAssign = assignOp->getRHS()->IgnoreParenCasts();
+
+                if (auto *lhsAssignRef = dyn_cast<DeclRefExpr>(lhsAssign)) {
+                  if (lhsAssignRef->getDecl() == var) {
+                    llvm::outs()
+                        << "Assignment to " << var->getName() << ": "
+                        << assignOp->getBeginLoc().printToString(srcManager)
+                        << "\n";
+                    if (auto *call = dyn_cast<CallExpr>(rhsAssign)) {
+                      llvm::outs() << "This is a function call assignment.\n";
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  return true;
+}
+#endif
+
 void MyASTVisitor::analyzeIfCondition(Expr *Cond) {
   if (clang::BinaryOperator *BO = dyn_cast<clang::BinaryOperator>(Cond)) {
     if (BO->getOpcode() == BO_LOr || BO->getOpcode() == BO_LAnd) {
