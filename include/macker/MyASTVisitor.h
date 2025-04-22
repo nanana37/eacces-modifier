@@ -27,7 +27,7 @@ private:
   std::string getFuncName(FunctionDecl *Func);
   void getFileAndLine(SourceLocation Loc, std::string &File, int &Line);
   void writeCSVRow(const std::string &Function, const std::string &File,
-                   int Line, const std::string &StmtType,
+                   unsigned Line, const std::string &StmtType, int CondID,
                    const std::string &Condition, const std::string &Extra);
   std::string getSourceText(SourceRange range);
   std::string getSourceTextFromStartLine(int startLine);

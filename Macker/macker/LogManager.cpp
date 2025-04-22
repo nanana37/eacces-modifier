@@ -30,12 +30,17 @@ LogManager::LogManager() {
 
 void LogManager::addEntry(const std::string &EventType,
                           const std::string &FileName, unsigned LineNumber,
-                          const std::string &FunctionName,
+                          const std::string &FunctionName, int CondID,
                           const std::string &Content,
                           const std::string &ExtraInfo) {
   std::lock_guard<std::mutex> lock(LogMutex);
-  Logs.push_back(
-      {FileName, LineNumber, FunctionName, EventType, Content, ExtraInfo});
+  Logs.push_back({FileName,
+                  LineNumber,
+                  FunctionName,
+                  EventType,
+                  CondID,
+                  Content,
+                  ExtraInfo});
 }
 
 void LogManager::writeAllLogs(bool SortByLocation) {
@@ -80,6 +85,7 @@ void LogManager::writeAllLogs(bool SortByLocation) {
            << Entry.LineNumber << ","
            << escapeCSV(Entry.FunctionName) << ","
            << escapeCSV(Entry.EventType) << ","
+           << Entry.CondID << ","
            << escapeCSV(Entry.Content) << ","
            << escapeCSV(Entry.ExtraInfo) << "\n";
     // clang-format on

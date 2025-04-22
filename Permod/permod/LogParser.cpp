@@ -12,6 +12,9 @@ namespace permod {
 LogParser::LogParser(const std::string &FileName) : InputFileName(FileName) {}
 
 void LogParser::parse() {
+  // FIXME: Permod currently does not support parsing Macker logs.
+  return;
+
   auto BufferOrError = llvm::MemoryBuffer::getFile(InputFileName);
   if (!BufferOrError) {
     llvm::errs() << "Error opening input file: " << InputFileName << "\n";
@@ -72,8 +75,9 @@ void LogParser::parse() {
 
     unsigned LineNum = std::stoi(LineNumber);
 
-    ParsedLogs.push_back(
-        {FileName, LineNum, FunctionName, EventType, Content, ExtraInfo});
+    // FIXME: correctly parse the content
+    // ParsedLogs.push_back(
+    //     {FileName, LineNum, FunctionName, EventType, Content, ExtraInfo});
   }
 
   llvm::outs() << "Parsed logs from " << InputFileName << "\n";

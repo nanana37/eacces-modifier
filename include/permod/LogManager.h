@@ -34,7 +34,7 @@ public:
     unsigned LineNumber;
     std::string FunctionName;
     std::string EventType;
-    unsigned ConditionID;
+    unsigned CondID;
     std::string Content;
     std::string ExtraInfo;
   };

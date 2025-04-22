@@ -55,7 +55,7 @@ void LogManager::writeAllLogs(bool SortByLocation) {
       return A.FileName < B.FileName;
     if (A.FunctionName != B.FunctionName)
       return A.FunctionName < B.FunctionName;
-    return A.ConditionID < B.ConditionID;
+    return A.CondID < B.CondID;
   });
 
   for (const auto &Entry : Logs) {
@@ -64,7 +64,7 @@ void LogManager::writeAllLogs(bool SortByLocation) {
        << Entry.LineNumber << "," 
        << escapeCSV(Entry.FunctionName) << ","
        << escapeCSV(Entry.EventType) << ","
-       << Entry.ConditionID << ","
+       << Entry.CondID << ","
        << escapeCSV(Entry.Content) << ","
        << escapeCSV(Entry.ExtraInfo)
        << "\n";

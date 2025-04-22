@@ -22,8 +22,8 @@ MyASTVisitor::MyASTVisitor(Rewriter &R, SourceManager &SM,
       DEBUG_PRINT2("Parsed log entry: "
                    << LogEntry.FileName << ", " << LogEntry.LineNumber << ", "
                    << LogEntry.FunctionName << ", " << LogEntry.EventType
-                   << ", " << LogEntry.Content << ", " << LogEntry.ExtraInfo
-                   << "\n");
+                   << ", " << LogEntry.CondID << ", " << LogEntry.Content
+                   << ", " << LogEntry.ExtraInfo << "\n");
     }
   }
 }
@@ -72,18 +72,14 @@ void MyASTVisitor::getFileAndLine(SourceLocation Loc, std::string &File,
 }
 
 void MyASTVisitor::writeCSVRow(const std::string &Function,
-                               const std::string &File, int Line,
-                               const std::string &StmtType,
+                               const std::string &File, unsigned Line,
+                               const std::string &StmtType, int CondID,
                                const std::string &Condition,
                                const std::string &Extra = "") {
   // Call LogManager with the correct parameter order to match our fields:
   // File, Line, Function, EventType, Content, ExtraInfo
-  LogManager::getInstance().addEntry(StmtType,  // EventType
-                                     File,      // File
-                                     Line,      // Line
-                                     Function,  // Function
-                                     Condition, // Content
-                                     Extra);    // ExtraInfo
+  LogManager::getInstance().addEntry(
+      StmtType, File, Line, Function, CondID, Condition, Extra);
 }
 
 bool MyASTVisitor::VisitFunctionDecl(FunctionDecl *Func) {
@@ -185,17 +181,21 @@ void MyASTVisitor::analyzeIfCondition(Expr *Cond) {
   int Line;
   getFileAndLine(CondRange.getBegin(), File, Line);
 
+  int CondID = -1;
   std::string ExtraInfo;
   // Get all the source texts stored in the LineNumQueue
-  for (const auto &LogEntry : FilteredLogs) {
+  for (const permod::LogManager::LogEntry &LogEntry : FilteredLogs) {
     if (LogEntry.LineNumber != Line)
       continue;
     if (LogEntry.FileName != File)
       continue;
     // if (LogEntry.FunctionName != getFuncName(CurrentFunction))
     //   continue;
-    // Found the log entry
+
+    /* Found the log entry */
     DEBUG_PRINT2("Content: " << LogEntry.Content << "\n");
+    CondID = LogEntry.CondID;
+
     // parse the LogEntry.Content into LineNumQueue
     // e.g., "1,2,3,4" -> {1, 2, 3, 4}
     std::vector<unsigned> LineNumQueue;
@@ -242,13 +242,19 @@ void MyASTVisitor::analyzeIfCondition(Expr *Cond) {
                                        CurrentFunctionFile,
                                        CurrentFunctionLine,
                                        getFuncName(CurrentFunction),
+                                       -1,
                                        CurrentFunctionSignature,
                                        "");
     CurrentFunctionSignature.clear();
   }
 
-  writeCSVRow(
-      getFuncName(CurrentFunction), File, Line, "if", CondText, ExtraInfo);
+  writeCSVRow(getFuncName(CurrentFunction),
+              File,
+              Line,
+              "if",
+              CondID,
+              CondText,
+              ExtraInfo);
 }
 
 bool MyASTVisitor::VisitSwitchStmt(SwitchStmt *Switch) {
@@ -273,12 +279,13 @@ bool MyASTVisitor::VisitSwitchStmt(SwitchStmt *Switch) {
                                        CurrentFunctionFile,
                                        CurrentFunctionLine,
                                        getFuncName(CurrentFunction),
+                                       -1,
                                        CurrentFunctionSignature,
                                        "");
     CurrentFunctionSignature.clear();
   }
 
-  writeCSVRow(getFuncName(CurrentFunction), File, Line, "switch", CondText);
+  writeCSVRow(getFuncName(CurrentFunction), File, Line, "switch", -1, CondText);
   return true;
 }
 
@@ -307,8 +314,13 @@ bool MyASTVisitor::VisitCaseStmt(CaseStmt *Case) {
     DEBUG_PRINT2("Found expanded macro: " << EM->MacroName << "\n");
     ValueText = EM->MacroValue;
   }
-  writeCSVRow(
-      getFuncName(CurrentFunction), File, Line, "case", CaseText, ValueText);
+  writeCSVRow(getFuncName(CurrentFunction),
+              File,
+              Line,
+              "case",
+              -1,
+              CaseText,
+              ValueText);
   return true;
 }
 

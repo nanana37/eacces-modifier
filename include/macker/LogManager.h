@@ -17,6 +17,7 @@ public:
     unsigned LineNumber;
     std::string FunctionName;
     std::string EventType;
+    int CondID;
     std::string Content;
     std::string ExtraInfo;
   };
@@ -25,7 +26,8 @@ public:
 
   void addEntry(const std::string &EventType, const std::string &FileName,
                 unsigned LineNumber, const std::string &FunctionName,
-                const std::string &Content, const std::string &ExtraInfo = "");
+                int CondID, const std::string &Content,
+                const std::string &ExtraInfo = "");
 
   void writeAllLogs(bool SortByLocation = false);
 
