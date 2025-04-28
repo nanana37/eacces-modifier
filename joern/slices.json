@@ -1,0 +1,86 @@
+{
+  "$type": "DataFlowSlice",
+  "edges": [
+    {
+      "dst": 68719476736,
+      "label": "REACHING_DEF",
+      "src": 115964116992
+    },
+    {
+      "dst": 68719476737,
+      "label": "REACHING_DEF",
+      "src": 68719476736
+    },
+    {
+      "dst": 68719476737,
+      "label": "REACHING_DEF",
+      "src": 90194313216
+    }
+  ],
+  "nodes": [
+    {
+      "code": "1",
+      "columnNumber": 10,
+      "id": 90194313219,
+      "label": "LITERAL",
+      "lineNumber": 20,
+      "parentFile": "macro.c",
+      "parentMethod": "main",
+      "typeFullName": "int"
+    },
+    {
+      "code": "int i",
+      "columnNumber": 12,
+      "id": 115964116992,
+      "label": "METHOD_PARAMETER_IN",
+      "lineNumber": 12,
+      "name": "i",
+      "parentFile": "macro.c",
+      "parentMethod": "func_M",
+      "typeFullName": "int"
+    },
+    {
+      "code": "EACCES",
+      "columnNumber": 13,
+      "id": 30064771075,
+      "label": "CALL",
+      "lineNumber": 14,
+      "name": "EACCES",
+      "parentFile": "macro.c",
+      "parentMethod": "func_M",
+      "typeFullName": "int"
+    },
+    {
+      "code": "i",
+      "columnNumber": 7,
+      "id": 68719476736,
+      "label": "IDENTIFIER",
+      "lineNumber": 13,
+      "name": "i",
+      "parentFile": "macro.c",
+      "parentMethod": "func_M",
+      "typeFullName": "int"
+    },
+    {
+      "code": "0",
+      "columnNumber": 7,
+      "id": 90194313216,
+      "label": "LITERAL",
+      "lineNumber": 13,
+      "parentFile": "macro.c",
+      "parentMethod": "func_M",
+      "typeFullName": "int"
+    },
+    {
+      "code": "i",
+      "columnNumber": 7,
+      "id": 68719476737,
+      "label": "IDENTIFIER",
+      "lineNumber": 13,
+      "name": "i",
+      "parentFile": "macro.c",
+      "parentMethod": "func_M",
+      "typeFullName": "int"
+    }
+  ]
+}

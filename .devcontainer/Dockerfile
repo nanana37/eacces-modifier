@@ -5,8 +5,7 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 ENV LLVM_VERSION=17
 
 # Prepare LLMV repository
-RUN apt-get update && \
-    apt-get install -y \
+RUN apt-get update && apt-get install -y \
     software-properties-common \
     lsb-release \
     wget
@@ -37,5 +36,12 @@ RUN apt-get update && apt-get install -y \
     bc binutils bison dwarves flex gcc git make openssl \
     pahole perl-base libssl-dev libelf-dev zstd lz4 kmod \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Joern
+RUN apt-get update && apt-get install -y openjdk-21-jdk
+RUN curl -L "https://github.com/joernio/joern/releases/latest/download/joern-install.sh" -o joern-install.sh && \
+    chmod u+x joern-install.sh && \
+    ./joern-install.sh && \
+    rm joern-install.sh
 
 CMD ["/bin/bash"]
