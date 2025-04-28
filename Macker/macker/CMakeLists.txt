@@ -1,9 +1,9 @@
 add_library(Macker SHARED
-  main.cpp
-  MyPPCallbacks.cpp
-  MyASTVisitor.cpp
-  LogManager.cpp
-  LogParser.cpp
+  Macker.cpp
+#  MyPPCallbacks.cpp
+#  MyASTVisitor.cpp
+#  LogManager.cpp
+#  LogParser.cpp
   # MyFrontendAction.cpp
 )
 
