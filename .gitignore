@@ -1,11 +1,17 @@
 .vscode/
 
 build/
+build-kernel/
+build-debug/
 
 bin/
-a.out
+*.out
 *.o
 *.so
+*.a
+*.o.cmd
+*.o.d
+
 *.csv
 .cache/
 

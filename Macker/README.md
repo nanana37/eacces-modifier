@@ -2,16 +2,13 @@
 
 ## Quick Start
 ```sh
-mkdir build && cd build
-cmake .. && make
-cd ..
-clang -fplugin=${MACKER_DIR}/build/macker/Macker.so test/test.c
+clang -fplugin=${BUILD_DIR}/${MACKER_REL_PATH} test/test.c
 ```
 
 ### For Linux Kernel
 ```sh
 rm fs/namei.o
 yes "" | make CC=clang \
-  KCFLAGS="-fplugin=${MACKER_DIR}/build/macker/Macker.so" \
+  KCFLAGS="-fplugin=${BUILD_DIR}/${MACKER_REL_PATH}" \
   fs/namei.o
 ```

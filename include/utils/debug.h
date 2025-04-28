@@ -1,22 +1,20 @@
 #pragma once
 
-#include "macro.h"
+#include "utils/macro.h"
 
 // This is required for DEBUG_VALUE(x)
 #include "llvm/IR/IRBuilder.h"
 
-using namespace llvm;
-
 #define PRETTY_PRINT(x)                                                        \
   do {                                                                         \
-    errs() << x;                                                               \
+    llvm::errs() << x;                                                         \
   } while (0)
 
-#ifdef DEBUG
+#if defined(DEBUG)
 #define MAX_TRACE_DEPTH 20
 #define DEBUG_PRINT(x)                                                         \
   do {                                                                         \
-    outs() << x;                                                               \
+    llvm::outs() << x;                                                         \
   } while (0)
 #else
 #define MAX_TRACE_DEPTH 10
@@ -25,15 +23,15 @@ using namespace llvm;
   } while (0)
 #endif // DEBUG
 
-#ifdef DEBUG2
+#if defined(DEBUG2)
 #define DEBUG_VALUE(x)                                                         \
   do {                                                                         \
     if (!x)                                                                    \
-      errs() << "(null)\n";                                                    \
+      llvm::errs() << "(null)\n";                                              \
     else if (isa<Function>(x))                                                 \
-      errs() << "(Func)" << (x)->getName() << "\n";                            \
+      llvm::errs() << "(Func)" << (x)->getName() << "\n";                      \
     else                                                                       \
-      errs() << "(Val) " << *(x) << "\n";                                      \
+      llvm::errs() << "(Val) " << *(x) << "\n";                                \
   } while (0)
 #define DEBUG_PRINT2(x) DEBUG_PRINT(x)
 #else

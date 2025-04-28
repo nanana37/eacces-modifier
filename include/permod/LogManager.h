@@ -1,10 +1,9 @@
-#ifndef PERMOD_LOG_MANAGER_H
-#define PERMOD_LOG_MANAGER_H
+#pragma once
 
 #include "llvm/Support/raw_ostream.h"
+#include <mutex>
 #include <string>
 #include <vector>
-#include <mutex>
 
 using namespace llvm;
 
@@ -28,29 +27,27 @@ private:
   llvm::raw_string_ostream OS;
 };
 
-struct LogEntry {
-  std::string FileName;
-  unsigned LineNumber;
-  std::string FunctionName;
-  std::string EventType;
-  unsigned ConditionID;
-  std::string Content;
-};
-
 class LogManager {
 public:
+  struct LogEntry {
+    std::string FileName;
+    unsigned LineNumber;
+    std::string FunctionName;
+    std::string EventType;
+    unsigned CondID;
+    std::string Content;
+    std::string ExtraInfo;
+  };
+
   static LogManager &getInstance();
 
-  void addEntry(StringRef FileName,
-               unsigned LineNumber,
-               StringRef FuncName,
-               StringRef EventType,
-               unsigned CondID,
-               StringRef Content);
+  void addEntry(StringRef FileName, unsigned LineNumber, StringRef FuncName,
+                StringRef EventType, unsigned CondID, StringRef Content,
+                StringRef ExtraInfo);
 
-  void writeAllLogs(bool SortByLocation = true);
+  void writeAllLogs(bool SortByLocation = false);
 
-  void setOutputFile(const std::string& Filename) {
+  void setOutputFile(const std::string &Filename) {
     std::lock_guard<std::mutex> lock(LogMutex);
     OutputFileName = Filename;
   }
@@ -59,11 +56,9 @@ private:
   LogManager() {}
   std::vector<LogEntry> Logs;
   std::mutex LogMutex;
-  std::string OutputFileName = "permod_conditions.csv";
+  std::string OutputFileName = "permod_logs.csv";
 
   std::string escapeCSV(const std::string &Str);
 };
 
 } // namespace permod
-
-#endif // PERMOD_LOG_MANAGER_H

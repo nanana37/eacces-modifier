@@ -1,5 +1,4 @@
-#ifndef MY_PP_CALLBACKS_H
-#define MY_PP_CALLBACKS_H
+#pragma once
 
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Lex/PPCallbacks.h"
@@ -17,8 +16,7 @@ public:
 
 private:
   CompilerInstance &CI;
-  void getFileAndLine(SourceLocation Loc, std::string &FileName, unsigned int &LineNumber);
+  void getFileAndLine(SourceLocation Loc, std::string &FileName,
+                      unsigned int &LineNumber);
   std::string getTokenString(const MacroInfo *MI);
 };
-
-#endif // MY_PP_CALLBACKS_H

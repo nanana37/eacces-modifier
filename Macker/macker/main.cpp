@@ -1,11 +1,14 @@
-#include "MyASTVisitor.h"
-#include "MyPPCallbacks.h"
-#include "LogManager.h"
+#include "macker/LogManager.h"
+#include "macker/LogParser.h"
+#include "macker/MyASTVisitor.h"
+#include "macker/MyPPCallbacks.h"
 #include "clang/AST/ASTConsumer.h"
 #include "clang/Frontend/CompilerInstance.h"
 #include "clang/Frontend/FrontendAction.h"
 #include "clang/Frontend/FrontendPluginRegistry.h"
 #include "clang/Rewrite/Core/Rewriter.h"
+
+#include "utils/debug.h"
 
 namespace {
 
@@ -15,21 +18,36 @@ private:
   bool enablePPCallbacks;
 
 public:
-  MacroTrackerConsumer(Rewriter &R, CompilerInstance &Instance, bool EnablePPCallbacks) 
-    : visitor(R, Instance.getSourceManager()),
-      enablePPCallbacks(EnablePPCallbacks) {
-    
+  MacroTrackerConsumer(Rewriter &R, CompilerInstance &Instance,
+                       bool EnablePPCallbacks, macker::LogParser &Parser,
+                       const std::string &TargetFile)
+      : visitor(R, Instance.getSourceManager(), Parser, TargetFile),
+        enablePPCallbacks(EnablePPCallbacks) {
+
     // Only add PP callbacks if explicitly enabled
     if (enablePPCallbacks) {
-      Instance.getPreprocessor().addPPCallbacks(std::make_unique<MyPPCallbacks>(Instance));
+      Instance.getPreprocessor().addPPCallbacks(
+          std::make_unique<MyPPCallbacks>(Instance));
     }
   }
 
   void HandleTranslationUnit(ASTContext &Context) override {
+    DEBUG_PRINT2("Macker: Starting macro tracking...\n");
     visitor.TraverseDecl(Context.getTranslationUnitDecl());
-    
+
+#if defined(DEBUG2)
+    llvm::outs() << "Macker: Macro tracking completed.\n";
+    llvm::outs() << "Macker: Writing logs to CSV file...\n";
+    std::string fileName =
+        Context.getSourceManager()
+            .getFileEntryForID(Context.getSourceManager().getMainFileID())
+            ->getName()
+            .str();
+    llvm::outs() << "Macker: File: " << fileName << "\n";
+#endif
+
     // Output the logs after traversal is complete
-    macker::LogManager::getInstance().writeAllLogs(true);
+    macker::LogManager::getInstance().writeAllLogs();
   }
 };
 
@@ -44,33 +62,55 @@ public:
 protected:
   std::unique_ptr<ASTConsumer>
   CreateASTConsumer(CompilerInstance &CI, llvm::StringRef InFile) override {
-    return std::make_unique<MacroTrackerConsumer>(rewriter, CI, enablePPCallbacks);
+    std::string LogFileName = "permod_logs.csv";
+    macker::LogParser parser(LogFileName);
+    std::string TargetFile =
+        CI.getSourceManager()
+            .getFileEntryForID(CI.getSourceManager().getMainFileID())
+            ->getName()
+            .str();
+    return std::make_unique<MacroTrackerConsumer>(
+        rewriter, CI, enablePPCallbacks, parser, TargetFile);
   }
 
   bool ParseArgs(const CompilerInstance &CI,
                  const std::vector<std::string> &args) override {
+
+    std::string fileName =
+        CI.getSourceManager()
+            .getFileEntryForID(CI.getSourceManager().getMainFileID())
+            ->getName()
+            .str();
+#if defined(KERNEL) && defined(DEBUG)
+    // FIXME: Macker currently only works with specified file names.
+    DEBUG_PRINT("Macker: This plugin only works with fs\n");
+    if (fileName.find("fs") == std::string::npos) {
+      return false;
+    }
+#endif
+
     for (const auto &arg : args) {
-      if (arg == "-enable-pp" || arg == "--enable-pp") {
+      if (arg == "enable-pp") {
+        DEBUG_PRINT2("Macker: Preprocessing callbacks enabled\n");
         enablePPCallbacks = true;
-      }
-      else if (arg == "-help" || arg == "--help") {
+      } else if (arg == "help") {
         llvm::errs() << "Macro Tracker Plugin Options:\n"
-                     << "  -enable-pp, --enable-pp   : Enable preprocessing callbacks\n";
+                     << "  enable-pp   : Enable preprocessing callbacks\n";
       }
     }
     return true;
   }
 
-  // Enable this plugin to run after the main action
   PluginASTAction::ActionType getActionType() override {
+    // NOTE: This plugin should run before the main action (e.g., compilation)
+    // to ensure that logs are generated to be used by the LLVM pass.
+    // return AddBeforeMainAction;
     return AddAfterMainAction;
   }
 
-  void ExecuteAction() override { 
-    PluginASTAction::ExecuteAction();
-  }
+  void ExecuteAction() override { PluginASTAction::ExecuteAction(); }
 };
 } // namespace
 
 static FrontendPluginRegistry::Add<MacroTrackerAction>
-    X("macro-tracker", "Trace macro with PPCallbacks");
+    X("macro_tracker", "Trace macro with PPCallbacks");

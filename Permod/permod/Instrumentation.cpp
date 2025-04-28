@@ -1,9 +1,9 @@
 #include "llvm/IR/IRBuilder.h"
 
-#include "Condition.hpp"
-#include "Instrumentation.hpp"
-#include "debug.h"
-#ifdef DEBUG
+#include "permod/Condition.hpp"
+#include "permod/Instrumentation.hpp"
+#include "utils/debug.h"
+#if defined(DEBUG)
 extern const char *condTypeStr[];
 #endif // DEBUG
 
@@ -98,6 +98,8 @@ bool Instrumentation::insertFlushFunc(DebugInfo &DBinfo, BasicBlock &TheBB) {
     DEBUG_PRINT("** Terminator " << *TermInst << " is invalid\n");
     return false;
   }
+  // TODO: Disable inserting buffer function for this case, the buffer won't be
+  // flushed.
   if (TermInst->getNumOperands() == 0) {
     DEBUG_PRINT("** Terminator " << *TermInst << " has no operand\n");
     return false;

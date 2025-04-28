@@ -3,18 +3,18 @@
 
 #include "llvm/IR/IRBuilder.h"
 
-#include "Condition.hpp"
-#include "macro.h"
+#include "permod/Condition.hpp"
+#include "utils/macro.h"
 
-#ifdef DEBUG
+#if defined(DEBUG)
 extern const char *condTypeStr[];
 #endif // DEBUG
 
-#ifndef TEST
+#if defined(KERNEL_MODE)
 #define LOGGR_FUNC "_printk"
 #else
 #define LOGGR_FUNC "printf"
-#endif // TEST
+#endif
 
 #define BUFFR_FUNC "buffer_cond"
 #define FLUSH_FUNC "flush_cond"

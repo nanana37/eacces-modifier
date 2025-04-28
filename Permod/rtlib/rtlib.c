@@ -1,16 +1,14 @@
-#include "../permod/include/macro.h"
-
-#ifndef TEST
+#if !defined(USER_MODE)
 #include <linux/printk.h>
-#define LogFunc(_fmt, ...) pr_info(_fmt, ##__VA_ARGS__)
-#else
+#define LogFunc(_fmt, ...) pr_debug(_fmt, ##__VA_ARGS__)
+#else // USER_MODE
 #include <stdio.h>
-#define LogFunc(_fmt, ...) printf(_fmt, ##__VA_ARGS__)
-#endif // TEST
+#define LogFunc(_fmt, ...) fprintf(stderr, _fmt, ##__VA_ARGS__)
+#endif
 
 void buffer_cond(long long *ext_list, long long *dst_list, long long nth,
                  long long dest) {
-#ifdef DEBUG2
+#if defined(DEBUG)
   LogFunc("buffer_cond(%lld, %lld)\n", nth, dest);
 #endif
   *ext_list |= (1 << nth);
@@ -20,21 +18,23 @@ void buffer_cond(long long *ext_list, long long *dst_list, long long nth,
     *dst_list &= ~(1 << nth);
   }
 }
-#ifndef TEST
+#if !defined(USER_MODE)
 EXPORT_SYMBOL(buffer_cond);
 #endif
 
 void flush_cond(long long *ext_list, long long *dst_list, const char *pathname,
                 const char *funcname, int retval) {
   if (retval == -13) {
-    LogFunc("============== PERMOD ==============\n");
-    LogFunc("[Permod] %s::%s() returned %d\n", pathname, funcname, retval);
-    LogFunc("[Permod] (ext)0x%llx, (dst)0x%llx\n", *ext_list, *dst_list);
-    LogFunc("====================================\n");
+    LogFunc("[Permod],%s,%s,%d,0x%llx,0x%llx\n",
+            pathname,
+            funcname,
+            retval,
+            *ext_list,
+            *dst_list);
   }
   *ext_list = 0;
   *dst_list = 0;
 }
-#ifndef TEST
+#if !defined(USER_MODE)
 EXPORT_SYMBOL(flush_cond);
 #endif

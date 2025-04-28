@@ -5,11 +5,11 @@
 
 #pragma once
 
-#include "Condition.hpp"
-#include "macro.h"
+#include "permod/Condition.hpp"
+#include "utils/macro.h"
 #include "llvm/IR/Instructions.h"
 
-#ifdef DEBUG
+#if defined(DEBUG)
 extern const char *condTypeStr[];
 #endif // DEBUG
 

@@ -7,15 +7,10 @@
     "remoteUser": "vscode",
     "mounts": [
         "source=${localWorkspaceFolder},target=/home/vscode/eacces-modifier,type=bind",
-        "source=/path/to/linux-kernel,target=/home/vscode/linux-kernel,type=bind"
+        "source=${localWorkspaceFolder}/../linux,target=/home/vscode/linux,type=bind"
     ],
     "workspaceFolder": "/home/vscode/eacces-modifier",
-    "postCreateCommand": "cd /home/vscode/eacces-modifier && cmake -S Permod -B Permod/build && cmake -S Macker -B Macker/build",
-    "containerEnv": {
-        "PERMOD_DIR": "/home/vscode/eacces-modifier/Permod",
-        "MACKER_DIR": "/home/vscode/eacces-modifier/Macker",
-        "KERNEL_DIR": "/home/vscode/linux-kernel"
-    },
+    "postCreateCommand": "cd /home/vscode/eacces-modifier && cmake --preset default && cmake --build --preset default",
     "features": {},
     "customizations": {
         "vscode": {
@@ -25,12 +20,7 @@
                 "clangd.arguments": [
                     "--background-index"
                 ]
-            },
-            "extensions": [
-                "llvm-vs-code-extensions.vscode-clangd",
-                "ms-vscode.cmake-tools",
-                "twxs.cmake"
-            ]
+            }
         }
     }
 }

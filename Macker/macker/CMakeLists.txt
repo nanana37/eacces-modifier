@@ -3,10 +3,18 @@ add_library(Macker SHARED
   MyPPCallbacks.cpp
   MyASTVisitor.cpp
   LogManager.cpp
+  LogParser.cpp
   # MyFrontendAction.cpp
 )
 
-target_link_libraries(Macker clangBasic
+target_include_directories(Macker
+  PRIVATE
+    ${LLVM_INCLUDE_DIRS}
+    ${CLANG_INCLUDE_DIRS}
+)
+
+target_link_libraries(Macker
+  clangBasic
   clangFrontend
   clangAST
   clangASTMatchers
@@ -19,8 +27,8 @@ target_link_libraries(Macker clangBasic
   clangSerialization
   clangTooling
   clangAnalysis
-  )
+)
 
 set_target_properties(Macker PROPERTIES
   PREFIX ""
-  )
+)

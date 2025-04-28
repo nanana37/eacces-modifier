@@ -1,0 +1,2 @@
+[Permod],fs-example.c,check_acl,-13,0x3,0x2
+[Permod],fs-example.c,func,-13,0x1,0x1
