@@ -2,14 +2,35 @@ import org.json4s.DefaultFormats
 import org.json4s.native.Serialization.{read => jsonRead}
 import org.json4s.native.Serialization.{write, writePretty}
 
-// function to trace the definition of a variable
-def collectAssignments(vars: List[Identifier], depth: Int, seen: Set[Call] = Set()): List[Call] = {
+
+// Recursive function to trace the definition of a variable, using explicit pseudocode structure.
+def recursiveDefSearch(vars: List[Identifier], depth: Int, seen: Set[CfgNode] = Set()): List[CfgNode] = {
   if (depth == 0) return seen.toList
-  val defCalls = vars
-    .flatMap(_.in.dedup.hasLabel("CALL").map(_.asInstanceOf[Call]).name("<operator>.assignment").l)
-    .filterNot(seen.contains)
-  val nextVars = defCalls.flatMap(_.ast.isIdentifier).filterNot(v => vars.map(_.code).contains(v.code))
-  collectAssignments(nextVars, depth - 1, seen ++ defCalls)
+
+  var defs = List[CfgNode]()
+  var nextVars = List[Identifier]()
+
+  for (v <- vars) {
+    val ddgIns = v.ddgIn.l
+    val astIdentifiers = ddgIns.flatMap(_.ast.isIdentifier.l)
+
+    // Collect assignments
+    val assignmentCalls = v.astParent.collect {
+      case c: Call if c.name == "<operator>.assignment" => c
+    }.filterNot(seen.contains)
+    defs ++= assignmentCalls
+    // println(s"Assignment Calls: ${assignmentCalls.code.l}")
+
+    // Collect parameters
+    val params = ddgIns.hasLabel("METHOD_PARAMETER_IN").filterNot(seen.contains)
+    defs ++= params
+    // println(s"Parameters: ${params.code.l}")
+
+    nextVars ++= astIdentifiers
+  }
+
+  val updatedSeen = seen ++ defs
+  defs ++ recursiveDefSearch(nextVars, depth - 1, updatedSeen).filterNot(defs.contains)
 }
 
 @main def exec(cpgFile: String, outFile: String) = {
@@ -25,7 +46,12 @@ def collectAssignments(vars: List[Identifier], depth: Int, seen: Set[Call] = Set
     val lineNumber         = statement.lineNumber
     val condition          = statement.condition
     val conditionVariables = statement.condition.ast.isIdentifier
-    val assignments        = collectAssignments(conditionVariables.l, 5) // TODO: make depth configurable
+    val assignments        = recursiveDefSearch(conditionVariables.l, 5) // TODO: make depth configurable
+  
+  // println(s"Line Number: $lineNumber")
+  //   println(s"Condition: ${condition.code.l}")
+  //   println(s"Assignments: ${assignments.map(_.code)}")
+
 
     val elementMap = Map("lineNumber" -> lineNumber, "condition" -> condition.code.l)
     val json       = write(elementMap)
