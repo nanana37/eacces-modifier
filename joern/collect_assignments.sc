@@ -47,13 +47,17 @@ def recursiveDefSearch(vars: List[Identifier], depth: Int, seen: Set[CfgNode] = 
     val condition          = statement.condition
     val conditionVariables = statement.condition.ast.isIdentifier
     val assignments        = recursiveDefSearch(conditionVariables.l, 5) // TODO: make depth configurable
-  
-  // println(s"Line Number: $lineNumber")
-  //   println(s"Condition: ${condition.code.l}")
-  //   println(s"Assignments: ${assignments.map(_.code)}")
 
+    val assignmentList = assignments.map(a => Map(
+      "code" -> a.code,
+      "lineNumber" -> a.lineNumber
+    ))
 
-    val elementMap = Map("lineNumber" -> lineNumber, "condition" -> condition.code.l)
+    val elementMap = Map(
+      "lineNumber" -> lineNumber,
+      "condition" -> condition.code.l,
+      "assignments" -> assignmentList
+    )
     val json       = write(elementMap)
 
     output += json + "\n"
