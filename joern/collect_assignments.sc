@@ -33,19 +33,23 @@ def recursiveDefSearch(vars: List[Identifier], depth: Int, seen: Set[CfgNode] = 
   defs ++ recursiveDefSearch(nextVars, depth - 1, updatedSeen).filterNot(defs.contains)
 }
 
+def flattenCondition(expr: Expression): List[Expression] = expr match {
+  case call: Call if call.name == "<operator>.logicalOr" || call.name == "<operator>.logicalAnd" =>
+    call.astChildren.collect { case e: Expression => e }.flatMap(flattenCondition).l
+  case other => List(other)
+}
+
 @main def exec(cpgFile: String, outFile: String) = {
   importCpg(cpgFile)
   implicit val formats: DefaultFormats.type = DefaultFormats
 
-// cpg.controlStructure.controlStructureType("IF").l(2).condition.ast.isIdentifier.ddgIn.isIdentifier.ddgIn.l
+  val conditions = cpg.controlStructure.controlStructureType("IF").condition.flatMap(flattenCondition)
 
-  val statements = cpg.controlStructure.controlStructureType("IF")
   var output     = ""
   val lastDef    = scala.collection.mutable.ListBuffer[String]()
-  for (statement <- statements) {
-    val lineNumber         = statement.lineNumber
-    val condition          = statement.condition
-    val conditionVariables = statement.condition.ast.isIdentifier
+  for (condition <- conditions) {
+    val lineNumber         = condition.lineNumber
+    val conditionVariables = condition.ast.isIdentifier
     val assignments        = recursiveDefSearch(conditionVariables.l, 5) // TODO: make depth configurable
 
     val assignmentList = assignments.map(a => Map(
@@ -55,7 +59,7 @@ def recursiveDefSearch(vars: List[Identifier], depth: Int, seen: Set[CfgNode] = 
 
     val elementMap = Map(
       "lineNumber" -> lineNumber,
-      "condition" -> condition.code.l,
+      "condition" -> condition.code,
       "assignments" -> assignmentList
     )
     val json       = write(elementMap)
