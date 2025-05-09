@@ -10,23 +10,34 @@ def recursiveDefSearch(vars: List[Identifier], depth: Int, seen: Set[CfgNode] = 
   var defs = List[CfgNode]()
   var nextVars = List[Identifier]()
 
-  for (v <- vars) {
-    val ddgIns = v.ddgIn.l
-    val astIdentifiers = ddgIns.flatMap(_.ast.isIdentifier.l)
-
-    // Collect assignments
-    val assignmentCalls = v.astParent.collect {
-      case c: Call if c.name == "<operator>.assignment" => c
-    }.filterNot(seen.contains)
+  // TODO: id.method is accessed multiple times, can we cache it?
+  // TODO: Limit the CFG traversal to a specific condition statement like `if(var)`,
+  // if not, the condition is "Call" and we can traverse the DDG.
+  // intra-procedural to find all definitions
+  for (id <- vars) {
+    val idLine = id.lineNumber.getOrElse(0)
+    val idName = id.name
+    val assignmentCalls = id.method
+      .call
+      .lineNumberLte(idLine)
+      .name("<operator>.assignment")
+      .filter {
+        c =>
+          val lhs = c.argument(1)
+          lhs.isIdentifier && lhs.asInstanceOf[Identifier].name == idName
+      }
+      .filterNot(seen.contains)
+      .l
     defs ++= assignmentCalls
+    nextVars ++= assignmentCalls.flatMap(_.argument(2).ast.isIdentifier.l)
     // println(s"Assignment Calls: ${assignmentCalls.code.l}")
+    // println(s"Next Vars: ${nextVars.map(_.code).mkString(", ")}")
 
-    // Collect parameters
-    val params = ddgIns.hasLabel("METHOD_PARAMETER_IN").filterNot(seen.contains)
+    val params = id.method
+      .parameter
+      .name(idName)
+      .filterNot(seen.contains)
     defs ++= params
-    // println(s"Parameters: ${params.code.l}")
-
-    nextVars ++= astIdentifiers
   }
 
   val updatedSeen = seen ++ defs

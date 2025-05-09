@@ -25,6 +25,9 @@ int func(int x) {
   if (x == 2 || y == 0) {
     y = 1;
   }
+  if (error) {
+    return error;
+  }
   return 0;
 }
 
